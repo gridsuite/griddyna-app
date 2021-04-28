@@ -38,5 +38,5 @@ it('renders', async () => {
         )
     );
 
-    expect(container.textContent).toContain('GridXXX');
+    expect(container.textContent).toContain('Griddyna');
 });

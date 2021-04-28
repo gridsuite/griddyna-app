@@ -1,5 +1,5 @@
 {
-    "name": "gridXXX-app",
+    "name": "griddyna-app",
     "version": "0.1.0",
     "homepage": ".",
     "private": true,
@@ -54,8 +54,8 @@
         ]
     },
     "devDependencies": {
-        "prettier": "2.0.5",
         "eslint-config-prettier": "^2.9.0",
-        "eslint-plugin-prettier": "^2.6.0"
+        "eslint-plugin-prettier": "^2.6.0",
+        "prettier": "^2.0.5"
     }
 }
