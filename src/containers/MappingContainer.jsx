@@ -1,9 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RuleSlice, getRulesNumber } from '../redux/slices/Rule';
+import { RuleSlice, getRulesNumber, postMapping } from '../redux/slices/Rule';
+import { convertScript } from '../redux/slices/Script';
 import { Divider, Grid, List, Paper, Typography } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
 import AddButton from '../components/1-atoms/AddButton';
+import SaveButton from '../components/1-atoms/SaveButton';
+import ConvertButton from '../components/1-atoms/ConvertButton';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
@@ -11,8 +14,18 @@ const MappingContainer = () => {
     const dispatch = useDispatch();
 
     function addRule() {
-        dispatch(RuleSlice.actions.addRule());
+        dispatch(RuleSlice.actions.addRule(undefined));
     }
+
+    function saveMapping() {
+        dispatch(postMapping());
+    }
+
+    function convertToScript() {
+        // TODO
+        dispatch(convertScript('mappingName'));
+    }
+
     const rulesLabel = 'Rules';
 
     function buildRules() {
@@ -27,6 +40,12 @@ const MappingContainer = () => {
             <Grid container justify="space-between">
                 <Grid item>
                     <Typography variant="h1">{`${rulesLabel} :`}</Typography>
+                </Grid>
+                <Grid item xs={2}>
+                    <ConvertButton onClick={convertToScript} />
+                </Grid>
+                <Grid item xs={2}>
+                    <SaveButton onClick={saveMapping} />
                 </Grid>
                 <Grid item xs={2}>
                     <AddButton onClick={addRule} />

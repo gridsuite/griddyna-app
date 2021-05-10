@@ -1,8 +1,13 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { EnumOperands } from '../../constants/operands';
-
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import * as mappingsAPI from '../../rest/mappingsAPI';
+import * as _ from 'lodash';
+import RequestStatus from '../../constants/RequestStatus';
+import { getProperty } from '../../utils/properties';
 const initialState = {
     rules: [], // if alone, state as array directly
+    status: RequestStatus.IDLE,
 };
 
 const DEFAULT_RULE = {
@@ -12,7 +17,6 @@ const DEFAULT_RULE = {
     filters: [],
     filterCounter: 1,
 };
-
 // Selectors
 
 export const getRulesNumber = (state) => state.rules.rules.length;
@@ -20,7 +24,7 @@ export const getRulesNumber = (state) => state.rules.rules.length;
 export const makeGetRule = () =>
     createSelector(
         (state) => state.rules.rules,
-        (_, index) => index,
+        (_state, index) => index,
         (rules, index) => {
             const foundRule = rules[index];
             const { type, composition, mappedModel } = foundRule;
@@ -37,7 +41,7 @@ export const makeGetRule = () =>
 export const makeGetFilter = () =>
     createSelector(
         (state) => state.rules.rules,
-        (_, indexes) => indexes,
+        (_state, indexes) => indexes,
         (rules, indexes) => rules[indexes.rule].filters[indexes.filter]
     );
 
@@ -46,6 +50,31 @@ export const makeGetFilter = () =>
 //// makeGetRuleValidity(index)
 
 // Reducers
+
+export const postMapping = createAsyncThunk(
+    'mappings/post',
+    async (undefined, { getState }) => {
+        // TODO name
+        const mappingName = 'mappingName';
+        const rules = getState().rules.rules;
+        //
+        let augmentedRules = rules.map((rule) => {
+            let augmentedRule = _.cloneDeep(rule);
+            augmentedRule.equipmentType = rule.type.toUpperCase();
+            augmentedRule.filters = augmentedRule.filters.map((filter) => ({
+                ...filter,
+                filterId: filter.id,
+                type: getProperty(rule.type, filter.property).type,
+            }));
+            return augmentedRule;
+        });
+        const response = await mappingsAPI.postMapping(
+            mappingName,
+            augmentedRules
+        );
+        return response.json();
+    }
+);
 
 const reducers = {
     addRule: (state) => {
@@ -107,11 +136,20 @@ const reducers = {
 
 const extraReducers = {
     /* TODO
-    [SAVE_MAPPING]
     [DELETE_MAPPING]
     [EXPORT_SCRIPT]
     [EXPORT_MAPPING]
      */
+    [postMapping.fulfilled]: (state, action) => {
+        state.status = RequestStatus.SUCCESS;
+    },
+    [postMapping.rejected]: (state, action) => {
+        console.log(action);
+        state.status = RequestStatus.ERROR;
+    },
+    [postMapping.pending]: (state, action) => {
+        state.status = RequestStatus.PENDING;
+    },
 };
 
 export const RuleSlice = createSlice({

@@ -10,6 +10,7 @@
         "@material-ui/lab": "^4.0.0-alpha.42",
         "@reduxjs/toolkit": "^1.2.3",
         "http-proxy-middleware": "^1.0.3",
+        "lodash": "^4.17.21",
         "prop-types": "15.7.2",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",

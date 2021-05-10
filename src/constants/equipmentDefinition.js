@@ -5,10 +5,10 @@ export const EquipmentType = {
 Object.freeze(EquipmentType);
 
 export const PropertyType = {
-    ENUM: 'enum',
-    STRING: 'string',
-    BOOLEAN: 'boolean',
-    NUMBER: 'number',
+    ENUM: 'ENUM',
+    STRING: 'STRING',
+    BOOLEAN: 'BOOLEAN',
+    NUMBER: 'NUMBER',
 };
 Object.freeze(PropertyType);
 

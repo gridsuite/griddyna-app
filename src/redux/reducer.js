@@ -10,10 +10,12 @@ import { InstanceModelReducer } from './slices/InstanceModel';
 import { RuleReducer } from './slices/Rule';
 import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
+import { ScriptReducer } from './slices/Script';
 
 export const reducer = combineReducers({
     user: UserReducer,
     theme: ThemeReducer,
     rules: RuleReducer,
     instanceModels: InstanceModelReducer,
+    scripts: ScriptReducer,
 });

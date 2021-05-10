@@ -116,6 +116,6 @@ export function getPropertiesOptions(type) {
 export function getModelsOptions(models) {
     return models.map((model) => ({
         label: model.name,
-        value: model.id,
+        value: model.name,
     }));
 }
