@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RuleSlice, getRulesNumber, postMapping } from '../redux/slices/Rule';
 import { convertScript } from '../redux/slices/Script';
-import { Divider, Grid, List, Paper, Typography } from '@material-ui/core';
+import { Grid, List, Paper, Typography } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
 import AddButton from '../components/1-atoms/AddButton';
 import SaveButton from '../components/1-atoms/SaveButton';

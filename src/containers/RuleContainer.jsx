@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeGetRule, RuleSlice } from '../redux/slices/Rule';
 import { makeGetModels } from '../redux/slices/InstanceModel';
@@ -28,13 +28,16 @@ const RuleContainer = ({ index }) => {
             })
         );
 
-    const changeModel = (newModel) =>
-        dispatch(
-            RuleSlice.actions.changeRuleModel({
-                index,
-                mappedModel: newModel,
-            })
-        );
+    const changeModel = useCallback(
+        (newModel) =>
+            dispatch(
+                RuleSlice.actions.changeRuleModel({
+                    index,
+                    mappedModel: newModel,
+                })
+            ),
+        [dispatch, index]
+    );
 
     const addFilter = () =>
         dispatch(
@@ -66,7 +69,7 @@ const RuleContainer = ({ index }) => {
         } else {
             changeModel('');
         }
-    }, [type]);
+    }, [type, models, changeModel]);
 
     return (
         <Rule

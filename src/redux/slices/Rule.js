@@ -53,10 +53,10 @@ export const makeGetFilter = () =>
 
 export const postMapping = createAsyncThunk(
     'mappings/post',
-    async (undefined, { getState }) => {
+    async (_arg, { getState }) => {
         // TODO name
         const mappingName = 'mappingName';
-        const rules = getState().rules.rules;
+        const rules = getState()?.rules.rules;
         //
         let augmentedRules = rules.map((rule) => {
             let augmentedRule = _.cloneDeep(rule);
@@ -66,6 +66,9 @@ export const postMapping = createAsyncThunk(
                 filterId: filter.id,
                 type: getProperty(rule.type, filter.property).type,
             }));
+            if (augmentedRule.filters.length === 0) {
+                augmentedRule.composition = 'true';
+            }
             return augmentedRule;
         });
         const response = await mappingsAPI.postMapping(

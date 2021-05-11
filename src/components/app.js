@@ -79,8 +79,10 @@ const App = () => {
 
     const dispatch = useDispatch();
 
-    const authenticationDispatch = (action) =>
-        dispatch(UserSlice.actions[action.type](action));
+    const authenticationDispatch = useCallback(
+        (action) => dispatch(UserSlice.actions[action.type](action)),
+        [dispatch]
+    );
 
     const location = useLocation();
 
@@ -107,7 +109,7 @@ const App = () => {
             );
         }
         // Note: initialMatchSilentRenewCallbackUrl and dispatch don't change
-    }, [initialMatchSilentRenewCallbackUrl, dispatch]);
+    }, [initialMatchSilentRenewCallbackUrl, authenticationDispatch]);
 
     useEffect(() => {
         initialize()

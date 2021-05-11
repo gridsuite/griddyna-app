@@ -102,6 +102,8 @@ export function getOperandsOptions(propertyType) {
                     label: 'ends with',
                 },
             ];
+        default:
+            return [];
     }
 }
 

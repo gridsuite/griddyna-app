@@ -1,10 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeGetFilter, RuleSlice } from '../redux/slices/Rule';
-import {
-    getOperandsOptions,
-    getPropertiesOptions,
-} from '../utils/optionsBuilders';
+import { getPropertiesOptions } from '../utils/optionsBuilders';
 import Filter from '../components/3-molecules/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
 import PropTypes from 'prop-types';

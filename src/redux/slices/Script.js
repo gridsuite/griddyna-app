@@ -7,12 +7,13 @@ const initialState = {
     scripts: [], // if alone, state as array directly
     status: RequestStatus.IDLE,
 };
+// TODO: Add Script Creation Front-Side
+// const DEFAULT_SCRIPT = {
+//     name: '',
+//     parent: undefined,
+//     script: '',
+// };
 
-const DEFAULT_SCRIPT = {
-    name: '',
-    parent: undefined,
-    script: '',
-};
 // Selectors
 
 // Reducers
