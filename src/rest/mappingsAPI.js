@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL + '/mappings';
+const API_URL = process.env.REACT_APP_API_GATEWAY + '/mappings';
 
 export function postMapping(mappingName, rules) {
     return fetch(`${API_URL}/${mappingName}`, {

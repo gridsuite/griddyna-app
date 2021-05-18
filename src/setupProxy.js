@@ -1,13 +1,13 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 module.exports = function (app) {
     app.use(
-        createProxyMiddleware('http://localhost:8080/api/dyna-server', {
-            pathRewrite: { '^/api/dyna-server/': '/' },
+        createProxyMiddleware('http://localhost:5036/api/dynamic-server', {
+            pathRewrite: { '^/api/dynamic-server/': '/' },
         })
     );
     app.use(
-        createProxyMiddleware('http://localhost:8080/ws/dyna-server', {
-            pathRewrite: { '^/ws/dyna-server/': '/' },
+        createProxyMiddleware('http://localhost:5036/ws/dynamic-server', {
+            pathRewrite: { '^/ws/dynamic-server/': '/' },
             ws: true,
         })
     );
