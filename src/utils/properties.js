@@ -7,7 +7,6 @@ export function getProperty(equipmentType, propertyName) {
 }
 
 export function getValuesOption(property) {
-    console.log(property);
     //TODO Intl
     return property?.values?.map((value) => ({
         label: value,

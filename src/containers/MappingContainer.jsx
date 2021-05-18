@@ -1,20 +1,23 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RuleSlice, getRulesNumber, postMapping } from '../redux/slices/Rule';
+import {
+    MappingSlice,
+    getRulesNumber,
+    postMapping,
+} from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
-import { Grid, List, Paper, Typography } from '@material-ui/core';
+import { List, Paper } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
-import AddButton from '../components/1-atoms/AddButton';
-import SaveButton from '../components/1-atoms/SaveButton';
-import ConvertButton from '../components/1-atoms/ConvertButton';
+import MappingHeader from '../components/2-molecules/MappingHeader';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
     const rulesNumber = useSelector(getRulesNumber);
+    const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const dispatch = useDispatch();
 
     function addRule() {
-        dispatch(RuleSlice.actions.addRule(undefined));
+        dispatch(MappingSlice.actions.addRule(undefined));
     }
 
     function saveMapping() {
@@ -22,11 +25,8 @@ const MappingContainer = () => {
     }
 
     function convertToScript() {
-        // TODO
-        dispatch(convertScript('mappingName'));
+        dispatch(convertScript(activeMapping));
     }
-
-    const rulesLabel = 'Rules';
 
     function buildRules() {
         const rules = [];
@@ -37,20 +37,12 @@ const MappingContainer = () => {
     }
     return (
         <Paper>
-            <Grid container justify="space-between">
-                <Grid item>
-                    <Typography variant="h1">{`${rulesLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs={2}>
-                    <ConvertButton onClick={convertToScript} />
-                </Grid>
-                <Grid item xs={2}>
-                    <SaveButton onClick={saveMapping} />
-                </Grid>
-                <Grid item xs={2}>
-                    <AddButton onClick={addRule} />
-                </Grid>
-            </Grid>
+            <MappingHeader
+                mappingName={activeMapping}
+                saveMapping={saveMapping}
+                addRule={addRule}
+                convertToScript={convertToScript}
+            />
             <List>{buildRules()}</List>
         </Paper>
     );

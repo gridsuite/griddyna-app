@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeGetFilter, RuleSlice } from '../redux/slices/Rule';
+import { makeGetFilter, MappingSlice } from '../redux/slices/Mapping';
 import { getPropertiesOptions } from '../utils/optionsBuilders';
 import Filter from '../components/3-molecules/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
@@ -22,7 +22,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     const dispatch = useDispatch();
     const setProperty = (property) =>
         dispatch(
-            RuleSlice.actions.changeFilterProperty({
+            MappingSlice.actions.changeFilterProperty({
                 ruleIndex,
                 filterIndex,
                 property,
@@ -31,7 +31,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
 
     const setOperand = (operand) =>
         dispatch(
-            RuleSlice.actions.changeFilterOperand({
+            MappingSlice.actions.changeFilterOperand({
                 ruleIndex,
                 filterIndex,
                 operand,
@@ -40,7 +40,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
 
     const setValue = (value) =>
         dispatch(
-            RuleSlice.actions.changeFilterValue({
+            MappingSlice.actions.changeFilterValue({
                 ruleIndex,
                 filterIndex,
                 value,

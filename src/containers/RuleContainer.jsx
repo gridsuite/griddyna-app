@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeGetRule, RuleSlice } from '../redux/slices/Rule';
+import { makeGetRule, MappingSlice } from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/InstanceModel';
 import Rule from '../components/3-molecules/Rule';
 import FiltersTemplate from '../components/4-templates/FiltersTemplate';
@@ -11,18 +11,21 @@ import { Typography } from '@material-ui/core';
 const RuleContainer = ({ index }) => {
     const getRule = useMemo(makeGetRule, []);
     const rule = useSelector((state) => getRule(state, index));
-    const { type, filtersNumber } = rule;
+    const { type, filtersNumber, mappedModel } = rule;
 
     const getModels = useMemo(makeGetModels, []);
     const models = useSelector((state) => getModels(state, rule.type));
     const dispatch = useDispatch();
     const changeType = (newType) =>
         dispatch(
-            RuleSlice.actions.changeRuleType({ index, equipmentType: newType })
+            MappingSlice.actions.changeRuleType({
+                index,
+                equipmentType: newType,
+            })
         );
     const changeComposition = (newComposition) =>
         dispatch(
-            RuleSlice.actions.changeRuleComposition({
+            MappingSlice.actions.changeRuleComposition({
                 index,
                 composition: newComposition,
             })
@@ -31,7 +34,7 @@ const RuleContainer = ({ index }) => {
     const changeModel = useCallback(
         (newModel) =>
             dispatch(
-                RuleSlice.actions.changeRuleModel({
+                MappingSlice.actions.changeRuleModel({
                     index,
                     mappedModel: newModel,
                 })
@@ -41,7 +44,7 @@ const RuleContainer = ({ index }) => {
 
     const addFilter = () =>
         dispatch(
-            RuleSlice.actions.addFilter({
+            MappingSlice.actions.addFilter({
                 index,
             })
         );
@@ -64,12 +67,14 @@ const RuleContainer = ({ index }) => {
     const noFilterLabel = 'no other rule applies';
 
     useEffect(() => {
-        if (models.length === 1) {
-            changeModel(models[0].id);
-        } else {
-            changeModel('');
+        if (!models.map((model) => model.name).includes(mappedModel)) {
+            if (models.length === 1) {
+                changeModel(models[0].id);
+            } else {
+                changeModel('');
+            }
         }
-    }, [type, models, changeModel]);
+    }, [type, models, changeModel, mappedModel]);
 
     return (
         <Rule

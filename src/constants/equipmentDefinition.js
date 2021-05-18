@@ -1,6 +1,6 @@
 export const EquipmentType = {
-    GENERATOR: 'generator',
-    LOAD: 'load',
+    GENERATOR: 'GENERATOR',
+    LOAD: 'LOAD',
 };
 Object.freeze(EquipmentType);
 
@@ -13,7 +13,7 @@ export const PropertyType = {
 Object.freeze(PropertyType);
 
 export const EquipmentProperties = {
-    generator: [
+    GENERATOR: [
         {
             name: 'energySource',
             type: PropertyType.ENUM,
@@ -60,7 +60,7 @@ export const EquipmentProperties = {
             type: PropertyType.NUMBER,
         },
     ],
-    load: [
+    LOAD: [
         {
             name: 'loadType',
             type: PropertyType.ENUM,

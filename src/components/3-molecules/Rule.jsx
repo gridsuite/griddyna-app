@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
-import AddButton from '../1-atoms/AddButton';
+import AddIconButton from '../1-atoms/AddIconButton';
 import { Grid, Paper, TextField, Typography } from '@material-ui/core';
 import {
     getEquipmentTypesOptions,
@@ -65,7 +65,7 @@ const Rule = (props) => {
                     <Typography>{`${filterLabel} :`}</Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    <AddButton onClick={addFilter} />
+                    <AddIconButton onClick={addFilter} />
                 </Grid>
             </Grid>
             {children}

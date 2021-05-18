@@ -36,8 +36,8 @@ import Box from '@material-ui/core/Box';
 
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import { fetchAppsAndUrls } from '../utils/rest-api';
-import MappingContainer from '../containers/MappingContainer';
 import { UserSlice } from '../redux/slices/User';
+import RootContainer from '../containers/RootContainer';
 const lightTheme = createMuiTheme({
     palette: {
         type: 'light',
@@ -122,7 +122,7 @@ const App = () => {
                     ) {
                         userManager.signinSilent().catch((error) => {
                             const oidcHackReloaded =
-                                'gridsuite-oidc-hack-reloaded';
+                                'gridsuite-oidc-hack-relodaded';
                             if (
                                 !sessionStorage.getItem(oidcHackReloaded) &&
                                 error.message ===
@@ -176,11 +176,8 @@ const App = () => {
                 {user !== null ? (
                     <Switch>
                         <Route exact path="/">
-                            <Box mt={20}>
-                                {
-                                    // TODO: Replace with actual page root
-                                }
-                                <MappingContainer />
+                            <Box mt={1}>
+                                <RootContainer />
                             </Box>
                         </Route>
                         <Route exact path="/sign-in-callback">

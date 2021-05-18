@@ -7,7 +7,7 @@
 
 import { combineReducers } from '@reduxjs/toolkit';
 import { InstanceModelReducer } from './slices/InstanceModel';
-import { RuleReducer } from './slices/Rule';
+import { MappingReducer } from './slices/Mapping';
 import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
 import { ScriptReducer } from './slices/Script';
@@ -15,7 +15,7 @@ import { ScriptReducer } from './slices/Script';
 export const reducer = combineReducers({
     user: UserReducer,
     theme: ThemeReducer,
-    rules: RuleReducer,
+    mappings: MappingReducer,
     instanceModels: InstanceModelReducer,
     scripts: ScriptReducer,
 });
