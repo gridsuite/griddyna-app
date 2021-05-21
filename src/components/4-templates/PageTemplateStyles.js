@@ -19,7 +19,10 @@ export const useStyles = makeStyles({
         maxWidth: 'calc(100% - 260px)',
         right: 0,
         width: '83%',
-        padding: '0.5%',
+        padding: '0.3%',
+        '& .MuiPaper-root': {
+            padding: '10px',
+        },
     },
     menuBox: {
         position: 'absolute',

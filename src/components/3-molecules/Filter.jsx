@@ -6,6 +6,7 @@ import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { PropertyType } from '../../constants/equipmentDefinition';
 import { EnumOperands } from '../../constants/operands';
+import { useStyles } from './FilterStyle';
 
 const Filter = (props) => {
     const {
@@ -20,7 +21,7 @@ const Filter = (props) => {
         setValue,
         possibleValues,
     } = props;
-
+    const classes = useStyles();
     const onValueChange = (event) => {
         setValue(event.target.value);
     };
@@ -28,25 +29,25 @@ const Filter = (props) => {
 
     const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
     return (
-        <Grid container>
-            <Grid item xs={3}>
+        <Grid container justify="center">
+            <Grid item xs="auto" className={classes.label}>
                 <Typography> {`${id} :`}</Typography>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs="auto">
                 <Select
                     options={properties}
                     value={property}
                     setValue={setProperty}
                 />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs="auto">
                 <Select
                     options={operands}
                     value={operand}
                     setValue={setOperand}
                 />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs="auto" className={classes.value}>
                 {possibleValues && possibleValues.length > 0 ? (
                     <Select
                         options={possibleValues}

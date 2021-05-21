@@ -7,6 +7,7 @@ import {
     getEquipmentTypesOptions,
     getModelsOptions,
 } from '../../utils/optionsBuilders';
+import { useStyles } from './RuleStyle';
 
 const Rule = (props) => {
     const {
@@ -19,6 +20,7 @@ const Rule = (props) => {
         children,
     } = props;
     const { type, composition, mappedModel } = rule;
+    const classes = useStyles();
     // TODO intl
     const equipmentLabel = 'Each';
     const compositionLabel = 'If';
@@ -29,12 +31,12 @@ const Rule = (props) => {
         changeComposition(event.target.value);
     };
     return (
-        <Paper>
+        <Paper elevation={0} className={classes.rulePaper}>
             <Grid container justify={'flex-start'}>
                 <Grid item>
                     <Typography variant="h2">{equipmentLabel}</Typography>
                 </Grid>
-                <Grid item>
+                <Grid item className={classes.titleSelect}>
                     <Select
                         options={getEquipmentTypesOptions()}
                         value={type}
@@ -47,7 +49,7 @@ const Rule = (props) => {
             </Grid>
             {rule.filtersNumber > 1 && (
                 <Grid container justify={'flex-start'}>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} className={classes.label}>
                         <Typography>{`${compositionLabel} :`}</Typography>
                     </Grid>
                     <Grid item xs={10}>
@@ -61,7 +63,7 @@ const Rule = (props) => {
             )}
 
             <Grid container justify={'space-between'}>
-                <Grid item xs={3}>
+                <Grid item xs={3} className={classes.filterLabel}>
                     <Typography>{`${filterLabel} :`}</Typography>
                 </Grid>
                 <Grid item xs={2}>
@@ -70,10 +72,10 @@ const Rule = (props) => {
             </Grid>
             {children}
             <Grid container justify={'center'}>
-                <Grid item xs={6}>
+                <Grid item xs="auto">
                     <Typography variant="h2">{`${modelLabel} :`}</Typography>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs="auto" className={classes.titleSelect}>
                     <Select
                         options={getModelsOptions(models)}
                         value={mappedModel}
