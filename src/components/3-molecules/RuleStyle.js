@@ -4,10 +4,11 @@ export const useStyles = makeStyles({
         border: '2px solid black',
         borderRadius: '5px',
         marginBottom: '5px',
+        '& >.MuiGrid-root': {
+            marginTop: '5px',
+        },
     },
-    titleSelect: {
-        marginTop: '20px',
-    },
+    titleSelect: {},
     label: {
         marginTop: '4px',
         textAlign: 'right',

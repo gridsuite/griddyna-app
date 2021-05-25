@@ -24,13 +24,14 @@ const Filter = (props) => {
         deleteFilter,
         copyFilter,
     } = props;
-    const classes = useStyles();
     const onValueChange = (event) => {
         setValue(event.target.value);
     };
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
     const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
+    const classes = useStyles(multiple);
+
     return (
         <Grid container justify="center">
             <Grid item xs="auto" className={classes.label}>

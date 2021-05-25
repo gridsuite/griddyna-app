@@ -6,36 +6,11 @@ import {
     FormHelperText,
     Input,
     InputLabel,
-    makeStyles,
     MenuItem,
     Select as MuiSelect,
 } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-        maxWidth: 300,
-    },
-    chips: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    chip: {
-        margin: 2,
-    },
-}));
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
+import { useStyles, MenuProps } from './SelectStyles';
 
 const Select = (props) => {
     const {
@@ -91,7 +66,7 @@ const Select = (props) => {
     return (
         <FormControl
             variant={outlined ? 'outlined' : undefined}
-            className={classes.formControl}
+            className={classes.form}
             error={error}
         >
             {label !== undefined && <InputLabel>{label}</InputLabel>}

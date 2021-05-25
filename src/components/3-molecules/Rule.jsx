@@ -34,7 +34,7 @@ const Rule = (props) => {
         <Paper elevation={0} className={classes.rulePaper}>
             <Grid container justify={'flex-start'}>
                 <Grid item>
-                    <Typography variant="h2">{equipmentLabel}</Typography>
+                    <Typography variant="h4">{equipmentLabel}</Typography>
                 </Grid>
                 <Grid item className={classes.titleSelect}>
                     <Select
@@ -44,7 +44,7 @@ const Rule = (props) => {
                     />
                 </Grid>
                 <Grid item>
-                    <Typography variant="h2">:</Typography>
+                    <Typography variant="h4">:</Typography>
                 </Grid>
             </Grid>
             {rule.filtersNumber > 1 && (
@@ -73,7 +73,7 @@ const Rule = (props) => {
             {children}
             <Grid container justify={'center'}>
                 <Grid item xs="auto">
-                    <Typography variant="h2">{`${modelLabel} :`}</Typography>
+                    <Typography variant="h4">{`${modelLabel} :`}</Typography>
                 </Grid>
                 <Grid item xs="auto" className={classes.titleSelect}>
                     <Select
