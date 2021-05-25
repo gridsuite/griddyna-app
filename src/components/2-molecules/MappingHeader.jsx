@@ -19,7 +19,7 @@ const MappingHeader = (props) => {
             <Box width="100%" display="flex">
                 <Box className={classes.titleBox}>
                     <Typography
-                        variant="h1"
+                        variant="h2"
                         className={isModified ? classes.italic : ''}
                     >{`${mappingName}${isModified ? '*' : ''} :`}</Typography>
                 </Box>

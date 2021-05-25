@@ -70,7 +70,13 @@ const Select = (props) => {
             error={error}
         >
             {label !== undefined && <InputLabel>{label}</InputLabel>}
-            <MuiSelect value={value} onChange={onChange} {...multipleProps}>
+            <MuiSelect
+                value={value}
+                onChange={onChange}
+                {...multipleProps}
+                // Either mess with the style (disappearing overflow) or allow scroll while Select is open
+                MenuProps={{ disableScrollLock: true }}
+            >
                 {options.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                         {option.label}

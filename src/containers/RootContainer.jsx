@@ -8,7 +8,7 @@ import { Typography } from '@material-ui/core';
 const RootContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     let mainContainer = (
-        <Typography align="center" variant="h1">
+        <Typography align="center" variant="h2">
             No mapping selected
         </Typography>
     );

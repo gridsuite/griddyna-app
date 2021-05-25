@@ -25,4 +25,6 @@ export const MenuProps = {
             width: 250,
         },
     },
+    // Either mess with the style (disappearing overflow) or allow scroll while Select is open
+    disableScrollLock: true,
 };

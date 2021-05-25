@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-const ICON_SIZE = '3em';
+const ICON_SIZE = '2em';
 export const useStyles = makeStyles({
     headerBox: {
         border: '5px solid',
@@ -15,7 +15,7 @@ export const useStyles = makeStyles({
     },
     buttonBox: {
         marginRight: '10px',
-        marginTop: '1.5em',
+        marginTop: '1em',
         position: 'relative',
         width: '25%',
         display: 'flex',
