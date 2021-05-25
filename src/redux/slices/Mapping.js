@@ -26,6 +26,7 @@ const DEFAULT_MAPPING = {
 };
 
 //utils
+
 const transformMapping = (receivedMapping) => {
     let mapping = _.cloneDeep(receivedMapping);
     mapping.rules = mapping.rules.map((rule) => {
@@ -36,6 +37,7 @@ const transformMapping = (receivedMapping) => {
             filterCounterList.push(Number(filter.filterId.slice(6)));
             filter['id'] = filter.filterId;
             delete filter.filterId;
+            delete filter.type;
         });
         rule['filterCounter'] =
             filterCounterList.reduce((max, val) => Math.max(max, val), 0) + 1;
@@ -77,14 +79,30 @@ export const makeGetFilter = () =>
 
 //// makeGetRuleValidity(index)
 
-export const getMappingsInfo = () =>
-    createSelector(
-        (state) => state.mappings.mappings,
-        (mappings) =>
-            mappings.map((mapping) => ({
-                name: mapping.name,
-            }))
-    );
+export const getMappingsInfo = createSelector(
+    (state) => state.mappings.mappings,
+    (mappings) =>
+        mappings.map((mapping) => ({
+            name: mapping.name,
+        }))
+);
+
+export const isModified = createSelector(
+    (state) => state.mappings.activeMapping,
+    (state) => state.mappings.rules,
+    (state) => state.mappings.mappings,
+    (activeName, activeRules, savedMappings) => {
+        const foundMapping = savedMappings.find(
+            (mapping) => mapping.name === activeName
+        );
+        console.log(
+            JSON.stringify(activeRules),
+            JSON.stringify(foundMapping.rules)
+        );
+        return !_.isEqual(activeRules, foundMapping.rules);
+    }
+);
+
 // Reducers
 
 export const postMapping = createAsyncThunk(
@@ -253,14 +271,6 @@ const reducers = {
         if (mappingToUse) {
             state.rules = mappingToUse.rules;
             state.activeMapping = name;
-        }
-    },
-    saveActiveMapping: (state, _action) => {
-        const mappingToSave = state.mappings.find(
-            (mapping) => mapping.name === state.activeMapping
-        );
-        if (mappingToSave) {
-            mappingToSave.rules = state.rules;
         }
     },
 };

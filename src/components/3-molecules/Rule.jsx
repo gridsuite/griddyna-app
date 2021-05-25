@@ -67,7 +67,9 @@ const Rule = (props) => {
                     <Typography>{`${filterLabel} :`}</Typography>
                 </Grid>
                 <Grid item xs={2}>
-                    <AddIconButton onClick={addFilter} />
+                    <Grid container justify="center">
+                        <AddIconButton onClick={addFilter} />
+                    </Grid>
                 </Grid>
             </Grid>
             {children}

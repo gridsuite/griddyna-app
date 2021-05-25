@@ -6,13 +6,22 @@ import PropTypes from 'prop-types';
 import { useStyles } from './MappingHeaderStyles';
 
 const MappingHeader = (props) => {
-    const { mappingName, saveMapping, addRule, convertToScript } = props;
+    const {
+        mappingName,
+        isModified = false,
+        saveMapping,
+        addRule,
+        convertToScript,
+    } = props;
     const classes = useStyles();
     return (
         <Box className={classes.headerBox}>
             <Box width="100%" display="flex">
                 <Box className={classes.titleBox}>
-                    <Typography variant="h1">{`${mappingName} :`}</Typography>
+                    <Typography
+                        variant="h1"
+                        className={isModified ? classes.italic : ''}
+                    >{`${mappingName}${isModified ? '*' : ''} :`}</Typography>
                 </Box>
                 <Box className={classes.buttonBox}>
                     <ConvertButton onClick={convertToScript} />
@@ -26,9 +35,9 @@ const MappingHeader = (props) => {
 
 MappingHeader.propTypes = {
     mappingName: PropTypes.string.isRequired,
+    isModified: PropTypes.bool,
     saveMapping: PropTypes.func.isRequired,
     convertToScript: PropTypes.func.isRequired,
-    copyMapping: PropTypes.func.isRequired,
     addRule: PropTypes.func.isRequired,
 };
 

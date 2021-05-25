@@ -14,7 +14,7 @@ import { Divider, Typography } from '@material-ui/core';
 
 const MenuContainer = () => {
     const dispatch = useDispatch();
-    const mappingsInfo = useSelector(getMappingsInfo());
+    const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector(
         (state) => state.mappings.activeMapping
     );

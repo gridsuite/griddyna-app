@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     MappingSlice,
     getRulesNumber,
+    isModified as isModifiedSelector,
     postMapping,
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
@@ -14,6 +15,7 @@ const MappingContainer = () => {
     // TODO Add path parameter here
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
+    const isModified = useSelector(isModifiedSelector);
     const dispatch = useDispatch();
 
     function addRule() {
@@ -39,6 +41,7 @@ const MappingContainer = () => {
         <Paper>
             <MappingHeader
                 mappingName={activeMapping}
+                isModified={isModified}
                 saveMapping={saveMapping}
                 addRule={addRule}
                 convertToScript={convertToScript}

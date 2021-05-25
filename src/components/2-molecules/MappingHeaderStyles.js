@@ -6,6 +6,9 @@ export const useStyles = makeStyles({
         border: '5px solid',
         borderRadius: '10px',
     },
+    italic: {
+        fontStyle: 'italic',
+    },
     titleBox: {
         position: 'relative',
         width: '75%',

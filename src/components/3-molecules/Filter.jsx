@@ -25,7 +25,12 @@ const Filter = (props) => {
         copyFilter,
     } = props;
     const onValueChange = (event) => {
-        setValue(event.target.value);
+        const rawValue = event.target.value;
+        let value = rawValue;
+        if (propertyType && propertyType === PropertyType.NUMBER) {
+            value = Number(rawValue);
+        }
+        setValue(value);
     };
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
@@ -33,50 +38,57 @@ const Filter = (props) => {
     const classes = useStyles(multiple);
 
     return (
-        <Grid container justify="center">
-            <Grid item xs="auto" className={classes.label}>
-                <Typography> {`${id} :`}</Typography>
+        <Grid container justify="space-between">
+            <Grid item xs={10}>
+                <Grid container justify="center">
+                    <Grid item xs="auto" className={classes.label}>
+                        <Typography> {`${id} :`}</Typography>
+                    </Grid>
+                    <Grid item xs="auto">
+                        <Select
+                            options={properties}
+                            value={property}
+                            setValue={setProperty}
+                        />
+                    </Grid>
+                    <Grid item xs="auto">
+                        <Select
+                            options={operands}
+                            value={operand}
+                            setValue={setOperand}
+                        />
+                    </Grid>
+                    <Grid item xs="auto" className={classes.value}>
+                        {possibleValues && possibleValues.length > 0 ? (
+                            <Select
+                                options={possibleValues}
+                                value={value === '' ? [] : value}
+                                setValue={setValue}
+                                multiple={multiple}
+                            />
+                        ) : (
+                            <TextField
+                                value={value}
+                                onChange={onValueChange}
+                                type={
+                                    propertyType === PropertyType.NUMBER
+                                        ? 'number'
+                                        : undefined
+                                }
+                            />
+                        )}
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid item xs="auto">
-                <Select
-                    options={properties}
-                    value={property}
-                    setValue={setProperty}
-                />
-            </Grid>
-            <Grid item xs="auto">
-                <Select
-                    options={operands}
-                    value={operand}
-                    setValue={setOperand}
-                />
-            </Grid>
-            <Grid item xs="auto" className={classes.value}>
-                {possibleValues && possibleValues.length > 0 ? (
-                    <Select
-                        options={possibleValues}
-                        value={value === '' ? [] : value}
-                        setValue={setValue}
-                        multiple={multiple}
-                    />
-                ) : (
-                    <TextField
-                        value={value}
-                        onChange={onValueChange}
-                        type={
-                            propertyType === PropertyType.NUMBER
-                                ? 'number'
-                                : undefined
-                        }
-                    />
-                )}
-            </Grid>
-            <Grid item xs={1} />
-            <Grid item xs="auto">
-                <DeleteButton onClick={deleteFilter} />
-            </Grid>
-            <Grid item xs="auto">
-                <CopyButton onClick={copyFilter} />
+            <Grid item xs={2}>
+                <Grid container justify="center">
+                    <Grid item xs="auto">
+                        <DeleteButton onClick={deleteFilter} />
+                    </Grid>
+                    <Grid item xs="auto">
+                        <CopyButton onClick={copyFilter} />
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
     );
@@ -90,7 +102,12 @@ Filter.propTypes = {
     setProperty: PropTypes.func.isRequired,
     operand: PropTypes.string.isRequired,
     setOperand: PropTypes.func.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.array,
+        PropTypes.number,
+        PropTypes.bool,
+    ]).isRequired,
     possibleValues: PropTypes.array,
     setValue: PropTypes.func.isRequired,
     deleteFilter: PropTypes.func.isRequired,
