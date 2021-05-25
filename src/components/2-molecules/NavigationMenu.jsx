@@ -11,7 +11,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import ContextMenu from './ContextMenu';
 import RenameDialog from './RenameDialog';
-import NewButton from '../1-atoms/NewButton';
+import NewButton from '../1-atoms/buttons/NewButton';
 import { useStyles } from './NavigationMenuStyles';
 
 const NavigationMenu = (props) => {

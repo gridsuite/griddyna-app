@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
-import AddIconButton from '../1-atoms/AddIconButton';
+import { AddIconButton } from '../1-atoms/buttons';
 import { Grid, Paper, TextField, Typography } from '@material-ui/core';
 import {
     getEquipmentTypesOptions,

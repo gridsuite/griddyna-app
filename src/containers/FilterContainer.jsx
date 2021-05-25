@@ -46,6 +46,23 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
                 value,
             })
         );
+
+    const deleteFilter = () =>
+        dispatch(
+            MappingSlice.actions.deleteFilter({
+                ruleIndex,
+                filterIndex,
+            })
+        );
+
+    const copyFilter = () =>
+        dispatch(
+            MappingSlice.actions.copyFilter({
+                ruleIndex,
+                filterIndex,
+            })
+        );
+
     const properties = equipmentType ? getPropertiesOptions(equipmentType) : [];
     const possibleValues =
         getValuesOption(fullProperty) ??
@@ -68,6 +85,8 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
             value={value}
             possibleValues={possibleValues}
             setValue={setValue}
+            deleteFilter={deleteFilter}
+            copyFilter={copyFilter}
         />
     );
 };

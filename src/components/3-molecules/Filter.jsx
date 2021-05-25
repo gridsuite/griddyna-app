@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid, TextField, Typography } from '@material-ui/core';
 
+import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { PropertyType } from '../../constants/equipmentDefinition';
@@ -20,6 +21,8 @@ const Filter = (props) => {
         value,
         setValue,
         possibleValues,
+        deleteFilter,
+        copyFilter,
     } = props;
     const classes = useStyles();
     const onValueChange = (event) => {
@@ -67,6 +70,13 @@ const Filter = (props) => {
                     />
                 )}
             </Grid>
+            <Grid item xs={1} />
+            <Grid item xs="auto">
+                <DeleteButton onClick={deleteFilter} />
+            </Grid>
+            <Grid item xs="auto">
+                <CopyButton onClick={copyFilter} />
+            </Grid>
         </Grid>
     );
 };
@@ -82,6 +92,8 @@ Filter.propTypes = {
     value: PropTypes.string.isRequired,
     possibleValues: PropTypes.array,
     setValue: PropTypes.func.isRequired,
+    deleteFilter: PropTypes.func.isRequired,
+    copyFilter: PropTypes.func.isRequired,
 };
 
 export default Filter;

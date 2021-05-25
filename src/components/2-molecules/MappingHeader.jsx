@@ -1,7 +1,5 @@
 import { Box, Typography } from '@material-ui/core';
-import ConvertButton from '../1-atoms/ConvertButton';
-import SaveButton from '../1-atoms/SaveButton';
-import AddIconButton from '../1-atoms/AddIconButton';
+import { ConvertButton, SaveButton, AddIconButton } from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
 

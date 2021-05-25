@@ -13,7 +13,6 @@ export const useStyles = makeStyles({
             width: '100%',
         },
     },
-    menuRoot: {},
     mainBox: {
         position: 'absolute',
         maxWidth: 'calc(100% - 260px)',

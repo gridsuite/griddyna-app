@@ -210,7 +210,32 @@ const reducers = {
         const modifiedFilter = state.rules[ruleIndex].filters[filterIndex];
         modifiedFilter.value = value;
     },
-
+    deleteFilter: (state, action) => {
+        const { ruleIndex, filterIndex } = action.payload;
+        const ruleToModify = state.rules[ruleIndex];
+        const filterIdToDelete = ruleToModify.filters[filterIndex].id;
+        const newFilters = ruleToModify.filters.filter(
+            (value, index) => index !== filterIndex
+        );
+        ruleToModify.filters = newFilters;
+        ruleToModify.composition = ruleToModify.composition.replaceAll(
+            filterIdToDelete,
+            'true'
+        );
+    },
+    copyFilter: (state, action) => {
+        const { ruleIndex, filterIndex } = action.payload;
+        let filters = state.rules[ruleIndex].filters;
+        const filterToCopy = _.cloneDeep(filters[filterIndex]);
+        const newId = `filter${state.rules[ruleIndex].filterCounter++}`;
+        filterToCopy.id = newId;
+        const selectedRule = state.rules[ruleIndex];
+        selectedRule.filters.push(filterToCopy);
+        selectedRule.composition =
+            selectedRule.filters.length === 1
+                ? newId
+                : `${selectedRule.composition} &&  ${newId}`;
+    },
     // Mappings
     createMapping: (state, _action) => {
         const mappings = state.mappings;
