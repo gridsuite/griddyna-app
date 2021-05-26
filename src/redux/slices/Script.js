@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 
 import * as scriptsAPI from '../../rest/scriptsAPI';
 import RequestStatus from '../../constants/RequestStatus';
-import { copyMapping, postMapping, renameMapping } from './Mapping';
 const initialState = {
     activeScript: '',
     text: '',
@@ -172,10 +171,10 @@ const extraReducers = {
         }
         state.status = RequestStatus.SUCCESS;
     },
-    [renameMapping.rejected]: (state, _action) => {
+    [renameScript.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
     },
-    [renameMapping.pending]: (state, _action) => {
+    [renameScript.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
     },
     [copyScript.fulfilled]: (state, action) => {
