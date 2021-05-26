@@ -15,6 +15,7 @@ const initialState = {
 //     name: '',
 //     parent: undefined,
 //     script: '',
+//       isManual: true
 // };
 
 // Selectors

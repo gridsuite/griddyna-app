@@ -20,10 +20,7 @@ const DEFAULT_RULE = {
     filterCounter: 1,
 };
 
-const DEFAULT_MAPPING = {
-    name: 'default',
-    rules: [],
-};
+export const DEFAULT_NAME = 'default';
 
 //utils
 
@@ -95,7 +92,15 @@ export const isModified = createSelector(
         const foundMapping = savedMappings.find(
             (mapping) => mapping.name === activeName
         );
-        return !_.isEqual(activeRules, foundMapping.rules);
+        function ignoreFilterCounterRule(rule) {
+            const ruleToTest = _.cloneDeep(rule);
+            delete ruleToTest.filterCounter;
+            return ruleToTest;
+        }
+        return !_.isEqual(
+            activeRules.map(ignoreFilterCounterRule),
+            foundMapping.rules.map(ignoreFilterCounterRule)
+        );
     }
 );
 
@@ -254,9 +259,13 @@ const reducers = {
     createMapping: (state, _action) => {
         const mappings = state.mappings;
         const mappingsNames = mappings.map((mapping) => mapping.name);
-        if (!mappingsNames.includes(DEFAULT_MAPPING.name)) {
-            mappings.push(DEFAULT_MAPPING);
-            state.activeMapping = DEFAULT_MAPPING.name;
+        if (!mappingsNames.includes(DEFAULT_NAME)) {
+            mappings.push({
+                name: DEFAULT_NAME,
+                rules: [],
+            });
+            state.activeMapping = DEFAULT_NAME;
+            state.rules = [];
         }
     },
     selectMapping: (state, action) => {
@@ -273,6 +282,16 @@ const reducers = {
         state.rules = [];
         state.activeMapping = '';
     },
+    renameDefault: (state, action) => {
+        const newName = action.payload;
+        const foundDefaultMapping = state.mappings.find(
+            (mapping) => mapping.name === DEFAULT_NAME
+        );
+        foundDefaultMapping.name = newName;
+        if (state.activeMapping === DEFAULT_NAME) {
+            state.activeMapping = newName;
+        }
+    },
 };
 
 const extraReducers = {
@@ -286,7 +305,7 @@ const extraReducers = {
             foundMapping.rules = receivedMapping.rules;
         }
     },
-    [postMapping.rejected]: (state, action) => {
+    [postMapping.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
     },
     [postMapping.pending]: (state, _action) => {
@@ -296,7 +315,7 @@ const extraReducers = {
         state.mappings = action.payload.map(transformMapping);
         state.status = RequestStatus.SUCCESS;
     },
-    [getMappings.rejected]: (state, action) => {
+    [getMappings.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
     },
     [getMappings.pending]: (state, _action) => {
