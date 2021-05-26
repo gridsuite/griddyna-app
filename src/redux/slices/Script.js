@@ -116,7 +116,21 @@ const reducers = {
 const extraReducers = {
     [convertScript.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        alert(action.payload.script);
+        const receivedScript = action.payload;
+        const receivedName = receivedScript.name;
+        let isUpdate = false;
+        state.scripts.forEach((script) => {
+            if (!isUpdate && script.name === receivedName) {
+                script.script = receivedScript.script;
+                isUpdate = true;
+            }
+        });
+        if (state.activeScript === receivedName) {
+            state.text = receivedScript.script;
+        }
+        if (!isUpdate) {
+            state.scripts.push(receivedScript);
+        }
     },
     [convertScript.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
@@ -149,8 +163,15 @@ const extraReducers = {
     [deleteScript.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
     },
-    [postScript.fulfilled]: (state, _action) => {
+    [postScript.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
+        const receivedScript = action.payload;
+        const foundScript = state.scripts.find(
+            (script) => script.name === receivedScript.name
+        );
+        if (foundScript) {
+            foundScript.script = receivedScript.script;
+        }
     },
     [postScript.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;

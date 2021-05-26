@@ -6,7 +6,16 @@ import PropTypes from 'prop-types';
 import { useStyles } from './HeaderStyles';
 
 const Header = (props) => {
-    const { name, isModified = false, save, addElement, convert } = props;
+    const {
+        name,
+        isModified = false,
+        save,
+        savePopOver,
+        addElement,
+        addPopOver,
+        convert,
+        convertPopOver,
+    } = props;
     const classes = useStyles();
     return (
         <Box className={classes.headerBox}>
@@ -19,11 +28,19 @@ const Header = (props) => {
                 </Box>
                 <Box className={classes.buttonBox}>
                     {convert !== undefined && (
-                        <ConvertButton onClick={convert} />
+                        <ConvertButton
+                            onClick={convert}
+                            popOver={convertPopOver}
+                        />
                     )}
-                    {save !== undefined && <SaveButton onClick={save} />}
+                    {save !== undefined && (
+                        <SaveButton onClick={save} popOver={savePopOver} />
+                    )}
                     {addElement !== undefined && (
-                        <AddIconButton onClick={addElement} />
+                        <AddIconButton
+                            onClick={addElement}
+                            popOver={addPopOver}
+                        />
                     )}
                 </Box>
             </Box>
@@ -32,11 +49,14 @@ const Header = (props) => {
 };
 
 Header.propTypes = {
-    mappingName: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     isModified: PropTypes.bool,
-    saveMapping: PropTypes.func.isRequired,
-    convertToScript: PropTypes.func.isRequired,
-    addRule: PropTypes.func.isRequired,
+    save: PropTypes.func,
+    savePopOver: PropTypes.string,
+    convert: PropTypes.func,
+    convertPopOver: PropTypes.string,
+    addElement: PropTypes.func,
+    addPopOver: PropTypes.string,
 };
 
 export default Header;

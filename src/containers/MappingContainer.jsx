@@ -11,6 +11,11 @@ import { List, Paper } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 
+// TODO intl
+const ADD_LABEL = 'Add a rule';
+const CONVERT_LABEL = 'Convert to script';
+const SAVE_LABEL = 'Save Mapping';
+
 const MappingContainer = () => {
     // TODO Add path parameter here
     const rulesNumber = useSelector(getRulesNumber);
@@ -43,8 +48,11 @@ const MappingContainer = () => {
                 name={activeMapping}
                 isModified={isModified}
                 save={saveMapping}
+                savePopOver={SAVE_LABEL}
                 addElement={addRule}
+                addPopOver={ADD_LABEL}
                 convert={convertToScript}
+                convertPopOver={CONVERT_LABEL}
             />
             <List>{buildRules()}</List>
         </Paper>

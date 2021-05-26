@@ -278,6 +278,13 @@ const reducers = {
 const extraReducers = {
     [postMapping.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
+        const receivedMapping = transformMapping(action.payload);
+        const foundMapping = state.mappings.find(
+            (script) => script.name === receivedMapping.name
+        );
+        if (foundMapping) {
+            foundMapping.rules = receivedMapping.rules;
+        }
     },
     [postMapping.rejected]: (state, action) => {
         state.status = RequestStatus.ERROR;
