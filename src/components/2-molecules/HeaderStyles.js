@@ -5,6 +5,7 @@ export const useStyles = makeStyles({
     headerBox: {
         border: '5px solid',
         borderRadius: '10px',
+        marginBottom: '5px',
     },
     italic: {
         fontStyle: 'italic',
@@ -19,7 +20,7 @@ export const useStyles = makeStyles({
         position: 'relative',
         width: '25%',
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         '& .MuiIconButton-root': {
             width: ICON_SIZE,
             height: ICON_SIZE,

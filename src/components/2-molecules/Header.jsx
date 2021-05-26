@@ -3,16 +3,10 @@ import { ConvertButton, SaveButton, AddIconButton } from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { useStyles } from './MappingHeaderStyles';
+import { useStyles } from './HeaderStyles';
 
-const MappingHeader = (props) => {
-    const {
-        mappingName,
-        isModified = false,
-        saveMapping,
-        addRule,
-        convertToScript,
-    } = props;
+const Header = (props) => {
+    const { name, isModified = false, save, addElement, convert } = props;
     const classes = useStyles();
     return (
         <Box className={classes.headerBox}>
@@ -21,19 +15,23 @@ const MappingHeader = (props) => {
                     <Typography
                         variant="h2"
                         className={isModified ? classes.italic : ''}
-                    >{`${mappingName}${isModified ? '*' : ''} :`}</Typography>
+                    >{`${name}${isModified ? '*' : ''} :`}</Typography>
                 </Box>
                 <Box className={classes.buttonBox}>
-                    <ConvertButton onClick={convertToScript} />
-                    <SaveButton onClick={saveMapping} />
-                    <AddIconButton onClick={addRule} />
+                    {convert !== undefined && (
+                        <ConvertButton onClick={convert} />
+                    )}
+                    {save !== undefined && <SaveButton onClick={save} />}
+                    {addElement !== undefined && (
+                        <AddIconButton onClick={addElement} />
+                    )}
                 </Box>
             </Box>
         </Box>
     );
 };
 
-MappingHeader.propTypes = {
+Header.propTypes = {
     mappingName: PropTypes.string.isRequired,
     isModified: PropTypes.bool,
     saveMapping: PropTypes.func.isRequired,
@@ -41,4 +39,4 @@ MappingHeader.propTypes = {
     addRule: PropTypes.func.isRequired,
 };
 
-export default MappingHeader;
+export default Header;

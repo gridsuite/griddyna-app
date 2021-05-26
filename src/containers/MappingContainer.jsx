@@ -9,7 +9,7 @@ import {
 import { convertScript } from '../redux/slices/Script';
 import { List, Paper } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
-import MappingHeader from '../components/2-molecules/MappingHeader';
+import Header from '../components/2-molecules/Header';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
@@ -39,12 +39,12 @@ const MappingContainer = () => {
     }
     return (
         <Paper>
-            <MappingHeader
-                mappingName={activeMapping}
+            <Header
+                name={activeMapping}
                 isModified={isModified}
-                saveMapping={saveMapping}
-                addRule={addRule}
-                convertToScript={convertToScript}
+                save={saveMapping}
+                addElement={addRule}
+                convert={convertToScript}
             />
             <List>{buildRules()}</List>
         </Paper>

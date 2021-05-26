@@ -9,20 +9,32 @@ import {
     copyMapping as copyMappingAction,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
-import { convertScript } from '../redux/slices/Script';
+import {
+    ScriptsSlice,
+    convertScript,
+    getScripts,
+    getScriptsInfo,
+    deleteScript as deleteScriptAction,
+    renameScript as renameScriptAction,
+    copyScript as copyScriptAction,
+} from '../redux/slices/Script';
 import { Divider, Typography } from '@material-ui/core';
 
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
+    const scriptsInfo = useSelector(getScriptsInfo);
     const selectedMapping = useSelector(
         (state) => state.mappings.activeMapping
     );
+    const selectedScript = useSelector((state) => state.scripts.activeScript);
 
     useEffect(() => {
         dispatch(getMappings());
+        dispatch(getScripts());
     }, [dispatch]);
 
+    // Mappings
     const addMapping = () => dispatch(MappingSlice.actions.createMapping());
 
     const renameMapping = (name) => (newName) =>
@@ -33,8 +45,10 @@ const MenuContainer = () => {
             })
         );
 
-    const selectMapping = (name) => () =>
+    const selectMapping = (name) => () => {
         dispatch(MappingSlice.actions.selectMapping({ name }));
+        dispatch(ScriptsSlice.actions.deselectScript());
+    };
 
     const deleteMapping = (name) => () => {
         dispatch(deleteMappingAction(name));
@@ -48,6 +62,31 @@ const MenuContainer = () => {
 
     const convertMappingToScript = (name) => () =>
         dispatch(convertScript(name));
+
+    // Scripts
+
+    const selectScript = (name) => () => {
+        dispatch(ScriptsSlice.actions.selectScript({ name }));
+        dispatch(MappingSlice.actions.deselectMapping());
+    };
+
+    const renameScript = (name) => (newName) =>
+        dispatch(
+            renameScriptAction({
+                nameToReplace: name,
+                newName: newName,
+            })
+        );
+
+    const deleteScript = (name) => () => {
+        dispatch(deleteScriptAction(name));
+    };
+
+    const copyScript = (name) => () => {
+        dispatch(
+            copyScriptAction({ originalName: name, copyName: name + ' Copy' })
+        );
+    };
 
     return (
         <>
@@ -63,6 +102,22 @@ const MenuContainer = () => {
                 convertItem={convertMappingToScript}
                 selected={selectedMapping}
             />
+            {scriptsInfo.length > 0 && (
+                <>
+                    <div />
+                    <Divider />
+                    <Typography variant="h2">Scripts</Typography>
+                    <Divider />
+                    <NavigationMenu
+                        items={scriptsInfo}
+                        deleteItem={deleteScript}
+                        renameItem={renameScript}
+                        copyItem={copyScript}
+                        selectItem={selectScript}
+                        selected={selectedScript}
+                    />
+                </>
+            )}
         </>
     );
 };

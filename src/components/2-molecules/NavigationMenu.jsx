@@ -33,23 +33,26 @@ const NavigationMenu = (props) => {
     const setMenu = (event) => setAnchor(event.currentTarget);
 
     const buildOptions = (itemName) => {
-        let options = [
-            {
-                label: 'Convert to .groovy',
-                action: convertItem(itemName),
-            },
-            {
+        let options = [];
+        if (deleteItem) {
+            options.push({
                 label: 'Delete',
                 action: deleteItem(itemName),
-            },
-        ];
+            });
+        }
+        if (convertItem) {
+            options.push({
+                label: 'Convert to .groovy',
+                action: convertItem(itemName),
+            });
+        }
         if (renameItem) {
             options.push({
                 label: 'Rename',
                 action: () => setOpenDialog(itemName),
             });
         }
-        if (renameItem) {
+        if (copyItem) {
             options.push({
                 label: 'Copy',
                 action: copyItem(itemName),
@@ -89,7 +92,9 @@ const NavigationMenu = (props) => {
                     );
                 })}
             </List>
-            <NewButton onClick={addItem} className={classes.new} />
+            {addItem !== undefined && (
+                <NewButton onClick={addItem} className={classes.new} />
+            )}
             {anchor !== null && (
                 <ContextMenu
                     anchorEl={anchor}
@@ -112,8 +117,8 @@ const NavigationMenu = (props) => {
 
 NavigationMenu.propTypes = {
     items: PropTypes.array.isRequired,
-    addItem: PropTypes.func.isRequired,
-    deleteItem: PropTypes.func.isRequired,
+    addItem: PropTypes.func,
+    deleteItem: PropTypes.func,
     renameItem: PropTypes.func,
     copyItem: PropTypes.func,
     selectItem: PropTypes.func.isRequired,

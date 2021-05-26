@@ -95,10 +95,6 @@ export const isModified = createSelector(
         const foundMapping = savedMappings.find(
             (mapping) => mapping.name === activeName
         );
-        console.log(
-            JSON.stringify(activeRules),
-            JSON.stringify(foundMapping.rules)
-        );
         return !_.isEqual(activeRules, foundMapping.rules);
     }
 );
@@ -111,7 +107,7 @@ export const postMapping = createAsyncThunk(
         const state = getState();
         const mappingName = name ?? state?.mappings.activeMapping;
         const rules =
-            name && name !== state?.activeMapping
+            name && name !== state?.mappings.activeMapping
                 ? state?.mappings.mappings.find(
                       (mapping) => mapping.name === name
                   )?.rules
@@ -273,14 +269,13 @@ const reducers = {
             state.activeMapping = name;
         }
     },
+    deselectMapping: (state, _action) => {
+        state.rules = [];
+        state.activeMapping = '';
+    },
 };
 
 const extraReducers = {
-    /* TODO
-    [DELETE_MAPPING]
-    [EXPORT_SCRIPT]
-    [EXPORT_MAPPING]
-     */
     [postMapping.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
     },
@@ -291,12 +286,10 @@ const extraReducers = {
         state.status = RequestStatus.PENDING;
     },
     [getMappings.fulfilled]: (state, action) => {
-        // TODO: set counterFilter
         state.mappings = action.payload.map(transformMapping);
         state.status = RequestStatus.SUCCESS;
     },
     [getMappings.rejected]: (state, action) => {
-        console.log(action);
         state.status = RequestStatus.ERROR;
     },
     [getMappings.pending]: (state, _action) => {
@@ -313,7 +306,7 @@ const extraReducers = {
             state.activeMapping = '';
         }
     },
-    [deleteMapping.rejected]: (state, action) => {
+    [deleteMapping.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
     },
     [deleteMapping.pending]: (state, _action) => {

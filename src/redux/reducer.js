@@ -10,12 +10,12 @@ import { InstanceModelReducer } from './slices/InstanceModel';
 import { MappingReducer } from './slices/Mapping';
 import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
-import { ScriptReducer } from './slices/Script';
+import { ScriptsReducer } from './slices/Script';
 
 export const reducer = combineReducers({
     user: UserReducer,
     theme: ThemeReducer,
     mappings: MappingReducer,
     instanceModels: InstanceModelReducer,
-    scripts: ScriptReducer,
+    scripts: ScriptsReducer,
 });
