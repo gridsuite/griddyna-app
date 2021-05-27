@@ -48,11 +48,11 @@ const MappingContainer = () => {
                 name={activeMapping}
                 isModified={isModified}
                 save={saveMapping}
-                savePopOver={SAVE_LABEL}
+                saveTooltip={SAVE_LABEL}
                 addElement={addRule}
-                addPopOver={ADD_LABEL}
+                addTooltip={ADD_LABEL}
                 convert={convertToScript}
-                convertPopOver={CONVERT_LABEL}
+                convertTooltip={CONVERT_LABEL}
             />
             <List>{buildRules()}</List>
         </Paper>

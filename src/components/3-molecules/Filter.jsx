@@ -9,6 +9,9 @@ import { PropertyType } from '../../constants/equipmentDefinition';
 import { EnumOperands } from '../../constants/operands';
 import { useStyles } from './FilterStyle';
 
+const COPY_FILTER_LABEL = 'Copy filter';
+const DELETE_FILTER_LABEL = 'Delete filter';
+
 const Filter = (props) => {
     const {
         id = 'Filter',
@@ -83,10 +86,16 @@ const Filter = (props) => {
             <Grid item xs={2}>
                 <Grid container justify="center">
                     <Grid item xs="auto">
-                        <DeleteButton onClick={deleteFilter} />
+                        <DeleteButton
+                            onClick={deleteFilter}
+                            tooltip={DELETE_FILTER_LABEL}
+                        />
                     </Grid>
                     <Grid item xs="auto">
-                        <CopyButton onClick={copyFilter} />
+                        <CopyButton
+                            onClick={copyFilter}
+                            tooltip={COPY_FILTER_LABEL}
+                        />
                     </Grid>
                 </Grid>
             </Grid>

@@ -10,11 +10,11 @@ const Header = (props) => {
         name,
         isModified = false,
         save,
-        savePopOver,
+        saveTooltip,
         addElement,
-        addPopOver,
+        addTooltip,
         convert,
-        convertPopOver,
+        convertTooltip,
     } = props;
     const classes = useStyles();
     return (
@@ -30,16 +30,16 @@ const Header = (props) => {
                     {convert !== undefined && (
                         <ConvertButton
                             onClick={convert}
-                            popOver={convertPopOver}
+                            tooltip={convertTooltip}
                         />
                     )}
                     {save !== undefined && (
-                        <SaveButton onClick={save} popOver={savePopOver} />
+                        <SaveButton onClick={save} tooltip={saveTooltip} />
                     )}
                     {addElement !== undefined && (
                         <AddIconButton
                             onClick={addElement}
-                            popOver={addPopOver}
+                            tooltip={addTooltip}
                         />
                     )}
                 </Box>
@@ -52,11 +52,11 @@ Header.propTypes = {
     name: PropTypes.string.isRequired,
     isModified: PropTypes.bool,
     save: PropTypes.func,
-    savePopOver: PropTypes.string,
+    saveTooltip: PropTypes.string,
     convert: PropTypes.func,
-    convertPopOver: PropTypes.string,
+    convertTooltip: PropTypes.string,
     addElement: PropTypes.func,
-    addPopOver: PropTypes.string,
+    addTooltip: PropTypes.string,
 };
 
 export default Header;

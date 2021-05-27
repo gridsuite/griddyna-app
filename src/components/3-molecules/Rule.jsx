@@ -26,6 +26,7 @@ const Rule = (props) => {
     const compositionLabel = 'If';
     const filterLabel = 'Where';
     const modelLabel = 'should be mapped to';
+    const addFilterLabel = 'Add filter';
 
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
@@ -68,7 +69,10 @@ const Rule = (props) => {
                 </Grid>
                 <Grid item xs={2}>
                     <Grid container justify="center">
-                        <AddIconButton onClick={addFilter} />
+                        <AddIconButton
+                            onClick={addFilter}
+                            tooltip={addFilterLabel}
+                        />
                     </Grid>
                 </Grid>
             </Grid>

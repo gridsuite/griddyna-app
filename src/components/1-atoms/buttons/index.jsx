@@ -6,22 +6,30 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 
-export const AddIconButton = ({ onClick }) => (
-    <IconButton onClick={onClick} icon={<AddCircleIcon />} />
+export const AddIconButton = ({ onClick, tooltip }) => (
+    <IconButton onClick={onClick} icon={<AddCircleIcon />} tooltip={tooltip} />
 );
 
-export const ConvertButton = ({ onClick }) => (
-    <IconButton onClick={onClick} icon={<PublishOutlinedIcon />} />
+export const ConvertButton = ({ onClick, tooltip }) => (
+    <IconButton
+        onClick={onClick}
+        icon={<PublishOutlinedIcon />}
+        tooltip={tooltip}
+    />
 );
 
-export const SaveButton = ({ onClick }) => (
-    <IconButton onClick={onClick} icon={<SaveOutlinedIcon />} />
+export const SaveButton = ({ onClick, tooltip }) => (
+    <IconButton
+        onClick={onClick}
+        icon={<SaveOutlinedIcon />}
+        tooltip={tooltip}
+    />
 );
 
-export const DeleteButton = ({ onClick }) => (
-    <IconButton onClick={onClick} icon={<DeleteIcon />} />
+export const DeleteButton = ({ onClick, tooltip }) => (
+    <IconButton onClick={onClick} icon={<DeleteIcon />} tooltip={tooltip} />
 );
 
-export const CopyButton = ({ onClick }) => (
-    <IconButton onClick={onClick} icon={<FileCopyIcon />} />
+export const CopyButton = ({ onClick, tooltip }) => (
+    <IconButton onClick={onClick} icon={<FileCopyIcon />} tooltip={tooltip} />
 );

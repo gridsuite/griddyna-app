@@ -8,6 +8,10 @@ import {
 import { Paper } from '@material-ui/core';
 import Header from '../components/2-molecules/Header';
 import Script from '../components/3-molecules/Script';
+
+// TODO intl
+const SAVE_LABEL = 'Save Script';
+
 const ScriptContainer = () => {
     // TODO Add path parameter here
     const activeScript = useSelector((state) => state.scripts.activeScript);
@@ -28,6 +32,7 @@ const ScriptContainer = () => {
                 name={activeScript}
                 isModified={isModified}
                 save={saveScript}
+                saveTooltip={SAVE_LABEL}
             />
             <Script script={script} setScript={setScript} />
         </Paper>
