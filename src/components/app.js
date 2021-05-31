@@ -122,7 +122,7 @@ const App = () => {
                     ) {
                         userManager.signinSilent().catch((error) => {
                             const oidcHackReloaded =
-                                'gridsuite-oidc-hack-relodaded';
+                                'gridsuite-oidc-hack-reloaded';
                             if (
                                 !sessionStorage.getItem(oidcHackReloaded) &&
                                 error.message ===

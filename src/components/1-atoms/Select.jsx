@@ -37,20 +37,6 @@ const Select = (props) => {
         setValue(value);
     }
 
-    // function onMultipleChange(event) {
-    //     console.log(event);
-    //     const { options } = event.target;
-    //     const values = [];
-    //     options.forEach((option) => {
-    //         if (option.selected) {
-    //             values.push(option.value);
-    //         }
-    //     });
-    //     setValue(values);
-    // }
-
-    // const onChange = multiple ? onMultipleChange : onSimpleChange;
-
     const multipleProps = multiple
         ? {
               input: <Input />,

@@ -11,7 +11,6 @@ export function convertToScript(mappingName) {
     return fetch(`${API_URL}/from/${mappingName}`, {
         method: 'GET',
         headers: {},
-        mode: 'cors',
         cache: 'default',
     });
 }
@@ -23,7 +22,6 @@ export function getScripts() {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        mode: 'cors',
         cache: 'default',
     });
 }
@@ -35,7 +33,6 @@ export function deleteScript(scriptName) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        mode: 'cors',
         cache: 'default',
     });
 }
@@ -47,7 +44,6 @@ export async function copyScript(originalName, copyName) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        mode: 'cors',
         cache: 'default',
     });
 }
@@ -59,7 +55,6 @@ export async function renameScript(nameToReplace, newName) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        mode: 'cors',
         cache: 'default',
     });
 }
@@ -71,7 +66,6 @@ export function postScript(scriptName, script) {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        mode: 'cors',
         cache: 'default',
         body: JSON.stringify({ name: scriptName, script }),
     });

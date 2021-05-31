@@ -35,10 +35,6 @@ export function getOperandsOptions(propertyType) {
                     label: '=',
                 },
                 // Since choices are always True/False, having both is redundant
-                // {
-                //     value: BaseOperands.NOT_EQUALS,
-                //     label: '!=',
-                // },
             ];
         case PropertyType.ENUM:
             return [
