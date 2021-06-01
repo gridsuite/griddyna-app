@@ -7,7 +7,11 @@
 
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeGetFilter, MappingSlice } from '../redux/slices/Mapping';
+import {
+    makeGetFilter,
+    makeIsFilterValid,
+    MappingSlice,
+} from '../redux/slices/Mapping';
 import { getPropertiesOptions } from '../utils/optionsBuilders';
 import Filter from '../components/3-molecules/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
@@ -24,6 +28,11 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     const fullProperty = equipmentType
         ? getProperty(equipmentType, property)
         : undefined;
+
+    const isFilterValid = useMemo(makeIsFilterValid, []);
+    const isValid = useSelector((state) =>
+        isFilterValid(state, { rule: ruleIndex, filter: filterIndex })
+    );
 
     // Actions
     const dispatch = useDispatch();
@@ -83,6 +92,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     return (
         <Filter
             id={id}
+            isValid={isValid}
             property={property}
             propertyType={fullProperty?.type}
             properties={properties}

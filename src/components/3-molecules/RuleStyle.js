@@ -7,14 +7,15 @@
 
 import { makeStyles } from '@material-ui/core';
 export const useStyles = makeStyles({
-    rulePaper: {
-        border: '2px solid black',
+    rulePaper: (isValid) => ({
+        border: '2px solid',
         borderRadius: '5px',
+        borderColor: isValid ? 'black' : 'red',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
         },
-    },
+    }),
     titleSelect: {},
     label: {
         marginTop: '4px',

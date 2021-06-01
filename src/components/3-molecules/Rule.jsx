@@ -19,6 +19,7 @@ import { useStyles } from './RuleStyle';
 const Rule = (props) => {
     const {
         rule,
+        isRuleValid = true,
         changeType,
         changeComposition,
         changeModel,
@@ -27,7 +28,7 @@ const Rule = (props) => {
         children,
     } = props;
     const { type, composition, mappedModel } = rule;
-    const classes = useStyles();
+    const classes = useStyles(isRuleValid);
     // TODO intl
     const equipmentLabel = 'Each';
     const compositionLabel = 'If';
@@ -49,6 +50,7 @@ const Rule = (props) => {
                         options={getEquipmentTypesOptions()}
                         value={type}
                         setValue={changeType}
+                        error={type === ''}
                     />
                 </Grid>
                 <Grid item>
@@ -65,6 +67,7 @@ const Rule = (props) => {
                             fullWidth
                             onChange={onChangeComposition}
                             value={composition}
+                            error={composition === ''}
                         />
                     </Grid>
                 </Grid>
@@ -93,6 +96,7 @@ const Rule = (props) => {
                         options={getModelsOptions(models)}
                         value={mappedModel}
                         setValue={changeModel}
+                        error={mappedModel === ''}
                     />
                 </Grid>
             </Grid>
@@ -101,6 +105,7 @@ const Rule = (props) => {
 };
 Rule.propTypes = {
     rule: PropTypes.object.isRequired,
+    isRuleValid: PropTypes.bool,
     changeType: PropTypes.func.isRequired,
     changeComposition: PropTypes.func.isRequired,
     changeModel: PropTypes.func.isRequired,

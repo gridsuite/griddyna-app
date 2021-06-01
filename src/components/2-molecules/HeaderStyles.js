@@ -9,14 +9,16 @@ import { makeStyles } from '@material-ui/core';
 
 const ICON_SIZE = '2em';
 export const useStyles = makeStyles({
-    headerBox: {
+    headerBox: ({ isValid }) => ({
         border: '5px solid',
         borderRadius: '10px',
         marginBottom: '5px',
-    },
-    italic: {
-        fontStyle: 'italic',
-    },
+        borderColor: !isValid ? 'red' : undefined,
+    }),
+    title: ({ isModified, isValid }) => ({
+        fontStyle: isModified ? 'italic' : undefined,
+        color: !isValid ? 'red' : undefined,
+    }),
     titleBox: {
         position: 'relative',
         width: '75%',

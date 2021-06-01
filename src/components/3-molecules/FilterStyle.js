@@ -6,19 +6,20 @@
  */
 
 import { makeStyles } from '@material-ui/core';
-export const useStyles = makeStyles({
-    label: {
+export const useStyles = makeStyles((theme) => ({
+    label: ({ isValid }) => ({
         textAlign: 'right',
         marginTop: '12px',
         '& .MuiTypography-root': {
             fontWeight: 'bold',
+            color: !isValid ? 'red' : theme.palette.text.primary,
         },
-    },
+    }),
     filter: {
         justifyContent: 'center',
     },
-    value: (multiple) => ({
-        margin: multiple ? 0 : '8px',
+    value: ({ isMultiple }) => ({
+        margin: isMultiple ? 0 : '8px',
         '& .MuiFormControl-root .MuiInput-root': {
             minHeight: '2em',
             '& .MuiSelect-root': {
@@ -27,4 +28,4 @@ export const useStyles = makeStyles({
             },
         },
     }),
-});
+}));

@@ -15,13 +15,13 @@ import { getProperty } from '../../utils/properties';
 const initialState = {
     mappings: [],
     activeMapping: '',
-    rules: [], // if alone, state as array directly
+    rules: [],
     status: RequestStatus.IDLE,
 };
 
 const DEFAULT_RULE = {
     type: '',
-    composition: '',
+    composition: 'true',
     mappedModel: '',
     filters: [],
     filterCounter: 1,
@@ -79,9 +79,42 @@ export const makeGetFilter = () =>
         (rules, indexes) => rules[indexes.rule].filters[indexes.filter]
     );
 
-//// makeGetFilterValidity(ruleIndex,filterIndex)
+const checkFilterValidity = (filter) =>
+    filter.property !== '' && filter.operand !== '' && filter.value !== '';
 
-//// makeGetRuleValidity(index)
+export const makeIsFilterValid = () =>
+    createSelector(
+        (state) => state.mappings.rules,
+        (_state, indexes) => indexes,
+        (rules, indexes) =>
+            checkFilterValidity(rules[indexes.rule].filters[indexes.filter])
+    );
+
+const checkRuleValidity = (rule) => {
+    return (
+        rule.type !== '' &&
+        rule.composition !== '' &&
+        rule.mappedModel !== '' &&
+        rule.filters.reduce(
+            (acc, filter) => acc && checkFilterValidity(filter),
+            true
+        )
+    );
+};
+export const makeIsRuleValid = () =>
+    createSelector(
+        (state) => state.mappings.rules,
+        (_state, index) => index,
+        (rules, index) => checkRuleValidity(rules[index])
+    );
+
+export const isMappingValid = createSelector(
+    (state) => state.mappings.activeMapping,
+    (state) => state.mappings.rules,
+    (name, rules) =>
+        name !== '' &&
+        rules.reduce((acc, rule) => acc && checkRuleValidity(rule), true)
+);
 
 export const getMappingsInfo = createSelector(
     (state) => state.mappings.mappings,
@@ -134,6 +167,7 @@ export const postMapping = createAsyncThunk(
                 type: getProperty(rule.type, filter.property).type,
             }));
             if (augmentedRule.filters.length === 0) {
+                // Even if it should be true anyway, avoid "true && true" in case of filter deletion
                 augmentedRule.composition = 'true';
             }
             return augmentedRule;

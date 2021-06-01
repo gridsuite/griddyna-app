@@ -22,6 +22,7 @@ const DELETE_FILTER_LABEL = 'Delete filter';
 const Filter = (props) => {
     const {
         id = 'Filter',
+        isValid = true,
         properties,
         property,
         propertyType,
@@ -45,7 +46,7 @@ const Filter = (props) => {
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
     const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
-    const classes = useStyles(multiple);
+    const classes = useStyles({ isValid, isMultiple: multiple });
 
     return (
         <Grid container justify="space-between">
@@ -59,6 +60,7 @@ const Filter = (props) => {
                             options={properties}
                             value={property}
                             setValue={setProperty}
+                            error={property === ''}
                         />
                     </Grid>
                     <Grid item xs="auto">
@@ -66,6 +68,7 @@ const Filter = (props) => {
                             options={operands}
                             value={operand}
                             setValue={setOperand}
+                            error={operand === ''}
                         />
                     </Grid>
                     <Grid item xs="auto" className={classes.value}>
@@ -75,6 +78,7 @@ const Filter = (props) => {
                                 value={value === '' ? [] : value}
                                 setValue={setValue}
                                 multiple={multiple}
+                                error={value === '' || value === []}
                             />
                         ) : (
                             <TextField
@@ -85,6 +89,7 @@ const Filter = (props) => {
                                         ? 'number'
                                         : undefined
                                 }
+                                error={value === ''}
                             />
                         )}
                     </Grid>
@@ -112,6 +117,7 @@ const Filter = (props) => {
 
 Filter.propTypes = {
     id: PropTypes.string,
+    isValid: PropTypes.bool,
     properties: PropTypes.array.isRequired,
     property: PropTypes.string.isRequired,
     propertyType: PropTypes.string,

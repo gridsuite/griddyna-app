@@ -7,7 +7,11 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeGetRule, MappingSlice } from '../redux/slices/Mapping';
+import {
+    makeGetRule,
+    makeIsRuleValid,
+    MappingSlice,
+} from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/InstanceModel';
 import Rule from '../components/3-molecules/Rule';
 import FiltersTemplate from '../components/4-templates/FiltersTemplate';
@@ -19,7 +23,10 @@ const RuleContainer = ({ index }) => {
     const getRule = useMemo(makeGetRule, []);
     const rule = useSelector((state) => getRule(state, index));
     const { type, filtersNumber, mappedModel } = rule;
-
+    const isRuleValidSelector = useMemo(makeIsRuleValid, []);
+    const isRuleValid = useSelector((state) =>
+        isRuleValidSelector(state, index)
+    );
     const getModels = useMemo(makeGetModels, []);
     const models = useSelector((state) => getModels(state, rule.type));
     const dispatch = useDispatch();
@@ -86,6 +93,7 @@ const RuleContainer = ({ index }) => {
     return (
         <Rule
             rule={rule}
+            isRuleValid={isRuleValid}
             changeType={changeType}
             changeComposition={changeComposition}
             changeModel={changeModel}

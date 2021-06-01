@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     MappingSlice,
     getRulesNumber,
+    isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
     postMapping,
 } from '../redux/slices/Mapping';
@@ -28,6 +29,7 @@ const MappingContainer = () => {
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
+    const isMappingValid = useSelector(isMappingValidSelector);
     const dispatch = useDispatch();
 
     function addRule() {
@@ -54,6 +56,7 @@ const MappingContainer = () => {
             <Header
                 name={activeMapping}
                 isModified={isModified}
+                isValid={isMappingValid}
                 save={saveMapping}
                 saveTooltip={SAVE_LABEL}
                 addElement={addRule}

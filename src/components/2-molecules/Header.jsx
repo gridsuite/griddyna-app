@@ -16,6 +16,7 @@ const Header = (props) => {
     const {
         name,
         isModified = false,
+        isValid = true,
         save,
         saveTooltip,
         addElement,
@@ -23,14 +24,14 @@ const Header = (props) => {
         convert,
         convertTooltip,
     } = props;
-    const classes = useStyles();
+    const classes = useStyles({ isModified, isValid });
     return (
         <Box className={classes.headerBox}>
             <Box width="100%" display="flex">
                 <Box className={classes.titleBox}>
                     <Typography
                         variant="h2"
-                        className={isModified ? classes.italic : ''}
+                        className={classes.title}
                     >{`${name}${isModified ? '*' : ''} :`}</Typography>
                 </Box>
                 <Box className={classes.buttonBox}>
@@ -38,10 +39,15 @@ const Header = (props) => {
                         <ConvertButton
                             onClick={convert}
                             tooltip={convertTooltip}
+                            disabled={!isValid || isModified}
                         />
                     )}
                     {save !== undefined && (
-                        <SaveButton onClick={save} tooltip={saveTooltip} />
+                        <SaveButton
+                            onClick={save}
+                            tooltip={saveTooltip}
+                            disabled={!isValid}
+                        />
                     )}
                     {addElement !== undefined && (
                         <AddIconButton
@@ -58,6 +64,7 @@ const Header = (props) => {
 Header.propTypes = {
     name: PropTypes.string.isRequired,
     isModified: PropTypes.bool,
+    isValid: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
     convert: PropTypes.func,

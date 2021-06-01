@@ -9,8 +9,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton as MuiIconButton, Tooltip } from '@material-ui/core';
 
-const IconButton = ({ onClick, icon, tooltip }) => {
-    const button = <MuiIconButton onClick={onClick}>{icon}</MuiIconButton>;
+const IconButton = ({ onClick, icon, tooltip, disabled, ...styleProps }) => {
+    const button = (
+        <MuiIconButton onClick={onClick} disabled={disabled} {...styleProps}>
+            {icon}
+        </MuiIconButton>
+    );
 
     if (tooltip) {
         return <Tooltip title={tooltip}>{button}</Tooltip>;
