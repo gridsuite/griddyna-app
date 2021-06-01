@@ -14,10 +14,10 @@ const initialState = {
     models: [
         // TODO Remove when connected
         {
-            id: 'LoadLab',
+            id: 'LoadAlphaBeta',
             type: EquipmentType.LOAD,
-            name: 'LoadAlphaBeta',
-            modelName: 'LoadAlphaBeta',
+            name: 'LoadLab',
+            modelName: 'LoadLab',
             params: {
                 type: 'FIXED',
                 name: 'LAB',
