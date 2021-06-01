@@ -144,6 +144,12 @@ export const isModified = createSelector(
     }
 );
 
+const canCreateNewMappingCheck = (mappings) =>
+    !mappings.some((mapping) => mapping.name === DEFAULT_NAME);
+
+export const canCreateNewMapping = (state) =>
+    canCreateNewMappingCheck(state.mappings.mappings);
+
 // Reducers
 
 export const postMapping = createAsyncThunk(
@@ -299,8 +305,7 @@ const reducers = {
     // Mappings
     createMapping: (state, _action) => {
         const mappings = state.mappings;
-        const mappingsNames = mappings.map((mapping) => mapping.name);
-        if (!mappingsNames.includes(DEFAULT_NAME)) {
+        if (canCreateNewMappingCheck(mappings)) {
             mappings.push({
                 name: DEFAULT_NAME,
                 rules: [],

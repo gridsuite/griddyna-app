@@ -7,18 +7,21 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@material-ui/core';
+import { Button, Tooltip } from '@material-ui/core';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
 
-const NewButton = ({ onClick, className }) => (
-    <Button
-        variant="outlined"
-        onClick={onClick}
-        endIcon={<AddRoundedIcon />}
-        className={className}
-    >
-        New
-    </Button>
+const NewButton = ({ onClick, className, disabled, tooltip }) => (
+    <Tooltip title={tooltip}>
+        <Button
+            variant="outlined"
+            onClick={onClick}
+            endIcon={<AddRoundedIcon />}
+            className={className}
+            disabled={disabled}
+        >
+            New
+        </Button>
+    </Tooltip>
 );
 
 NewButton.propTypes = {

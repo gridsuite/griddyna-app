@@ -13,6 +13,7 @@ import {
     ListItemText,
     IconButton,
     ListItemSecondaryAction,
+    Tooltip,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
@@ -31,6 +32,8 @@ const NavigationMenu = (props) => {
         selectItem,
         convertItem,
         selected = '',
+        canAdd = true,
+        addTooltip = '',
     } = props;
 
     const [anchor, setAnchor] = useState(null);
@@ -100,7 +103,12 @@ const NavigationMenu = (props) => {
                 })}
             </List>
             {addItem !== undefined && (
-                <NewButton onClick={addItem} className={classes.new} />
+                <NewButton
+                    onClick={addItem}
+                    className={classes.new}
+                    disabled={!canAdd}
+                    tooltip={addTooltip}
+                />
             )}
             {anchor !== null && (
                 <ContextMenu
@@ -131,6 +139,8 @@ NavigationMenu.propTypes = {
     selectItem: PropTypes.func.isRequired,
     convertItem: PropTypes.func,
     selected: PropTypes.string,
+    canAdd: PropTypes.bool,
+    addTooltip: PropTypes.string,
 };
 
 export default NavigationMenu;

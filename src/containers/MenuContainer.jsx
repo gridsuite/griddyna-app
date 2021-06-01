@@ -15,6 +15,7 @@ import {
     renameMapping as renameMappingAction,
     copyMapping as copyMappingAction,
     DEFAULT_NAME,
+    canCreateNewMapping,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
 import {
@@ -28,6 +29,7 @@ import {
 } from '../redux/slices/Script';
 import { Divider, Typography } from '@material-ui/core';
 
+const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
@@ -36,6 +38,7 @@ const MenuContainer = () => {
         (state) => state.mappings.activeMapping
     );
     const selectedScript = useSelector((state) => state.scripts.activeScript);
+    const canCreateMapping = useSelector(canCreateNewMapping);
 
     useEffect(() => {
         dispatch(getMappings());
@@ -114,6 +117,10 @@ const MenuContainer = () => {
                 selectItem={selectMapping}
                 convertItem={convertMappingToScript}
                 selected={selectedMapping}
+                canAdd={canCreateMapping}
+                addTooltip={
+                    !canCreateMapping ? CANNOT_CREATE_MAPPING_LABEL : undefined
+                }
             />
             {scriptsInfo.length > 0 && (
                 <>

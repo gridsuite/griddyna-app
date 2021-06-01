@@ -11,5 +11,6 @@ export const useStyles = makeStyles({
     new: {
         marginTop: 10,
         justifyContent: 'center',
+        pointerEvents: 'auto !important',
     },
 });
