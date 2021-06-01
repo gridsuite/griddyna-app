@@ -18,8 +18,8 @@ export const useStyles = makeStyles((theme) => ({
     filter: {
         justifyContent: 'center',
     },
-    value: ({ isMultiple }) => ({
-        margin: isMultiple ? 0 : '8px',
+    value: ({ isSelect }) => ({
+        margin: isSelect ? 0 : '8px',
         '& .MuiFormControl-root .MuiInput-root': {
             minHeight: '2em',
             '& .MuiSelect-root': {

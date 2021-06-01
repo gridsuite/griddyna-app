@@ -13,7 +13,6 @@ import {
     ListItemText,
     IconButton,
     ListItemSecondaryAction,
-    Tooltip,
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 

@@ -46,7 +46,8 @@ const Filter = (props) => {
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
     const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
-    const classes = useStyles({ isValid, isMultiple: multiple });
+    const isSelect = possibleValues && possibleValues.length > 0;
+    const classes = useStyles({ isValid, isSelect });
 
     return (
         <Grid container justify="space-between">
@@ -72,7 +73,7 @@ const Filter = (props) => {
                         />
                     </Grid>
                     <Grid item xs="auto" className={classes.value}>
-                        {possibleValues && possibleValues.length > 0 ? (
+                        {isSelect ? (
                             <Select
                                 options={possibleValues}
                                 value={value === '' ? [] : value}
