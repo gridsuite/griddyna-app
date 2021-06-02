@@ -17,6 +17,7 @@ import Filter from '../components/3-molecules/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
 import PropTypes from 'prop-types';
 import { PropertyType } from '../constants/equipmentDefinition';
+import { BaseOperands } from '../constants/operands';
 
 const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     // Data
@@ -54,15 +55,19 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
             })
         );
 
+    const isUniqueSelectFilter = // is an enum
+        fullProperty?.type === PropertyType.ENUM &&
+        // operands only allow one string to select
+        [BaseOperands.EQUALS, BaseOperands.NOT_EQUALS].includes(operand);
+
     const setValue = (value) =>
         dispatch(
             MappingSlice.actions.changeFilterValue({
                 ruleIndex,
                 filterIndex,
-                value,
+                value: isUniqueSelectFilter ? [value] : value,
             })
         );
-
     const deleteFilter = () =>
         dispatch(
             MappingSlice.actions.deleteFilter({
@@ -99,7 +104,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
             setProperty={setProperty}
             operand={operand}
             setOperand={setOperand}
-            value={value}
+            value={isUniqueSelectFilter && value.length > 0 ? value[0] : value}
             possibleValues={possibleValues}
             setValue={setValue}
             deleteFilter={deleteFilter}
