@@ -4,7 +4,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { configureStore } from '@reduxjs/toolkit';
-import { reducer } from './reducer';
 
-export const store = configureStore({ reducer });
+const RequestStatus = {
+    IDLE: 'idle',
+    PENDING: 'pending',
+    SUCCESS: 'success',
+    ERROR: 'error',
+};
+Object.freeze(RequestStatus);
+
+export default RequestStatus;

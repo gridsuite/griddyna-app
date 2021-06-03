@@ -4,7 +4,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { configureStore } from '@reduxjs/toolkit';
-import { reducer } from './reducer';
 
-export const store = configureStore({ reducer });
+import { makeStyles } from '@material-ui/core';
+
+export const useStyles = makeStyles({
+    new: {
+        marginTop: 10,
+        justifyContent: 'center',
+        pointerEvents: 'auto !important',
+    },
+});

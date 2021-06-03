@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, RTE (http://www.rte-france.com)
+ * Copyright (c) 2021, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -19,7 +19,7 @@ import {
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { LIGHT_THEME } from '../redux/actions';
+import { LIGHT_THEME } from '../redux/slices/Theme';
 
 import {
     TopBar,
@@ -32,12 +32,12 @@ import {
 
 import { useRouteMatch } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import { fetchAppsAndUrls } from '../utils/rest-api';
-
+import { UserSlice } from '../redux/slices/User';
+import RootContainer from '../containers/RootContainer';
 const lightTheme = createMuiTheme({
     palette: {
         type: 'light',
@@ -65,10 +65,10 @@ const noUserManager = { instance: null, error: null };
 const App = () => {
     const theme = useSelector((state) => state.theme);
 
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user.user);
 
     const signInCallbackError = useSelector(
-        (state) => state.signInCallbackError
+        (state) => state.user.signInCallbackError
     );
 
     const [userManager, setUserManager] = useState(noUserManager);
@@ -78,6 +78,11 @@ const App = () => {
     const history = useHistory();
 
     const dispatch = useDispatch();
+
+    const authenticationDispatch = useCallback(
+        (action) => dispatch(UserSlice.actions[action.type](action)),
+        [dispatch]
+    );
 
     const location = useLocation();
 
@@ -92,18 +97,19 @@ const App = () => {
     const initialize = useCallback(() => {
         if (process.env.REACT_APP_USE_AUTHENTICATION === 'true') {
             return initializeAuthenticationProd(
-                dispatch,
+                authenticationDispatch,
                 initialMatchSilentRenewCallbackUrl != null,
                 fetch('idpSettings.json')
             );
         } else {
+            console.log('devauth');
             return initializeAuthenticationDev(
-                dispatch,
+                authenticationDispatch,
                 initialMatchSilentRenewCallbackUrl != null
             );
         }
         // Note: initialMatchSilentRenewCallbackUrl and dispatch don't change
-    }, [initialMatchSilentRenewCallbackUrl, dispatch]);
+    }, [initialMatchSilentRenewCallbackUrl, authenticationDispatch]);
 
     useEffect(() => {
         initialize()
@@ -156,10 +162,12 @@ const App = () => {
             <React.Fragment>
                 <CssBaseline />
                 <TopBar
-                    appName="XXX"
+                    appName="Dyna"
                     appColor="grey"
                     onParametersClick={() => console.log('onParametersClick')}
-                    onLogoutClick={() => logout(dispatch, userManager.instance)}
+                    onLogoutClick={() =>
+                        logout(authenticationDispatch, userManager.instance)
+                    }
                     onLogoClick={() => onLogoClicked()}
                     appLogo={<PowsyblLogo />}
                     user={user}
@@ -168,14 +176,8 @@ const App = () => {
                 {user !== null ? (
                     <Switch>
                         <Route exact path="/">
-                            <Box mt={20}>
-                                <Typography
-                                    variant="h3"
-                                    color="textPrimary"
-                                    align="center"
-                                >
-                                    Connected
-                                </Typography>
+                            <Box mt={1}>
+                                <RootContainer />
                             </Box>
                         </Route>
                         <Route exact path="/sign-in-callback">
@@ -196,7 +198,7 @@ const App = () => {
                     <AuthenticationRouter
                         userManager={userManager}
                         signInCallbackError={signInCallbackError}
-                        dispatch={dispatch}
+                        dispatch={authenticationDispatch}
                         history={history}
                         location={location}
                     />
