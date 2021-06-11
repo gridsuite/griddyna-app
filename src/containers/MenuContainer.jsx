@@ -14,7 +14,6 @@ import {
     deleteMapping as deleteMappingAction,
     renameMapping as renameMappingAction,
     copyMapping as copyMappingAction,
-    DEFAULT_NAME,
     canCreateNewMapping,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
@@ -49,16 +48,12 @@ const MenuContainer = () => {
     const addMapping = () => dispatch(MappingSlice.actions.createMapping());
 
     const renameMapping = (name) => (newName) => {
-        if (name === DEFAULT_NAME) {
-            dispatch(MappingSlice.actions.renameDefault(newName));
-        } else {
-            dispatch(
-                renameMappingAction({
-                    nameToReplace: name,
-                    newName: newName,
-                })
-            );
-        }
+        dispatch(
+            renameMappingAction({
+                nameToReplace: name,
+                newName: newName,
+            })
+        );
     };
 
     const selectMapping = (name) => () => {

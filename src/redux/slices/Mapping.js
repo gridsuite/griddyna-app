@@ -328,16 +328,6 @@ const reducers = {
         state.rules = [];
         state.activeMapping = '';
     },
-    renameDefault: (state, action) => {
-        const newName = action.payload;
-        const foundDefaultMapping = state.mappings.find(
-            (mapping) => mapping.name === DEFAULT_NAME
-        );
-        foundDefaultMapping.name = newName;
-        if (state.activeMapping === DEFAULT_NAME) {
-            state.activeMapping = newName;
-        }
-    },
 };
 
 const extraReducers = {
