@@ -5,7 +5,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-const API_URL = process.env.REACT_APP_API_GATEWAY + '/mappings';
+const API_URL =
+    process.env.REACT_APP_API_PREFIX +
+    (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
+        ? process.env.REACT_APP_GATEWAY_PREFIX + '/dynamic-mapping'
+        : process.env.REACT_APP_URI) +
+    '/mappings';
 
 export function postMapping(mappingName, rules) {
     return fetch(`${API_URL}/${mappingName}`, {

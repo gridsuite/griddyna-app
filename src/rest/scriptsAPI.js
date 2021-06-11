@@ -5,8 +5,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-const API_URL = process.env.REACT_APP_API_GATEWAY + '/scripts';
-
+const API_URL =
+    process.env.REACT_APP_API_PREFIX +
+    (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
+        ? process.env.REACT_APP_GATEWAY_PREFIX + '/dynamic-mapping'
+        : process.env.REACT_APP_URI) +
+    '/scripts';
 export function convertToScript(mappingName) {
     return fetch(`${API_URL}/from/${mappingName}`, {
         method: 'GET',
