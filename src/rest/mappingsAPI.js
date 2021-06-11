@@ -12,57 +12,62 @@ const API_URL =
         : process.env.REACT_APP_URI) +
     '/mappings';
 
-export function postMapping(mappingName, rules) {
+export function postMapping(mappingName, rules, token) {
     return fetch(`${API_URL}/${mappingName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
         body: JSON.stringify({ name: mappingName, rules }),
     });
 }
 
-export function getMappings() {
+export function getMappings(token) {
     return fetch(`${API_URL}/`, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export function deleteMapping(mappingName) {
+export function deleteMapping(mappingName, token) {
     return fetch(`${API_URL}/${mappingName}`, {
         method: 'DELETE',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export async function renameMapping(nameToReplace, newName) {
+export async function renameMapping(nameToReplace, newName, token) {
     return fetch(`${API_URL}/rename/${nameToReplace}/to/${newName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export async function copyMapping(originalName, copyName) {
+export async function copyMapping(originalName, copyName, token) {
     return fetch(`${API_URL}/copy/${originalName}/to/${copyName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });

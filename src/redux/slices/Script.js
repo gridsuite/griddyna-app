@@ -52,35 +52,51 @@ export const getScriptsInfo = createSelector(
 export const convertScript = createAsyncThunk(
     'scripts/convert',
     async (mappingName, { getState }) => {
-        const response = await scriptsAPI.convertToScript(mappingName);
+        const token = getState()?.user.user?.id_token;
+        const response = await scriptsAPI.convertToScript(mappingName, token);
         return response.json();
     }
 );
 
-export const getScripts = createAsyncThunk('scripts/get', async (_arg) => {
-    const response = await scriptsAPI.getScripts();
-    return response.json();
-});
+export const getScripts = createAsyncThunk(
+    'scripts/get',
+    async (_arg, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await scriptsAPI.getScripts(token);
+        return response.json();
+    }
+);
 
 export const deleteScript = createAsyncThunk(
     'scripts/delete',
-    async (scriptName) => {
-        const response = await scriptsAPI.deleteScript(scriptName);
+    async (scriptName, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await scriptsAPI.deleteScript(scriptName, token);
         return response.text();
     }
 );
 export const copyScript = createAsyncThunk(
     'scripts/copy',
-    async ({ originalName, copyName }) => {
-        const response = await scriptsAPI.copyScript(originalName, copyName);
+    async ({ originalName, copyName }, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await scriptsAPI.copyScript(
+            originalName,
+            copyName,
+            token
+        );
         return response.json();
     }
 );
 
 export const renameScript = createAsyncThunk(
     'scripts/rename',
-    async ({ nameToReplace, newName }) => {
-        const response = await scriptsAPI.renameScript(nameToReplace, newName);
+    async ({ nameToReplace, newName }, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await scriptsAPI.renameScript(
+            nameToReplace,
+            newName,
+            token
+        );
         return response.json();
     }
 );
@@ -89,6 +105,7 @@ export const postScript = createAsyncThunk(
     'scripts/post',
     async (name, { getState }) => {
         const state = getState();
+        const token = state?.user.user?.id_token;
         const scriptName = name ?? state?.scripts.activeScript;
         const script =
             name && name !== state?.scripts.activeScript
@@ -96,7 +113,7 @@ export const postScript = createAsyncThunk(
                       ?.script
                 : state?.scripts.text;
 
-        const response = await scriptsAPI.postScript(scriptName, script);
+        const response = await scriptsAPI.postScript(scriptName, script, token);
         return response.json();
     }
 );
