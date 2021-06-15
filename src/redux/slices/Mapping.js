@@ -156,6 +156,7 @@ export const postMapping = createAsyncThunk(
     'mappings/post',
     async (name, { getState }) => {
         const state = getState();
+        const token = state?.user.user?.id_token;
         const mappingName = name ?? state?.mappings.activeMapping;
         const rules =
             name && name !== state?.mappings.activeMapping
@@ -180,31 +181,39 @@ export const postMapping = createAsyncThunk(
         });
         const response = await mappingsAPI.postMapping(
             mappingName,
-            augmentedRules
+            augmentedRules,
+            token
         );
         return response.json();
     }
 );
 
-export const getMappings = createAsyncThunk('mappings/get', async (_arg) => {
-    const response = await mappingsAPI.getMappings();
-    return response.json();
-});
+export const getMappings = createAsyncThunk(
+    'mappings/get',
+    async (_arg, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await mappingsAPI.getMappings(token);
+        return response.json();
+    }
+);
 
 export const deleteMapping = createAsyncThunk(
     'mappings/delete',
-    async (mappingName) => {
-        const response = await mappingsAPI.deleteMapping(mappingName);
+    async (mappingName, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await mappingsAPI.deleteMapping(mappingName, token);
         return response.text();
     }
 );
 
 export const renameMapping = createAsyncThunk(
     'mappings/rename',
-    async ({ nameToReplace, newName }) => {
+    async ({ nameToReplace, newName }, { getState }) => {
+        const token = getState()?.user.user?.id_token;
         const response = await mappingsAPI.renameMapping(
             nameToReplace,
-            newName
+            newName,
+            token
         );
         return response.json();
     }
@@ -212,8 +221,13 @@ export const renameMapping = createAsyncThunk(
 
 export const copyMapping = createAsyncThunk(
     'mappings/copy',
-    async ({ originalName, copyName }) => {
-        const response = await mappingsAPI.copyMapping(originalName, copyName);
+    async ({ originalName, copyName }, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await mappingsAPI.copyMapping(
+            originalName,
+            copyName,
+            token
+        );
         return response.json();
     }
 );

@@ -11,64 +11,72 @@ const API_URL =
         ? process.env.REACT_APP_GATEWAY_PREFIX + '/dynamic-mapping'
         : process.env.REACT_APP_URI) +
     '/scripts';
-export function convertToScript(mappingName) {
+
+export function convertToScript(mappingName, token) {
     return fetch(`${API_URL}/from/${mappingName}`, {
         method: 'GET',
-        headers: {},
+        headers: {
+            Authorization: 'Bearer ' + token,
+        },
         cache: 'default',
     });
 }
 
-export function getScripts() {
+export function getScripts(token) {
     return fetch(`${API_URL}/`, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export function deleteScript(scriptName) {
+export function deleteScript(scriptName, token) {
     return fetch(`${API_URL}/${scriptName}`, {
         method: 'DELETE',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export async function copyScript(originalName, copyName) {
+export async function copyScript(originalName, copyName, token) {
     return fetch(`${API_URL}/copy/${originalName}/to/${copyName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export async function renameScript(nameToReplace, newName) {
+export async function renameScript(nameToReplace, newName, token) {
     return fetch(`${API_URL}/rename/${nameToReplace}/to/${newName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
     });
 }
 
-export function postScript(scriptName, script) {
+export function postScript(scriptName, script, token) {
     return fetch(`${API_URL}/${scriptName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
         },
         cache: 'default',
         body: JSON.stringify({ name: scriptName, script }),
