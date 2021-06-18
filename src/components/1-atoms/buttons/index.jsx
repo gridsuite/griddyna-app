@@ -12,6 +12,7 @@ import PublishOutlinedIcon from '@material-ui/icons/PublishOutlined';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
 
 export const AddIconButton = (props) => (
     <IconButton icon={<AddCircleIcon />} {...props} />
@@ -31,4 +32,8 @@ export const DeleteButton = (props) => (
 
 export const CopyButton = (props) => (
     <IconButton icon={<FileCopyIcon />} {...props} />
+);
+
+export const AttachButton = (props) => (
+    <IconButton icon={<AttachFileIcon />} {...props} />
 );

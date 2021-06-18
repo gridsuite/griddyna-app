@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     MappingSlice,
@@ -15,14 +15,20 @@ import {
     postMapping,
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
+import {
+    getPropertyValuesFromNetworkId,
+    getPropertyValuesFromFile,
+} from '../redux/slices/Network';
 import { List, Paper } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
+import AttachDialog from '../components/2-molecules/AttachDialog';
 
 // TODO intl
 const ADD_LABEL = 'Add a rule';
 const CONVERT_LABEL = 'Convert to script';
 const SAVE_LABEL = 'Save Mapping';
+const ATTACH_LABEL = 'Attach a Network';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
@@ -31,6 +37,8 @@ const MappingContainer = () => {
     const isModified = useSelector(isModifiedSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
     const dispatch = useDispatch();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     function addRule() {
         dispatch(MappingSlice.actions.addRule(undefined));
@@ -44,6 +52,14 @@ const MappingContainer = () => {
         dispatch(convertScript(activeMapping));
     }
 
+    function attachWithId(id) {
+        dispatch(getPropertyValuesFromNetworkId(id));
+    }
+
+    function attachWithFile(file) {
+        dispatch(getPropertyValuesFromFile(file));
+    }
+
     function buildRules() {
         const rules = [];
         for (let i = 0; i < rulesNumber; i++) {
@@ -52,20 +68,30 @@ const MappingContainer = () => {
         return rules;
     }
     return (
-        <Paper>
-            <Header
-                name={activeMapping}
-                isModified={isModified}
-                isValid={isMappingValid}
-                save={saveMapping}
-                saveTooltip={SAVE_LABEL}
-                addElement={addRule}
-                addTooltip={ADD_LABEL}
-                convert={convertToScript}
-                convertTooltip={CONVERT_LABEL}
+        <>
+            <Paper>
+                <Header
+                    name={activeMapping}
+                    isModified={isModified}
+                    isValid={isMappingValid}
+                    save={saveMapping}
+                    saveTooltip={SAVE_LABEL}
+                    addElement={addRule}
+                    addTooltip={ADD_LABEL}
+                    convert={convertToScript}
+                    convertTooltip={CONVERT_LABEL}
+                    attach={() => setIsModalOpen(true)}
+                    attachTooltip={ATTACH_LABEL}
+                />
+                <List>{buildRules()}</List>
+            </Paper>
+            <AttachDialog
+                open={isModalOpen}
+                handleClose={() => setIsModalOpen(false)}
+                attachWithId={attachWithId}
+                attachWithFile={attachWithFile}
             />
-            <List>{buildRules()}</List>
-        </Paper>
+        </>
     );
 };
 

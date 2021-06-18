@@ -11,6 +11,7 @@ import { MappingReducer } from './slices/Mapping';
 import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
 import { ScriptsReducer } from './slices/Script';
+import { NetworkReducer } from './slices/Network';
 
 export const reducer = combineReducers({
     user: UserReducer,
@@ -18,4 +19,5 @@ export const reducer = combineReducers({
     mappings: MappingReducer,
     instanceModels: InstanceModelReducer,
     scripts: ScriptsReducer,
+    network: NetworkReducer,
 });

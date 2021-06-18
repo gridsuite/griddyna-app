@@ -6,7 +6,12 @@
  */
 
 import { Box, Typography } from '@material-ui/core';
-import { ConvertButton, SaveButton, AddIconButton } from '../1-atoms/buttons/';
+import {
+    ConvertButton,
+    SaveButton,
+    AddIconButton,
+    AttachButton,
+} from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -23,6 +28,8 @@ const Header = (props) => {
         addTooltip,
         convert,
         convertTooltip,
+        attach,
+        attachTooltip,
     } = props;
     const classes = useStyles({ isModified, isValid });
     return (
@@ -40,6 +47,13 @@ const Header = (props) => {
                             onClick={convert}
                             tooltip={convertTooltip}
                             disabled={!isValid || isModified}
+                        />
+                    )}
+                    {attach !== undefined && (
+                        <AttachButton
+                            onClick={attach}
+                            tooltip={attachTooltip}
+                            disabled={!isValid}
                         />
                     )}
                     {save !== undefined && (
@@ -71,6 +85,8 @@ Header.propTypes = {
     convertTooltip: PropTypes.string,
     addElement: PropTypes.func,
     addTooltip: PropTypes.string,
+    attach: PropTypes.func,
+    attachTooltip: PropTypes.string,
 };
 
 export default Header;

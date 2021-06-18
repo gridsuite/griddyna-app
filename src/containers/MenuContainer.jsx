@@ -26,6 +26,7 @@ import {
     renameScript as renameScriptAction,
     copyScript as copyScriptAction,
 } from '../redux/slices/Script';
+import { NetworkSlice } from '../redux/slices/Network';
 import { Divider, Typography } from '@material-ui/core';
 
 const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
@@ -45,7 +46,10 @@ const MenuContainer = () => {
     }, [dispatch]);
 
     // Mappings
-    const addMapping = () => dispatch(MappingSlice.actions.createMapping());
+    const addMapping = () => {
+        dispatch(MappingSlice.actions.createMapping());
+        dispatch(NetworkSlice.actions.cleanNetwork());
+    };
 
     const renameMapping = (name) => (newName) => {
         dispatch(
@@ -54,15 +58,20 @@ const MenuContainer = () => {
                 newName: newName,
             })
         );
+        dispatch(NetworkSlice.actions.cleanNetwork());
     };
 
     const selectMapping = (name) => () => {
         dispatch(MappingSlice.actions.selectMapping({ name }));
         dispatch(ScriptsSlice.actions.deselectScript());
+        dispatch(NetworkSlice.actions.cleanNetwork());
     };
 
     const deleteMapping = (name) => () => {
         dispatch(deleteMappingAction(name));
+        if (name === selectedMapping) {
+            dispatch(NetworkSlice.actions.cleanNetwork());
+        }
     };
 
     const copyMapping = (name) => () => {
@@ -79,6 +88,7 @@ const MenuContainer = () => {
     const selectScript = (name) => () => {
         dispatch(ScriptsSlice.actions.selectScript({ name }));
         dispatch(MappingSlice.actions.deselectMapping());
+        dispatch(NetworkSlice.actions.cleanNetwork());
     };
 
     const renameScript = (name) => (newName) =>
