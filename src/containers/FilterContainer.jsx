@@ -12,6 +12,7 @@ import {
     makeIsFilterValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
+import { makeGetNetworkValues } from '../redux/slices/Network';
 import { getPropertiesOptions } from '../utils/optionsBuilders';
 import Filter from '../components/3-molecules/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
@@ -33,6 +34,11 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     const isFilterValid = useMemo(makeIsFilterValid, []);
     const isValid = useSelector((state) =>
         isFilterValid(state, { rule: ruleIndex, filter: filterIndex })
+    );
+
+    const getNetworkValues = useMemo(makeGetNetworkValues, []);
+    const networkValues = useSelector((state) =>
+        getNetworkValues(state, { equipmentType, fullProperty })
     );
 
     // Actions
@@ -106,6 +112,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
             setOperand={setOperand}
             value={isUniqueSelectFilter && value.length > 0 ? value[0] : value}
             possibleValues={possibleValues}
+            networkValues={networkValues}
             setValue={setValue}
             deleteFilter={deleteFilter}
             copyFilter={copyFilter}

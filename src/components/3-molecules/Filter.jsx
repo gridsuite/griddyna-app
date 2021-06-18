@@ -32,9 +32,11 @@ const Filter = (props) => {
         value,
         setValue,
         possibleValues,
+        networkValues,
         deleteFilter,
         copyFilter,
     } = props;
+
     const onValueChange = (event) => {
         const rawValue = event.target.value;
         let value = rawValue;
@@ -132,6 +134,7 @@ Filter.propTypes = {
         PropTypes.bool,
     ]).isRequired,
     possibleValues: PropTypes.array,
+    networkValues: PropTypes.array,
     setValue: PropTypes.func.isRequired,
     deleteFilter: PropTypes.func.isRequired,
     copyFilter: PropTypes.func.isRequired,
