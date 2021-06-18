@@ -5,15 +5,31 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+    createAsyncThunk,
+    createSelector,
+    createSlice,
+} from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
+
 const initialState = {
     propertyValues: [],
     status: RequestStatus.IDLE,
 };
 
 // Selectors
+
+export const makeGetNetworkValues = () =>
+    createSelector(
+        (state) => state.network.propertyValues,
+        (_state, args) => args,
+        (propertyValues, { equipmentType, fullProperty }) =>
+            propertyValues?.find(
+                (propertyValuesItem) =>
+                    propertyValuesItem.type === equipmentType
+            )?.values[fullProperty?.name] ?? []
+    );
 
 // Reducers
 

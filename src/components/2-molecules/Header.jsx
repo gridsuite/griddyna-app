@@ -49,18 +49,17 @@ const Header = (props) => {
                             disabled={!isValid || isModified}
                         />
                     )}
-                    {attach !== undefined && (
-                        <AttachButton
-                            onClick={attach}
-                            tooltip={attachTooltip}
-                            disabled={!isValid}
-                        />
-                    )}
                     {save !== undefined && (
                         <SaveButton
                             onClick={save}
                             tooltip={saveTooltip}
                             disabled={!isValid}
+                        />
+                    )}
+                    {attach !== undefined && (
+                        <AttachButton
+                            onClick={attach}
+                            tooltip={attachTooltip}
                         />
                     )}
                     {addElement !== undefined && (
