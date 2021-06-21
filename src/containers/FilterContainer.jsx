@@ -39,7 +39,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     const getNetworkValues = useMemo(makeGetNetworkValues, []);
     const networkValues = useSelector((state) =>
         getNetworkValues(state, { equipmentType, fullProperty })
-    );
+    ).map((value) => ({ label: value.toString(), value }));
 
     // Actions
     const dispatch = useDispatch();
