@@ -118,12 +118,13 @@ const Filter = (props) => {
                             )}
                             <Autocomplete
                                 isFree={!isSelect}
-                                value={value}
+                                isMultiple={multiple}
+                                value={value === '' ? [] : value}
                                 onChange={onAutocompleteChange}
                                 options={joinOptions}
                                 highlightOptions={networkValues}
                                 type={autocompleteType(propertyType)}
-                                error={value === ''}
+                                error={value === '' || value === []}
                             />
                         </>
                     </Grid>

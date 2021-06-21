@@ -12,20 +12,36 @@ const Autocomplete = (props) => {
         highlightOptions = [],
         type,
         error,
+        isMultiple = false,
     } = props;
+
+    function matchMultipleOptions(options, values) {
+        const matchedOptions = [];
+        values.forEach((value) => {
+            let foundOption = options.find((option) => option.value === value);
+            if (foundOption) {
+                matchedOptions.push(foundOption);
+            }
+        });
+        return matchedOptions;
+    }
 
     const selectedOption = useMemo(
         () =>
-            options.find((option) => option.value === value) || {
-                label: value.toString(),
-                value,
-            },
+            isMultiple
+                ? matchMultipleOptions(options, value)
+                : options.find((option) => option.value === value) || {
+                      label: value.toString(),
+                      value,
+                  },
         [options, value]
     );
-    const [inputValue, setInputValue] = useState(value.toString());
+    const [inputValue, setInputValue] = useState(
+        isMultiple ? '' : value.toString()
+    );
     const onInputChange = (event, newInputValue) => {
         let valueToSend = newInputValue;
-        if (isFree) {
+        if (isFree && !isMultiple) {
             if (type === 'number') {
                 valueToSend = Number(newInputValue);
             }
@@ -39,14 +55,26 @@ const Autocomplete = (props) => {
     };
 
     const onValueChange = (_event, newValue) => {
-        if (newValue !== null) {
-            let valueToSend = newValue.value;
-            if (type === 'number') {
-                valueToSend = Number(valueToSend);
+        if (!isMultiple) {
+            if (newValue !== null) {
+                let valueToSend = newValue.value;
+                if (type === 'number') {
+                    valueToSend = Number(valueToSend);
+                }
+                onChange(valueToSend);
+            } else {
+                onChange('');
             }
-            onChange(valueToSend);
         } else {
-            onChange('');
+            onChange(
+                newValue.map((valueItem) => {
+                    let formattedValue = valueItem.value;
+                    if (type === 'number') {
+                        formattedValue = Number(formattedValue);
+                    }
+                    return formattedValue;
+                })
+            );
         }
     };
 
@@ -62,6 +90,7 @@ const Autocomplete = (props) => {
     return (
         <MuiAutocomplete
             freeSolo={isFree}
+            multiple={isMultiple}
             value={selectedOption}
             inputValue={inputValue}
             onChange={onValueChange}
@@ -89,6 +118,7 @@ Autocomplete.propTypes = {
         PropTypes.array,
     ]).isRequired,
     isFree: PropTypes.bool,
+    isMultiple: PropTypes.bool,
     onChange: PropTypes.func,
     options: PropTypes.array,
     highlightOptions: PropTypes.array,
