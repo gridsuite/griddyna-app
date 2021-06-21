@@ -8,13 +8,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid, TextField, Typography } from '@material-ui/core';
-
+import * as _ from 'lodash';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { PropertyType } from '../../constants/equipmentDefinition';
 import { EnumOperands } from '../../constants/operands';
 import { useStyles } from './FilterStyle';
+import Autocomplete from '../1-atoms/Autocomplete';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';
@@ -31,7 +32,7 @@ const Filter = (props) => {
         setOperand,
         value,
         setValue,
-        possibleValues,
+        possibleValues = [],
         networkValues,
         deleteFilter,
         copyFilter,
@@ -45,11 +46,30 @@ const Filter = (props) => {
         }
         setValue(value);
     };
+
+    const onAutocompleteChange = (newValue) => setValue(newValue);
+
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
     const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
-    const isSelect = possibleValues && possibleValues.length > 0;
+    const isSelect = possibleValues.length > 0;
     const classes = useStyles({ isValid, isSelect });
+
+    const joinOptions = _.uniqBy(
+        [...possibleValues, ...networkValues],
+        'value'
+    );
+
+    function autocompleteType(type) {
+        switch (type) {
+            case PropertyType.NUMBER:
+                return 'number';
+            case PropertyType.BOOLEAN:
+                return 'boolean';
+            default:
+                return undefined;
+        }
+    }
 
     return (
         <Grid container justify="space-between">
@@ -75,26 +95,37 @@ const Filter = (props) => {
                         />
                     </Grid>
                     <Grid item xs="auto" className={classes.value}>
-                        {isSelect ? (
-                            <Select
-                                options={possibleValues}
-                                value={value === '' ? [] : value}
-                                setValue={setValue}
-                                multiple={multiple}
-                                error={value === '' || value === []}
-                            />
-                        ) : (
-                            <TextField
+                        <>
+                            {isSelect ? (
+                                <Select
+                                    options={possibleValues}
+                                    value={value === '' ? [] : value}
+                                    setValue={setValue}
+                                    multiple={multiple}
+                                    error={value === '' || value === []}
+                                />
+                            ) : (
+                                <TextField
+                                    value={value}
+                                    onChange={onValueChange}
+                                    type={
+                                        propertyType === PropertyType.NUMBER
+                                            ? 'number'
+                                            : undefined
+                                    }
+                                    error={value === ''}
+                                />
+                            )}
+                            <Autocomplete
+                                isFree={!isSelect}
                                 value={value}
-                                onChange={onValueChange}
-                                type={
-                                    propertyType === PropertyType.NUMBER
-                                        ? 'number'
-                                        : undefined
-                                }
+                                onChange={onAutocompleteChange}
+                                options={joinOptions}
+                                highlightOptions={networkValues}
+                                type={autocompleteType(propertyType)}
                                 error={value === ''}
                             />
-                        )}
+                        </>
                     </Grid>
                 </Grid>
             </Grid>
