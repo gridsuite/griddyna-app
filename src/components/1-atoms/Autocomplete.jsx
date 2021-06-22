@@ -1,7 +1,15 @@
+/**
+ * Copyright (c) 2021, RTE (http://www.rte-france.com)
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Autocomplete as MuiAutocomplete } from '@material-ui/lab';
 import { Popper, TextField } from '@material-ui/core';
+import { useStyles } from './AutocompleteStyles';
 
 const Autocomplete = (props) => {
     const {
@@ -39,6 +47,19 @@ const Autocomplete = (props) => {
     const [inputValue, setInputValue] = useState(
         isMultiple ? '' : value.toString()
     );
+
+    const classes = useStyles({
+        labelLength:
+            inputValue.length +
+            (isMultiple
+                ? selectedOption.reduce(
+                      (accLength, currentValue) =>
+                          accLength + currentValue.label.length,
+                      0
+                  )
+                : 0),
+        selectedOptions: isMultiple ? value.length : 0,
+    });
 
     const [updateFlag, setUpdateFlag] = useState(false);
 
@@ -125,6 +146,7 @@ const Autocomplete = (props) => {
             getOptionLabel={(option) => option?.label ?? ''}
             autoHighlight={!isFree}
             renderOption={renderOption}
+            className={classes.inputWidth}
             renderInput={(params) => <TextField {...params} error={error} />}
             PopperComponent={(props) => (
                 <Popper

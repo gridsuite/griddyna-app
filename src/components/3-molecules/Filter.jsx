@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, TextField, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import * as _ from 'lodash';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
@@ -37,15 +37,6 @@ const Filter = (props) => {
         deleteFilter,
         copyFilter,
     } = props;
-
-    const onValueChange = (event) => {
-        const rawValue = event.target.value;
-        let value = rawValue;
-        if (propertyType && propertyType === PropertyType.NUMBER) {
-            value = Number(rawValue);
-        }
-        setValue(value);
-    };
 
     const onAutocompleteChange = (newValue) => setValue(newValue);
 
