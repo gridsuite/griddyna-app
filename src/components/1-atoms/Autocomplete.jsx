@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Autocomplete as MuiAutocomplete } from '@material-ui/lab';
-import { TextField } from '@material-ui/core';
+import { Popper, TextField } from '@material-ui/core';
 
 const Autocomplete = (props) => {
     const {
@@ -34,30 +34,54 @@ const Autocomplete = (props) => {
                       label: value.toString(),
                       value,
                   },
-        [options, value]
+        [options, value, isMultiple]
     );
     const [inputValue, setInputValue] = useState(
         isMultiple ? '' : value.toString()
     );
+
+    const [updateFlag, setUpdateFlag] = useState(false);
+
+    useEffect(() => {
+        if (updateFlag && inputValue !== '') {
+            if (isFree && !isMultiple) {
+                let valueToSend = inputValue;
+                if (type === 'number') {
+                    valueToSend = Number(valueToSend);
+                }
+                if (!Number.isNaN(valueToSend)) {
+                    onChange(valueToSend);
+                }
+            }
+            setUpdateFlag(false);
+        }
+    }, [updateFlag, isFree, isMultiple, inputValue, onChange, type]);
+
     const onInputChange = (event, newInputValue) => {
-        let valueToSend = newInputValue;
-        if (isFree && !isMultiple) {
-            if (type === 'number') {
-                valueToSend = Number(newInputValue);
-            }
-            if (!Number.isNaN(valueToSend)) {
-                setInputValue(valueToSend.toString());
-                onChange(valueToSend);
-            }
+        if (type !== 'number') {
+            console.log('input', newInputValue);
+            setInputValue(newInputValue.toString());
         } else {
-            setInputValue(newInputValue);
+            // Avoid locale misinterpretation
+            const inputToSend = newInputValue.replace(',', '.');
+            if (!Number.isNaN(Number(inputToSend))) {
+                console.log('input', inputToSend);
+                setInputValue(inputToSend.toString());
+            }
         }
     };
 
+    const onPopupClose = () => {
+        console.log('close', inputValue);
+        setUpdateFlag(true);
+    };
+
     const onValueChange = (_event, newValue) => {
+        console.log('newValue', newValue);
         if (!isMultiple) {
             if (newValue !== null) {
-                let valueToSend = newValue.value;
+                // In case of manual addition, valueItem will be a string and not an option
+                let valueToSend = newValue?.value ?? newValue;
                 if (type === 'number') {
                     valueToSend = Number(valueToSend);
                 }
@@ -68,7 +92,8 @@ const Autocomplete = (props) => {
         } else {
             onChange(
                 newValue.map((valueItem) => {
-                    let formattedValue = valueItem.value;
+                    // In case of manual addition, valueItem will be a string and not an option
+                    let formattedValue = valueItem?.value ?? valueItem;
                     if (type === 'number') {
                         formattedValue = Number(formattedValue);
                     }
@@ -90,20 +115,22 @@ const Autocomplete = (props) => {
     return (
         <MuiAutocomplete
             freeSolo={isFree}
+            onClose={onPopupClose}
             multiple={isMultiple}
             value={selectedOption}
             inputValue={inputValue}
             onChange={onValueChange}
             onInputChange={onInputChange}
             options={options}
-            getOptionLabel={(option) => option.label ?? ''}
-            autoHighlight
+            getOptionLabel={(option) => option?.label ?? ''}
+            autoHighlight={!isFree}
             renderOption={renderOption}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    type={type === 'number' ? type : undefined}
-                    error={error}
+            renderInput={(params) => <TextField {...params} error={error} />}
+            PopperComponent={(props) => (
+                <Popper
+                    {...props}
+                    placement="bottom-start"
+                    style={{ width: 'fit-content' }}
                 />
             )}
         />
