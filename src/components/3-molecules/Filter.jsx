@@ -56,7 +56,21 @@ const Filter = (props) => {
     const classes = useStyles({ isValid, isSelect });
 
     const joinOptions = _.uniqBy(
-        [...possibleValues, ...networkValues],
+        [
+            // Values known as possible
+            ...possibleValues,
+            // Values received from network
+            // (should be a subset of possibleValues,
+            // here to avoid versions mismatch)
+            ...networkValues,
+            // Additional user created values
+            ...(multiple
+                ? value.map((value) => ({
+                      label: value,
+                      value,
+                  }))
+                : []),
+        ],
         'value'
     );
 
@@ -95,38 +109,16 @@ const Filter = (props) => {
                         />
                     </Grid>
                     <Grid item xs="auto" className={classes.value}>
-                        <>
-                            {isSelect ? (
-                                <Select
-                                    options={possibleValues}
-                                    value={value === '' ? [] : value}
-                                    setValue={setValue}
-                                    multiple={multiple}
-                                    error={value === '' || value === []}
-                                />
-                            ) : (
-                                <TextField
-                                    value={value}
-                                    onChange={onValueChange}
-                                    type={
-                                        propertyType === PropertyType.NUMBER
-                                            ? 'number'
-                                            : undefined
-                                    }
-                                    error={value === ''}
-                                />
-                            )}
-                            <Autocomplete
-                                isFree={!isSelect}
-                                isMultiple={multiple}
-                                value={value === '' ? [] : value}
-                                onChange={onAutocompleteChange}
-                                options={joinOptions}
-                                highlightOptions={networkValues}
-                                type={autocompleteType(propertyType)}
-                                error={value === '' || value === []}
-                            />
-                        </>
+                        <Autocomplete
+                            isFree={!isSelect}
+                            isMultiple={multiple}
+                            value={value === '' ? [] : value}
+                            onChange={onAutocompleteChange}
+                            options={joinOptions}
+                            highlightOptions={networkValues}
+                            type={autocompleteType(propertyType)}
+                            error={value === '' || value === []}
+                        />
                     </Grid>
                 </Grid>
             </Grid>
