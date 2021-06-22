@@ -15,51 +15,7 @@ import * as networkAPI from '../../rest/networkAPI';
 import { PropertyType } from '../../constants/equipmentDefinition';
 
 const initialState = {
-    propertyValues: [
-        //TODO remove
-        {
-            type: 'GENERATOR',
-            values: {
-                'terminal.voltageLevel.nominalV': ['13.8', '69.0'],
-                'terminal.voltageLevel.substation.country.name': [
-                    'AFGHANISTAN',
-                ],
-                id: [
-                    '_GEN____8_SM',
-                    '_GEN____1_SM',
-                    '_GEN____2_SM',
-                    '_GEN____3_SM',
-                    '_GEN____6_SM',
-                ],
-                energySource: ['OTHER'],
-                voltageRegulatorOn: ['true'],
-            },
-        },
-        {
-            type: 'LOAD',
-            values: {
-                loadType: ['UNDEFINED'],
-                'terminal.voltageLevel.nominalV': ['13.8', '69.0'],
-                'terminal.voltageLevel.substation.country.name': [
-                    'AFGHANISTAN',
-                ],
-                id: [
-                    '_LOAD___9_EC',
-                    '_LOAD__13_EC',
-                    '_LOAD__12_EC',
-                    '_LOAD__14_EC',
-                    '_LOAD__10_EC',
-                    '_LOAD___4_EC',
-                    '_LOAD__11_EC',
-                    '_LOAD___6_EC',
-                    '_LOAD___5_EC',
-                    '_LOAD___2_EC',
-                    '_LOAD___3_EC',
-                ],
-            },
-        },
-    ],
-    // [],
+    propertyValues: [],
     status: RequestStatus.IDLE,
 };
 
@@ -110,8 +66,7 @@ export const getPropertyValuesFromNetworkId = createAsyncThunk(
 
 const reducers = {
     cleanNetwork: (state) => {
-        // TODO uncomment
-        // state.propertyValues = [];
+        state.propertyValues = [];
     },
 };
 

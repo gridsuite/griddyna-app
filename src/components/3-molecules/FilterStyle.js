@@ -27,8 +27,5 @@ export const useStyles = makeStyles((theme) => ({
                 paddingBottom: 0,
             },
         },
-        '&  .MuiFormControl-root .MuiInput-root .MuiAutocomplete-input': {
-            // width: '66%', //TODO
-        },
     },
 }));
