@@ -110,10 +110,10 @@ export function getOperandsOptions(propertyType) {
     }
 }
 
-// TODO Add label here for translations
+// TODO Intl
 export function getPropertiesOptions(type) {
     return EquipmentProperties[type].map((property) => ({
-        label: property.name,
+        label: property.label ?? property.name,
         value: property.name,
     }));
 }

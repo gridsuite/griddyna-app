@@ -32,7 +32,13 @@ export const EquipmentProperties = {
         },
         {
             name: 'terminal.voltageLevel.nominalV',
+            label: 'nominalV',
             type: PropertyType.NUMBER,
+        },
+        {
+            name: 'terminal.voltageLevel.substation.country.name',
+            label: 'country',
+            type: PropertyType.STRING,
         },
         {
             name: 'name',
@@ -76,6 +82,16 @@ export const EquipmentProperties = {
             name: 'loadType',
             type: PropertyType.ENUM,
             values: ['UNDEFINED'],
+        },
+        {
+            name: 'terminal.voltageLevel.nominalV',
+            label: 'nominalV',
+            type: PropertyType.NUMBER,
+        },
+        {
+            name: 'terminal.voltageLevel.substation.country.name',
+            label: 'country',
+            type: PropertyType.STRING,
         },
         {
             name: 'id',
