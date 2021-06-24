@@ -80,25 +80,21 @@ const Autocomplete = (props) => {
 
     const onInputChange = (event, newInputValue) => {
         if (type !== 'number') {
-            console.log('input', newInputValue);
             setInputValue(newInputValue.toString());
         } else {
             // Avoid locale misinterpretation
             const inputToSend = newInputValue.replace(',', '.');
             if (!Number.isNaN(Number(inputToSend))) {
-                console.log('input', inputToSend);
                 setInputValue(inputToSend.toString());
             }
         }
     };
 
     const onPopupClose = () => {
-        console.log('close', inputValue);
         setUpdateFlag(true);
     };
 
     const onValueChange = (_event, newValue) => {
-        console.log('newValue', newValue);
         if (!isMultiple) {
             if (newValue !== null) {
                 // In case of manual addition, valueItem will be a string and not an option
