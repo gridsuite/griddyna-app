@@ -12,7 +12,6 @@ export const EquipmentType = {
 Object.freeze(EquipmentType);
 
 export const PropertyType = {
-    ENUM: 'ENUM',
     STRING: 'STRING',
     BOOLEAN: 'BOOLEAN',
     NUMBER: 'NUMBER',
@@ -23,7 +22,7 @@ export const EquipmentProperties = {
     GENERATOR: [
         {
             name: 'energySource',
-            type: PropertyType.ENUM,
+            type: PropertyType.STRING,
             values: ['OTHER', 'HYDRO'],
         },
         {
@@ -80,7 +79,7 @@ export const EquipmentProperties = {
     LOAD: [
         {
             name: 'loadType',
-            type: PropertyType.ENUM,
+            type: PropertyType.STRING,
             values: ['UNDEFINED'],
         },
         {

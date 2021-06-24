@@ -13,7 +13,7 @@ import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { PropertyType } from '../../constants/equipmentDefinition';
-import { EnumOperands } from '../../constants/operands';
+import { multipleOperands } from '../../constants/operands';
 import { useStyles } from './FilterStyle';
 import Autocomplete from '../1-atoms/Autocomplete';
 
@@ -42,7 +42,7 @@ const Filter = (props) => {
 
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
-    const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
+    const multiple = multipleOperands.includes(operand);
     const isSelect = possibleValues.length > 0;
     const classes = useStyles({ isValid, isSelect });
 
