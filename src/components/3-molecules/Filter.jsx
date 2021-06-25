@@ -57,7 +57,7 @@ const Filter = (props) => {
             // Additional user created values
             ...(multiple
                 ? value.map((value) => ({
-                      label: value,
+                      label: value.toString(),
                       value,
                   }))
                 : []),
