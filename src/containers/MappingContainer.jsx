@@ -12,6 +12,7 @@ import {
     getRulesNumber,
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
+    getSortedRulesNumber,
     postMapping,
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
@@ -23,6 +24,8 @@ import { List, Paper } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
+import FilterBar from '../components/2-molecules/FilterBar';
+import { EquipmentType } from '../constants/equipmentDefinition';
 
 // TODO intl
 const ADD_LABEL = 'Add a rule';
@@ -36,9 +39,18 @@ const MappingContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
+    const sortedRulesNumber = useSelector(getSortedRulesNumber);
+    const filteredType = useSelector((state) => state.mappings.filteredType);
     const dispatch = useDispatch();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const filterOptions = Object.values(EquipmentType).map((type) => ({
+        value: type,
+        // TODO: intl
+        label: `${type} (${sortedRulesNumber[type]})`,
+        disabled: sortedRulesNumber[type] === 0,
+    }));
 
     function addRule() {
         dispatch(MappingSlice.actions.addRule(undefined));
@@ -58,6 +70,10 @@ const MappingContainer = () => {
 
     function attachWithFile(file) {
         dispatch(getPropertyValuesFromFile(file));
+    }
+
+    function setFilteredType(type) {
+        dispatch(MappingSlice.actions.changeFilteredType(type));
     }
 
     function buildRules() {
@@ -82,6 +98,11 @@ const MappingContainer = () => {
                     convertTooltip={CONVERT_LABEL}
                     attach={() => setIsModalOpen(true)}
                     attachTooltip={ATTACH_LABEL}
+                />
+                <FilterBar
+                    value={filteredType}
+                    options={filterOptions}
+                    setFilter={setFilteredType}
                 />
                 <List>{buildRules()}</List>
             </Paper>
