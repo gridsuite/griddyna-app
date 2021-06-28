@@ -67,7 +67,6 @@ const Filter = (props) => {
             const type = autocompleteType(propertyType);
             if (type === 'number') {
                 // Filtering identical number (float comparison issues)
-                console.log(option1, option2);
                 return Math.abs(option1.value - option2.value) < PRECISION;
             } else {
                 return option1.value === option2.value;
