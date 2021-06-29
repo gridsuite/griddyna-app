@@ -14,7 +14,7 @@ const API_URL =
 
 export function getPropertyValuesFromFile(networkFile, token) {
     const formData = new FormData();
-    formData.append('networkFile', networkFile);
+    formData.append('file', networkFile);
 
     return fetch(`${API_URL}/new`, {
         method: 'POST',

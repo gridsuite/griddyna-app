@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Autocomplete as MuiAutocomplete } from '@material-ui/lab';
 import { Popper, TextField } from '@material-ui/core';
@@ -23,7 +23,7 @@ const Autocomplete = (props) => {
         isMultiple = false,
     } = props;
 
-    function matchMultipleOptions(options, values) {
+    const matchMultipleOptions = useCallback((options, values) => {
         const matchedOptions = [];
         values.forEach((value) => {
             let foundOption = options.find((option) => option.value === value);
@@ -32,7 +32,7 @@ const Autocomplete = (props) => {
             }
         });
         return matchedOptions;
-    }
+    }, []);
 
     const selectedOption = useMemo(
         () =>
@@ -42,7 +42,7 @@ const Autocomplete = (props) => {
                       label: value.toString(),
                       value,
                   },
-        [options, value, isMultiple]
+        [options, value, isMultiple, matchMultipleOptions]
     );
     const [inputValue, setInputValue] = useState(
         isMultiple ? '' : value.toString()
@@ -124,7 +124,13 @@ const Autocomplete = (props) => {
         highlightOptions
             .map((option) => option.value)
             .includes(option.value) ? (
-            <b>{option.label}</b>
+            <b
+                style={{
+                    'text-shadow': '#FFF 1px 0px 2px',
+                }}
+            >
+                {option.label}
+            </b>
         ) : (
             option.label
         );
