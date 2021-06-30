@@ -391,6 +391,21 @@ const reducers = {
             index
         ].mappedModel = mappedModel;
     },
+    deleteRule: (state, action) => {
+        const { index } = action.payload;
+        const ruleToDelete = filterRulesByType(
+            state.rules,
+            state.filteredRuleType
+        )[index];
+        state.rules = state.rules.filter((rule) => rule !== ruleToDelete);
+    },
+    copyRule: (state, action) => {
+        const { index } = action.payload;
+        const ruleToCopy = _.cloneDeep(
+            filterRulesByType(state.rules, state.filteredRuleType)[index]
+        );
+        state.rules.push(ruleToCopy);
+    },
     // Filter
     addFilter: (state, action) => {
         const { index } = action.payload;
@@ -506,6 +521,26 @@ const reducers = {
             state.filteredAutomatonFamily
         )[index];
         selectedAutomaton.watchedElement = watchedElement;
+    },
+    deleteAutomaton: (state, action) => {
+        const { index } = action.payload;
+        const automatonToDelete = filterAutomataByFamily(
+            state.automata,
+            state.filteredAutomatonFamily
+        )[index];
+        state.automata = state.automata.filter(
+            (automaton) => automaton !== automatonToDelete
+        );
+    },
+    copyAutomaton: (state, action) => {
+        const { index } = action.payload;
+        const automatonToCopy = _.cloneDeep(
+            filterAutomataByFamily(
+                state.automata,
+                state.filteredAutomatonFamily
+            )[index]
+        );
+        state.automata.push(automatonToCopy);
     },
     // Mappings
     createMapping: (state, _action) => {
