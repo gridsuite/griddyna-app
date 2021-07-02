@@ -14,6 +14,8 @@ import {
     isModified as isModifiedSelector,
     getSortedRulesNumber,
     postMapping,
+    getAutomataNumber,
+    getSortedAutomataNumber,
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
 import {
@@ -34,17 +36,22 @@ import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import FilterBar from '../components/2-molecules/FilterBar';
-import { EquipmentType } from '../constants/equipmentDefinition';
+import {
+    EquipmentType,
+    AutomatonFamily,
+} from '../constants/equipmentDefinition';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
+import AutomatonContainer from './AutomatonContainer';
 
 // TODO intl
-const ADD_LABEL = 'Add a rule';
+const ADD_RULE_LABEL = 'Add a rule';
 const CONVERT_LABEL = 'Convert to script';
 const SAVE_LABEL = 'Save Mapping';
 const ATTACH_LABEL = 'Attach a Network';
 const RULES_TITLE = 'Rules';
 const AUTOMATA_TITLE = 'Automata';
+const ADD_AUTOMATON_LABEL = 'Add an automaton';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
@@ -56,16 +63,30 @@ const MappingContainer = () => {
     const filteredType = useSelector(
         (state) => state.mappings.filteredRuleType
     );
+    const filteredFamily = useSelector(
+        (state) => state.mappings.filteredAutomatonFamily
+    );
+    const automataNumber = useSelector(getAutomataNumber);
+    const sortedAutomataNumber = useSelector(getSortedAutomataNumber);
     const dispatch = useDispatch();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const filterOptions = Object.values(EquipmentType).map((type) => ({
+    const filterRulesOptions = Object.values(EquipmentType).map((type) => ({
         value: type,
         // TODO: intl
         label: `${type} (${sortedRulesNumber[type]})`,
         disabled: sortedRulesNumber[type] === 0,
     }));
+
+    const filterAutomataOptions = Object.values(AutomatonFamily).map(
+        (family) => ({
+            value: family,
+            // TODO: intl
+            label: `${family} (${sortedAutomataNumber[family]})`,
+            disabled: sortedAutomataNumber[family] === 0,
+        })
+    );
 
     function addRule() {
         dispatch(MappingSlice.actions.addRule(undefined));
@@ -91,12 +112,33 @@ const MappingContainer = () => {
         dispatch(MappingSlice.actions.changeFilteredType(type));
     }
 
+    function addAutomaton() {
+        dispatch(MappingSlice.actions.addAutomaton(undefined));
+    }
+
+    function setFilteredFamily(type) {
+        dispatch(MappingSlice.actions.changeFilteredFamily(type));
+    }
+
     function buildRules() {
         const rules = [];
         for (let i = 0; i < rulesNumber; i++) {
             rules.push(<RuleContainer index={i} key={`rule-container-${i}`} />);
         }
         return rules;
+    }
+
+    function buildAutomata() {
+        const automata = [];
+        for (let i = 0; i < automataNumber; i++) {
+            automata.push(
+                <AutomatonContainer
+                    index={i}
+                    key={`automaton-container-${i}`}
+                />
+            );
+        }
+        return automata;
     }
     return (
         <>
@@ -122,18 +164,17 @@ const MappingContainer = () => {
                             <Grid item xs={11}>
                                 <FilterBar
                                     value={filteredType}
-                                    options={filterOptions}
+                                    options={filterRulesOptions}
                                     setFilter={setFilteredType}
                                 />
                             </Grid>
                             <Grid item xs={1}>
                                 <AddIconButton
                                     onClick={addRule}
-                                    tooltip={ADD_LABEL}
+                                    tooltip={ADD_RULE_LABEL}
                                 />
                             </Grid>
                         </Grid>
-
                         <List>{buildRules()}</List>
                     </AccordionDetails>
                 </Accordion>
@@ -143,7 +184,22 @@ const MappingContainer = () => {
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
-                        WIP
+                        <Grid container>
+                            <Grid item xs={11}>
+                                <FilterBar
+                                    value={filteredFamily}
+                                    options={filterAutomataOptions}
+                                    setFilter={setFilteredFamily}
+                                />
+                            </Grid>
+                            <Grid item xs={1}>
+                                <AddIconButton
+                                    onClick={addAutomaton}
+                                    tooltip={ADD_AUTOMATON_LABEL}
+                                />
+                            </Grid>
+                        </Grid>
+                        <List>{buildAutomata()}</List>
                     </AccordionDetails>
                 </Accordion>
             </Paper>

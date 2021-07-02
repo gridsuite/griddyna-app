@@ -13,6 +13,7 @@ import {
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
 import { PropertyType } from '../../constants/equipmentDefinition';
+import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automata';
 
 const initialState = {
     propertyValues: [],
@@ -38,6 +39,25 @@ export const makeGetNetworkValues = () =>
                 ) ?? []
     );
 
+export const makeGetPossibleWatchedElements = () =>
+    createSelector(
+        (state) => state.network.propertyValues,
+        (_state, family) => family,
+        (propertyValues, family) => {
+            const possibleTypes =
+                getPossibleEquipmentTypesFromAutomatonFamily(family);
+            const ids = [];
+            possibleTypes.forEach((possibleTime) => {
+                ids.concat(
+                    propertyValues?.find(
+                        (propertyValuesItem) =>
+                            propertyValuesItem.type === possibleTime
+                    )?.values['id'] ?? []
+                );
+            });
+            return ids;
+        }
+    );
 // Reducers
 
 export const getPropertyValuesFromFile = createAsyncThunk(

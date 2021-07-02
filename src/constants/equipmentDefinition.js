@@ -119,3 +119,27 @@ export const EquipmentProperties = {
     ],
 };
 Object.freeze(EquipmentProperties);
+
+export const AutomatonFamily = {
+    CURRENT_LIMIT: 'CURRENT_LIMIT',
+};
+Object.freeze(AutomatonFamily);
+
+export const AutomatonProperties = {
+    CURRENT_LIMIT: {
+        side: {
+            type: 'string',
+            values: [
+                {
+                    value: 'Branch.Side.ONE',
+                    label: 'One',
+                },
+                {
+                    value: 'Branch.Side.TWO',
+                    label: 'Two',
+                },
+            ],
+        },
+    },
+};
+Object.freeze(AutomatonProperties);

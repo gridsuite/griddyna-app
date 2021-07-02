@@ -14,6 +14,7 @@ import {
     PropertyType,
     EquipmentType,
     EquipmentProperties,
+    AutomatonFamily,
 } from '../constants/equipmentDefinition';
 
 export function getEquipmentTypesOptions() {
@@ -21,6 +22,14 @@ export function getEquipmentTypesOptions() {
         const type = EquipmentType[key];
         // TODO intl
         return { value: type, label: type };
+    });
+}
+
+export function getAutomatonFamiliesOptions() {
+    return Object.keys(AutomatonFamily).map((key) => {
+        const family = AutomatonFamily[key];
+        // TODO intl
+        return { value: family, label: family };
     });
 }
 
