@@ -12,7 +12,11 @@ import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
 import { getProperty } from '../../utils/properties';
 import { multipleOperands } from '../../constants/operands';
-import { EquipmentType } from '../../constants/equipmentDefinition';
+import {
+    AutomatonFamily,
+    AutomatonProperties,
+    EquipmentType,
+} from '../../constants/equipmentDefinition';
 
 const initialState = {
     mappings: [],
@@ -113,6 +117,20 @@ export const getAutomataNumber = (state) =>
             automaton.family === state.mappings.filteredAutomatonFamily
     ).length;
 
+export const getSortedAutomataNumber = (state) => {
+    let sortedAutomataNumber = {};
+    Object.values(AutomatonFamily).forEach((family) => {
+        sortedAutomataNumber[family] = 0;
+    });
+
+    state.mappings.automata.forEach((automaton) => {
+        if (automaton.family !== '') {
+            sortedAutomataNumber[automaton.family]++;
+        }
+    });
+    return sortedAutomataNumber;
+};
+
 export const makeGetRule = () =>
     createSelector(
         (state) =>
@@ -188,7 +206,12 @@ const checkRuleValidity = (rule) => {
 const checkAutomatonValidity = (automaton) =>
     automaton.family !== '' &&
     automaton.watchedElement !== '' &&
-    automaton.model !== '';
+    automaton.model !== '' &&
+    (automaton.properties.length === 0 ||
+        automaton.properties.reduce(
+            (acc, property) => acc && property.value !== '',
+            true
+        ));
 
 export const makeIsRuleValid = () =>
     createSelector(
@@ -209,7 +232,7 @@ export const makeIsAutomatonValid = () =>
                 state.mappings.filteredAutomatonFamily
             ),
         (_state, index) => index,
-        (rules, index) => checkAutomatonValidity(rules[index])
+        (automata, index) => checkAutomatonValidity(automata[index])
     );
 
 export const isMappingValid = createSelector(
@@ -504,7 +527,12 @@ const reducers = {
         selectedAutomaton.family = family;
         selectedAutomaton.model = DEFAULT_AUTOMATON.model;
         selectedAutomaton.watchedElement = DEFAULT_AUTOMATON.watchedElement;
-        selectedAutomaton.properties = DEFAULT_AUTOMATON.properties;
+        selectedAutomaton.properties = Object.keys(
+            AutomatonProperties[family] ?? {}
+        ).map((propertyName) => ({
+            name: propertyName,
+            value: '',
+        }));
     },
     changeAutomatonModel: (state, action) => {
         const { index, model } = action.payload;
@@ -521,6 +549,19 @@ const reducers = {
             state.filteredAutomatonFamily
         )[index];
         selectedAutomaton.watchedElement = watchedElement;
+    },
+    changeAutomatonPropertyValue: (state, action) => {
+        const { index, property } = action.payload;
+        const selectedAutomaton = filterAutomataByFamily(
+            state.automata,
+            state.filteredAutomatonFamily
+        )[index];
+        const modifiedProperty = selectedAutomaton.properties.find(
+            (automatonProperty) => automatonProperty.name === property.name
+        );
+        if (modifiedProperty) {
+            modifiedProperty.value = property.value;
+        }
     },
     deleteAutomaton: (state, action) => {
         const { index } = action.payload;
