@@ -39,6 +39,7 @@ const Automaton = (props) => {
     const copyAutomatonLabel = 'Copy automaton';
     const familyLabel = 'Of Family';
     const watchedElementLabel = 'On equipment';
+    const propertiesLabel = 'Additional properties';
     const modelLabel = 'Modelled by';
 
     const onChangeProperty = (propertyName) => (propertyValue) => {
@@ -89,19 +90,13 @@ const Automaton = (props) => {
                     />
                 </Grid>
             </Grid>
-            <Grid container justify={'flex-start'}>
-                <Grid item xs="auto" className={classes.label}>
-                    <Typography variant="h4">{`${modelLabel} :`}</Typography>
+            {properties.length > 0 && (
+                <Grid container justify={'flex-start'}>
+                    <Grid item xs="auto" className={classes.label}>
+                        <Typography>{`${propertiesLabel} :`}</Typography>
+                    </Grid>
                 </Grid>
-                <Grid item xs="auto" className={classes.value}>
-                    <Select
-                        options={getModelsOptions(models)}
-                        value={model}
-                        setValue={changeModel}
-                        error={model === ''}
-                    />
-                </Grid>
-            </Grid>
+            )}
             {properties.map((property) => {
                 const modelProperty = getAutomatonProperty(
                     family,
@@ -109,6 +104,7 @@ const Automaton = (props) => {
                 );
                 return (
                     <Grid container justify={'flex-start'} key={property.name}>
+                        <Grid item xs={1} />
                         <Grid item xs="auto" className={classes.label}>
                             <Typography>{`${property.name} :`}</Typography>
                         </Grid>
@@ -129,11 +125,30 @@ const Automaton = (props) => {
                                         : undefined
                                 }
                                 error={property.value === ''}
+                                ignoreReset={
+                                    !(
+                                        modelProperty?.values &&
+                                        modelProperty?.values?.length > 0
+                                    )
+                                }
                             />
                         </Grid>
                     </Grid>
                 );
             })}
+            <Grid container justify={'flex-start'}>
+                <Grid item xs="auto" className={classes.label}>
+                    <Typography variant="h4">{`${modelLabel} :`}</Typography>
+                </Grid>
+                <Grid item xs="auto" className={classes.value}>
+                    <Select
+                        options={getModelsOptions(models)}
+                        value={model}
+                        setValue={changeModel}
+                        error={model === ''}
+                    />
+                </Grid>
+            </Grid>
         </Paper>
     );
 };
