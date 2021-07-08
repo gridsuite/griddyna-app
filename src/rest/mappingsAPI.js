@@ -12,7 +12,7 @@ const API_URL =
         : process.env.REACT_APP_URI) +
     '/mappings';
 
-export function postMapping(mappingName, rules, token) {
+export function postMapping(mappingName, rules, automata, token) {
     return fetch(`${API_URL}/${mappingName}`, {
         method: 'POST',
         headers: {
@@ -21,7 +21,7 @@ export function postMapping(mappingName, rules, token) {
             Authorization: 'Bearer ' + token,
         },
         cache: 'default',
-        body: JSON.stringify({ name: mappingName, rules }),
+        body: JSON.stringify({ name: mappingName, rules, automata }),
     });
 }
 
