@@ -13,6 +13,7 @@ import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
+import LoopIcon from '@material-ui/icons/Loop';
 
 export const AddIconButton = (props) => (
     <IconButton icon={<AddCircleIcon />} {...props} />
@@ -36,4 +37,8 @@ export const CopyButton = (props) => (
 
 export const AttachButton = (props) => (
     <IconButton icon={<AttachFileIcon />} {...props} />
+);
+
+export const ChangeButton = (props) => (
+    <IconButton icon={<LoopIcon />} {...props} />
 );
