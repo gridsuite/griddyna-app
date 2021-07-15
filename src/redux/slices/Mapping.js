@@ -204,6 +204,27 @@ export const makeGetAutomaton = () =>
         }
     );
 
+export const makeGetUnusedFilters = () =>
+    createSelector(
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredRuleType
+            ),
+        (_state, index) => index,
+        (rules, index) => {
+            const selectedRule = rules[index];
+            const usedFilters = Array.from(
+                selectedRule.composition.matchAll(/filter\d+\b/g),
+                (m) => m[0]
+            );
+            const ruleFilters = selectedRule.filters.map((filter) => filter.id);
+            return ruleFilters.filter(
+                (filterToTest) => !usedFilters.includes(filterToTest)
+            );
+        }
+    );
+
 export const makeGetFilter = () =>
     createSelector(
         (state) =>

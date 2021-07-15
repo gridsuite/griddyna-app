@@ -14,7 +14,8 @@ import {
     CopyButton,
     ChangeButton,
 } from '../1-atoms/buttons';
-import { Grid, Paper, TextField, Typography } from '@material-ui/core';
+import { Grid, Paper, TextField, Typography, Tooltip } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import {
     getEquipmentTypesOptions,
     getModelsOptions,
@@ -36,6 +37,7 @@ const Rule = (props) => {
         changeCompositionMode,
         isAdvancedMode,
         canUseBasicMode,
+        unusedFilters = [],
     } = props;
     const { type, composition, mappedModel } = rule;
     const classes = useStyles(isRuleValid);
@@ -50,6 +52,7 @@ const Rule = (props) => {
     const copyRuleLabel = 'Copy Rule';
     const useBasicModeLabel = 'Use simple filters mode';
     const useAdvancedModeLabel = 'Use advanced filters mode';
+    const unusedFiltersLabel = 'You have unused filter(s)';
 
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
@@ -75,6 +78,17 @@ const Rule = (props) => {
                         <Grid item>
                             <Typography variant="h4">:</Typography>
                         </Grid>
+                        {unusedFilters.length > 0 && (
+                            <Grid item className={classes.unused}>
+                                <Tooltip
+                                    title={`${unusedFiltersLabel}: ${unusedFilters.join(
+                                        ', '
+                                    )}`}
+                                >
+                                    <ErrorIcon />
+                                </Tooltip>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
                 <Grid item>
@@ -158,6 +172,7 @@ Rule.propTypes = {
     changeCompositionMode: PropTypes.func.isRequired,
     isAdvancedMode: PropTypes.bool.isRequired,
     canUseBasicMode: PropTypes.bool.isRequired,
+    unusedFilters: PropTypes.array,
 };
 
 export default Rule;
