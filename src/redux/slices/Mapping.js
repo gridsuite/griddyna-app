@@ -122,7 +122,7 @@ const postProcessComposition = (composition) =>
         // remove parentheses bordering one element
         .replaceAll(/\((filter\d+)\)/g, '$1')
         // remove useless parentheses around the whole string
-        .replace(/^\(([^\(]+)\)$/g, '$1');
+        .replace(/^\(([^(]+)\)$/g, '$1');
 
 // Selectors
 
