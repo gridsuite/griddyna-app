@@ -49,18 +49,32 @@ export function convertCompositionArrayToString(compositionArray) {
     return compositionStringArray.join(' ');
 }
 
-export const checkCompositionArrayValidity = (compositionArray) =>
-    compositionArray
+export const checkCompositionArrayValidity = (
+    compositionArray,
+    isInner = false
+) => {
+    let arrayOperation;
+    return compositionArray
         .map((compositionElement, index) => {
             if (index % 2 === 0) {
                 if (Array.isArray(compositionElement)) {
-                    return checkCompositionArrayValidity(compositionElement);
+                    return checkCompositionArrayValidity(
+                        compositionElement,
+                        true
+                    );
                 }
                 return /filter\d+\b/.test(compositionElement);
             }
-            return /(&&|\|\|)/.test(compositionElement);
+            if (index === 1) {
+                arrayOperation = compositionElement;
+            }
+            return (
+                /(&&|\|\|)/.test(compositionElement) &&
+                (!isInner || compositionElement === arrayOperation)
+            );
         })
         .reduce((acc, element) => acc && element);
+};
 
 export function getMaxDepthParentheses(logicString) {
     let count = 0;
