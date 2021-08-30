@@ -8,15 +8,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
-import { DeleteButton, CopyButton } from '../1-atoms/buttons';
+import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@material-ui/core';
-import {
-    getAutomatonFamiliesOptions,
-    getModelsOptions,
-} from '../../utils/optionsBuilders';
+import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonStyle';
 import { getAutomatonProperty } from '../../utils/automata';
+import ModelSelect from '../2-molecules/ModelSelect';
 
 const Automaton = (props) => {
     const {
@@ -25,13 +23,15 @@ const Automaton = (props) => {
         changeFamily,
         changeWatchedElement,
         changeModel,
+        changeParameters,
         changeProperty,
         models,
         networkIds = [],
         deleteAutomaton,
         copyAutomaton,
+        editGroup = () => {},
     } = props;
-    const { family, watchedElement, model, properties } = automaton;
+    const { family, watchedElement, model, setGroup, properties } = automaton;
     const classes = useStyles(isAutomatonValid);
     // TODO intl
     const automatonLabel = 'Automaton';
@@ -40,7 +40,6 @@ const Automaton = (props) => {
     const familyLabel = 'Of Family';
     const watchedElementLabel = 'On equipment';
     const propertiesLabel = 'Additional properties';
-    const modelLabel = 'Modelled by';
 
     const onChangeProperty = (propertyName) => (propertyValue) => {
         changeProperty({ name: propertyName, value: propertyValue });
@@ -136,19 +135,14 @@ const Automaton = (props) => {
                     </Grid>
                 );
             })}
-            <Grid container justify={'flex-start'}>
-                <Grid item xs="auto" className={classes.label}>
-                    <Typography variant="h4">{`${modelLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs="auto" className={classes.value}>
-                    <Select
-                        options={getModelsOptions(models)}
-                        value={model}
-                        setValue={changeModel}
-                        error={model === ''}
-                    />
-                </Grid>
-            </Grid>
+            <ModelSelect
+                model={model}
+                models={models}
+                changeModel={changeModel}
+                setGroup={setGroup}
+                changeGroup={changeParameters}
+                editGroup={editGroup}
+            />
         </Paper>
     );
 };
@@ -159,11 +153,13 @@ Automaton.propTypes = {
     changeFamily: PropTypes.func.isRequired,
     changeWatchedElement: PropTypes.func.isRequired,
     changeModel: PropTypes.func.isRequired,
+    changeParameters: PropTypes.func.isRequired,
     changeProperty: PropTypes.func.isRequired,
     models: PropTypes.array.isRequired,
     networkIds: PropTypes.array,
     deleteAutomaton: PropTypes.func.isRequired,
     copyAutomaton: PropTypes.func.isRequired,
+    editGroup: PropTypes.func.isRequired,
 };
 
 export default Automaton;

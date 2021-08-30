@@ -11,11 +11,12 @@ import {
     StringOperands,
 } from '../constants/operands';
 import {
-    PropertyType,
-    EquipmentType,
-    EquipmentProperties,
     AutomatonFamily,
+    EquipmentProperties,
+    EquipmentType,
+    PropertyType,
 } from '../constants/equipmentDefinition';
+import { SetType } from '../constants/models';
 
 export function getEquipmentTypesOptions() {
     return Object.keys(EquipmentType).map((key) => {
@@ -123,9 +124,30 @@ export function getPropertiesOptions(type) {
     }));
 }
 
+export function getModelNamesOptions(models) {
+    return models.map((model) => ({
+        label: model.id,
+        value: model.id,
+    }));
+}
+
+export function getInstantiatedModelsOptions(models) {
+    return models.map((model) => ({
+        label: model.name,
+        value: model.name,
+    }));
+}
+
 export function getModelsOptions(models) {
     return models.map((model) => ({
         label: model.name,
         value: model.name,
+    }));
+}
+
+export function getSetTypesOptions() {
+    return Object.keys(SetType).map((type) => ({
+        label: SetType[type],
+        value: SetType[type],
     }));
 }

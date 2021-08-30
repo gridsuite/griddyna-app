@@ -27,6 +27,8 @@ import {
     ScriptsSlice,
 } from '../redux/slices/Script';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
+import { getModels } from '../redux/slices/Model';
+
 import { Divider, Typography } from '@material-ui/core';
 
 const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
@@ -44,6 +46,7 @@ const MenuContainer = () => {
         dispatch(getMappings());
         dispatch(getScripts());
         dispatch(getNetworkNames());
+        dispatch(getModels());
     }, [dispatch]);
 
     // Mappings

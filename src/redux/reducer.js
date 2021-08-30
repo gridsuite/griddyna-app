@@ -6,18 +6,18 @@
  */
 
 import { combineReducers } from '@reduxjs/toolkit';
-import { InstanceModelReducer } from './slices/InstanceModel';
 import { MappingReducer } from './slices/Mapping';
 import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
 import { ScriptsReducer } from './slices/Script';
 import { NetworkReducer } from './slices/Network';
+import { ModelReducer } from './slices/Model';
 
 export const reducer = combineReducers({
     user: UserReducer,
     theme: ThemeReducer,
     mappings: MappingReducer,
-    instanceModels: InstanceModelReducer,
+    models: ModelReducer,
     scripts: ScriptsReducer,
     network: NetworkReducer,
 });
