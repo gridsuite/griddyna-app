@@ -12,15 +12,15 @@ import {
     makeIsAutomatonValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
-import { makeGetModels } from '../redux/slices/InstanceModel';
+import { makeGetModels } from '../redux/slices/Model';
 import { makeGetPossibleWatchedElements } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-molecules/Automaton';
 
-const AutomatonContainer = ({ index }) => {
+const AutomatonContainer = ({ index, editParameters }) => {
     const getAutomaton = useMemo(makeGetAutomaton, []);
     const automaton = useSelector((state) => getAutomaton(state, index));
-    const { model, family } = automaton;
+    const { model, family, setGroup } = automaton;
     const isAutomatonValidSelector = useMemo(makeIsAutomatonValid, []);
     const isAutomatonValid = useSelector((state) =>
         isAutomatonValidSelector(state, index)
@@ -34,6 +34,7 @@ const AutomatonContainer = ({ index }) => {
     const networkIds = useSelector((state) =>
         getPossibleWatchedElements(state, family)
     );
+
     const dispatch = useDispatch();
     const changeFamily = (newFamily) =>
         dispatch(
@@ -69,6 +70,17 @@ const AutomatonContainer = ({ index }) => {
         [dispatch, index]
     );
 
+    const changeParameters = useCallback(
+        (newParameters) =>
+            dispatch(
+                MappingSlice.actions.changeAutomatonParameters({
+                    index,
+                    parameters: newParameters,
+                })
+            ),
+        [dispatch, index]
+    );
+
     const deleteAutomaton = () =>
         dispatch(
             MappingSlice.actions.deleteAutomaton({
@@ -83,15 +95,30 @@ const AutomatonContainer = ({ index }) => {
             })
         );
 
+    const editGroup = () => editParameters({ model, setGroup });
+
     useEffect(() => {
         if (!models.map((model) => model.name).includes(model)) {
             if (models.length === 1) {
-                changeModel(models[0].id);
+                changeModel(models[0].name);
             } else {
                 changeModel('');
             }
         }
-    }, [models, changeModel, model]);
+        const mappedModel = models.find(
+            (modelToTest) => modelToTest.name === model
+        );
+        if (
+            mappedModel &&
+            !mappedModel.groups.map((group) => group.name).includes(setGroup)
+        ) {
+            if (mappedModel.groups.length === 1) {
+                changeParameters(mappedModel.groups[0].name);
+            } else {
+                changeParameters('');
+            }
+        }
+    }, [models, changeModel, model, setGroup]);
 
     return (
         <Automaton
@@ -100,17 +127,20 @@ const AutomatonContainer = ({ index }) => {
             changeFamily={changeFamily}
             changeWatchedElement={changeWatchedElement}
             changeModel={changeModel}
+            changeParameters={changeParameters}
             changeProperty={changeProperty}
             models={models}
             networkIds={networkIds}
             deleteAutomaton={deleteAutomaton}
             copyAutomaton={copyAutomaton}
+            editGroup={editGroup}
         />
     );
 };
 
 AutomatonContainer.propTypes = {
     index: PropTypes.number.isRequired,
+    editParameters: PropTypes.func.isRequired,
 };
 
 export default AutomatonContainer;

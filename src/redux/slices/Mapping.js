@@ -5,8 +5,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import {
+    createAsyncThunk,
+    createSelector,
+    createSlice,
+} from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
@@ -32,12 +35,14 @@ const initialState = {
     status: RequestStatus.IDLE,
     filteredRuleType: '',
     filteredAutomatonFamily: '',
+    controlledParameters: false,
 };
 
 const DEFAULT_RULE = {
     type: '',
     composition: 'true',
     mappedModel: '',
+    setGroup: '',
     filters: [],
     filterCounter: 1,
 };
@@ -46,6 +51,7 @@ const DEFAULT_AUTOMATON = {
     family: '',
     watchedElement: '',
     model: '',
+    setGroup: '',
     properties: [],
 };
 
@@ -80,12 +86,14 @@ const transformMapping = (receivedMapping) => {
                     family,
                     watchedElement,
                     model,
+                    setGroup,
                     ...additionalProperties
                 } = receivedAutomaton;
                 return {
                     family,
                     watchedElement,
                     model,
+                    setGroup,
                     properties: Object.keys(additionalProperties).map(
                         (propertyKey) => ({
                             name: propertyKey,
@@ -180,12 +188,13 @@ export const makeGetRule = () =>
         (_state, index) => index,
         (rules, index) => {
             const foundRule = rules[index];
-            const { type, composition, mappedModel } = foundRule;
+            const { type, composition, mappedModel, setGroup } = foundRule;
             // Filters fetched separately to avoid re-renders
             return {
                 type,
                 composition,
                 mappedModel,
+                setGroup,
                 filtersNumber: foundRule.filters.length,
             };
         }
@@ -364,24 +373,35 @@ export const getMappingsInfo = createSelector(
 
 export const isModified = createSelector(
     (state) => state.mappings.activeMapping,
+    (state) => state.mappings.controlledParameters,
     (state) => state.mappings.rules,
     (state) => state.mappings.automata,
     (state) => state.mappings.mappings,
 
-    (activeName, activeRules, activeAutomata, savedMappings) => {
+    (
+        activeName,
+        controlledParameters,
+        activeRules,
+        activeAutomata,
+        savedMappings
+    ) => {
         const foundMapping = savedMappings.find(
             (mapping) => mapping.name === activeName
         );
+
         function ignoreFilterCounterRule(rule) {
             const ruleToTest = _.cloneDeep(rule);
             delete ruleToTest.filterCounter;
             return ruleToTest;
         }
+
         return !(
             _.isEqual(
                 activeRules.map(ignoreFilterCounterRule),
                 foundMapping.rules.map(ignoreFilterCounterRule)
-            ) && _.isEqual(activeAutomata, foundMapping.automata)
+            ) &&
+            _.isEqual(activeAutomata, foundMapping.automata) &&
+            _.isEqual(controlledParameters, foundMapping.controlledParameters)
         );
     }
 );
@@ -432,17 +452,32 @@ export const postMapping = createAsyncThunk(
                   )?.automata
                 : state?.mappings.automata;
         const formattedAutomata = automata.map((automaton) => {
-            const { family, watchedElement, model, properties } = automaton;
-            const formattedAutomaton = { family, watchedElement, model };
+            const { family, watchedElement, model, setGroup, properties } =
+                automaton;
+            const formattedAutomaton = {
+                family,
+                watchedElement,
+                model,
+                setGroup,
+            };
             properties.forEach((property) => {
                 formattedAutomaton[property.name] = property.value;
             });
             return formattedAutomaton;
         });
+
+        const controlledParameters =
+            name && name !== state?.mappings.activeMapping
+                ? state?.mappings.mappings.find(
+                      (mapping) => mapping.name === name
+                  )?.controlledParameters
+                : state?.mappings.controlledParameters;
+
         const response = await mappingsAPI.postMapping(
             mappingName,
             augmentedRules,
             formattedAutomata,
+            controlledParameters,
             token
         );
         return response.json();
@@ -508,6 +543,9 @@ const reducers = {
                 ? ''
                 : filteredAutomatonFamily;
     },
+    changeControlledParameters: (state) => {
+        state.controlledParameters = !state.controlledParameters;
+    },
     // Rule
     addRule: (state) => {
         const newRule = _.cloneDeep(DEFAULT_RULE);
@@ -537,6 +575,11 @@ const reducers = {
         filterRulesByType(state.rules, state.filteredRuleType)[
             index
         ].mappedModel = mappedModel;
+    },
+    changeRuleParameters: (state, action) => {
+        const { index, parameters } = action.payload;
+        filterRulesByType(state.rules, state.filteredRuleType)[index].setGroup =
+            parameters;
     },
     deleteRule: (state, action) => {
         const { index } = action.payload;
@@ -681,6 +724,14 @@ const reducers = {
             state.filteredAutomatonFamily
         )[index];
         selectedAutomaton.model = model;
+    },
+    changeAutomatonParameters: (state, action) => {
+        const { index, parameters } = action.payload;
+        const selectedAutomaton = filterAutomataByFamily(
+            state.automata,
+            state.filteredAutomatonFamily
+        )[index];
+        selectedAutomaton.setGroup = parameters;
     },
     changeAutomatonWatchedElement: (state, action) => {
         const { index, watchedElement } = action.payload;

@@ -10,33 +10,9 @@ const API_URL =
     (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
         ? process.env.REACT_APP_GATEWAY_PREFIX + '/dynamic-mapping'
         : process.env.REACT_APP_URI) +
-    '/mappings';
+    '/models';
 
-export function postMapping(
-    mappingName,
-    rules,
-    automata,
-    controlledParameters,
-    token
-) {
-    return fetch(`${API_URL}/${mappingName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-        },
-        cache: 'default',
-        body: JSON.stringify({
-            name: mappingName,
-            rules,
-            automata,
-            controlledParameters,
-        }),
-    });
-}
-
-export function getMappings(token) {
+export function getModels(token) {
     return fetch(`${API_URL}/`, {
         method: 'GET',
         headers: {
@@ -48,9 +24,9 @@ export function getMappings(token) {
     });
 }
 
-export function deleteMapping(mappingName, token) {
-    return fetch(`${API_URL}/${mappingName}`, {
-        method: 'DELETE',
+export function getModelDefinitions(modelName, token) {
+    return fetch(`${API_URL}/${modelName}/parameters/definitions/`, {
+        method: 'GET',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -60,9 +36,9 @@ export function deleteMapping(mappingName, token) {
     });
 }
 
-export async function renameMapping(nameToReplace, newName, token) {
-    return fetch(`${API_URL}/rename/${nameToReplace}/to/${newName}`, {
-        method: 'POST',
+export function getModelSets(modelName, token) {
+    return fetch(`${API_URL}/${modelName}/parameters/sets/`, {
+        method: 'GET',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -72,8 +48,8 @@ export async function renameMapping(nameToReplace, newName, token) {
     });
 }
 
-export async function copyMapping(originalName, copyName, token) {
-    return fetch(`${API_URL}/copy/${originalName}/to/${copyName}`, {
+export function postModelSetWithInstance(instanceModel, set, token) {
+    return fetch(`${API_URL}/${instanceModel.modelName}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -81,5 +57,25 @@ export async function copyMapping(originalName, copyName, token) {
             Authorization: 'Bearer ' + token,
         },
         cache: 'default',
+        body: JSON.stringify({
+            instance: instanceModel,
+            set,
+        }),
+    });
+}
+
+export function postModelSetWithoutInstance(set, token) {
+    return fetch(`${API_URL}/${set.modelName}`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+        },
+        cache: 'default',
+        body: JSON.stringify({
+            instance: null,
+            set,
+        }),
     });
 }
