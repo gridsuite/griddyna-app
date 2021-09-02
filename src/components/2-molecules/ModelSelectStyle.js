@@ -10,8 +10,13 @@ import { makeStyles } from '@material-ui/core';
 export const useStyles = makeStyles({
     titleSelect: {},
     box: {},
+    infoGrid: {
+        height: '100%',
+    },
     tooltip: {
-        marginTop: '1em',
+        marginTop: '3em',
+        justifyContent: 'center',
+        display: 'flex',
     },
     button: {
         justifyContent: 'center',

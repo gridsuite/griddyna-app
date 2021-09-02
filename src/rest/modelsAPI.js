@@ -50,7 +50,7 @@ export function getModelSets(modelName, groupName, token) {
 
 export function postModelSetsGroup(setGroup, strict, token) {
     return fetch(
-        `${API_URL}/${setGroup.modelName}/parameters/sets/${
+        `${API_URL}/${setGroup.modelName}/parameters/sets${
             strict ? '/strict' : ''
         }/`,
         {

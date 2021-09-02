@@ -12,6 +12,21 @@ export const SetType = {
 };
 Object.freeze(SetType);
 
+export const ParameterOrigin = {
+    USER: 'USER',
+    NETWORK: 'NETWORK',
+    FIXED: 'FIXED',
+};
+Object.freeze(ParameterOrigin);
+
+export const ParameterType = {
+    INT: 'INT',
+    BOOL: 'BOOL',
+    DOUBLE: 'DOUBLE',
+    STRING: 'STRING',
+};
+Object.freeze(ParameterType);
+
 export const GroupEditionOrigin = {
     RULE: 'RULE',
     AUTOMATON: 'AUTOMATON',
