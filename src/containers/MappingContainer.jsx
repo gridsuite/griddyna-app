@@ -247,6 +247,8 @@ const MappingContainer = () => {
                 <ParametersContainer
                     model={editParameters.model}
                     setGroup={editParameters.setGroup}
+                    origin={editParameters.origin}
+                    originIndex={editParameters.originIndex}
                     close={() => setEditParameters(undefined)}
                 />
             )}

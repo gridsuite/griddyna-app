@@ -36,8 +36,8 @@ export function getModelDefinitions(modelName, token) {
     });
 }
 
-export function getModelSets(modelName, token) {
-    return fetch(`${API_URL}/${modelName}/parameters/sets/`, {
+export function getModelSets(modelName, groupName, token) {
+    return fetch(`${API_URL}/${modelName}/parameters/sets/${groupName}`, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -48,34 +48,20 @@ export function getModelSets(modelName, token) {
     });
 }
 
-export function postModelSetWithInstance(instanceModel, set, token) {
-    return fetch(`${API_URL}/${instanceModel.modelName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-        },
-        cache: 'default',
-        body: JSON.stringify({
-            instance: instanceModel,
-            set,
-        }),
-    });
-}
-
-export function postModelSetWithoutInstance(set, token) {
-    return fetch(`${API_URL}/${set.modelName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-        },
-        cache: 'default',
-        body: JSON.stringify({
-            instance: null,
-            set,
-        }),
-    });
+export function postModelSetsGroup(setGroup, strict, token) {
+    return fetch(
+        `${API_URL}/${setGroup.modelName}/parameters/sets/${
+            strict ? '/strict' : ''
+        }/`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token,
+            },
+            cache: 'default',
+            body: JSON.stringify(setGroup),
+        }
+    );
 }

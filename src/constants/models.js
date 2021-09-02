@@ -12,4 +12,8 @@ export const SetType = {
 };
 Object.freeze(SetType);
 
-export const MODEL_SEPARATOR = '--';
+export const GroupEditionOrigin = {
+    RULE: 'RULE',
+    AUTOMATON: 'AUTOMATON',
+};
+Object.freeze(GroupEditionOrigin);
