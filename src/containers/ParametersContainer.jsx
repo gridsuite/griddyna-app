@@ -9,6 +9,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getModelDefinitions,
+    getModels,
     getModelSets,
     makeGetModel,
     ModelSlice,
@@ -27,6 +28,7 @@ import PropTypes from 'prop-types';
 import DotStepper from '../components/2-molecules/DotStepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
+import { isSetValid } from '../utils/parameters';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -46,7 +48,7 @@ const ParametersContainer = ({
     useEffect(() => {
         dispatch(getModelSets({ modelName: model, groupName: setGroup }));
         dispatch(getModelDefinitions(model));
-    }, [dispatch, model]);
+    }, [dispatch, model, setGroup]);
 
     const getModel = useMemo(makeGetModel, []);
     const modelToEdit = useSelector((state) => getModel(state, model));
@@ -98,11 +100,16 @@ const ParametersContainer = ({
                 parameters: currentGroup.name,
             })
         );
+        dispatch(getModels());
+
         close();
     };
 
-    const isErrorName = otherGroups.includes(currentGroup.name);
-    const isError = isErrorName;
+    const isErrorName =
+        currentGroup.name === '' || otherGroups.includes(currentGroup.name);
+    const isErrorSets = !isSetValid(currentSet, definitions);
+
+    const isError = isErrorName || (step > 0 && isErrorSets);
 
     useEffect(() => {
         dispatch(
@@ -111,9 +118,7 @@ const ParametersContainer = ({
                 modelName: model,
             })
         );
-        // return () =>
-        //     dispatch(ModelSlice.actions.changeGroup({ modelName: '' }));
-    }, [dispatch]);
+    }, [dispatch, groupToEdit, model]);
 
     return (
         <Dialog open={true} onClose={close}>

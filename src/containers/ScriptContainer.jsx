@@ -23,6 +23,8 @@ const ScriptContainer = () => {
     // TODO Add path parameter here
     const activeScript = useSelector((state) => state.scripts.activeScript);
     const script = useSelector((state) => state.scripts.text);
+    const parametersFile = useSelector((state) => state.scripts.parametersFile);
+    const isCurrent = useSelector((state) => state.scripts.isCurrent);
     const isModified = useSelector(isModifiedSelector);
     const dispatch = useDispatch();
 
@@ -41,8 +43,13 @@ const ScriptContainer = () => {
                 isModified={isModified}
                 save={saveScript}
                 saveTooltip={SAVE_LABEL}
+                isCurrent={isCurrent}
             />
-            <Script script={script} setScript={setScript} />
+            <Script
+                script={script}
+                setScript={setScript}
+                parametersFile={parametersFile}
+            />
         </Paper>
     );
 };

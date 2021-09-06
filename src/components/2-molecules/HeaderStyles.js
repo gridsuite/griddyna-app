@@ -8,16 +8,27 @@
 import { makeStyles } from '@material-ui/core';
 
 const ICON_SIZE = '2em';
+
+const displayColor = (isValid, isCurrent) => {
+    if (!isValid) {
+        return 'red';
+    } else if (!isCurrent) {
+        return 'orange';
+    } else {
+        return undefined;
+    }
+};
+
 export const useStyles = makeStyles({
-    headerBox: ({ isValid }) => ({
+    headerBox: ({ isValid, isCurrent }) => ({
         border: '5px solid',
         borderRadius: '10px',
         marginBottom: '5px',
-        borderColor: !isValid ? 'red' : undefined,
+        borderColor: displayColor(isValid, isCurrent),
     }),
-    title: ({ isModified, isValid }) => ({
+    title: ({ isModified, isValid, isCurrent }) => ({
         fontStyle: isModified ? 'italic' : undefined,
-        color: !isValid ? 'red' : undefined,
+        color: displayColor(isValid, isCurrent),
     }),
     titleBox: {
         position: 'relative',

@@ -11,38 +11,67 @@ import PropTypes from 'prop-types';
 
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-monokai';
+import { Divider, Typography } from '@material-ui/core';
 
+const parametersLabel = 'models.par';
 const Script = (props) => {
-    const { script, setScript } = props;
+    const { script, setScript, parametersFile } = props;
 
     return (
-        <AceEditor
-            placeholder="Script"
-            mode="java"
-            theme="monokai"
-            name="script"
-            width="100%"
-            height="75vh"
-            onChange={setScript}
-            fontSize={14}
-            showPrintMargin={false}
-            showGutter={true}
-            highlightActiveLine={true}
-            value={script}
-            setOptions={{
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: false,
-                enableSnippets: false,
-                showLineNumbers: true,
-                tabSize: 2,
-            }}
-        />
+        <>
+            <AceEditor
+                placeholder="Script"
+                mode="java"
+                theme="monokai"
+                name="script"
+                width="100%"
+                height={parametersFile ? '37vh' : '75vh'}
+                onChange={setScript}
+                fontSize={14}
+                showPrintMargin={false}
+                showGutter={true}
+                highlightActiveLine={true}
+                value={script}
+                setOptions={{
+                    enableBasicAutocompletion: true,
+                    enableLiveAutocompletion: false,
+                    enableSnippets: false,
+                    showLineNumbers: true,
+                    tabSize: 2,
+                }}
+            />
+            {parametersFile && (
+                <>
+                    <Divider />
+                    <Typography variant="h3">{`${parametersLabel} :`}</Typography>
+                    <AceEditor
+                        placeholder="Params"
+                        mode="java"
+                        theme="monokai"
+                        name="params"
+                        width="100%"
+                        height="37vh"
+                        readOnly
+                        fontSize={14}
+                        showPrintMargin={false}
+                        showGutter={true}
+                        highlightActiveLine={true}
+                        value={parametersFile}
+                        setOptions={{
+                            showLineNumbers: true,
+                            tabSize: 2,
+                        }}
+                    />
+                </>
+            )}
+        </>
     );
 };
 
 Script.propTypes = {
     script: PropTypes.string.isRequired,
     setScript: PropTypes.func.isRequired,
+    parametersFile: PropTypes.string,
 };
 
 export default Script;

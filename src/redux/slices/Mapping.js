@@ -786,6 +786,7 @@ const reducers = {
             state.activeMapping = DEFAULT_NAME;
             state.rules = [];
             state.automata = [];
+            state.controlledParameters = false;
         }
     },
     selectMapping: (state, action) => {
@@ -797,12 +798,14 @@ const reducers = {
             state.rules = mappingToUse.rules;
             state.automata = mappingToUse.automata;
             state.activeMapping = name;
+            state.controlledParameters = mappingToUse.controlledParameters;
         }
     },
     deselectMapping: (state, _action) => {
         state.rules = [];
         state.automata = [];
         state.activeMapping = '';
+        state.controlledParameters = false;
     },
 };
 
@@ -816,9 +819,13 @@ const extraReducers = {
         if (foundMapping) {
             foundMapping.rules = receivedMapping.rules;
             foundMapping.automata = receivedMapping.automata;
+            foundMapping.controlledParameters =
+                receivedMapping.controlledParameters;
             if (receivedMapping.name === state.activeMapping) {
                 state.rules = receivedMapping.rules;
                 state.automata = receivedMapping.automata;
+                state.controlledParameters =
+                    receivedMapping.controlledParameters;
             }
         }
     },
