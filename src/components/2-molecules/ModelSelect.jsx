@@ -51,7 +51,11 @@ const ModelSelect = (props) => {
     }));
     groupOptions.push({ label: newGroupLabel, value: '' });
 
-    const classes = useStyles();
+    const errorInParams =
+        controlledParameters &&
+        (foundGroup === undefined || foundGroup.setsNumber === 0);
+
+    const classes = useStyles({ errorInParams });
 
     return (
         <Box className={classes.box}>

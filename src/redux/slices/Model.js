@@ -151,6 +151,7 @@ const extraReducers = {
             const simpleUpdatedGroup = {
                 name: updatedGroup.name,
                 type: updatedGroup.type,
+                setsNumber: updatedGroup.sets.length,
             };
             const groupIndex = updatedModel.groups.findIndex(
                 (group) => group.name === simpleUpdatedGroup.name
