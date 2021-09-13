@@ -58,7 +58,7 @@ const AttachDialog = (props) => {
                             <Grid item xs={10}>
                                 <Autocomplete
                                     options={networks.map((network) => ({
-                                        label: network.iidmName,
+                                        label: network.networkName,
                                         value: network.networkId,
                                     }))}
                                     value={networkId}
