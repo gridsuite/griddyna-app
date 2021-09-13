@@ -8,25 +8,25 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    MappingSlice,
-    getMappingsInfo,
-    getMappings,
-    deleteMapping as deleteMappingAction,
-    renameMapping as renameMappingAction,
-    copyMapping as copyMappingAction,
     canCreateNewMapping,
+    copyMapping as copyMappingAction,
+    deleteMapping as deleteMappingAction,
+    getMappings,
+    getMappingsInfo,
+    MappingSlice,
+    renameMapping as renameMappingAction,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
 import {
-    ScriptsSlice,
     convertScript,
+    copyScript as copyScriptAction,
+    deleteScript as deleteScriptAction,
     getScripts,
     getScriptsInfo,
-    deleteScript as deleteScriptAction,
     renameScript as renameScriptAction,
-    copyScript as copyScriptAction,
+    ScriptsSlice,
 } from '../redux/slices/Script';
-import { NetworkSlice } from '../redux/slices/Network';
+import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
 import { Divider, Typography } from '@material-ui/core';
 
 const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
@@ -43,6 +43,7 @@ const MenuContainer = () => {
     useEffect(() => {
         dispatch(getMappings());
         dispatch(getScripts());
+        dispatch(getNetworkNames());
     }, [dispatch]);
 
     // Mappings

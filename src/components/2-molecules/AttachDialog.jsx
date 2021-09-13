@@ -7,7 +7,6 @@
 
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -16,16 +15,13 @@ import PropTypes from 'prop-types';
 import { Divider, Grid, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { useStyles } from './AttachDialogStyles';
+import Autocomplete from '../1-atoms/Autocomplete';
 
 const AttachDialog = (props) => {
-    const { open, handleClose, attachWithFile, attachWithId } = props;
+    const { open, handleClose, attachWithFile, networks, attachWithId } = props;
     const [file, setFile] = useState(null);
     const [networkId, setNetworkId] = useState('');
     const classes = useStyles();
-
-    const onChangeId = (event) => {
-        setNetworkId(event.target.value);
-    };
 
     const onChangeFile = (event) => {
         setFile(event.target.files[0]);
@@ -55,21 +51,18 @@ const AttachDialog = (props) => {
             <DialogTitle id="form-dialog-title">Attach a Network</DialogTitle>
             <Divider />
             <DialogContent>
-                {attachWithId && (
+                {attachWithId && networks.length > 0 && (
                     <Box>
-                        <Typography>
-                            Attach a known network using its id:
-                        </Typography>
+                        <Typography>Attach a known network :</Typography>
                         <Grid container className={classes.margins}>
                             <Grid item xs={10}>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="networkId"
-                                    label="Network UUID"
-                                    fullWidth
+                                <Autocomplete
+                                    options={networks.map((network) => ({
+                                        label: network.iidmName,
+                                        value: network.networkId,
+                                    }))}
                                     value={networkId}
-                                    onChange={onChangeId}
+                                    onChange={setNetworkId}
                                 />
                             </Grid>
                             <Grid item xs={2}>
@@ -121,6 +114,7 @@ const AttachDialog = (props) => {
 
 AttachDialog.propTypes = {
     open: PropTypes.bool.isRequired,
+    networks: PropTypes.array.isRequired,
     handleClose: PropTypes.func.isRequired,
     attachWithFile: PropTypes.func,
     attachWithId: PropTypes.func,

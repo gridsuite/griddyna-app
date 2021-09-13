@@ -38,3 +38,15 @@ export function getPropertyValuesFromId(networkId, token) {
         cache: 'default',
     });
 }
+
+export function getNetworksName(token) {
+    return fetch(`${API_URL}/`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+        },
+        cache: 'default',
+    });
+}

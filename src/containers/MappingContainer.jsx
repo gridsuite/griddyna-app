@@ -5,19 +5,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    MappingSlice,
     getRulesNumber,
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
+    MappingSlice,
     postMapping,
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
 import {
-    getPropertyValuesFromNetworkId,
+    getNetworkNames,
     getPropertyValuesFromFile,
+    getPropertyValuesFromNetworkId,
 } from '../redux/slices/Network';
 import { List, Paper } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
@@ -36,7 +37,13 @@ const MappingContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
+    const networks = useSelector((state) => state.network.knownNetworks);
+    const networkValues = useSelector((state) => state.network.propertyValues);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getNetworkNames());
+    }, [networkValues, dispatch]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -67,6 +74,7 @@ const MappingContainer = () => {
         }
         return rules;
     }
+
     return (
         <>
             <Paper>
@@ -87,6 +95,7 @@ const MappingContainer = () => {
             </Paper>
             <AttachDialog
                 open={isModalOpen}
+                networks={networks}
                 handleClose={() => setIsModalOpen(false)}
                 attachWithId={attachWithId}
                 attachWithFile={attachWithFile}

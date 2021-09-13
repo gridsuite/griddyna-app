@@ -16,6 +16,7 @@ import { PropertyType } from '../../constants/equipmentDefinition';
 
 const initialState = {
     propertyValues: [],
+    knownNetworks: [],
     status: RequestStatus.IDLE,
 };
 
@@ -64,6 +65,15 @@ export const getPropertyValuesFromNetworkId = createAsyncThunk(
     }
 );
 
+export const getNetworkNames = createAsyncThunk(
+    'network/getNetworks',
+    async (_args, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await networkAPI.getNetworksName(token);
+        return response.json();
+    }
+);
+
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
@@ -88,6 +98,16 @@ const extraReducers = {
     [getPropertyValuesFromNetworkId.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
         state.propertyValues = action.payload;
+    },
+    [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
+        state.status = RequestStatus.ERROR;
+    },
+    [getPropertyValuesFromNetworkId.pending]: (state, _action) => {
+        state.status = RequestStatus.PENDING;
+    },
+    [getNetworkNames.fulfilled]: (state, action) => {
+        state.status = RequestStatus.SUCCESS;
+        state.knownNetworks = action.payload;
     },
     [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
