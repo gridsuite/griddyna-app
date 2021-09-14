@@ -19,6 +19,7 @@ import Autocomplete from '../1-atoms/Autocomplete';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';
+const PRECISION = 10e-8;
 
 const Filter = (props) => {
     const {
@@ -46,7 +47,7 @@ const Filter = (props) => {
     const isSelect = possibleValues.length > 0;
     const classes = useStyles({ isValid, isSelect });
 
-    const joinOptions = _.uniqBy(
+    const joinOptions = _.uniqWith(
         [
             // Values known as possible
             ...possibleValues,
@@ -62,7 +63,16 @@ const Filter = (props) => {
                   }))
                 : []),
         ],
-        'value'
+        (option1, option2) => {
+            const type = autocompleteType(propertyType);
+            if (type === 'number') {
+                // Filtering identical number (float comparison issues)
+                console.log(option1, option2);
+                return Math.abs(option1.value - option2.value) < PRECISION;
+            } else {
+                return option1.value === option2.value;
+            }
+        }
     );
 
     function autocompleteType(type) {
