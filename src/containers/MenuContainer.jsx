@@ -50,6 +50,7 @@ const MenuContainer = () => {
     const addMapping = () => {
         dispatch(MappingSlice.actions.createMapping());
         dispatch(NetworkSlice.actions.cleanNetwork());
+        dispatch(MappingSlice.actions.changeFilteredType(''));
     };
 
     const renameMapping = (name) => (newName) => {
@@ -66,12 +67,14 @@ const MenuContainer = () => {
         dispatch(MappingSlice.actions.selectMapping({ name }));
         dispatch(ScriptsSlice.actions.deselectScript());
         dispatch(NetworkSlice.actions.cleanNetwork());
+        dispatch(MappingSlice.actions.changeFilteredType(''));
     };
 
     const deleteMapping = (name) => () => {
         dispatch(deleteMappingAction(name));
         if (name === selectedMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
+            dispatch(MappingSlice.actions.changeFilteredType(''));
         }
     };
 

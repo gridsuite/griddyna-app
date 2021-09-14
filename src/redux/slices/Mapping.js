@@ -6,17 +6,20 @@
  */
 
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { EnumOperands } from '../../constants/operands';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
 import { getProperty } from '../../utils/properties';
+import { multipleOperands } from '../../constants/operands';
+import { EquipmentType } from '../../constants/equipmentDefinition';
+
 const initialState = {
     mappings: [],
     activeMapping: '',
     rules: [],
     status: RequestStatus.IDLE,
+    filteredType: '',
 };
 
 const DEFAULT_RULE = {
@@ -51,13 +54,42 @@ const transformMapping = (receivedMapping) => {
     return mapping;
 };
 
+const filterRulesByType = (rules, type) =>
+    rules.filter(
+        (rule) => type === '' || rule.type === '' || rule.type === type
+    );
+
 // Selectors
 
-export const getRulesNumber = (state) => state.mappings.rules.length;
+export const getSortedRulesNumber = (state) => {
+    let sortedRulesNumber = {};
+    Object.values(EquipmentType).forEach((type) => {
+        sortedRulesNumber[type] = 0;
+    });
+
+    state.mappings.rules.forEach((rule) => {
+        if (rule.type !== '') {
+            sortedRulesNumber[rule.type]++;
+        }
+    });
+    return sortedRulesNumber;
+};
+
+export const getRulesNumber = (state) =>
+    state.mappings.rules.filter(
+        (rule) =>
+            state.mappings.filteredType === '' ||
+            rule.type === '' ||
+            rule.type === state.mappings.filteredType
+    ).length;
 
 export const makeGetRule = () =>
     createSelector(
-        (state) => state.mappings.rules,
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredType
+            ),
         (_state, index) => index,
         (rules, index) => {
             const foundRule = rules[index];
@@ -74,7 +106,11 @@ export const makeGetRule = () =>
 
 export const makeGetFilter = () =>
     createSelector(
-        (state) => state.mappings.rules,
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredType
+            ),
         (_state, indexes) => indexes,
         (rules, indexes) => rules[indexes.rule].filters[indexes.filter]
     );
@@ -84,7 +120,11 @@ const checkFilterValidity = (filter) =>
 
 export const makeIsFilterValid = () =>
     createSelector(
-        (state) => state.mappings.rules,
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredType
+            ),
         (_state, indexes) => indexes,
         (rules, indexes) =>
             checkFilterValidity(rules[indexes.rule].filters[indexes.filter])
@@ -103,7 +143,11 @@ const checkRuleValidity = (rule) => {
 };
 export const makeIsRuleValid = () =>
     createSelector(
-        (state) => state.mappings.rules,
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredType
+            ),
         (_state, index) => index,
         (rules, index) => checkRuleValidity(rules[index])
     );
@@ -235,34 +279,52 @@ export const copyMapping = createAsyncThunk(
 const reducers = {
     // Active Mapping
 
+    changeFilteredType: (state, action) => {
+        const filteredType = action.payload;
+        state.filteredType =
+            state.filteredType === filteredType ? '' : filteredType;
+    },
     addRule: (state) => {
-        state.rules.push(DEFAULT_RULE);
+        const newRule = _.cloneDeep(DEFAULT_RULE);
+        newRule.type = state.filteredType;
+        state.rules.push(newRule);
     },
     changeRuleType: (state, action) => {
         const { index, equipmentType } = action.payload;
-        state.rules[index] = {
-            ...DEFAULT_RULE,
-            type: equipmentType,
-        };
+        const selectedRule = filterRulesByType(state.rules, state.filteredType)[
+            index
+        ];
+        selectedRule.type = equipmentType;
+        selectedRule.composition = DEFAULT_RULE.composition;
+        selectedRule.filters = DEFAULT_RULE.filters;
+        selectedRule.mappedModel = DEFAULT_RULE.mappedModel;
+        selectedRule.filterCounter = DEFAULT_RULE.filterCounter;
     },
     changeRuleComposition: (state, action) => {
         const { index, composition } = action.payload;
-        state.rules[index].composition = composition;
+        filterRulesByType(state.rules, state.filteredType)[index].composition =
+            composition;
     },
     changeRuleModel: (state, action) => {
         const { index, mappedModel } = action.payload;
-        state.rules[index].mappedModel = mappedModel;
+        filterRulesByType(state.rules, state.filteredType)[index].mappedModel =
+            mappedModel;
     },
     addFilter: (state, action) => {
         const { index } = action.payload;
-        const newId = `filter${state.rules[index].filterCounter++}`;
+        const newId = `filter${filterRulesByType(
+            state.rules,
+            state.filteredType
+        )[index].filterCounter++}`;
         const newFilter = {
             id: newId,
             property: '',
             operand: '',
             value: '',
         };
-        const selectedRule = state.rules[index];
+        const selectedRule = filterRulesByType(state.rules, state.filteredType)[
+            index
+        ];
         selectedRule.filters.push(newFilter);
         selectedRule.composition =
             selectedRule.filters.length === 1
@@ -271,28 +333,37 @@ const reducers = {
     },
     changeFilterProperty: (state, action) => {
         const { ruleIndex, filterIndex, property } = action.payload;
-        const modifiedFilter = state.rules[ruleIndex].filters[filterIndex];
+        const modifiedFilter = filterRulesByType(
+            state.rules,
+            state.filteredType
+        )[ruleIndex].filters[filterIndex];
         modifiedFilter.property = property;
         modifiedFilter.operand = '';
         modifiedFilter.value = '';
     },
     changeFilterOperand: (state, action) => {
         const { ruleIndex, filterIndex, operand } = action.payload;
-        const modifiedFilter = state.rules[ruleIndex].filters[filterIndex];
-        const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(
-            operand
-        );
+        const modifiedFilter = filterRulesByType(
+            state.rules,
+            state.filteredType
+        )[ruleIndex].filters[filterIndex];
+        const multiple = multipleOperands.includes(operand);
         modifiedFilter.operand = operand;
         modifiedFilter.value = multiple ? [] : '';
     },
     changeFilterValue: (state, action) => {
         const { ruleIndex, filterIndex, value } = action.payload;
-        const modifiedFilter = state.rules[ruleIndex].filters[filterIndex];
+        const modifiedFilter = filterRulesByType(
+            state.rules,
+            state.filteredType
+        )[ruleIndex].filters[filterIndex];
         modifiedFilter.value = value;
     },
     deleteFilter: (state, action) => {
         const { ruleIndex, filterIndex } = action.payload;
-        const ruleToModify = state.rules[ruleIndex];
+        const ruleToModify = filterRulesByType(state.rules, state.filteredType)[
+            ruleIndex
+        ];
         const filterIdToDelete = ruleToModify.filters[filterIndex].id;
         const newFilters = ruleToModify.filters.filter(
             (value, index) => index !== filterIndex
@@ -305,11 +376,13 @@ const reducers = {
     },
     copyFilter: (state, action) => {
         const { ruleIndex, filterIndex } = action.payload;
-        let filters = state.rules[ruleIndex].filters;
+        const selectedRule = filterRulesByType(state.rules, state.filteredType)[
+            ruleIndex
+        ];
+        let filters = selectedRule.filters;
         const filterToCopy = _.cloneDeep(filters[filterIndex]);
-        const newId = `filter${state.rules[ruleIndex].filterCounter++}`;
+        const newId = `filter${selectedRule.filterCounter++}`;
         filterToCopy.id = newId;
-        const selectedRule = state.rules[ruleIndex];
         selectedRule.filters.push(filterToCopy);
         selectedRule.composition =
             selectedRule.filters.length === 1

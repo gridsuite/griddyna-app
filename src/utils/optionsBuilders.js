@@ -7,7 +7,6 @@
 
 import {
     BaseOperands,
-    EnumOperands,
     NumberOperands,
     StringOperands,
 } from '../constants/operands';
@@ -36,25 +35,6 @@ export function getOperandsOptions(propertyType) {
                 },
                 // Since choices are always True/False, having both is redundant
             ];
-        case PropertyType.ENUM:
-            return [
-                {
-                    value: EnumOperands.EQUALS,
-                    label: '=',
-                },
-                {
-                    value: EnumOperands.NOT_EQUALS,
-                    label: '!=',
-                },
-                {
-                    value: EnumOperands.IN,
-                    label: 'is in',
-                },
-                {
-                    value: EnumOperands.NOT_IN,
-                    label: 'is not in',
-                },
-            ];
         case PropertyType.NUMBER:
             return [
                 {
@@ -81,6 +61,14 @@ export function getOperandsOptions(propertyType) {
                     value: NumberOperands.HIGHER,
                     label: '>',
                 },
+                {
+                    value: NumberOperands.IN,
+                    label: 'is in',
+                },
+                {
+                    value: NumberOperands.NOT_IN,
+                    label: 'is not in',
+                },
             ];
         case PropertyType.STRING:
             return [
@@ -104,16 +92,24 @@ export function getOperandsOptions(propertyType) {
                     value: StringOperands.ENDS_WITH,
                     label: 'ends with',
                 },
+                {
+                    value: StringOperands.IN,
+                    label: 'is in',
+                },
+                {
+                    value: StringOperands.NOT_IN,
+                    label: 'is not in',
+                },
             ];
         default:
             return [];
     }
 }
 
-// TODO Add label here for translations
+// TODO Intl
 export function getPropertiesOptions(type) {
     return EquipmentProperties[type].map((property) => ({
-        label: property.name,
+        label: property.label ?? property.name,
         value: property.name,
     }));
 }

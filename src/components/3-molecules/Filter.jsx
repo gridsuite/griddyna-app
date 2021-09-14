@@ -13,12 +13,13 @@ import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { PropertyType } from '../../constants/equipmentDefinition';
-import { EnumOperands } from '../../constants/operands';
+import { multipleOperands } from '../../constants/operands';
 import { useStyles } from './FilterStyle';
 import Autocomplete from '../1-atoms/Autocomplete';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';
+const PRECISION = 10e-8;
 
 const Filter = (props) => {
     const {
@@ -42,11 +43,11 @@ const Filter = (props) => {
 
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
-    const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(operand);
+    const multiple = multipleOperands.includes(operand);
     const isSelect = possibleValues.length > 0;
     const classes = useStyles({ isValid, isSelect });
 
-    const joinOptions = _.uniqBy(
+    const joinOptions = _.uniqWith(
         [
             // Values known as possible
             ...possibleValues,
@@ -62,7 +63,15 @@ const Filter = (props) => {
                   }))
                 : []),
         ],
-        'value'
+        (option1, option2) => {
+            const type = autocompleteType(propertyType);
+            if (type === 'number') {
+                // Filtering identical number (float comparison issues)
+                return Math.abs(option1.value - option2.value) < PRECISION;
+            } else {
+                return option1.value === option2.value;
+            }
+        }
     );
 
     function autocompleteType(type) {

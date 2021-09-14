@@ -15,6 +15,8 @@ export const StringOperands = {
     INCLUDES: 'INCLUDES',
     STARTS_WITH: 'STARTS_WITH',
     ENDS_WITH: 'ENDS_WITH',
+    IN: 'IN',
+    NOT_IN: 'NOT_IN',
 };
 export const NumberOperands = {
     ...BaseOperands,
@@ -22,10 +24,13 @@ export const NumberOperands = {
     LOWER_OR_EQUALS: 'LOWER_OR_EQUALS',
     HIGHER_OR_EQUALS: 'HIGHER_OR_EQUALS',
     HIGHER: 'HIGHER',
-};
-
-export const EnumOperands = {
-    ...BaseOperands,
     IN: 'IN',
     NOT_IN: 'NOT_IN',
 };
+
+export const multipleOperands = [
+    NumberOperands.IN,
+    NumberOperands.NOT_IN,
+    StringOperands.IN,
+    StringOperands.NOT_IN,
+];

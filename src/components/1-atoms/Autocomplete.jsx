@@ -11,6 +11,8 @@ import { Autocomplete as MuiAutocomplete } from '@material-ui/lab';
 import { Popper, TextField } from '@material-ui/core';
 import { useStyles } from './AutocompleteStyles';
 
+const PRECISION = 10e-8;
+
 const Autocomplete = (props) => {
     const {
         value,
@@ -23,16 +25,25 @@ const Autocomplete = (props) => {
         isMultiple = false,
     } = props;
 
-    const matchMultipleOptions = useCallback((options, values) => {
-        const matchedOptions = [];
-        values.forEach((value) => {
-            let foundOption = options.find((option) => option.value === value);
-            if (foundOption) {
-                matchedOptions.push(foundOption);
-            }
-        });
-        return matchedOptions;
-    }, []);
+    const matchMultipleOptions = useCallback(
+        (options, values) => {
+            const matchedOptions = [];
+            values.forEach((value) => {
+                let foundOption = options.find((option) => {
+                    if (type === 'number') {
+                        return Math.abs(option.value - value) < PRECISION;
+                    } else {
+                        return option.value === value;
+                    }
+                });
+                if (foundOption) {
+                    matchedOptions.push(foundOption);
+                }
+            });
+            return matchedOptions;
+        },
+        [type]
+    );
 
     const selectedOption = useMemo(
         () =>
