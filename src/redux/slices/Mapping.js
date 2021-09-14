@@ -67,6 +67,28 @@ const transformMapping = (receivedMapping) => {
     // Avoid versions discrepancies
     if (!mapping['automata']) {
         mapping['automata'] = [];
+    } else {
+        mapping['automata'] = receivedMapping.automata.map(
+            (receivedAutomaton) => {
+                const {
+                    family,
+                    watchedElement,
+                    model,
+                    ...additionalProperties
+                } = receivedAutomaton;
+                return {
+                    family,
+                    watchedElement,
+                    model,
+                    properties: Object.keys(additionalProperties).map(
+                        (propertyKey) => ({
+                            name: propertyKey,
+                            value: additionalProperties[propertyKey],
+                        })
+                    ),
+                };
+            }
+        );
     }
 
     return mapping;
@@ -315,10 +337,25 @@ export const postMapping = createAsyncThunk(
             }
             return augmentedRule;
         });
-        // TODO: Add automata
+
+        const automata =
+            name && name !== state?.mappings.activeMapping
+                ? state?.mappings.mappings.find(
+                      (mapping) => mapping.name === name
+                  )?.automata
+                : state?.mappings.automata;
+        const formattedAutomata = automata.map((automaton) => {
+            const { family, watchedElement, model, properties } = automaton;
+            const formattedAutomaton = { family, watchedElement, model };
+            properties.forEach((property) => {
+                formattedAutomaton[property.name] = property.value;
+            });
+            return formattedAutomaton;
+        });
         const response = await mappingsAPI.postMapping(
             mappingName,
             augmentedRules,
+            formattedAutomata,
             token
         );
         return response.json();
