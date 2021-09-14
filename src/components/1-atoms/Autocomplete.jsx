@@ -25,22 +25,25 @@ const Autocomplete = (props) => {
         isMultiple = false,
     } = props;
 
-    const matchMultipleOptions = useCallback((options, values) => {
-        const matchedOptions = [];
-        values.forEach((value) => {
-            let foundOption = options.find((option) => {
-                if (type === 'number') {
-                    return Math.abs(option.value - value) < PRECISION;
-                } else {
-                    return option.value === value;
+    const matchMultipleOptions = useCallback(
+        (options, values) => {
+            const matchedOptions = [];
+            values.forEach((value) => {
+                let foundOption = options.find((option) => {
+                    if (type === 'number') {
+                        return Math.abs(option.value - value) < PRECISION;
+                    } else {
+                        return option.value === value;
+                    }
+                });
+                if (foundOption) {
+                    matchedOptions.push(foundOption);
                 }
             });
-            if (foundOption) {
-                matchedOptions.push(foundOption);
-            }
-        });
-        return matchedOptions;
-    }, []);
+            return matchedOptions;
+        },
+        [type]
+    );
 
     const selectedOption = useMemo(
         () =>
