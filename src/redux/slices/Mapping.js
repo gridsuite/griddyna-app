@@ -6,12 +6,12 @@
  */
 
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { EnumOperands } from '../../constants/operands';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
 import { getProperty } from '../../utils/properties';
+import { multipleOperands } from '../../constants/operands';
 const initialState = {
     mappings: [],
     activeMapping: '',
@@ -279,9 +279,7 @@ const reducers = {
     changeFilterOperand: (state, action) => {
         const { ruleIndex, filterIndex, operand } = action.payload;
         const modifiedFilter = state.rules[ruleIndex].filters[filterIndex];
-        const multiple = [EnumOperands.IN, EnumOperands.NOT_IN].includes(
-            operand
-        );
+        const multiple = multipleOperands.includes(operand);
         modifiedFilter.operand = operand;
         modifiedFilter.value = multiple ? [] : '';
     },

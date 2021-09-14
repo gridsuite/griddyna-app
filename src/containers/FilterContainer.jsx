@@ -18,7 +18,7 @@ import Filter from '../components/3-molecules/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
 import PropTypes from 'prop-types';
 import { PropertyType } from '../constants/equipmentDefinition';
-import { BaseOperands } from '../constants/operands';
+import { multipleOperands } from '../constants/operands';
 
 const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     // Data
@@ -62,9 +62,8 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
         );
 
     const isUniqueSelectFilter = // is an enum
-        fullProperty?.type === PropertyType.ENUM &&
         // operands only allow one string to select
-        [BaseOperands.EQUALS, BaseOperands.NOT_EQUALS].includes(operand);
+        !multipleOperands.includes(operand);
 
     const setValue = (value) =>
         dispatch(
