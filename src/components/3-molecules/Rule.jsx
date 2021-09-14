@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
-import { AddIconButton } from '../1-atoms/buttons';
+import { AddIconButton, DeleteButton, CopyButton } from '../1-atoms/buttons';
 import { Grid, Paper, TextField, Typography } from '@material-ui/core';
 import {
     getEquipmentTypesOptions,
@@ -26,6 +26,8 @@ const Rule = (props) => {
         addFilter,
         models,
         children,
+        deleteRule,
+        copyRule,
     } = props;
     const { type, composition, mappedModel } = rule;
     const classes = useStyles(isRuleValid);
@@ -35,26 +37,41 @@ const Rule = (props) => {
     const filterLabel = 'Where';
     const modelLabel = 'should be mapped to';
     const addFilterLabel = 'Add filter';
+    const deleteRuleLabel = 'Delete rule';
+    const copyRuleLabel = 'Copy Rule';
 
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
     };
     return (
         <Paper elevation={0} className={classes.rulePaper}>
-            <Grid container justify={'flex-start'}>
+            <Grid container justify={'space-between'}>
                 <Grid item>
-                    <Typography variant="h4">{equipmentLabel}</Typography>
+                    <Grid container justify={'flex-start'}>
+                        <Grid item>
+                            <Typography variant="h4">
+                                {equipmentLabel}
+                            </Typography>
+                        </Grid>
+                        <Grid item className={classes.titleSelect}>
+                            <Select
+                                options={getEquipmentTypesOptions()}
+                                value={type}
+                                setValue={changeType}
+                                error={type === ''}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h4">:</Typography>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid item className={classes.titleSelect}>
-                    <Select
-                        options={getEquipmentTypesOptions()}
-                        value={type}
-                        setValue={changeType}
-                        error={type === ''}
+                <Grid item>
+                    <DeleteButton
+                        onClick={deleteRule}
+                        tooltip={deleteRuleLabel}
                     />
-                </Grid>
-                <Grid item>
-                    <Typography variant="h4">:</Typography>
+                    <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
                 </Grid>
             </Grid>
             {rule.filtersNumber > 1 && (
@@ -111,6 +128,8 @@ Rule.propTypes = {
     changeModel: PropTypes.func.isRequired,
     addFilter: PropTypes.func.isRequired,
     models: PropTypes.array.isRequired,
+    deleteRule: PropTypes.func.isRequired,
+    copyRule: PropTypes.func.isRequired,
 };
 
 export default Rule;
