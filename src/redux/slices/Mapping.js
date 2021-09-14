@@ -109,7 +109,7 @@ const transformMapping = (receivedMapping) => {
     return mapping;
 };
 
-const filterRulesByType = (rules, type) =>
+export const filterRulesByType = (rules, type) =>
     rules.filter(
         (rule) => type === '' || rule.type === '' || rule.type === type
     );
@@ -419,7 +419,11 @@ export const canCreateNewMapping = (state) =>
     canCreateNewMappingCheck(state.mappings.mappings);
 
 // Reducers
-
+export const augmentFilter = (ruleType) => (filter) => ({
+    ...filter,
+    filterId: filter.id,
+    type: getProperty(ruleType, filter.property).type,
+});
 export const postMapping = createAsyncThunk(
     'mappings/post',
     async (name, { getState }) => {
@@ -439,11 +443,9 @@ export const postMapping = createAsyncThunk(
             augmentedRule.composition = postProcessComposition(
                 rule.composition
             );
-            augmentedRule.filters = augmentedRule.filters.map((filter) => ({
-                ...filter,
-                filterId: filter.id,
-                type: getProperty(rule.type, filter.property).type,
-            }));
+            augmentedRule.filters = augmentedRule.filters.map(
+                augmentFilter(rule.type)
+            );
             if (augmentedRule.filters.length === 0) {
                 // Even if it should be true anyway, avoid "true && true" in case of filter deletion
                 augmentedRule.composition = 'true';

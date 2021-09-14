@@ -14,10 +14,12 @@ import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
 import { PropertyType } from '../../constants/equipmentDefinition';
 import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automata';
+import { augmentFilter, filterRulesByType } from './Mapping';
 
 const initialState = {
     propertyValues: [],
     knownNetworks: [],
+    currentNetwork: '',
     status: RequestStatus.IDLE,
 };
 
@@ -94,6 +96,28 @@ export const getNetworkNames = createAsyncThunk(
     }
 );
 
+export const getNetworkMatchesFromRule = createAsyncThunk(
+    'network/getValuesFromId',
+    async (ruleIndex, { getState }) => {
+        const state = getState();
+        const token = state?.user.user?.id_token;
+        const { rules, filteredRuleType } = state?.mappings;
+        const networkId = state?.network.currentNetwork;
+        const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
+        const ruleToMatch = {
+            ruleIndex,
+            equipmentType: foundRule.type,
+            filters: foundRule.filters.map(augmentFilter(foundRule.type)),
+        };
+        const response = await networkAPI.getNetworkMatchesFromRule(
+            networkId,
+            ruleToMatch,
+            token
+        );
+        return response.json();
+    }
+);
+
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
@@ -117,7 +141,9 @@ const extraReducers = {
     },
     [getPropertyValuesFromNetworkId.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        state.propertyValues = action.payload;
+        const { propertyValues, networkId } = action.payload;
+        state.propertyValues = propertyValues;
+        state.currentNetwork = networkId;
     },
     [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
@@ -129,10 +155,10 @@ const extraReducers = {
         state.status = RequestStatus.SUCCESS;
         state.knownNetworks = action.payload;
     },
-    [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
+    [getNetworkNames.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
     },
-    [getPropertyValuesFromNetworkId.pending]: (state, _action) => {
+    [getNetworkNames.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
     },
 };

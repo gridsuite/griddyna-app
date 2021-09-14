@@ -50,3 +50,16 @@ export function getNetworksName(token) {
         cache: 'default',
     });
 }
+
+export function getNetworkMatchesFromRule(networkId, ruleToMatch, token) {
+    return fetch(`${API_URL}/${networkId}/matches/rule`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+        },
+        cache: 'default',
+        body: JSON.stringify(ruleToMatch),
+    });
+}
