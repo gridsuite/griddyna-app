@@ -18,8 +18,8 @@ export const useStyles = makeStyles((theme) => ({
     filter: {
         justifyContent: 'center',
     },
-    value: ({ isSelect }) => ({
-        margin: isSelect ? 0 : '8px',
+    value: {
+        margin: '8px',
         '& .MuiFormControl-root .MuiInput-root': {
             minHeight: '2em',
             '& .MuiSelect-root': {
@@ -27,5 +27,5 @@ export const useStyles = makeStyles((theme) => ({
                 paddingBottom: 0,
             },
         },
-    }),
+    },
 }));

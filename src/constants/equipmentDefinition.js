@@ -31,6 +31,10 @@ export const EquipmentProperties = {
             type: PropertyType.STRING,
         },
         {
+            name: 'terminal.voltageLevel.nominalV',
+            type: PropertyType.NUMBER,
+        },
+        {
             name: 'name',
             type: PropertyType.STRING,
         },
