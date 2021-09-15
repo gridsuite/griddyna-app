@@ -6,7 +6,10 @@
  */
 
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { EquipmentType } from '../../constants/equipmentDefinition';
+import {
+    AutomatonFamily,
+    EquipmentType,
+} from '../../constants/equipmentDefinition';
 // Only process instantiated models, models without parameters will be
 // put in config files when added to app.
 
@@ -44,6 +47,36 @@ const initialState = {
             params: {
                 type: 'PREFIX',
                 name: 'GSTWPR',
+            },
+        },
+        {
+            id: 'LoadAlphaBeta',
+            type: EquipmentType.LOAD,
+            name: 'LoadLab',
+            modelName: 'LoadLab',
+            params: {
+                type: 'FIXED',
+                name: 'LAB',
+            },
+        },
+        {
+            id: 'CLA_2_4',
+            type: AutomatonFamily.CURRENT_LIMIT,
+            name: 'CLA_2_4',
+            modelName: 'CLA_2_4',
+            params: {
+                type: 'FIXED',
+                name: 'CLA_2_4',
+            },
+        },
+        {
+            id: 'CLA_2_5',
+            type: AutomatonFamily.CURRENT_LIMIT,
+            name: 'CLA_2_5',
+            modelName: 'CLA_2_5',
+            params: {
+                type: 'FIXED',
+                name: 'CLA_2_5',
             },
         },
     ], // useless if alone

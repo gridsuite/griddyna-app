@@ -56,6 +56,20 @@ const RuleContainer = ({ index }) => {
         [dispatch, index]
     );
 
+    const deleteRule = () =>
+        dispatch(
+            MappingSlice.actions.deleteRule({
+                index,
+            })
+        );
+
+    const copyRule = () =>
+        dispatch(
+            MappingSlice.actions.copyRule({
+                index,
+            })
+        );
+
     const addFilter = () =>
         dispatch(
             MappingSlice.actions.addFilter({
@@ -99,6 +113,8 @@ const RuleContainer = ({ index }) => {
             changeModel={changeModel}
             addFilter={addFilter}
             models={models}
+            deleteRule={deleteRule}
+            copyRule={copyRule}
         >
             {rule.filtersNumber > 0 ? (
                 <FiltersTemplate>{buildFilters()}</FiltersTemplate>

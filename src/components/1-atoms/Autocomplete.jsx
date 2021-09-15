@@ -23,6 +23,7 @@ const Autocomplete = (props) => {
         type,
         error,
         isMultiple = false,
+        ignoreReset = false,
     } = props;
 
     const matchMultipleOptions = useCallback(
@@ -49,7 +50,7 @@ const Autocomplete = (props) => {
         () =>
             isMultiple
                 ? matchMultipleOptions(options, value)
-                : options.find((option) => option.value === value) || {
+                : options?.find((option) => option.value === value) || {
                       label: value.toString(),
                       value,
                   },
@@ -85,18 +86,20 @@ const Autocomplete = (props) => {
                     onChange(valueToSend);
                 }
             }
-            setUpdateFlag(false);
         }
+        setUpdateFlag(false);
     }, [updateFlag, isFree, isMultiple, inputValue, onChange, type]);
 
-    const onInputChange = (event, newInputValue) => {
-        if (type !== 'number') {
-            setInputValue(newInputValue.toString());
-        } else {
-            // Avoid locale misinterpretation
-            const inputToSend = newInputValue.replace(',', '.');
-            if (!Number.isNaN(Number(inputToSend))) {
-                setInputValue(inputToSend.toString());
+    const onInputChange = (_event, newInputValue, eventName) => {
+        if (eventName !== 'reset' || !ignoreReset) {
+            if (type !== 'number') {
+                setInputValue(newInputValue.toString());
+            } else {
+                // Avoid locale misinterpretation
+                const inputToSend = newInputValue.replace(',', '.');
+                if (!Number.isNaN(Number(inputToSend))) {
+                    setInputValue(inputToSend.toString());
+                }
             }
         }
     };
@@ -186,6 +189,7 @@ Autocomplete.propTypes = {
     highlightOptions: PropTypes.array,
     type: PropTypes.string,
     error: PropTypes.bool,
+    ignoreReset: PropTypes.bool,
 };
 
 export default Autocomplete;
