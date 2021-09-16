@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    getNetworkMatchesFromRule,
     makeCanUseBasicMode,
     makeGetFilterIndexes,
     makeGetRule,
@@ -71,6 +72,8 @@ const RuleContainer = ({ index, editParameters }) => {
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
+
+    const currentNetwork = useSelector((state) => state.network.currentNetwork);
     const dispatch = useDispatch();
     const [isAdvancedComposition, setIsAdvancedComposition] = useState(
         !canUseBasicMode
@@ -236,6 +239,12 @@ const RuleContainer = ({ index, editParameters }) => {
     }, [type, models, changeModel, mappedModel]);
 
     const showAdvanced = isAdvancedComposition || filtersNumber === 1;
+    useEffect(() => {
+        if (currentNetwork !== '' && isRuleValid) {
+            dispatch(getNetworkMatchesFromRule(index));
+        }
+    }, [currentNetwork, isRuleValid, index, composition, dispatch]);
+
     return (
         <Rule
             rule={rule}

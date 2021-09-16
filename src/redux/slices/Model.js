@@ -62,6 +62,10 @@ export const getModelDefinitions = createAsyncThunk(
     async (modelName, { getState }) => {
         const token = getState()?.user.user?.id_token;
         const response = await modelsAPI.getModelDefinitions(modelName, token);
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -77,6 +81,10 @@ export const getModelSets = createAsyncThunk(
                 groupType !== '' ? groupType : SetType.FIXED,
                 token
             );
+
+            if (!response.ok) {
+                throw response;
+            }
             return response.json();
         } else {
             return [];
@@ -94,6 +102,10 @@ export const postModelSetsGroup = createAsyncThunk(
             strict,
             token
         );
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );

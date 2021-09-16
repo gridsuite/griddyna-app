@@ -26,6 +26,7 @@ import {
     convertCompositionStringToArray,
     getMaxDepthParentheses,
 } from '../../utils/composition';
+import * as networkAPI from '../../rest/networkAPI';
 
 const initialState = {
     mappings: [],
@@ -46,6 +47,7 @@ const DEFAULT_RULE = {
     groupType: 'FIXED',
     filters: [],
     filterCounter: 1,
+    matches: [],
 };
 
 const DEFAULT_AUTOMATON = {
@@ -74,6 +76,7 @@ const transformMapping = (receivedMapping) => {
         });
         rule['filterCounter'] =
             filterCounterList.reduce((max, val) => Math.max(max, val), 0) + 1;
+        rule['matches'] = [];
         return rule;
     });
 
@@ -109,7 +112,7 @@ const transformMapping = (receivedMapping) => {
     return mapping;
 };
 
-export const filterRulesByType = (rules, type) =>
+const filterRulesByType = (rules, type) =>
     rules.filter(
         (rule) => type === '' || rule.type === '' || rule.type === type
     );
@@ -189,7 +192,7 @@ export const makeGetRule = () =>
         (_state, index) => index,
         (rules, index) => {
             const foundRule = rules[index];
-            const { type, composition, mappedModel, setGroup, groupType } =
+            const { type, composition, mappedModel, setGroup, groupType, matches } =
                 foundRule;
             // Filters fetched separately to avoid re-renders
             return {
@@ -198,6 +201,7 @@ export const makeGetRule = () =>
                 mappedModel,
                 setGroup,
                 groupType,
+                matches,
                 filtersNumber: foundRule.filters.length,
             };
         }
@@ -395,16 +399,17 @@ export const isModified = createSelector(
             (mapping) => mapping.name === activeName
         );
 
-        function ignoreFilterCounterRule(rule) {
+        function ignoreInternalProperties(rule) {
             const ruleToTest = _.cloneDeep(rule);
             delete ruleToTest.filterCounter;
+            delete ruleToTest.matches;
             return ruleToTest;
         }
 
         return !(
             _.isEqual(
-                activeRules.map(ignoreFilterCounterRule),
-                foundMapping.rules.map(ignoreFilterCounterRule)
+                activeRules.map(ignoreInternalProperties),
+                foundMapping.rules.map(ignoreInternalProperties)
             ) &&
             _.isEqual(activeAutomata, foundMapping.automata) &&
             _.isEqual(controlledParameters, foundMapping.controlledParameters)
@@ -419,7 +424,7 @@ export const canCreateNewMapping = (state) =>
     canCreateNewMappingCheck(state.mappings.mappings);
 
 // Reducers
-export const augmentFilter = (ruleType) => (filter) => ({
+const augmentFilter = (ruleType) => (filter) => ({
     ...filter,
     filterId: filter.id,
     type: getProperty(ruleType, filter.property).type,
@@ -450,6 +455,7 @@ export const postMapping = createAsyncThunk(
                 // Even if it should be true anyway, avoid "true && true" in case of filter deletion
                 augmentedRule.composition = 'true';
             }
+            delete augmentedRule.matches;
             return augmentedRule;
         });
 
@@ -488,6 +494,10 @@ export const postMapping = createAsyncThunk(
             controlledParameters,
             token
         );
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -506,6 +516,10 @@ export const deleteMapping = createAsyncThunk(
     async (mappingName, { getState }) => {
         const token = getState()?.user.user?.id_token;
         const response = await mappingsAPI.deleteMapping(mappingName, token);
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.text();
     }
 );
@@ -519,6 +533,10 @@ export const renameMapping = createAsyncThunk(
             newName,
             token
         );
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -532,6 +550,36 @@ export const copyMapping = createAsyncThunk(
             copyName,
             token
         );
+
+        if (!response.ok) {
+            throw response;
+        }
+        return response.json();
+    }
+);
+
+export const getNetworkMatchesFromRule = createAsyncThunk(
+    'mappings/matchNetwork',
+    async (ruleIndex, { getState, rejectWithValue }) => {
+        const state = getState();
+        const token = state?.user.user?.id_token;
+        const { rules, filteredRuleType } = state?.mappings;
+        const networkId = state?.network.currentNetwork;
+        const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
+        const ruleToMatch = {
+            ruleIndex,
+            composition: foundRule.composition,
+            equipmentType: foundRule.type,
+            filters: foundRule.filters.map(augmentFilter(foundRule.type)),
+        };
+        const response = await networkAPI.getNetworkMatchesFromRule(
+            networkId,
+            ruleToMatch,
+            token
+        );
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -573,18 +621,25 @@ const reducers = {
         selectedRule.setGroup = DEFAULT_RULE.setGroup;
         selectedRule.groupType = DEFAULT_RULE.groupType;
         selectedRule.filterCounter = DEFAULT_RULE.filterCounter;
+        selectedRule.matches = DEFAULT_RULE.matches;
     },
     changeRuleComposition: (state, action) => {
         const { index, composition } = action.payload;
-        filterRulesByType(state.rules, state.filteredRuleType)[
-            index
-        ].composition = composition;
+        const selectedRule = filterRulesByType(
+            state.rules,
+            state.filteredRuleType
+        )[index];
+        selectedRule.composition = composition;
+        selectedRule.matches = DEFAULT_RULE.matches;
     },
     changeRuleModel: (state, action) => {
         const { index, mappedModel } = action.payload;
-        filterRulesByType(state.rules, state.filteredRuleType)[
-            index
-        ].mappedModel = mappedModel;
+        const selectedRule = filterRulesByType(
+            state.rules,
+            state.filteredRuleType
+        )[index];
+        selectedRule.mappedModel = mappedModel;
+        selectedRule.matches = DEFAULT_RULE.matches;
     },
     changeRuleParameters: (state, action) => {
         const { index, parameters, type } = action.payload;
@@ -594,6 +649,8 @@ const reducers = {
         )[index];
         selectedRule.setGroup = parameters;
         selectedRule.groupType = type;
+        selectedRule.matches = DEFAULT_RULE.matches;
+
     },
     deleteRule: (state, action) => {
         const { index } = action.payload;
@@ -627,6 +684,7 @@ const reducers = {
             state.rules,
             state.filteredRuleType
         )[ruleIndex];
+        selectedRule.matches = DEFAULT_RULE.matches;
         selectedRule.filters.push(newFilter);
         if (groupIndex !== undefined) {
             try {
@@ -907,6 +965,21 @@ const extraReducers = {
         state.status = RequestStatus.ERROR;
     },
     [copyMapping.pending]: (state, _action) => {
+        state.status = RequestStatus.PENDING;
+    },
+    [getNetworkMatchesFromRule.fulfilled]: (state, action) => {
+        state.status = RequestStatus.SUCCESS;
+        const { ruleIndex, matchedIds } = action.payload;
+        const foundRule = filterRulesByType(
+            state.rules,
+            state.filteredRuleType
+        )[ruleIndex];
+        foundRule.matches = matchedIds;
+    },
+    [getNetworkMatchesFromRule.rejected]: (state, _action) => {
+        state.status = RequestStatus.ERROR;
+    },
+    [getNetworkMatchesFromRule.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
     },
 };

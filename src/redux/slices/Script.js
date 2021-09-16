@@ -60,6 +60,10 @@ export const convertScript = createAsyncThunk(
     async (mappingName, { getState }) => {
         const token = getState()?.user.user?.id_token;
         const response = await scriptsAPI.convertToScript(mappingName, token);
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -69,6 +73,10 @@ export const getScripts = createAsyncThunk(
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
         const response = await scriptsAPI.getScripts(token);
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -78,6 +86,10 @@ export const deleteScript = createAsyncThunk(
     async (scriptName, { getState }) => {
         const token = getState()?.user.user?.id_token;
         const response = await scriptsAPI.deleteScript(scriptName, token);
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.text();
     }
 );
@@ -103,6 +115,10 @@ export const renameScript = createAsyncThunk(
             newName,
             token
         );
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );
@@ -120,6 +136,10 @@ export const postScript = createAsyncThunk(
                 : state?.scripts.text;
 
         const response = await scriptsAPI.postScript(scriptName, script, token);
+
+        if (!response.ok) {
+            throw response;
+        }
         return response.json();
     }
 );

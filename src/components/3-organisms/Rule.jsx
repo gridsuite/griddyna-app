@@ -40,7 +40,7 @@ const Rule = (props) => {
         editGroup = () => {},
         controlledParameters = false,
     } = props;
-    const { type, composition, mappedModel, setGroup, groupType } = rule;
+    const { type, composition, mappedModel, setGroup, groupType, matches = [] } = rule;
     const classes = useStyles(isRuleValid);
     // TODO intl
     const equipmentLabel = 'Each';
@@ -53,7 +53,7 @@ const Rule = (props) => {
     const useBasicModeLabel = 'Use simple filters mode';
     const useAdvancedModeLabel = 'Use advanced filters mode';
     const unusedFiltersLabel = 'You have unused filter(s)';
-
+    const matchesLabel = 'matched network equipments';
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
     };
@@ -154,6 +154,11 @@ const Rule = (props) => {
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
             />
+            {matches.length > 0 && (
+                <Typography>
+                    {`${matchesLabel} : ${matches.join(', ')}`}
+                </Typography>
+            )}
         </Paper>
     );
 };
