@@ -119,16 +119,53 @@ const reducers = {
         const newType = action.payload;
         state.currentGroup.type = newType;
     },
+    resetGroup: (state) => {
+        state.currentGroup = DEFAULT_GROUP;
+    },
     changeGroup: (state, action) => {
-        const { group, modelName, isAbsolute } = action.payload;
-        state.currentGroup = _.cloneDeep(DEFAULT_GROUP);
-        state.currentGroup.modelName = modelName;
-        if (group) {
-            state.currentGroup.name = group.name;
-            state.currentGroup.type = group.type;
+        const { group, originalGroup, modelName, isAbsolute, matches } = action.payload;
+        const currentGroup = _.cloneDeep(group);
+        const definitions = state.parameterDefinitions;
+        currentGroup.modelName = modelName;
+        if (originalGroup) {
+            currentGroup.name =
+                currentGroup.name !== ''
+                    ? currentGroup.name
+                    : originalGroup.name;
+            currentGroup.type =
+                currentGroup.type !== ''
+                    ? currentGroup.type
+                    : originalGroup.type;
         } else if (isAbsolute) {
             state.currentGroup.type = SetType.FIXED;
         }
+        const matchingSetName = (matchName, type) =>
+            `${type === SetType.SUFFIX ? matchName : ''}${currentGroup.name}${
+                type === SetType.PREFIX ? matchName : ''
+            }`;
+        // Create blank sets if needed
+        if (currentGroup.type !== SetType.FIXED && matches.length > 0) {
+            const newSets = matches
+                .filter(
+                    (match) =>
+                        _.findIndex(
+                            currentGroup.sets,
+                            (set) =>
+                                set.name ===
+                                matchingSetName(match, currentGroup.type)
+                        ) === -1
+                )
+                .map((matchToAdd) => ({
+                    name: matchingSetName(matchToAdd, currentGroup.type),
+                    parameters: definitions.map((definition) => ({
+                        name: definition.name,
+                        value: definition.fixedValue ?? '',
+                    })),
+                }));
+            currentGroup.sets = currentGroup.sets.concat(newSets);
+        }
+
+        state.currentGroup = currentGroup;
     },
     addOrModifySet: (state, action) => {
         const newSet = action.payload;

@@ -19,7 +19,10 @@ const isParameterValid = (set, definition) => {
     const correspondingParameter = set.parameters.find(
         (parameter) => parameter.name === definition.name
     );
-    return isParameterValueValid(correspondingParameter.value, definition.type);
+    return (
+        correspondingParameter &&
+        isParameterValueValid(correspondingParameter.value, definition.type)
+    );
 };
 
 export const isParameterValueValid = (value, type) => {

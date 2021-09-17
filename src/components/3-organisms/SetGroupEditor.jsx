@@ -51,7 +51,7 @@ const SetGroupEditor = (props) => {
                     <Grid item xs="auto">
                         <Typography> {`${typeLabel} :`} </Typography>
                     </Grid>
-                    <Grid item xs="8">
+                    <Grid item xs={8}>
                         <Select
                             options={[
                                 {
@@ -65,7 +65,7 @@ const SetGroupEditor = (props) => {
                             ]}
                             value={type}
                             setValue={changeType}
-                        />
+                            disabled={name === ''}/>
                     </Grid>
                 </Grid>
             )}

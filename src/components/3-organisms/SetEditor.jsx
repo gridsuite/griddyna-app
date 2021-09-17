@@ -66,13 +66,13 @@ const SetEditor = (props) => {
                                         definition.origin ===
                                         ParameterOrigin.NETWORK
                                             ? networkLabel
-                                            : correspondingParameter.value
+                                            : correspondingParameter?.value
                                     }
                                     error={
                                         definition.origin ===
                                             ParameterOrigin.USER &&
                                         !isParameterValueValid(
-                                            correspondingParameter.value,
+                                            correspondingParameter?.value,
                                             definition.type
                                         )
                                     }

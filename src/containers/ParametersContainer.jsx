@@ -21,7 +21,7 @@ import {
     DialogContent,
     DialogTitle,
 } from '@material-ui/core';
-import { MappingSlice } from '../redux/slices/Mapping';
+import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import { GroupEditionOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';
 import DotStepper from '../components/2-molecules/DotStepper';
@@ -64,6 +64,13 @@ const ParametersContainer = ({
     const definitions = useSelector(
         (state) => state.models.parameterDefinitions
     );
+    const getMatches = useMemo(makeGetMatches, []);
+    const matches = useSelector((state) =>
+        getMatches(state, {
+            isRule: origin === GroupEditionOrigin.RULE,
+            index: originIndex,
+        })
+    );
 
     const groupToEdit = modelToEdit?.groups.find(
         (group) => group.name === setGroup && group.type === groupType
@@ -78,8 +85,9 @@ const ParametersContainer = ({
     );
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
-    const showSteps = !setGroup && controlledParameters;
-    const maxStep = 1; // TODO: Change when PREFIX/SUFFIX Group are implemented ( maxStep = number or equipments in network to parametrize)
+
+    const showSteps =
+        (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
 
     const currentSet = currentGroup.sets[step - 1] ?? {
         name: currentGroup.name,
@@ -88,6 +96,7 @@ const ParametersContainer = ({
             value: definition.fixedValue ?? '',
         })),
     };
+    const maxStep = currentGroup.sets.length;
 
     const changeGroupName = (newName) => {
         dispatch(ModelSlice.actions.changeGroupName(newName));
@@ -109,7 +118,6 @@ const ParametersContainer = ({
                 type: currentGroup.type,
             })
         );
-
         close();
     };
 
@@ -123,16 +131,23 @@ const ParametersContainer = ({
         if (model) {
             dispatch(
                 ModelSlice.actions.changeGroup({
-                    group: groupToEdit,
+                    group: currentGroup,
+                    originalGroup: groupToEdit,
                     modelName: model,
+                    matches: matches,
                     isAbsolute: isAbsolute,
                 })
             );
         }
-    }, [dispatch, groupToEdit, model, isAbsolute]);
+    }, [dispatch, currentGroup.type, model, isAbsolute]);
+
+    const onClose = () => {
+        dispatch(ModelSlice.actions.resetGroup());
+        close();
+    };
 
     return (
-        <Dialog open={true} onClose={close}>
+        <Dialog open={true} onClose={onClose}>
             <DialogTitle>
                 {step === 0 ? groupTitleLabel : setTitleLabel}
             </DialogTitle>
@@ -165,7 +180,7 @@ const ParametersContainer = ({
                 />
             ) : (
                 <DialogActions>
-                    <Button onClick={close} color="primary">
+                    <Button onClick={onClose} color="primary">
                         Cancel
                     </Button>
                     <Button

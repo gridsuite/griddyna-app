@@ -17,7 +17,7 @@ import {
     Select as MuiSelect,
 } from '@material-ui/core';
 
-import { useStyles, MenuProps } from './SelectStyles';
+import { MenuProps, useStyles } from './SelectStyles';
 
 const Select = (props) => {
     const {
@@ -29,6 +29,7 @@ const Select = (props) => {
         multiple,
         outlined,
         error = false,
+        disabled = false,
     } = props;
     const classes = useStyles();
 
@@ -67,6 +68,7 @@ const Select = (props) => {
                 value={value}
                 onChange={onChange}
                 {...multipleProps}
+                disabled={disabled}
                 // Either mess with the style (disappearing overflow) or allow scroll while Select is open
                 MenuProps={{ disableScrollLock: true }}
             >
@@ -87,6 +89,7 @@ Select.propTypes = {
     helperText: PropTypes.string,
     outlined: PropTypes.bool,
     error: PropTypes.bool,
+    disabled: PropTypes.bool,
     options: PropTypes.array.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
     setValue: PropTypes.func,

@@ -423,6 +423,17 @@ const canCreateNewMappingCheck = (mappings) =>
 export const canCreateNewMapping = (state) =>
     canCreateNewMappingCheck(state.mappings.mappings);
 
+export const makeGetMatches = () =>
+    createSelector(
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredRuleType
+            ),
+        (_state, { isRule, index }) => (isRule ? index : -1),
+        (rules, index) => rules[index]?.matches ?? []
+    );
+
 // Reducers
 const augmentFilter = (ruleType) => (filter) => ({
     ...filter,
@@ -639,7 +650,6 @@ const reducers = {
             state.filteredRuleType
         )[index];
         selectedRule.mappedModel = mappedModel;
-        selectedRule.matches = DEFAULT_RULE.matches;
     },
     changeRuleParameters: (state, action) => {
         const { index, parameters, type } = action.payload;
@@ -649,8 +659,6 @@ const reducers = {
         )[index];
         selectedRule.setGroup = parameters;
         selectedRule.groupType = type;
-        selectedRule.matches = DEFAULT_RULE.matches;
-
     },
     deleteRule: (state, action) => {
         const { index } = action.payload;
