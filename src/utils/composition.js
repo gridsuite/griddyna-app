@@ -8,7 +8,7 @@
 export function convertCompositionStringToArray(compositionString) {
     // Transform parentheses into arrays
     const step1 = compositionString
-        .split(/([\(\)])/)
+        .split(/([()])/)
         .map((x) => x.trim())
         .join(' ')
         .replace(/\)\s\)/g, '))')
@@ -21,9 +21,9 @@ export function convertCompositionStringToArray(compositionString) {
 
     // Replace whitespace separators with commas and escape values
     const step3 = step2
-        .replace(/[^\[\]\,\s]+/g, '"$&"')
+        .replace(/[^[\],\s]+/g, '"$&"')
         .replace(/" /g, '", ')
-        .replace(/\,[\s]+\]/g, ']');
+        .replace(/,[\s]+]/g, ']');
 
     // Parse as a JSON array
     const compositionArray = JSON.parse(step3);
