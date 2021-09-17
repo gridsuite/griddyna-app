@@ -50,16 +50,6 @@ const initialState = {
             },
         },
         {
-            id: 'LoadAlphaBeta',
-            type: EquipmentType.LOAD,
-            name: 'LoadLab',
-            modelName: 'LoadLab',
-            params: {
-                type: 'FIXED',
-                name: 'LAB',
-            },
-        },
-        {
             id: 'CLA_2_4',
             type: AutomatonFamily.CURRENT_LIMIT,
             name: 'CLA_2_4',
