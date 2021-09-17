@@ -12,6 +12,7 @@ import {
     makeCanUseBasicMode,
     makeGetFilterIndexes,
     makeGetRule,
+    makeGetUnusedFilters,
     makeIsRuleValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
@@ -53,6 +54,11 @@ const RuleContainer = ({ index }) => {
     const getCanUseBasicMode = useMemo(makeCanUseBasicMode, []);
     const canUseBasicMode = useSelector((state) =>
         getCanUseBasicMode(state, index)
+    );
+
+    const getUnusedFilters = useMemo(makeGetUnusedFilters, []);
+    const unusedFilters = useSelector((state) =>
+        getUnusedFilters(state, index)
     );
 
     const dispatch = useDispatch();
@@ -211,6 +217,7 @@ const RuleContainer = ({ index }) => {
             changeCompositionMode={changeCompositionMode}
             isAdvancedMode={isAdvancedComposition}
             canUseBasicMode={canUseBasicMode}
+            unusedFilters={unusedFilters}
         >
             {rule.filtersNumber > 0 ? (
                 <>

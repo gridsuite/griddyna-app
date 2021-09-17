@@ -26,4 +26,11 @@ export const useStyles = makeStyles({
         paddingLeft: '5px',
         marginTop: '1em',
     },
+    unused: {
+        color: '#ff9800',
+        '& svg': {
+            margin: '0.3em',
+            fontSize: '2em',
+        },
+    },
 });
