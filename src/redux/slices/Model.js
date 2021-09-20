@@ -26,7 +26,6 @@ const initialState = {
     models: [],
     currentGroup: DEFAULT_GROUP,
     parameterDefinitions: [],
-    sets: [],
     status: RequestStatus.IDLE,
 };
 
@@ -114,7 +113,6 @@ const reducers = {
         if (group) {
             state.currentGroup.name = group.name;
             state.currentGroup.type = group.type;
-            state.currentGroup.sets = state.sets;
         }
     },
     addOrModifySet: (state, action) => {
@@ -136,11 +134,10 @@ const extraReducers = {
         state.status = RequestStatus.SUCCESS;
     },
     [getModelDefinitions.fulfilled]: (state, action) => {
-        state.definitions = action.payload;
+        state.parameterDefinitions = action.payload;
         state.status = RequestStatus.SUCCESS;
     },
     [getModelSets.fulfilled]: (state, action) => {
-        state.sets = action.payload;
         state.currentGroup.sets = action.payload;
         state.status = RequestStatus.SUCCESS;
     },

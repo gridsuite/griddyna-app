@@ -6,18 +6,113 @@
  */
 
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { ParameterOrigin, ParameterType } from '../../constants/models';
+import { Box, Grid, TextField, Tooltip, Typography } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
+import * as _ from 'lodash';
 
+const infoTypeLabel = 'This parameter is of type ';
+const networkLabel = ' From Network';
 const SetEditor = (props) => {
-    // const {} = props;
+    const { definitions, set, saveSet } = props;
+    const valueOrigin = (origin) => {
+        switch (origin) {
+            case ParameterOrigin.USER:
+                return -1;
+            case ParameterOrigin.FIXED:
+                return 0;
+            case ParameterOrigin.NETWORK:
+                return 1;
+        }
+    };
+    console.log(definitions, set);
+    const onChange = (event) => {
+        const parameterChanged = event.target.id;
+        const newValue = event.target.value;
+        const newValueToUse =
+            definitions.find(
+                (definition) => definition.name === parameterChanged
+            ).type === ParameterType.BOOL
+                ? newValue.replace(',', '.')
+                : newValue;
+        const updatedSet = _.cloneDeep(set);
+        updatedSet.parameters.find(
+            (parameter) => parameter.name === parameterChanged
+        ).value = newValueToUse;
+        saveSet(updatedSet);
+    };
+
+    const isValid = (value, type) => {
+        console.log(value, type);
+        switch (type) {
+            case ParameterType.BOOL:
+                return value === 'true' || value === 'false';
+            case ParameterType.STRING:
+                return value.length > 0;
+            case ParameterType.DOUBLE:
+                return /^\d+([.,]\d+)?$/.test(value);
+            case ParameterType.INT:
+                return /^\d+$/.test(value);
+        }
+    };
 
     return (
-        <Grid container>
-            <Grid item></Grid>
-        </Grid>
+        <Box>
+            <Typography variant="h2"> {set.name}</Typography>
+            {_.cloneDeep(definitions)
+                .sort((a, b) => valueOrigin(a.origin) - valueOrigin(b.origin))
+                .map((definition) => {
+                    const correspondingParameter = set.parameters.find(
+                        (param) => param.name === definition.name
+                    );
+                    return (
+                        <Grid container justify="space-evenly">
+                            <Grid item xs={5}>
+                                <Typography>{definition.name}</Typography>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <TextField
+                                    id={definition.name}
+                                    value={
+                                        definition.origin ===
+                                        ParameterOrigin.NETWORK
+                                            ? networkLabel
+                                            : correspondingParameter.value
+                                    }
+                                    error={
+                                        definition.origin ===
+                                            ParameterOrigin.USER &&
+                                        !isValid(
+                                            correspondingParameter.value,
+                                            definition.type
+                                        )
+                                    }
+                                    onChange={onChange}
+                                    disabled={
+                                        definition.origin !==
+                                        ParameterOrigin.USER
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={1}>
+                                <Tooltip
+                                    title={infoTypeLabel + definition.type}
+                                >
+                                    <InfoIcon />
+                                </Tooltip>
+                            </Grid>
+                        </Grid>
+                    );
+                })}
+        </Box>
     );
 };
 
-SetEditor.propTypes = {};
+SetEditor.propTypes = {
+    set: PropTypes.object.isRequired,
+    definitions: PropTypes.array.isRequired,
+    saveSet: PropTypes.func.isRequired,
+};
 
 export default SetEditor;

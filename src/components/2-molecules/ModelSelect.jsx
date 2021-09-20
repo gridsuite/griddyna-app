@@ -82,7 +82,11 @@ const ModelSelect = (props) => {
                                 error={setGroup === ''}
                             />
                         </Grid>
-                        <Grid item xs="auto" className={classes.tooltip}>
+                    </Grid>
+                </Grid>
+                <Grid item xs={2}>
+                    <Grid container className={classes.infoGrid}>
+                        <Grid item xs={3} className={classes.tooltip}>
                             {foundGroup && (
                                 <Tooltip
                                     title={
@@ -99,20 +103,21 @@ const ModelSelect = (props) => {
                                 </Tooltip>
                             )}
                         </Grid>
+                        <Grid item xs={9} className={classes.button}>
+                            <SaveButton
+                                onClick={editGroup}
+                                disabled={
+                                    model === '' ||
+                                    (setGroup && !controlledParameters)
+                                }
+                                tooltip={
+                                    setGroup && !controlledParameters
+                                        ? simpledEditLabel
+                                        : editGroupLabel
+                                }
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid item xs={2} className={classes.button}>
-                    <SaveButton
-                        onClick={editGroup}
-                        disabled={
-                            model === '' || (setGroup && !controlledParameters)
-                        }
-                        tooltip={
-                            setGroup && !controlledParameters
-                                ? simpledEditLabel
-                                : editGroupLabel
-                        }
-                    />
                 </Grid>
             </Grid>
         </Box>

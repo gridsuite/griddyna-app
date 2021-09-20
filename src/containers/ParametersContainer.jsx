@@ -53,15 +53,13 @@ const ParametersContainer = ({
     const definitions = useSelector(
         (state) => state.models.parameterDefinitions
     );
-    const sets = useSelector((state) => state.models.sets);
+
     const groupToEdit = modelToEdit.groups.find(
         (group) => group.name === setGroup
     );
     const otherGroups = modelToEdit.groups
         .map((group) => group.name)
         .filter((groupName) => groupName !== setGroup);
-
-    const currentGroup = useSelector((state) => state.models.currentGroup);
 
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
@@ -71,8 +69,17 @@ const ParametersContainer = ({
     const showSteps = !setGroup && controlledParameters;
     const maxStep = 1; // TODO: Change when PREFIX/SUFFIX Group are implemented ( maxStep = number or equipments in network to parametrize)
 
+    const currentGroup = useSelector((state) => state.models.currentGroup);
+
+    const currentSet = currentGroup.sets[step - 1] ?? {
+        name: currentGroup.name,
+        parameters: definitions.map((definition) => ({
+            name: definition.name,
+            value: definition.fixedValue ?? '',
+        })),
+    };
+
     const changeGroupName = (newName) => {
-        console.log(newName);
         dispatch(ModelSlice.actions.changeGroupName(newName));
     };
     const changeGroupType = (newType) =>
@@ -96,6 +103,7 @@ const ParametersContainer = ({
 
     const isErrorName = otherGroups.includes(currentGroup.name);
     const isError = isErrorName;
+
     useEffect(() => {
         dispatch(
             ModelSlice.actions.changeGroup({
@@ -103,8 +111,8 @@ const ParametersContainer = ({
                 modelName: model,
             })
         );
-        return () =>
-            dispatch(ModelSlice.actions.changeGroup({ modelName: '' }));
+        // return () =>
+        //     dispatch(ModelSlice.actions.changeGroup({ modelName: '' }));
     }, [dispatch]);
 
     return (
@@ -122,7 +130,11 @@ const ParametersContainer = ({
                         changeType={changeGroupType}
                     />
                 ) : (
-                    <SetEditor />
+                    <SetEditor
+                        definitions={definitions}
+                        saveSet={addOrModifySet}
+                        set={currentSet}
+                    />
                 )}
             </DialogContent>
             {showSteps ? (
