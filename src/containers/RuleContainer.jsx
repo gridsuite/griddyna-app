@@ -17,7 +17,7 @@ import {
     MappingSlice,
 } from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/Model';
-import Rule from '../components/3-molecules/Rule';
+import Rule from '../components/3-organisms/Rule';
 import FiltersTemplate from '../components/4-templates/FiltersTemplate';
 import FilterContainer from './FilterContainer';
 import PropTypes from 'prop-types';
@@ -27,7 +27,8 @@ import {
     convertCompositionStringToArray,
 } from '../utils/composition';
 import BooleanOperatorSelect from '../components/2-molecules/BooleanOperatorSelect';
-import FiltersGroup from '../components/3-molecules/FiltersGroup';
+import FiltersGroup from '../components/3-organisms/FiltersGroup';
+import { GroupEditionOrigin } from '../constants/models';
 
 const RuleContainer = ({ index, editParameters }) => {
     const getRule = useMemo(makeGetRule, []);
@@ -60,7 +61,9 @@ const RuleContainer = ({ index, editParameters }) => {
     const unusedFilters = useSelector((state) =>
         getUnusedFilters(state, index)
     );
-
+    const controlledParameters = useSelector(
+        (state) => state.mappings.controlledParameters
+    );
     const dispatch = useDispatch();
     const [isAdvancedComposition, setIsAdvancedComposition] = useState(
         !canUseBasicMode
@@ -155,7 +158,13 @@ const RuleContainer = ({ index, editParameters }) => {
             })
         );
 
-    const editGroup = () => editParameters({ model: mappedModel, setGroup });
+    const editGroup = () =>
+        editParameters({
+            model: mappedModel,
+            setGroup,
+            origin: GroupEditionOrigin.RULE,
+            originIndex: index,
+        });
 
     function buildFilters() {
         const filters = [];
@@ -234,6 +243,7 @@ const RuleContainer = ({ index, editParameters }) => {
             canUseBasicMode={canUseBasicMode}
             unusedFilters={unusedFilters}
             editGroup={editGroup}
+            controlledParameters={controlledParameters}
         >
             {rule.filtersNumber > 0 ? (
                 <>

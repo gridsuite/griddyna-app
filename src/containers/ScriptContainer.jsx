@@ -8,13 +8,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    ScriptsSlice,
     isModified as isModifiedSelector,
     postScript,
+    ScriptsSlice,
 } from '../redux/slices/Script';
 import { Paper } from '@material-ui/core';
 import Header from '../components/2-molecules/Header';
-import Script from '../components/3-molecules/Script';
+import Script from '../components/3-organisms/Script';
 
 // TODO intl
 const SAVE_LABEL = 'Save Script';
@@ -29,6 +29,7 @@ const ScriptContainer = () => {
     function setScript(newScript) {
         dispatch(ScriptsSlice.actions.setText(newScript));
     }
+
     function saveScript() {
         dispatch(postScript());
     }

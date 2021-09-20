@@ -6,6 +6,19 @@
  */
 
 import { makeStyles } from '@material-ui/core';
+
 export const useStyles = makeStyles({
     titleSelect: {},
+    box: {},
+    tooltip: {
+        marginTop: '1em',
+    },
+    button: {
+        justifyContent: 'center',
+        display: 'flex',
+        '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
+            fontSize: '2em',
+            pointerEvents: 'auto',
+        },
+    },
 });

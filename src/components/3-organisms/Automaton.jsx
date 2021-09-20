@@ -30,6 +30,7 @@ const Automaton = (props) => {
         deleteAutomaton,
         copyAutomaton,
         editGroup = () => {},
+        controlledParameters = false,
     } = props;
     const { family, watchedElement, model, setGroup, properties } = automaton;
     const classes = useStyles(isAutomatonValid);
@@ -142,6 +143,7 @@ const Automaton = (props) => {
                 setGroup={setGroup}
                 changeGroup={changeParameters}
                 editGroup={editGroup}
+                controlledParameters={controlledParameters}
             />
         </Paper>
     );
@@ -160,6 +162,7 @@ Automaton.propTypes = {
     deleteAutomaton: PropTypes.func.isRequired,
     copyAutomaton: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
+    controlledParameters: PropTypes.bool,
 };
 
 export default Automaton;

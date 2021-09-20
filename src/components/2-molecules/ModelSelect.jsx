@@ -6,10 +6,14 @@ import { useStyles } from './ModelSelectStyle';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SetType } from '../../constants/models';
+import { SaveButton } from '../1-atoms/buttons';
 
 const modelLabel = 'should be mapped to';
 const setLabel = 'and use parameters group';
-
+const editGroupLabel = 'Edit the parameters group and/or the parameters sets';
+const simpledEditLabel =
+    'Cannot edit sets without enabling parameters management';
+const newGroupLabel = 'Create new group';
 const fixedLabel = (name) =>
     `All equipments affected will use ${name}.par file.`;
 
@@ -19,8 +23,15 @@ const variableLabel = (isPrefix, name) =>
     }.par file.`;
 
 const ModelSelect = (props) => {
-    const { model, models, changeModel, setGroup, changeGroup, editGroup } =
-        props;
+    const {
+        model,
+        models,
+        changeModel,
+        setGroup,
+        changeGroup,
+        editGroup,
+        controlledParameters = false,
+    } = props;
 
     const mappedModel = models.find(
         (modelToTest) => modelToTest.name === model
@@ -33,54 +44,76 @@ const ModelSelect = (props) => {
     const foundGroup = mappedModel?.groups.find(
         (group) => group.name === setGroup
     );
+
+    const groupOptions = groups.map((group) => ({
+        label: group,
+        value: group,
+    }));
+    groupOptions.push({ label: newGroupLabel, value: '' });
+
     const classes = useStyles();
 
     return (
-        <Box>
+        <Box className={classes.box}>
             <Grid container justify={'center'}>
                 <Grid item xs="auto">
-                    <Typography variant="h4">{`${modelLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs="auto" className={classes.titleSelect}>
-                    <Select
-                        options={getModelsOptions(models)}
-                        value={model}
-                        setValue={changeModel}
-                        error={model === ''}
-                    />
-                </Grid>
-            </Grid>
-            <Grid container justify={'center'}>
-                <Grid item xs="auto">
-                    <Typography variant="h4">{`${setLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs="auto" className={classes.titleSelect}>
-                    <Select
-                        options={groups.map((group) => ({
-                            label: group,
-                            value: group,
-                        }))}
-                        value={setGroup}
-                        setValue={changeGroup}
-                        error={setGroup === ''}
-                    />
-                </Grid>
-                {foundGroup && (
-                    <Grid item xs="auto" className={classes.titleSelect}>
-                        <Tooltip
-                            title={
-                                foundGroup.type === SetType.FIXED
-                                    ? fixedLabel(foundGroup.name)
-                                    : variableLabel(
-                                          foundGroup.type === SetType.PREFIX,
-                                          foundGroup.name
-                                      )
-                            }
-                        >
-                            <InfoIcon />
-                        </Tooltip>
+                    <Grid container justify={'center'}>
+                        <Grid item xs="auto">
+                            <Typography variant="h4">{`${modelLabel} :`}</Typography>
+                        </Grid>
+                        <Grid item xs="auto" className={classes.titleSelect}>
+                            <Select
+                                options={getModelsOptions(models)}
+                                value={model}
+                                setValue={changeModel}
+                                error={model === ''}
+                            />
+                        </Grid>
                     </Grid>
-                )}
+                    <Grid container justify={'center'}>
+                        <Grid item xs="auto">
+                            <Typography variant="h4">{`${setLabel} :`}</Typography>
+                        </Grid>
+                        <Grid item xs="auto" className={classes.titleSelect}>
+                            <Select
+                                options={groupOptions}
+                                value={setGroup}
+                                setValue={changeGroup}
+                                error={setGroup === ''}
+                            />
+                        </Grid>
+                        <Grid item xs="auto" className={classes.tooltip}>
+                            {foundGroup && (
+                                <Tooltip
+                                    title={
+                                        foundGroup.type === SetType.FIXED
+                                            ? fixedLabel(foundGroup.name)
+                                            : variableLabel(
+                                                  foundGroup.type ===
+                                                      SetType.PREFIX,
+                                                  foundGroup.name
+                                              )
+                                    }
+                                >
+                                    <InfoIcon />
+                                </Tooltip>
+                            )}
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid item xs={2} className={classes.button}>
+                    <SaveButton
+                        onClick={editGroup}
+                        disabled={
+                            model === '' || (setGroup && !controlledParameters)
+                        }
+                        tooltip={
+                            setGroup && !controlledParameters
+                                ? simpledEditLabel
+                                : editGroupLabel
+                        }
+                    />
+                </Grid>
             </Grid>
         </Box>
     );
@@ -93,6 +126,7 @@ ModelSelect.propTypes = {
     changeModel: PropTypes.func.isRequired,
     changeGroup: PropTypes.string.isRequired,
     editGroup: PropTypes.func.isRequired,
+    controlledParameters: PropTypes.bool,
 };
 
 export default ModelSelect;

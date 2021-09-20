@@ -38,6 +38,7 @@ const Rule = (props) => {
         unusedFilters = [],
         changeParameters = () => {},
         editGroup = () => {},
+        controlledParameters = false,
     } = props;
     const { type, composition, mappedModel, setGroup } = rule;
     const classes = useStyles(isRuleValid);
@@ -150,6 +151,7 @@ const Rule = (props) => {
                 changeModel={changeModel}
                 changeGroup={changeParameters}
                 editGroup={editGroup}
+                controlledParameters={controlledParameters}
             />
         </Paper>
     );
@@ -170,6 +172,7 @@ Rule.propTypes = {
     unusedFilters: PropTypes.array,
     changeParameters: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
+    controlledParameters: PropTypes.bool,
 };
 
 export default Rule;
