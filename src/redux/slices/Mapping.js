@@ -5,8 +5,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import {
+    createAsyncThunk,
+    createSelector,
+    createSlice,
+} from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
@@ -287,9 +290,10 @@ const checkCanUseBasicMode = (inputComposition) => {
             const compositionArray =
                 convertCompositionStringToArray(composition);
             return (
-                composition ===
+                composition === 'true' ||
+                (composition ===
                     convertCompositionArrayToString(compositionArray) &&
-                checkCompositionArrayValidity(compositionArray)
+                    checkCompositionArrayValidity(compositionArray))
             );
         } catch {
             return false;
@@ -372,11 +376,13 @@ export const isModified = createSelector(
         const foundMapping = savedMappings.find(
             (mapping) => mapping.name === activeName
         );
+
         function ignoreFilterCounterRule(rule) {
             const ruleToTest = _.cloneDeep(rule);
             delete ruleToTest.filterCounter;
             return ruleToTest;
         }
+
         return !(
             _.isEqual(
                 activeRules.map(ignoreFilterCounterRule),
@@ -632,6 +638,7 @@ const reducers = {
         ruleToModify.filters = newFilters;
         const modifiedComposition = ruleToModify.composition
             .replaceAll(filterIdToDelete, 'true')
+            .replaceAll('(true)', 'true')
             .replaceAll(/ (?:&&|\|\|) true/g, '')
             .replaceAll(/true (?:&&|\|\|) /g, '');
         ruleToModify.composition = modifiedComposition;

@@ -203,6 +203,7 @@ const RuleContainer = ({ index }) => {
         }
     }, [type, models, changeModel, mappedModel]);
 
+    const showAdvanced = isAdvancedComposition || filtersNumber === 1;
     return (
         <Rule
             rule={rule}
@@ -221,10 +222,10 @@ const RuleContainer = ({ index }) => {
         >
             {rule.filtersNumber > 0 ? (
                 <>
-                    {isAdvancedComposition && (
+                    {showAdvanced && (
                         <FiltersTemplate>{buildFilters()}</FiltersTemplate>
                     )}
-                    {!isAdvancedComposition &&
+                    {!showAdvanced &&
                         compositionArray.map((element, index) => {
                             if (Array.isArray(element)) {
                                 return buildFiltersGroup(element, index);

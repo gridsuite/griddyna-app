@@ -58,21 +58,23 @@ const FiltersGroup = (props) => {
         <Paper className={classes.group}>
             <Grid container justify="space-between">
                 <Grid item>
-                    <Grid container justify="flex-start">
-                        <Grid item className={classes.operatorSelect}>
-                            <Select
-                                options={[
-                                    { value: '||', label: 'Any' },
-                                    { value: '&&', label: 'All' },
-                                ]}
-                                value={operator}
-                                setValue={changeOperator}
-                            />
+                    {filters.length > 1 && (
+                        <Grid container justify="flex-start">
+                            <Grid item className={classes.operatorSelect}>
+                                <Select
+                                    options={[
+                                        { value: '||', label: 'Any' },
+                                        { value: '&&', label: 'All' },
+                                    ]}
+                                    value={operator}
+                                    setValue={changeOperator}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <Typography>{requirementsLabel}</Typography>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Typography>{requirementsLabel}</Typography>
-                        </Grid>
-                    </Grid>
+                    )}
                 </Grid>
                 <Grid item>
                     <AddIconButton
