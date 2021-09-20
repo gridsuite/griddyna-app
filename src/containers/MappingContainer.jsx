@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getAutomataNumber,
     getRulesNumber,
-    getSortedRulesNumber,
     getSortedAutomataNumber,
     getSortedRulesNumber,
     isMappingValid as isMappingValidSelector,
@@ -87,7 +86,6 @@ const MappingContainer = () => {
         dispatch(getNetworkNames());
     }, [networkValues, dispatch]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
 
@@ -249,7 +247,6 @@ const MappingContainer = () => {
                 </Accordion>
             </Paper>
             <AttachDialog
-                open={isModalOpen}
                 networks={networks}
                 open={isAttachedModalOpen}
                 handleClose={() => setIsAttachedModalOpen(false)}
