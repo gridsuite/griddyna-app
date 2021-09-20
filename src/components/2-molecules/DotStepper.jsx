@@ -10,13 +10,14 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { MobileStepper } from '@material-ui/core';
+import { useStyles } from './DotStepperStyles';
 
 const saveLabel = 'Save';
 const nextLabel = 'Next';
 const backLabel = 'Back';
 const cancelLabel = 'Cancel';
 
-const RenameDialog = (props) => {
+const DotStepper = (props) => {
     const {
         step,
         setStep,
@@ -25,8 +26,11 @@ const RenameDialog = (props) => {
         onCancel,
         disabled = false,
     } = props;
+
+    const classes = useStyles();
     return (
         <MobileStepper
+            className={classes.position}
             backButton={
                 <Button
                     size="small"
@@ -49,12 +53,13 @@ const RenameDialog = (props) => {
                     <KeyboardArrowRight />
                 </Button>
             }
-            steps={step}
+            steps={maxStep + 1}
+            activeStep={step}
         />
     );
 };
 
-RenameDialog.propTypes = {
+DotStepper.propTypes = {
     step: PropTypes.number.isRequired,
     maxStep: PropTypes.number.isRequired,
     setStep: PropTypes.func.isRequired,
@@ -63,4 +68,4 @@ RenameDialog.propTypes = {
     disabled: PropTypes.bool,
 };
 
-export default RenameDialog;
+export default DotStepper;

@@ -11,6 +11,7 @@ import { ParameterOrigin, ParameterType } from '../../constants/models';
 import { Box, Grid, TextField, Tooltip, Typography } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
 import * as _ from 'lodash';
+import { isParameterValueValid } from '../../utils/parameters';
 
 const infoTypeLabel = 'This parameter is of type ';
 const networkLabel = ' From Network';
@@ -24,9 +25,10 @@ const SetEditor = (props) => {
                 return 0;
             case ParameterOrigin.NETWORK:
                 return 1;
+            default:
+                return 10;
         }
     };
-    console.log(definitions, set);
     const onChange = (event) => {
         const parameterChanged = event.target.id;
         const newValue = event.target.value;
@@ -41,20 +43,6 @@ const SetEditor = (props) => {
             (parameter) => parameter.name === parameterChanged
         ).value = newValueToUse;
         saveSet(updatedSet);
-    };
-
-    const isValid = (value, type) => {
-        console.log(value, type);
-        switch (type) {
-            case ParameterType.BOOL:
-                return value === 'true' || value === 'false';
-            case ParameterType.STRING:
-                return value.length > 0;
-            case ParameterType.DOUBLE:
-                return /^\d+([.,]\d+)?$/.test(value);
-            case ParameterType.INT:
-                return /^\d+$/.test(value);
-        }
     };
 
     return (
@@ -83,7 +71,7 @@ const SetEditor = (props) => {
                                     error={
                                         definition.origin ===
                                             ParameterOrigin.USER &&
-                                        !isValid(
+                                        !isParameterValueValid(
                                             correspondingParameter.value,
                                             definition.type
                                         )
