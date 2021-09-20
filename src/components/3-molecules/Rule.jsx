@@ -8,8 +8,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
-import { AddIconButton, DeleteButton, CopyButton } from '../1-atoms/buttons';
-import { Grid, Paper, TextField, Typography } from '@material-ui/core';
+import {
+    AddIconButton,
+    DeleteButton,
+    CopyButton,
+    ChangeButton,
+} from '../1-atoms/buttons';
+import { Grid, Paper, TextField, Typography, Tooltip } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import {
     getEquipmentTypesOptions,
     getModelsOptions,
@@ -28,6 +34,10 @@ const Rule = (props) => {
         children,
         deleteRule,
         copyRule,
+        changeCompositionMode,
+        isAdvancedMode,
+        canUseBasicMode,
+        unusedFilters = [],
     } = props;
     const { type, composition, mappedModel } = rule;
     const classes = useStyles(isRuleValid);
@@ -37,8 +47,12 @@ const Rule = (props) => {
     const filterLabel = 'Where';
     const modelLabel = 'should be mapped to';
     const addFilterLabel = 'Add filter';
+    const addFilterGroupLabel = 'Add filter group';
     const deleteRuleLabel = 'Delete rule';
     const copyRuleLabel = 'Copy Rule';
+    const useBasicModeLabel = 'Use simple filters mode';
+    const useAdvancedModeLabel = 'Use advanced filters mode';
+    const unusedFiltersLabel = 'You have unused filter(s)';
 
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
@@ -64,9 +78,31 @@ const Rule = (props) => {
                         <Grid item>
                             <Typography variant="h4">:</Typography>
                         </Grid>
+                        {unusedFilters.length > 0 && (
+                            <Grid item className={classes.unused}>
+                                <Tooltip
+                                    title={`${unusedFiltersLabel}: ${unusedFilters.join(
+                                        ', '
+                                    )}`}
+                                >
+                                    <ErrorIcon />
+                                </Tooltip>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
                 <Grid item>
+                    {rule.filtersNumber > 1 && (
+                        <ChangeButton
+                            onClick={changeCompositionMode}
+                            disabled={isAdvancedMode && !canUseBasicMode}
+                            tooltip={
+                                isAdvancedMode
+                                    ? useBasicModeLabel
+                                    : useAdvancedModeLabel
+                            }
+                        />
+                    )}
                     <DeleteButton
                         onClick={deleteRule}
                         tooltip={deleteRuleLabel}
@@ -74,12 +110,12 @@ const Rule = (props) => {
                     <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
                 </Grid>
             </Grid>
-            {rule.filtersNumber > 1 && (
+            {rule.filtersNumber > 1 && isAdvancedMode && (
                 <Grid container justify={'flex-start'}>
                     <Grid item xs={2} className={classes.label}>
                         <Typography>{`${compositionLabel} :`}</Typography>
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={8}>
                         <TextField
                             fullWidth
                             onChange={onChangeComposition}
@@ -89,7 +125,6 @@ const Rule = (props) => {
                     </Grid>
                 </Grid>
             )}
-
             <Grid container justify={'space-between'}>
                 <Grid item xs={3} className={classes.filterLabel}>
                     <Typography>{`${filterLabel} :`}</Typography>
@@ -98,7 +133,11 @@ const Rule = (props) => {
                     <Grid container justify="center">
                         <AddIconButton
                             onClick={addFilter}
-                            tooltip={addFilterLabel}
+                            tooltip={
+                                isAdvancedMode
+                                    ? addFilterLabel
+                                    : addFilterGroupLabel
+                            }
                         />
                     </Grid>
                 </Grid>
@@ -130,6 +169,10 @@ Rule.propTypes = {
     models: PropTypes.array.isRequired,
     deleteRule: PropTypes.func.isRequired,
     copyRule: PropTypes.func.isRequired,
+    changeCompositionMode: PropTypes.func.isRequired,
+    isAdvancedMode: PropTypes.bool.isRequired,
+    canUseBasicMode: PropTypes.bool.isRequired,
+    unusedFilters: PropTypes.array,
 };
 
 export default Rule;

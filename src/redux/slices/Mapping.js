@@ -5,8 +5,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import {
+    createAsyncThunk,
+    createSelector,
+    createSlice,
+} from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
@@ -17,6 +20,12 @@ import {
     AutomatonProperties,
     EquipmentType,
 } from '../../constants/equipmentDefinition';
+import {
+    checkCompositionArrayValidity,
+    convertCompositionArrayToString,
+    convertCompositionStringToArray,
+    getMaxDepthParentheses,
+} from '../../utils/composition';
 
 const initialState = {
     mappings: [],
@@ -107,6 +116,17 @@ const filterAutomataByFamily = (automata, family) =>
             automaton.family === family
     );
 
+const postProcessComposition = (composition) =>
+    composition
+        // remove bordering spaces
+        .trim()
+        // replace multiple spaces by single ones
+        .replaceAll(/ +(?= )/g, '')
+        // remove parentheses bordering one element
+        .replaceAll(/\((filter\d+)\)/g, '$1')
+        // remove useless parentheses around the whole string
+        .replace(/^\(([^(]+)\)$/g, '$1');
+
 // Selectors
 
 export const getSortedRulesNumber = (state) => {
@@ -187,6 +207,27 @@ export const makeGetAutomaton = () =>
         }
     );
 
+export const makeGetUnusedFilters = () =>
+    createSelector(
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredRuleType
+            ),
+        (_state, index) => index,
+        (rules, index) => {
+            const selectedRule = rules[index];
+            const usedFilters = Array.from(
+                selectedRule.composition.matchAll(/filter\d+\b/g),
+                (m) => m[0]
+            );
+            const ruleFilters = selectedRule.filters.map((filter) => filter.id);
+            return ruleFilters.filter(
+                (filterToTest) => !usedFilters.includes(filterToTest)
+            );
+        }
+    );
+
 export const makeGetFilter = () =>
     createSelector(
         (state) =>
@@ -196,6 +237,22 @@ export const makeGetFilter = () =>
             ),
         (_state, indexes) => indexes,
         (rules, indexes) => rules[indexes.rule].filters[indexes.filter]
+    );
+
+export const makeGetFilterIndexes = () =>
+    createSelector(
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredRuleType
+            ),
+        (_state, args) => args,
+        (rules, { ruleIndex, filterIds }) => {
+            const filters = rules[ruleIndex].filters;
+            return filterIds.map((id) =>
+                filters.findIndex((filter) => filter.id === id)
+            );
+        }
     );
 
 const checkFilterValidity = (filter) =>
@@ -225,6 +282,26 @@ const checkRuleValidity = (rule) => {
     );
 };
 
+const checkCanUseBasicMode = (inputComposition) => {
+    const composition = postProcessComposition(inputComposition);
+    const maxDepthComposition = getMaxDepthParentheses(composition);
+    if (maxDepthComposition < 2) {
+        try {
+            const compositionArray =
+                convertCompositionStringToArray(composition);
+            return (
+                composition === 'true' ||
+                (composition ===
+                    convertCompositionArrayToString(compositionArray) &&
+                    checkCompositionArrayValidity(compositionArray))
+            );
+        } catch {
+            return false;
+        }
+    }
+    return false;
+};
+
 const checkAutomatonValidity = (automaton) =>
     automaton.family !== '' &&
     automaton.watchedElement !== '' &&
@@ -244,6 +321,17 @@ export const makeIsRuleValid = () =>
             ),
         (_state, index) => index,
         (rules, index) => checkRuleValidity(rules[index])
+    );
+
+export const makeCanUseBasicMode = () =>
+    createSelector(
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredRuleType
+            ),
+        (_state, index) => index,
+        (rules, index) => checkCanUseBasicMode(rules[index].composition)
     );
 
 export const makeIsAutomatonValid = () =>
@@ -288,11 +376,13 @@ export const isModified = createSelector(
         const foundMapping = savedMappings.find(
             (mapping) => mapping.name === activeName
         );
+
         function ignoreFilterCounterRule(rule) {
             const ruleToTest = _.cloneDeep(rule);
             delete ruleToTest.filterCounter;
             return ruleToTest;
         }
+
         return !(
             _.isEqual(
                 activeRules.map(ignoreFilterCounterRule),
@@ -326,6 +416,9 @@ export const postMapping = createAsyncThunk(
         let augmentedRules = rules.map((rule) => {
             let augmentedRule = _.cloneDeep(rule);
             augmentedRule.equipmentType = rule.type.toUpperCase();
+            augmentedRule.composition = postProcessComposition(
+                rule.composition
+            );
             augmentedRule.filters = augmentedRule.filters.map((filter) => ({
                 ...filter,
                 filterId: filter.id,
@@ -468,11 +561,11 @@ const reducers = {
     },
     // Filter
     addFilter: (state, action) => {
-        const { index } = action.payload;
+        const { ruleIndex, groupIndex, groupOperator = '||' } = action.payload;
         const newId = `filter${filterRulesByType(
             state.rules,
             state.filteredRuleType
-        )[index].filterCounter++}`;
+        )[ruleIndex].filterCounter++}`;
         const newFilter = {
             id: newId,
             property: '',
@@ -482,12 +575,27 @@ const reducers = {
         const selectedRule = filterRulesByType(
             state.rules,
             state.filteredRuleType
-        )[index];
+        )[ruleIndex];
         selectedRule.filters.push(newFilter);
-        selectedRule.composition =
-            selectedRule.filters.length === 1
-                ? newId
-                : `${selectedRule.composition} &&  ${newId}`;
+        if (groupIndex !== undefined) {
+            try {
+                const newCompositionArray = convertCompositionStringToArray(
+                    selectedRule.composition
+                );
+                newCompositionArray[groupIndex].push(groupOperator);
+                newCompositionArray[groupIndex].push(newId);
+                const newComposition =
+                    convertCompositionArrayToString(newCompositionArray);
+                selectedRule.composition = newComposition;
+            } catch (e) {
+                console.error(e);
+            }
+        } else {
+            selectedRule.composition =
+                selectedRule.filters.length === 1
+                    ? newId
+                    : `${selectedRule.composition} && ${newId}`;
+        }
     },
     changeFilterProperty: (state, action) => {
         const { ruleIndex, filterIndex, property } = action.payload;
@@ -528,10 +636,12 @@ const reducers = {
             (value, index) => index !== filterIndex
         );
         ruleToModify.filters = newFilters;
-        ruleToModify.composition = ruleToModify.composition.replaceAll(
-            filterIdToDelete,
-            'true'
-        );
+        const modifiedComposition = ruleToModify.composition
+            .replaceAll(filterIdToDelete, 'true')
+            .replaceAll('(true)', 'true')
+            .replaceAll(/ (?:&&|\|\|) true/g, '')
+            .replaceAll(/true (?:&&|\|\|) /g, '');
+        ruleToModify.composition = modifiedComposition;
     },
     copyFilter: (state, action) => {
         const { ruleIndex, filterIndex } = action.payload;
@@ -657,11 +767,15 @@ const extraReducers = {
         state.status = RequestStatus.SUCCESS;
         const receivedMapping = transformMapping(action.payload);
         const foundMapping = state.mappings.find(
-            (script) => script.name === receivedMapping.name
+            (mapping) => mapping.name === receivedMapping.name
         );
         if (foundMapping) {
             foundMapping.rules = receivedMapping.rules;
             foundMapping.automata = receivedMapping.automata;
+            if (receivedMapping.name === state.activeMapping) {
+                state.rules = receivedMapping.rules;
+                state.automata = receivedMapping.automata;
+            }
         }
     },
     [postMapping.rejected]: (state, _action) => {
