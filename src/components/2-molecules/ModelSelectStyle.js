@@ -7,7 +7,7 @@
 
 import { makeStyles } from '@material-ui/core';
 
-export const useStyles = makeStyles({
+export const useStyles = makeStyles((theme) => ({
     titleSelect: {},
     box: {},
     infoGrid: {
@@ -18,12 +18,13 @@ export const useStyles = makeStyles({
         justifyContent: 'center',
         display: 'flex',
     },
-    button: {
+    button: ({ errorInParams }) => ({
         justifyContent: 'center',
         display: 'flex',
         '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
             fontSize: '2em',
             pointerEvents: 'auto',
+            color: errorInParams ? 'red' : 'unset',
         },
-    },
-});
+    }),
+}));

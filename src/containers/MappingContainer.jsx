@@ -48,6 +48,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
+import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 
 // TODO intl
 const ADD_RULE_LABEL = 'Add a rule';
@@ -79,6 +80,7 @@ const MappingContainer = () => {
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
+    const areParametersValid = useSelector(areParametersValidSelector);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -175,7 +177,7 @@ const MappingContainer = () => {
                 <Header
                     name={activeMapping}
                     isModified={isModified}
-                    isValid={isMappingValid}
+                    isValid={isMappingValid && areParametersValid}
                     save={saveMapping}
                     saveTooltip={SAVE_LABEL}
                     convert={convertToScript}
