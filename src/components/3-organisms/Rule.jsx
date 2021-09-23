@@ -41,7 +41,14 @@ const Rule = (props) => {
         controlledParameters = false,
         isNetworkAttached = false,
     } = props;
-    const { type, composition, mappedModel, setGroup, groupType, matches = [] } = rule;
+    const {
+        type,
+        composition,
+        mappedModel,
+        setGroup,
+        groupType,
+        matches = [],
+    } = rule;
     const classes = useStyles(isRuleValid);
     // TODO intl
     const equipmentLabel = 'Each';

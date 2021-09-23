@@ -24,7 +24,7 @@ import {
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import { GroupEditionOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';
-import DotStepper from '../components/2-molecules/DotStepper';
+import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
@@ -77,8 +77,11 @@ const ParametersContainer = ({
     );
     const otherGroups =
         modelToEdit?.groups
-            .map((group) => group.name)
-            .filter((groupName) => groupName !== setGroup) ?? [];
+            .filter(
+                (group) =>
+                    !(group.name === setGroup && group.type === groupType)
+            )
+            .map((group) => group.name) ?? [];
 
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
@@ -170,7 +173,7 @@ const ParametersContainer = ({
                 )}
             </DialogContent>
             {showSteps ? (
-                <DotStepper
+                <Stepper
                     step={step}
                     maxStep={maxStep}
                     setStep={setStep}

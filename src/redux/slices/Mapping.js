@@ -192,8 +192,14 @@ export const makeGetRule = () =>
         (_state, index) => index,
         (rules, index) => {
             const foundRule = rules[index];
-            const { type, composition, mappedModel, setGroup, groupType, matches } =
-                foundRule;
+            const {
+                type,
+                composition,
+                mappedModel,
+                setGroup,
+                groupType,
+                matches,
+            } = foundRule;
             // Filters fetched separately to avoid re-renders
             return {
                 type,

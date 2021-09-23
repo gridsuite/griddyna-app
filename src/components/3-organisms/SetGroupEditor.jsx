@@ -65,7 +65,8 @@ const SetGroupEditor = (props) => {
                             ]}
                             value={type}
                             setValue={changeType}
-                            disabled={name === ''}/>
+                            disabled={name === ''}
+                        />
                     </Grid>
                 </Grid>
             )}

@@ -123,7 +123,8 @@ const reducers = {
         state.currentGroup = DEFAULT_GROUP;
     },
     changeGroup: (state, action) => {
-        const { group, originalGroup, modelName, isAbsolute, matches } = action.payload;
+        const { group, originalGroup, modelName, isAbsolute, matches } =
+            action.payload;
         const currentGroup = _.cloneDeep(group);
         const definitions = state.parameterDefinitions;
         currentGroup.modelName = modelName;
