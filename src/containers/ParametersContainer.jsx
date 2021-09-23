@@ -45,10 +45,18 @@ const ParametersContainer = ({
 
     const dispatch = useDispatch();
 
+    const currentGroup = useSelector((state) => state.models.currentGroup);
+
     useEffect(() => {
-        dispatch(getModelSets({ modelName: model, groupName: setGroup }));
+        dispatch(
+            getModelSets({
+                modelName: model,
+                groupName: setGroup,
+                groupType: currentGroup?.type,
+            })
+        );
         dispatch(getModelDefinitions(model));
-    }, [dispatch, model, setGroup]);
+    }, [dispatch, model, setGroup, currentGroup.type]);
 
     const getModel = useMemo(makeGetModel, []);
     const modelToEdit = useSelector((state) => getModel(state, model));
@@ -70,8 +78,6 @@ const ParametersContainer = ({
     const [step, setStep] = useState(setGroup ? 1 : 0);
     const showSteps = !setGroup && controlledParameters;
     const maxStep = 1; // TODO: Change when PREFIX/SUFFIX Group are implemented ( maxStep = number or equipments in network to parametrize)
-
-    const currentGroup = useSelector((state) => state.models.currentGroup);
 
     const currentSet = currentGroup.sets[step - 1] ?? {
         name: currentGroup.name,

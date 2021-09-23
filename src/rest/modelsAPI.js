@@ -36,16 +36,19 @@ export function getModelDefinitions(modelName, token) {
     });
 }
 
-export function getModelSets(modelName, groupName, token) {
-    return fetch(`${API_URL}/${modelName}/parameters/sets/${groupName}`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-        },
-        cache: 'default',
-    });
+export function getModelSets(modelName, groupName, groupType, token) {
+    return fetch(
+        `${API_URL}/${modelName}/parameters/sets/${groupName}/${groupType}`,
+        {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + token,
+            },
+            cache: 'default',
+        }
+    );
 }
 
 export function postModelSetsGroup(setGroup, strict, token) {

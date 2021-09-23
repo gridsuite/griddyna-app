@@ -68,12 +68,13 @@ export const getModelDefinitions = createAsyncThunk(
 
 export const getModelSets = createAsyncThunk(
     'models/sets',
-    async ({ modelName, groupName }, { getState }) => {
+    async ({ modelName, groupName, groupType }, { getState }) => {
         if (groupName) {
             const token = getState()?.user.user?.id_token;
             const response = await modelsAPI.getModelSets(
                 modelName,
                 groupName,
+                groupType,
                 token
             );
             return response.json();
