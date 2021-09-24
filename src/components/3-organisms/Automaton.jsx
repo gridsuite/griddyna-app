@@ -15,6 +15,7 @@ import Autocomplete from '../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonStyle';
 import { getAutomatonProperty } from '../../utils/automata';
 import ModelSelect from '../2-molecules/ModelSelect';
+import { SetType } from '../../constants/models';
 
 const Automaton = (props) => {
     const {
@@ -141,6 +142,7 @@ const Automaton = (props) => {
                 models={models}
                 changeModel={changeModel}
                 setGroup={setGroup}
+                groupType={SetType.FIXED}
                 changeGroup={changeParameters}
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}

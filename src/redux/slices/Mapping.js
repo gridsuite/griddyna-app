@@ -43,6 +43,7 @@ const DEFAULT_RULE = {
     composition: 'true',
     mappedModel: '',
     setGroup: '',
+    groupType: 'FIXED',
     filters: [],
     filterCounter: 1,
 };
@@ -188,13 +189,15 @@ export const makeGetRule = () =>
         (_state, index) => index,
         (rules, index) => {
             const foundRule = rules[index];
-            const { type, composition, mappedModel, setGroup } = foundRule;
+            const { type, composition, mappedModel, setGroup, groupType } =
+                foundRule;
             // Filters fetched separately to avoid re-renders
             return {
                 type,
                 composition,
                 mappedModel,
                 setGroup,
+                groupType,
                 filtersNumber: foundRule.filters.length,
             };
         }
@@ -281,6 +284,8 @@ const checkRuleValidity = (rule) => {
         rule.type !== '' &&
         rule.composition !== '' &&
         rule.mappedModel !== '' &&
+        rule.setGroup !== '' &&
+        rule.groupType !== '' &&
         rule.filters.reduce(
             (acc, filter) => acc && checkFilterValidity(filter),
             true
@@ -563,6 +568,8 @@ const reducers = {
         selectedRule.composition = DEFAULT_RULE.composition;
         selectedRule.filters = DEFAULT_RULE.filters;
         selectedRule.mappedModel = DEFAULT_RULE.mappedModel;
+        selectedRule.setGroup = DEFAULT_RULE.setGroup;
+        selectedRule.groupType = DEFAULT_RULE.groupType;
         selectedRule.filterCounter = DEFAULT_RULE.filterCounter;
     },
     changeRuleComposition: (state, action) => {
@@ -578,9 +585,13 @@ const reducers = {
         ].mappedModel = mappedModel;
     },
     changeRuleParameters: (state, action) => {
-        const { index, parameters } = action.payload;
-        filterRulesByType(state.rules, state.filteredRuleType)[index].setGroup =
-            parameters;
+        const { index, parameters, type } = action.payload;
+        const selectedRule = filterRulesByType(
+            state.rules,
+            state.filteredRuleType
+        )[index];
+        selectedRule.setGroup = parameters;
+        selectedRule.groupType = type;
     },
     deleteRule: (state, action) => {
         const { index } = action.payload;

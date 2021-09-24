@@ -9,7 +9,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getModelDefinitions,
-    getModels,
     getModelSets,
     makeGetModel,
     ModelSlice,
@@ -23,7 +22,7 @@ import {
     DialogTitle,
 } from '@material-ui/core';
 import { MappingSlice } from '../redux/slices/Mapping';
-import { GroupEditionOrigin } from '../constants/models';
+import { GroupEditionOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';
 import DotStepper from '../components/2-molecules/DotStepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
@@ -40,6 +39,8 @@ const ParametersContainer = ({
     close,
     origin,
     originIndex,
+    groupType = SetType.FIXED,
+    isAbsolute = true,
 }) => {
     // TODO Add path parameter here
 
@@ -64,12 +65,13 @@ const ParametersContainer = ({
         (state) => state.models.parameterDefinitions
     );
 
-    const groupToEdit = modelToEdit.groups.find(
-        (group) => group.name === setGroup
+    const groupToEdit = modelToEdit?.groups.find(
+        (group) => group.name === setGroup && group.type === groupType
     );
-    const otherGroups = modelToEdit.groups
-        .map((group) => group.name)
-        .filter((groupName) => groupName !== setGroup);
+    const otherGroups =
+        modelToEdit?.groups
+            .map((group) => group.name)
+            .filter((groupName) => groupName !== setGroup) ?? [];
 
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
@@ -104,9 +106,9 @@ const ParametersContainer = ({
             actionToDispatch({
                 index: originIndex,
                 parameters: currentGroup.name,
+                type: currentGroup.type,
             })
         );
-        dispatch(getModels());
 
         close();
     };
@@ -118,13 +120,16 @@ const ParametersContainer = ({
     const isError = isErrorName || (step > 0 && isErrorSets);
 
     useEffect(() => {
-        dispatch(
-            ModelSlice.actions.changeGroup({
-                group: groupToEdit,
-                modelName: model,
-            })
-        );
-    }, [dispatch, groupToEdit, model]);
+        if (model) {
+            dispatch(
+                ModelSlice.actions.changeGroup({
+                    group: groupToEdit,
+                    modelName: model,
+                    isAbsolute: isAbsolute,
+                })
+            );
+        }
+    }, [dispatch, groupToEdit, model, isAbsolute]);
 
     return (
         <Dialog open={true} onClose={close}>
@@ -139,6 +144,7 @@ const ParametersContainer = ({
                         type={currentGroup.type}
                         changeName={changeGroupName}
                         changeType={changeGroupType}
+                        isAbsolute={isAbsolute}
                     />
                 ) : (
                     <SetEditor
@@ -180,6 +186,8 @@ ParametersContainer.propTypes = {
     origin: PropTypes.string.isRequired,
     originIndex: PropTypes.number.isRequired,
     setGroup: PropTypes.string,
+    groupType: PropTypes.string,
+    isAbsolute: PropTypes.bool,
     close: PropTypes.func.isRequired,
 };
 export default ParametersContainer;

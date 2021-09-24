@@ -16,7 +16,7 @@ import { makeGetModels } from '../redux/slices/Model';
 import { makeGetPossibleWatchedElements } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
-import { GroupEditionOrigin } from '../constants/models';
+import { GroupEditionOrigin, SetType } from '../constants/models';
 
 const AutomatonContainer = ({ index, editParameters }) => {
     const getAutomaton = useMemo(makeGetAutomaton, []);
@@ -98,10 +98,12 @@ const AutomatonContainer = ({ index, editParameters }) => {
             })
         );
 
-    const editGroup = () =>
+    const editGroup = () => () =>
         editParameters({
             model,
             setGroup,
+            groupType: SetType.FIXED,
+            isAbsolute: true,
             origin: GroupEditionOrigin.AUTOMATON,
             originIndex: index,
         });

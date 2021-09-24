@@ -1,9 +1,8 @@
-import { Box, Grid, Tooltip, Typography } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
+import { Box, Checkbox, Grid, Typography } from '@material-ui/core';
 import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './ModelSelectStyle';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { SetType } from '../../constants/models';
 import { SaveButton } from '../1-atoms/buttons';
@@ -14,13 +13,20 @@ const editGroupLabel = 'Edit the parameters group and/or the parameters sets';
 const simpledEditLabel =
     'Cannot edit sets without enabling parameters management';
 const newGroupLabel = 'Create new group';
+const isAbsoluteLabel = 'All equipments share the same .par file';
 const fixedLabel = (name) =>
     `All equipments affected will use ${name}.par file.`;
 
+const parName = (type, name) =>
+    (type === SetType.SUFFIX ? '{id}' : '') +
+    name +
+    (type === SetType.PREFIX ? '{id}' : '');
+
 const variableLabel = (isPrefix, name) =>
-    `Equipments affected will use their own ${
-        (isPrefix ? '{id}' : '') + name + (!isPrefix ? '{id}' : '')
-    }.par file.`;
+    `Equipments affected will use their own ${parName(
+        isPrefix ? SetType.PREFIX : SetType.SUFFIX,
+        name
+    )}.par file.`;
 
 const ModelSelect = (props) => {
     const {
@@ -28,27 +34,47 @@ const ModelSelect = (props) => {
         models,
         changeModel,
         setGroup,
+        groupType,
         changeGroup,
         editGroup,
         controlledParameters = false,
     } = props;
-
     const mappedModel = models.find(
         (modelToTest) => modelToTest.name === model
     );
 
-    const groups = mappedModel
-        ? mappedModel.groups.map((group) => group.name)
-        : [];
+    const groups = mappedModel ? mappedModel.groups : [];
 
     const foundGroup = mappedModel?.groups.find(
-        (group) => group.name === setGroup
+        (group) => group.name === setGroup && group.type === groupType
     );
 
-    const groupOptions = groups.map((group) => ({
-        label: group,
-        value: group,
-    }));
+    const [isAbsolute, setIsAbsolute] = useState(
+        ![SetType.PREFIX, SetType.SUFFIX].includes(groupType)
+    );
+
+    useEffect(() => {
+        if (groupType) {
+            setIsAbsolute(
+                ![SetType.PREFIX, SetType.SUFFIX].includes(groupType)
+            );
+        }
+    }, [groupType]);
+
+    const onAbsoluteChange = () => {
+        setIsAbsolute(!isAbsolute);
+        changeGroup({ name: '', type: '' });
+    };
+    const groupOptions = groups
+        .filter((group) =>
+            isAbsolute
+                ? group.type === SetType.FIXED
+                : group.type !== SetType.FIXED
+        )
+        .map((group) => ({
+            label: parName(group.type, group.name),
+            value: group,
+        }));
     groupOptions.push({ label: newGroupLabel, value: '' });
 
     const errorInParams =
@@ -76,40 +102,35 @@ const ModelSelect = (props) => {
                     </Grid>
                     <Grid container justify={'center'}>
                         <Grid item xs="auto">
+                            <Typography variant="h4">{`${isAbsoluteLabel} :`}</Typography>
+                        </Grid>
+                        <Grid item xs="auto">
+                            <Checkbox
+                                checked={isAbsolute}
+                                onChange={onAbsoluteChange}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container justify={'center'}>
+                        <Grid item xs="auto">
                             <Typography variant="h4">{`${setLabel} :`}</Typography>
                         </Grid>
                         <Grid item xs="auto" className={classes.titleSelect}>
                             <Select
                                 options={groupOptions}
-                                value={setGroup}
+                                value={foundGroup}
                                 setValue={changeGroup}
-                                error={setGroup === ''}
+                                error={foundGroup === undefined}
                             />
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item xs={2}>
                     <Grid container className={classes.infoGrid}>
-                        <Grid item xs={3} className={classes.tooltip}>
-                            {foundGroup && (
-                                <Tooltip
-                                    title={
-                                        foundGroup.type === SetType.FIXED
-                                            ? fixedLabel(foundGroup.name)
-                                            : variableLabel(
-                                                  foundGroup.type ===
-                                                      SetType.PREFIX,
-                                                  foundGroup.name
-                                              )
-                                    }
-                                >
-                                    <InfoIcon />
-                                </Tooltip>
-                            )}
-                        </Grid>
+                        <Grid item xs={3} className={classes.tooltip}></Grid>
                         <Grid item xs={9} className={classes.button}>
                             <SaveButton
-                                onClick={editGroup}
+                                onClick={editGroup(isAbsolute)}
                                 disabled={
                                     model === '' ||
                                     (setGroup && !controlledParameters)
@@ -131,6 +152,7 @@ const ModelSelect = (props) => {
 ModelSelect.propTypes = {
     model: PropTypes.string.isRequired,
     setGroup: PropTypes.string.isRequired,
+    groupType: PropTypes.string.isRequired,
     models: PropTypes.arrayOf(PropTypes.string).isRequired,
     changeModel: PropTypes.func.isRequired,
     changeGroup: PropTypes.string.isRequired,

@@ -33,7 +33,14 @@ import { GroupEditionOrigin } from '../constants/models';
 const RuleContainer = ({ index, editParameters }) => {
     const getRule = useMemo(makeGetRule, []);
     const rule = useSelector((state) => getRule(state, index));
-    const { type, filtersNumber, mappedModel, setGroup, composition } = rule;
+    const {
+        type,
+        filtersNumber,
+        mappedModel,
+        setGroup,
+        groupType,
+        composition,
+    } = rule;
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
     const isRuleValid = useSelector((state) =>
         isRuleValidSelector(state, index)
@@ -118,11 +125,12 @@ const RuleContainer = ({ index, editParameters }) => {
     );
 
     const changeParameters = useCallback(
-        (parameters) =>
+        (group) =>
             dispatch(
                 MappingSlice.actions.changeRuleParameters({
                     index,
-                    parameters: parameters,
+                    parameters: group.name,
+                    type: group.type,
                 })
             ),
         [dispatch, index]
@@ -158,10 +166,12 @@ const RuleContainer = ({ index, editParameters }) => {
             })
         );
 
-    const editGroup = () =>
+    const editGroup = (isAbsolute) => () =>
         editParameters({
             model: mappedModel,
             setGroup,
+            groupType,
+            isAbsolute,
             origin: GroupEditionOrigin.RULE,
             originIndex: index,
         });

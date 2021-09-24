@@ -12,13 +12,13 @@ import {
 } from '@reduxjs/toolkit';
 import * as modelsAPI from '../../rest/modelsAPI';
 import RequestStatus from '../../constants/RequestStatus';
-import { SetType } from '../../constants/models';
 import * as _ from 'lodash';
+import { SetType } from '../../constants/models';
 
 const DEFAULT_GROUP = {
     name: '',
     modelName: '',
-    type: SetType.FIXED,
+    type: '',
     sets: [],
 };
 
@@ -74,7 +74,7 @@ export const getModelSets = createAsyncThunk(
             const response = await modelsAPI.getModelSets(
                 modelName,
                 groupName,
-                groupType,
+                groupType !== '' ? groupType : SetType.FIXED,
                 token
             );
             return response.json();
@@ -108,12 +108,14 @@ const reducers = {
         state.currentGroup.type = newType;
     },
     changeGroup: (state, action) => {
-        const { group, modelName } = action.payload;
+        const { group, modelName, isAbsolute } = action.payload;
         state.currentGroup = _.cloneDeep(DEFAULT_GROUP);
         state.currentGroup.modelName = modelName;
         if (group) {
             state.currentGroup.name = group.name;
             state.currentGroup.type = group.type;
+        } else if (isAbsolute) {
+            state.currentGroup.type = SetType.FIXED;
         }
     },
     addOrModifySet: (state, action) => {
@@ -139,7 +141,12 @@ const extraReducers = {
         state.status = RequestStatus.SUCCESS;
     },
     [getModelSets.fulfilled]: (state, action) => {
-        state.currentGroup.sets = action.payload;
+        const receivedSets = action.payload;
+
+        state.currentGroup.sets = _.uniqBy(
+            receivedSets.concat(state.currentGroup.sets),
+            'name'
+        );
         state.status = RequestStatus.SUCCESS;
     },
     [postModelSetsGroup.fulfilled]: (state, action) => {

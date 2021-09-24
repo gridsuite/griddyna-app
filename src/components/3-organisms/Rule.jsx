@@ -40,7 +40,7 @@ const Rule = (props) => {
         editGroup = () => {},
         controlledParameters = false,
     } = props;
-    const { type, composition, mappedModel, setGroup } = rule;
+    const { type, composition, mappedModel, setGroup, groupType } = rule;
     const classes = useStyles(isRuleValid);
     // TODO intl
     const equipmentLabel = 'Each';
@@ -147,6 +147,7 @@ const Rule = (props) => {
             <ModelSelect
                 model={mappedModel}
                 setGroup={setGroup}
+                groupType={groupType}
                 models={models}
                 changeModel={changeModel}
                 changeGroup={changeParameters}

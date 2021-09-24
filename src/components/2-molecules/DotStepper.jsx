@@ -10,7 +10,6 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { MobileStepper } from '@material-ui/core';
-import { useStyles } from './DotStepperStyles';
 
 const saveLabel = 'Save';
 const nextLabel = 'Next';
@@ -27,10 +26,8 @@ const DotStepper = (props) => {
         disabled = false,
     } = props;
 
-    const classes = useStyles();
     return (
         <MobileStepper
-            className={classes.position}
             backButton={
                 <Button
                     size="small"
@@ -55,6 +52,7 @@ const DotStepper = (props) => {
             }
             steps={maxStep + 1}
             activeStep={step}
+            position="static"
         />
     );
 };

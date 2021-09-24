@@ -7,16 +7,23 @@
 
 import React from 'react';
 import { Grid, TextField, Typography } from '@material-ui/core';
-import { getSetTypesOptions } from '../../utils/optionsBuilders';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
+import { SetType } from '../../constants/models';
 
 // intl
 const nameLabel = 'Name of the group';
 const typeLabel = 'Type of the group';
 
 const SetGroupEditor = (props) => {
-    const { name, type, changeName, changeType, isError = false } = props;
+    const {
+        name,
+        type,
+        changeName,
+        changeType,
+        isError = false,
+        isAbsolute,
+    } = props;
 
     const onChange = (event) => changeName(event.target.value);
 
@@ -39,18 +46,29 @@ const SetGroupEditor = (props) => {
                     />
                 </Grid>
             </Grid>
-            <Grid container>
-                <Grid item xs="auto">
-                    <Typography> {`${typeLabel} :`} </Typography>
+            {!isAbsolute && (
+                <Grid container>
+                    <Grid item xs="auto">
+                        <Typography> {`${typeLabel} :`} </Typography>
+                    </Grid>
+                    <Grid item xs="8">
+                        <Select
+                            options={[
+                                {
+                                    value: SetType.PREFIX,
+                                    label: SetType.PREFIX,
+                                },
+                                {
+                                    value: SetType.SUFFIX,
+                                    label: SetType.SUFFIX,
+                                },
+                            ]}
+                            value={type}
+                            setValue={changeType}
+                        />
+                    </Grid>
                 </Grid>
-                <Grid item xs="8">
-                    <Select
-                        options={getSetTypesOptions()}
-                        value={type}
-                        setValue={changeType}
-                    />
-                </Grid>
-            </Grid>
+            )}
         </>
     );
 };
@@ -61,6 +79,7 @@ SetGroupEditor.propTypes = {
     changeName: PropTypes.func.isRequired,
     changeType: PropTypes.func.isRequired,
     isError: PropTypes.bool,
+    isAbsolute: PropTypes.bool.isRequired,
 };
 
 export default SetGroupEditor;

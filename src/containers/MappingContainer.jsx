@@ -257,6 +257,8 @@ const MappingContainer = () => {
                 <ParametersContainer
                     model={editParameters.model}
                     setGroup={editParameters.setGroup}
+                    groupType={editParameters.groupType}
+                    isAbsolute={editParameters.isAbsolute}
                     origin={editParameters.origin}
                     originIndex={editParameters.originIndex}
                     close={() => setEditParameters(undefined)}
