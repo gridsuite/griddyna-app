@@ -14,19 +14,11 @@ const simpledEditLabel =
     'Cannot edit sets without enabling parameters management';
 const newGroupLabel = 'Create new group';
 const isAbsoluteLabel = 'All equipments share the same .par file';
-const fixedLabel = (name) =>
-    `All equipments affected will use ${name}.par file.`;
 
 const parName = (type, name) =>
     (type === SetType.SUFFIX ? '{id}' : '') +
     name +
     (type === SetType.PREFIX ? '{id}' : '');
-
-const variableLabel = (isPrefix, name) =>
-    `Equipments affected will use their own ${parName(
-        isPrefix ? SetType.PREFIX : SetType.SUFFIX,
-        name
-    )}.par file.`;
 
 const ModelSelect = (props) => {
     const {
