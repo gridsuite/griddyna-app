@@ -16,8 +16,8 @@ import {
     makeIsRuleValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
-import { makeGetModels } from '../redux/slices/InstanceModel';
-import Rule from '../components/3-molecules/Rule';
+import { makeGetModels } from '../redux/slices/Model';
+import Rule from '../components/3-organisms/Rule';
 import FiltersTemplate from '../components/4-templates/FiltersTemplate';
 import FilterContainer from './FilterContainer';
 import PropTypes from 'prop-types';
@@ -27,12 +27,20 @@ import {
     convertCompositionStringToArray,
 } from '../utils/composition';
 import BooleanOperatorSelect from '../components/2-molecules/BooleanOperatorSelect';
-import FiltersGroup from '../components/3-molecules/FiltersGroup';
+import FiltersGroup from '../components/3-organisms/FiltersGroup';
+import { GroupEditionOrigin } from '../constants/models';
 
-const RuleContainer = ({ index }) => {
+const RuleContainer = ({ index, editParameters }) => {
     const getRule = useMemo(makeGetRule, []);
     const rule = useSelector((state) => getRule(state, index));
-    const { type, filtersNumber, mappedModel, composition } = rule;
+    const {
+        type,
+        filtersNumber,
+        mappedModel,
+        setGroup,
+        groupType,
+        composition,
+    } = rule;
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
     const isRuleValid = useSelector((state) =>
         isRuleValidSelector(state, index)
@@ -60,7 +68,9 @@ const RuleContainer = ({ index }) => {
     const unusedFilters = useSelector((state) =>
         getUnusedFilters(state, index)
     );
-
+    const controlledParameters = useSelector(
+        (state) => state.mappings.controlledParameters
+    );
     const dispatch = useDispatch();
     const [isAdvancedComposition, setIsAdvancedComposition] = useState(
         !canUseBasicMode
@@ -114,6 +124,18 @@ const RuleContainer = ({ index }) => {
         [dispatch, index]
     );
 
+    const changeParameters = useCallback(
+        (group) =>
+            dispatch(
+                MappingSlice.actions.changeRuleParameters({
+                    index,
+                    parameters: group.name,
+                    type: group.type,
+                })
+            ),
+        [dispatch, index]
+    );
+
     const deleteRule = () =>
         dispatch(
             MappingSlice.actions.deleteRule({
@@ -143,6 +165,16 @@ const RuleContainer = ({ index }) => {
                 groupOperator,
             })
         );
+
+    const editGroup = (isAbsolute) => () =>
+        editParameters({
+            model: mappedModel,
+            setGroup,
+            groupType,
+            isAbsolute,
+            origin: GroupEditionOrigin.RULE,
+            originIndex: index,
+        });
 
     function buildFilters() {
         const filters = [];
@@ -211,6 +243,7 @@ const RuleContainer = ({ index }) => {
             changeType={changeType}
             changeComposition={changeComposition}
             changeModel={changeModel}
+            changeParameters={changeParameters}
             addFilter={addFilter}
             models={models}
             deleteRule={deleteRule}
@@ -219,6 +252,8 @@ const RuleContainer = ({ index }) => {
             isAdvancedMode={isAdvancedComposition}
             canUseBasicMode={canUseBasicMode}
             unusedFilters={unusedFilters}
+            editGroup={editGroup}
+            controlledParameters={controlledParameters}
         >
             {rule.filtersNumber > 0 ? (
                 <>
@@ -256,6 +291,7 @@ const RuleContainer = ({ index }) => {
 
 RuleContainer.propTypes = {
     index: PropTypes.number.isRequired,
+    editParameters: PropTypes.func.isRequired,
 };
 
 export default RuleContainer;

@@ -12,15 +12,16 @@ import {
     makeIsAutomatonValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
-import { makeGetModels } from '../redux/slices/InstanceModel';
+import { makeGetModels } from '../redux/slices/Model';
 import { makeGetPossibleWatchedElements } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
-import Automaton from '../components/3-molecules/Automaton';
+import Automaton from '../components/3-organisms/Automaton';
+import { GroupEditionOrigin, SetType } from '../constants/models';
 
-const AutomatonContainer = ({ index }) => {
+const AutomatonContainer = ({ index, editParameters }) => {
     const getAutomaton = useMemo(makeGetAutomaton, []);
     const automaton = useSelector((state) => getAutomaton(state, index));
-    const { model, family } = automaton;
+    const { model, family, setGroup } = automaton;
     const isAutomatonValidSelector = useMemo(makeIsAutomatonValid, []);
     const isAutomatonValid = useSelector((state) =>
         isAutomatonValidSelector(state, index)
@@ -33,6 +34,9 @@ const AutomatonContainer = ({ index }) => {
     );
     const networkIds = useSelector((state) =>
         getPossibleWatchedElements(state, family)
+    );
+    const controlledParameters = useSelector(
+        (state) => state.mappings.controlledParameters
     );
     const dispatch = useDispatch();
     const changeFamily = (newFamily) =>
@@ -69,6 +73,17 @@ const AutomatonContainer = ({ index }) => {
         [dispatch, index]
     );
 
+    const changeParameters = useCallback(
+        (newParameters) =>
+            dispatch(
+                MappingSlice.actions.changeAutomatonParameters({
+                    index,
+                    parameters: newParameters,
+                })
+            ),
+        [dispatch, index]
+    );
+
     const deleteAutomaton = () =>
         dispatch(
             MappingSlice.actions.deleteAutomaton({
@@ -83,15 +98,44 @@ const AutomatonContainer = ({ index }) => {
             })
         );
 
-    useEffect(() => {
-        if (!models.map((model) => model.name).includes(model)) {
-            if (models.length === 1) {
-                changeModel(models[0].id);
-            } else {
-                changeModel('');
+    const editGroup = () => () =>
+        editParameters({
+            model,
+            setGroup,
+            groupType: SetType.FIXED,
+            isAbsolute: true,
+            origin: GroupEditionOrigin.AUTOMATON,
+            originIndex: index,
+        });
+
+    useEffect(
+        () => {
+            if (!models.map((model) => model.name).includes(model)) {
+                if (models.length === 1) {
+                    changeModel(models[0].name);
+                } else {
+                    changeModel('');
+                }
             }
-        }
-    }, [models, changeModel, model]);
+            const mappedModel = models.find(
+                (modelToTest) => modelToTest.name === model
+            );
+            if (
+                mappedModel &&
+                !mappedModel.groups
+                    .map((group) => group.name)
+                    .includes(setGroup)
+            ) {
+                if (mappedModel.groups.length === 1) {
+                    changeParameters(mappedModel.groups[0].name);
+                } else {
+                    changeParameters('');
+                }
+            }
+        },
+        [models, changeModel, model, setGroup, changeParameters],
+        changeParameters
+    );
 
     return (
         <Automaton
@@ -100,17 +144,21 @@ const AutomatonContainer = ({ index }) => {
             changeFamily={changeFamily}
             changeWatchedElement={changeWatchedElement}
             changeModel={changeModel}
+            changeParameters={changeParameters}
             changeProperty={changeProperty}
             models={models}
             networkIds={networkIds}
             deleteAutomaton={deleteAutomaton}
             copyAutomaton={copyAutomaton}
+            editGroup={editGroup}
+            controlledParameters={controlledParameters}
         />
     );
 };
 
 AutomatonContainer.propTypes = {
     index: PropTypes.number.isRequired,
+    editParameters: PropTypes.func.isRequired,
 };
 
 export default AutomatonContainer;

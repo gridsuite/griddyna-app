@@ -10,17 +10,15 @@ import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import {
     AddIconButton,
-    DeleteButton,
-    CopyButton,
     ChangeButton,
+    CopyButton,
+    DeleteButton,
 } from '../1-atoms/buttons';
-import { Grid, Paper, TextField, Typography, Tooltip } from '@material-ui/core';
+import { Grid, Paper, TextField, Tooltip, Typography } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
-import {
-    getEquipmentTypesOptions,
-    getModelsOptions,
-} from '../../utils/optionsBuilders';
+import { getEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './RuleStyle';
+import ModelSelect from '../2-molecules/ModelSelect';
 
 const Rule = (props) => {
     const {
@@ -38,14 +36,16 @@ const Rule = (props) => {
         isAdvancedMode,
         canUseBasicMode,
         unusedFilters = [],
+        changeParameters = () => {},
+        editGroup = () => {},
+        controlledParameters = false,
     } = props;
-    const { type, composition, mappedModel } = rule;
+    const { type, composition, mappedModel, setGroup, groupType } = rule;
     const classes = useStyles(isRuleValid);
     // TODO intl
     const equipmentLabel = 'Each';
     const compositionLabel = 'If';
     const filterLabel = 'Where';
-    const modelLabel = 'should be mapped to';
     const addFilterLabel = 'Add filter';
     const addFilterGroupLabel = 'Add filter group';
     const deleteRuleLabel = 'Delete rule';
@@ -143,19 +143,17 @@ const Rule = (props) => {
                 </Grid>
             </Grid>
             {children}
-            <Grid container justify={'center'}>
-                <Grid item xs="auto">
-                    <Typography variant="h4">{`${modelLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs="auto" className={classes.titleSelect}>
-                    <Select
-                        options={getModelsOptions(models)}
-                        value={mappedModel}
-                        setValue={changeModel}
-                        error={mappedModel === ''}
-                    />
-                </Grid>
-            </Grid>
+
+            <ModelSelect
+                model={mappedModel}
+                setGroup={setGroup}
+                groupType={groupType}
+                models={models}
+                changeModel={changeModel}
+                changeGroup={changeParameters}
+                editGroup={editGroup}
+                controlledParameters={controlledParameters}
+            />
         </Paper>
     );
 };
@@ -173,6 +171,9 @@ Rule.propTypes = {
     isAdvancedMode: PropTypes.bool.isRequired,
     canUseBasicMode: PropTypes.bool.isRequired,
     unusedFilters: PropTypes.array,
+    changeParameters: PropTypes.func.isRequired,
+    editGroup: PropTypes.func.isRequired,
+    controlledParameters: PropTypes.bool,
 };
 
 export default Rule;

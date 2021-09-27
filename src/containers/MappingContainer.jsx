@@ -8,14 +8,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    getAutomataNumber,
     getRulesNumber,
+    getSortedAutomataNumber,
     getSortedRulesNumber,
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
     MappingSlice,
     postMapping,
-    getAutomataNumber,
-    getSortedAutomataNumber,
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
 import {
@@ -28,9 +28,11 @@ import {
     AccordionDetails,
     AccordionSummary,
     Divider,
+    FormControlLabel,
     Grid,
     List,
     Paper,
+    Switch,
     Typography,
 } from '@material-ui/core';
 import RuleContainer from './RuleContainer';
@@ -38,12 +40,14 @@ import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import FilterBar from '../components/2-molecules/FilterBar';
 import {
-    EquipmentType,
     AutomatonFamily,
+    EquipmentType,
 } from '../constants/equipmentDefinition';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
+import ParametersContainer from './ParametersContainer';
+import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 
 // TODO intl
 const ADD_RULE_LABEL = 'Add a rule';
@@ -53,6 +57,7 @@ const ATTACH_LABEL = 'Attach a Network';
 const RULES_TITLE = 'Rules';
 const AUTOMATA_TITLE = 'Automata';
 const ADD_AUTOMATON_LABEL = 'Add an automaton';
+const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
@@ -71,13 +76,18 @@ const MappingContainer = () => {
     );
     const automataNumber = useSelector(getAutomataNumber);
     const sortedAutomataNumber = useSelector(getSortedAutomataNumber);
+    const controlledParameters = useSelector(
+        (state) => state.mappings.controlledParameters
+    );
+    const areParametersValid = useSelector(areParametersValidSelector);
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(getNetworkNames());
     }, [networkValues, dispatch]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
+    const [editParameters, setEditParameters] = useState(undefined);
 
     const filterRulesOptions = Object.values(EquipmentType).map((type) => ({
         value: type,
@@ -127,10 +137,20 @@ const MappingContainer = () => {
         dispatch(MappingSlice.actions.changeFilteredFamily(type));
     }
 
+    function changeControlledParameters() {
+        dispatch(MappingSlice.actions.changeControlledParameters());
+    }
+
     function buildRules() {
         const rules = [];
         for (let i = 0; i < rulesNumber; i++) {
-            rules.push(<RuleContainer index={i} key={`rule-container-${i}`} />);
+            rules.push(
+                <RuleContainer
+                    index={i}
+                    editParameters={setEditParameters}
+                    key={`rule-container-${i}`}
+                />
+            );
         }
         return rules;
     }
@@ -141,26 +161,42 @@ const MappingContainer = () => {
             automata.push(
                 <AutomatonContainer
                     index={i}
+                    editParameters={setEditParameters}
                     key={`automaton-container-${i}`}
                 />
             );
         }
         return automata;
     }
+
     return (
         <>
             <Paper>
                 <Header
                     name={activeMapping}
                     isModified={isModified}
-                    isValid={isMappingValid}
+                    isValid={isMappingValid && areParametersValid}
                     save={saveMapping}
                     saveTooltip={SAVE_LABEL}
                     convert={convertToScript}
                     convertTooltip={CONVERT_LABEL}
-                    attach={() => setIsModalOpen(true)}
+                    attach={() => setIsAttachedModalOpen(true)}
                     attachTooltip={ATTACH_LABEL}
                 />
+                <Grid container justify="center">
+                    <Grid item>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    // <Checkbox
+                                    checked={controlledParameters}
+                                    onChange={changeControlledParameters}
+                                />
+                            }
+                            label={CONTROLLED_PARAMETERS_LABEL}
+                        />
+                    </Grid>
+                </Grid>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography>{RULES_TITLE}</Typography>
@@ -211,12 +247,23 @@ const MappingContainer = () => {
                 </Accordion>
             </Paper>
             <AttachDialog
-                open={isModalOpen}
                 networks={networks}
-                handleClose={() => setIsModalOpen(false)}
+                open={isAttachedModalOpen}
+                handleClose={() => setIsAttachedModalOpen(false)}
                 attachWithId={attachWithId}
                 attachWithFile={attachWithFile}
             />
+            {editParameters && (
+                <ParametersContainer
+                    model={editParameters.model}
+                    setGroup={editParameters.setGroup}
+                    groupType={editParameters.groupType}
+                    isAbsolute={editParameters.isAbsolute}
+                    origin={editParameters.origin}
+                    originIndex={editParameters.originIndex}
+                    close={() => setEditParameters(undefined)}
+                />
+            )}
         </>
     );
 };

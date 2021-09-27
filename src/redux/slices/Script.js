@@ -5,17 +5,23 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import {
+    createAsyncThunk,
+    createSelector,
+    createSlice,
+} from '@reduxjs/toolkit';
 import * as _ from 'lodash';
 
 import * as scriptsAPI from '../../rest/scriptsAPI';
 import RequestStatus from '../../constants/RequestStatus';
+
 const initialState = {
     activeScript: '',
     text: '',
     scripts: [], // if alone, state as array directly
     status: RequestStatus.IDLE,
+    parametersFile: '',
+    isCurrent: true,
 };
 // TODO: Add Script Creation Front-Side ?
 // const DEFAULT_SCRIPT = {
@@ -127,6 +133,8 @@ const reducers = {
         if (scriptToUse) {
             state.text = scriptToUse.script;
             state.activeScript = name;
+            state.parametersFile = scriptToUse.parametersFile;
+            state.isCurrent = scriptToUse.current;
         }
     },
     deselectScript: (state, _action) => {
@@ -147,11 +155,19 @@ const extraReducers = {
         state.scripts.forEach((script) => {
             if (!isUpdate && script.name === receivedName) {
                 script.script = receivedScript.script;
+                script.script = receivedScript.script;
+                script.current = receivedScript.current;
+                script.parametersFile = receivedScript.parametersFile;
                 isUpdate = true;
             }
         });
         if (state.activeScript === receivedName) {
             state.text = receivedScript.script;
+            state.parametersFile =
+                receivedScript.parametersFile !== null
+                    ? receivedScript.parametersFile
+                    : undefined;
+            state.isCurrent = receivedScript.current;
         }
         if (!isUpdate) {
             state.scripts.push(receivedScript);

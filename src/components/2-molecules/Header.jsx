@@ -5,17 +5,20 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Box, Typography } from '@material-ui/core';
+import { Box, Tooltip, Typography } from '@material-ui/core';
 import {
-    ConvertButton,
-    SaveButton,
     AddIconButton,
     AttachButton,
+    ConvertButton,
+    SaveButton,
 } from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { useStyles } from './HeaderStyles';
+
+const outdatedLabel =
+    'Generated elements are outdated, re-generate them to delete this warning';
 
 const Header = (props) => {
     const {
@@ -30,16 +33,19 @@ const Header = (props) => {
         convertTooltip,
         attach,
         attachTooltip,
+        isCurrent = true,
     } = props;
-    const classes = useStyles({ isModified, isValid });
+    const classes = useStyles({ isModified, isValid, isCurrent });
     return (
         <Box className={classes.headerBox}>
             <Box width="100%" display="flex">
                 <Box className={classes.titleBox}>
-                    <Typography
-                        variant="h2"
-                        className={classes.title}
-                    >{`${name}${isModified ? '*' : ''} :`}</Typography>
+                    <Tooltip title={isCurrent ? '' : outdatedLabel}>
+                        <Typography
+                            variant="h2"
+                            className={classes.title}
+                        >{`${name}${isModified ? '*' : ''} :`}</Typography>
+                    </Tooltip>
                 </Box>
                 <Box className={classes.buttonBox}>
                     {convert !== undefined && (
@@ -78,6 +84,7 @@ Header.propTypes = {
     name: PropTypes.string.isRequired,
     isModified: PropTypes.bool,
     isValid: PropTypes.bool,
+    isCurrent: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
     convert: PropTypes.func,

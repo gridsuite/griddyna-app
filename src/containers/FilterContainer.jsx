@@ -14,7 +14,7 @@ import {
 } from '../redux/slices/Mapping';
 import { makeGetNetworkValues } from '../redux/slices/Network';
 import { getPropertiesOptions } from '../utils/optionsBuilders';
-import Filter from '../components/3-molecules/Filter';
+import Filter from '../components/3-organisms/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
 import PropTypes from 'prop-types';
 import { PropertyType } from '../constants/equipmentDefinition';
