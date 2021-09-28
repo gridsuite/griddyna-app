@@ -39,6 +39,7 @@ const Rule = (props) => {
         changeParameters = () => {},
         editGroup = () => {},
         controlledParameters = false,
+        isNetworkAttached = false,
     } = props;
     const { type, composition, mappedModel, setGroup, groupType, matches = [] } = rule;
     const classes = useStyles(isRuleValid);
@@ -54,6 +55,7 @@ const Rule = (props) => {
     const useAdvancedModeLabel = 'Use advanced filters mode';
     const unusedFiltersLabel = 'You have unused filter(s)';
     const matchesLabel = 'matched network equipments';
+    const noMatchesLabel = 'None';
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
     };
@@ -154,7 +156,7 @@ const Rule = (props) => {
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
             />
-            {matches.length > 0 && (
+            {isNetworkAttached && (
                 <Paper className={classes.matches}>
                     <Grid container>
                         <Grid item xs={4}>
@@ -163,7 +165,11 @@ const Rule = (props) => {
                             </Typography>
                         </Grid>
                         <Grid item xs={8}>
-                            <Typography>{`${matches.join(', ')}`}</Typography>
+                            <Typography>
+                                {matches.length > 0
+                                    ? `${matches.join(', ')}`
+                                    : noMatchesLabel}
+                            </Typography>
                         </Grid>
                     </Grid>
                 </Paper>
@@ -188,6 +194,7 @@ Rule.propTypes = {
     changeParameters: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
+    isNetworkAttached: PropTypes.bool,
 };
 
 export default Rule;

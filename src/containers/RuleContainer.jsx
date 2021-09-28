@@ -263,6 +263,7 @@ const RuleContainer = ({ index, editParameters }) => {
             unusedFilters={unusedFilters}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
+            isNetworkAttached={currentNetwork !== ''}
         >
             {rule.filtersNumber > 0 ? (
                 <>
