@@ -76,6 +76,7 @@ const Autocomplete = (props) => {
     const [updateFlag, setUpdateFlag] = useState(false);
 
     useEffect(() => {
+        // Also updates before closing the popup
         if (updateFlag && inputValue !== '') {
             if (isFree && !isMultiple) {
                 let valueToSend = inputValue;

@@ -43,6 +43,7 @@ const MenuContainer = () => {
     const canCreateMapping = useSelector(canCreateNewMapping);
 
     useEffect(() => {
+        // Fetch data on mount
         dispatch(getMappings());
         dispatch(getScripts());
         dispatch(getNetworkNames());

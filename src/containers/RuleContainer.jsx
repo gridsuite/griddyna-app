@@ -229,8 +229,10 @@ const RuleContainer = ({ index, editParameters }) => {
     const noFilterLabel = 'no other rule applies';
 
     useEffect(() => {
+        // If selected model is not in the list
         if (!models.map((model) => model.name).includes(mappedModel)) {
             if (models.length === 1) {
+                // Replace selected model with the only one available
                 changeModel(models[0].id);
             } else {
                 changeModel('');

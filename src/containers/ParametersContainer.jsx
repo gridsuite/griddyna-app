@@ -49,6 +49,7 @@ const ParametersContainer = ({
     const currentGroup = useSelector((state) => state.models.currentGroup);
 
     useEffect(() => {
+        // Keep fetched sets and definition up-to-date with instantiated model
         dispatch(
             getModelSets({
                 modelName: model,
@@ -131,6 +132,7 @@ const ParametersContainer = ({
     const isError = isErrorName || (step > 0 && isErrorSets);
 
     useEffect(() => {
+        // Populate currentGroup
         if (model) {
             dispatch(
                 ModelSlice.actions.changeGroup({
@@ -142,7 +144,9 @@ const ParametersContainer = ({
                 })
             );
         }
-    }, [dispatch, currentGroup.type, model, isAbsolute]);
+        // Cannot be an issue there because currentGroup, groupToEdit and matches cannot be updated elsewhere and we do not want to update changeGroup
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, currentGroup.type, currentGroup.name, model, isAbsolute]);
 
     const onClose = () => {
         dispatch(ModelSlice.actions.resetGroup());

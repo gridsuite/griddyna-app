@@ -138,14 +138,18 @@ const reducers = {
                     ? currentGroup.type
                     : originalGroup.type;
         } else if (isAbsolute) {
-            state.currentGroup.type = SetType.FIXED;
+            currentGroup.type = SetType.FIXED;
         }
         const matchingSetName = (matchName, type) =>
             `${type === SetType.SUFFIX ? matchName : ''}${currentGroup.name}${
                 type === SetType.PREFIX ? matchName : ''
             }`;
         // Create blank sets if needed
-        if (currentGroup.type !== SetType.FIXED && matches.length > 0) {
+        if (
+            (currentGroup.type === SetType.PREFIX ||
+                currentGroup.type === SetType.SUFFIX) &&
+            matches.length > 0
+        ) {
             const newSets = matches
                 .filter(
                     (match) =>
@@ -164,6 +168,29 @@ const reducers = {
                     })),
                 }));
             currentGroup.sets = currentGroup.sets.concat(newSets);
+        } else if (currentGroup.type === SetType.FIXED) {
+            if (currentGroup.sets.length === 0) {
+                currentGroup.sets.push({
+                    name: currentGroup.name,
+                    parameters: definitions.map((definition) => ({
+                        name: definition.name,
+                        value: definition.fixedValue ?? '',
+                    })),
+                });
+            } else {
+                const currentSet = currentGroup.sets[0];
+                if (currentSet?.name !== currentGroup.name) {
+                    currentSet['name'] = currentGroup.name;
+                }
+                if (currentSet.parameters?.length === 0) {
+                    currentSet['parameters'] = definitions.map(
+                        (definition) => ({
+                            name: definition.name,
+                            value: definition.fixedValue ?? '',
+                        })
+                    );
+                }
+            }
         }
 
         state.currentGroup = currentGroup;

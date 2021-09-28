@@ -83,6 +83,7 @@ const MappingContainer = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        // Get known networks on start-up and update after file import
         dispatch(getNetworkNames());
     }, [networkValues, dispatch]);
 

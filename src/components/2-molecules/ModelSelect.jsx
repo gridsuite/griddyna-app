@@ -46,6 +46,7 @@ const ModelSelect = (props) => {
     );
 
     useEffect(() => {
+        // Update isAbsolute according to the group type for the rule
         if (groupType) {
             setIsAbsolute(
                 ![SetType.PREFIX, SetType.SUFFIX].includes(groupType)

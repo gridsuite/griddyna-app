@@ -108,34 +108,32 @@ const AutomatonContainer = ({ index, editParameters }) => {
             originIndex: index,
         });
 
-    useEffect(
-        () => {
-            if (!models.map((model) => model.name).includes(model)) {
-                if (models.length === 1) {
-                    changeModel(models[0].name);
-                } else {
-                    changeModel('');
-                }
+    useEffect(() => {
+        // If selected model is not in the list
+        if (!models.map((model) => model.name).includes(model)) {
+            if (models.length === 1) {
+                // Replace selected model with the only one available
+                changeModel(models[0].name);
+            } else {
+                // Or remove selection (in case of Equipment Type Change)
+                changeModel('');
             }
-            const mappedModel = models.find(
-                (modelToTest) => modelToTest.name === model
-            );
-            if (
-                mappedModel &&
-                !mappedModel.groups
-                    .map((group) => group.name)
-                    .includes(setGroup)
-            ) {
-                if (mappedModel.groups.length === 1) {
-                    changeParameters(mappedModel.groups[0].name);
-                } else {
-                    changeParameters('');
-                }
+        }
+        const mappedModel = models.find(
+            (modelToTest) => modelToTest.name === model
+        );
+        // Same process for sets group
+        if (
+            mappedModel &&
+            !mappedModel.groups.map((group) => group.name).includes(setGroup)
+        ) {
+            if (mappedModel.groups.length === 1) {
+                changeParameters(mappedModel.groups[0].name);
+            } else {
+                changeParameters('');
             }
-        },
-        [models, changeModel, model, setGroup, changeParameters],
-        changeParameters
-    );
+        }
+    }, [models, changeModel, model, setGroup, changeParameters]);
 
     return (
         <Automaton
