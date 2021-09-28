@@ -155,9 +155,18 @@ const Rule = (props) => {
                 controlledParameters={controlledParameters}
             />
             {matches.length > 0 && (
-                <Typography>
-                    {`${matchesLabel} : ${matches.join(', ')}`}
-                </Typography>
+                <Paper className={classes.matches}>
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <Typography variant="h6">
+                                {`${matchesLabel} :`}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <Typography>{`${matches.join(', ')}`}</Typography>
+                        </Grid>
+                    </Grid>
+                </Paper>
             )}
         </Paper>
     );
