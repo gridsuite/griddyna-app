@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    getNetworkMatchesFromRule,
     makeCanUseBasicMode,
     makeGetFilterIndexes,
     makeGetRule,
@@ -71,6 +72,8 @@ const RuleContainer = ({ index, editParameters }) => {
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
+
+    const currentNetwork = useSelector((state) => state.network.currentNetwork);
     const dispatch = useDispatch();
     const [isAdvancedComposition, setIsAdvancedComposition] = useState(
         !canUseBasicMode
@@ -226,8 +229,10 @@ const RuleContainer = ({ index, editParameters }) => {
     const noFilterLabel = 'no other rule applies';
 
     useEffect(() => {
+        // If selected model is not in the list
         if (!models.map((model) => model.name).includes(mappedModel)) {
             if (models.length === 1) {
+                // Replace selected model with the only one available
                 changeModel(models[0].id);
             } else {
                 changeModel('');
@@ -236,6 +241,12 @@ const RuleContainer = ({ index, editParameters }) => {
     }, [type, models, changeModel, mappedModel]);
 
     const showAdvanced = isAdvancedComposition || filtersNumber === 1;
+    useEffect(() => {
+        if (currentNetwork !== '' && isRuleValid) {
+            dispatch(getNetworkMatchesFromRule(index));
+        }
+    }, [currentNetwork, isRuleValid, index, composition, dispatch]);
+
     return (
         <Rule
             rule={rule}
@@ -254,6 +265,7 @@ const RuleContainer = ({ index, editParameters }) => {
             unusedFilters={unusedFilters}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
+            isNetworkAttached={currentNetwork !== ''}
         >
             {rule.filtersNumber > 0 ? (
                 <>

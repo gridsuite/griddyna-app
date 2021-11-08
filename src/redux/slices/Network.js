@@ -18,6 +18,7 @@ import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automa
 const initialState = {
     propertyValues: [],
     knownNetworks: [],
+    currentNetwork: '',
     status: RequestStatus.IDLE,
 };
 
@@ -107,7 +108,9 @@ const extraReducers = {
      */
     [getPropertyValuesFromFile.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        state.propertyValues = action.payload;
+        const { propertyValues, networkId } = action.payload;
+        state.propertyValues = propertyValues;
+        state.currentNetwork = networkId;
     },
     [getPropertyValuesFromFile.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
@@ -117,7 +120,9 @@ const extraReducers = {
     },
     [getPropertyValuesFromNetworkId.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        state.propertyValues = action.payload;
+        const { propertyValues, networkId } = action.payload;
+        state.propertyValues = propertyValues;
+        state.currentNetwork = networkId;
     },
     [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
@@ -129,10 +134,10 @@ const extraReducers = {
         state.status = RequestStatus.SUCCESS;
         state.knownNetworks = action.payload;
     },
-    [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
+    [getNetworkNames.rejected]: (state, _action) => {
         state.status = RequestStatus.ERROR;
     },
-    [getPropertyValuesFromNetworkId.pending]: (state, _action) => {
+    [getNetworkNames.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
     },
 };

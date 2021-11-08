@@ -16,7 +16,7 @@ const nextLabel = 'Next';
 const backLabel = 'Back';
 const cancelLabel = 'Cancel';
 
-const DotStepper = (props) => {
+const Stepper = (props) => {
     const {
         step,
         setStep,
@@ -28,6 +28,7 @@ const DotStepper = (props) => {
 
     return (
         <MobileStepper
+            variant={maxStep < 10 ? 'dots' : 'text'}
             backButton={
                 <Button
                     size="small"
@@ -57,7 +58,7 @@ const DotStepper = (props) => {
     );
 };
 
-DotStepper.propTypes = {
+Stepper.propTypes = {
     step: PropTypes.number.isRequired,
     maxStep: PropTypes.number.isRequired,
     setStep: PropTypes.func.isRequired,
@@ -66,4 +67,4 @@ DotStepper.propTypes = {
     disabled: PropTypes.bool,
 };
 
-export default DotStepper;
+export default Stepper;

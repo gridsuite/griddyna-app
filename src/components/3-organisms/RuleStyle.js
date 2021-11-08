@@ -6,6 +6,7 @@
  */
 
 import { makeStyles } from '@material-ui/core';
+
 export const useStyles = makeStyles({
     rulePaper: (isValid) => ({
         border: '2px solid',
@@ -31,6 +32,18 @@ export const useStyles = makeStyles({
         '& svg': {
             margin: '0.3em',
             fontSize: '2em',
+        },
+    },
+    matches: {
+        backgroundColor: 'rgba(255, 255, 255, 0.16)',
+        maxHeight: '8em',
+        '& .MuiGrid-container': {
+            // maxHeight: '10em',
+            // overflowY: 'auto',
+            '& .MuiGrid-item': {
+                maxHeight: '7em',
+                overflowY: 'auto',
+            },
         },
     },
 });
