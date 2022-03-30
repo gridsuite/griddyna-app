@@ -32,7 +32,7 @@ export const isParameterValueValid = (value, type) => {
         case ParameterType.STRING:
             return value.length > 0;
         case ParameterType.DOUBLE:
-            return /^\d+([.,]\d+)?$/.test(value);
+            return /^-?\d+([.,]\d+)?$/.test(value);
         case ParameterType.INT:
             return /^\d+$/.test(value);
         default:
