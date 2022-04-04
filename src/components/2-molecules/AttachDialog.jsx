@@ -14,14 +14,21 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
 import { Divider, Grid, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List';
 import { useStyles } from './AttachDialogStyles';
 import Autocomplete from '../1-atoms/Autocomplete';
+import { useDispatch } from 'react-redux';
+import { deleteNetwork as deleteMappingAction } from '../../redux/slices/Network';
 
 const AttachDialog = (props) => {
     const { open, handleClose, attachWithFile, networks, attachWithId } = props;
     const [file, setFile] = useState(null);
     const [networkId, setNetworkId] = useState('');
     const classes = useStyles();
+
+    const dispatch = useDispatch();
 
     const onChangeFile = (event) => {
         setFile(event.target.files[0]);
@@ -40,6 +47,10 @@ const AttachDialog = (props) => {
         handleClose();
         setFile(null);
         setNetworkId('');
+    };
+
+    const deleteNetwork = (networkId) => {
+        dispatch(deleteMappingAction(networkId));
     };
 
     return (
@@ -101,6 +112,23 @@ const AttachDialog = (props) => {
                         </Grid>
                     </Box>
                 )}
+            </DialogContent>
+            <Divider />
+            <DialogContent>
+                <Typography>Delete a known network :</Typography>
+                <List>
+                    {networks.map((network) => (
+                        <ListItem
+                            button
+                            key={network.networkName}
+                            onClick={() => deleteNetwork(network.networkId)}
+                        >
+                            <ListItemText>
+                                primary={`${network.networkName}`}
+                            </ListItemText>
+                        </ListItem>
+                    ))}
+                </List>
             </DialogContent>
             <Divider />
             <DialogActions>

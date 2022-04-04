@@ -95,6 +95,19 @@ export const getNetworkNames = createAsyncThunk(
     }
 );
 
+export const deleteNetwork = createAsyncThunk(
+    'network/delete',
+    async (networkId, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        const response = await networkAPI.deleteNetwork(networkId, token);
+
+        if (!response.ok) {
+            throw response;
+        }
+        return response.text();
+    }
+);
+
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
@@ -138,6 +151,19 @@ const extraReducers = {
         state.status = RequestStatus.ERROR;
     },
     [getNetworkNames.pending]: (state, _action) => {
+        state.status = RequestStatus.PENDING;
+    },
+    [deleteNetwork.fulfilled]: (state, action) => {
+        state.status = RequestStatus.SUCCESS;
+        const name = action.payload;
+        state.knownNetworks = state.knownNetworks.filter(
+            (network) => network.networkId !== name
+        );
+    },
+    [deleteNetwork.rejected]: (state, _action) => {
+        state.status = RequestStatus.ERROR;
+    },
+    [deleteNetwork.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
     },
 };
