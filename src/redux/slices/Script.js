@@ -93,6 +93,7 @@ export const deleteScript = createAsyncThunk(
         return response.text();
     }
 );
+
 export const copyScript = createAsyncThunk(
     'scripts/copy',
     async ({ originalName, copyName }, { getState }) => {
