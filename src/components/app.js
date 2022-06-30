@@ -24,6 +24,7 @@ import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
     TopBar,
     AuthenticationRouter,
+    CardErrorBoundary,
     logout,
     getPreLoginPath,
     initializeAuthenticationProd,
@@ -173,36 +174,38 @@ const App = () => {
                     user={user}
                     appsAndUrls={appsAndUrls}
                 />
-                {user !== null ? (
-                    <Switch>
-                        <Route exact path="/">
-                            <Box mt={1}>
-                                <RootContainer />
-                            </Box>
-                        </Route>
-                        <Route exact path="/sign-in-callback">
-                            <Redirect to={getPreLoginPath() || '/'} />
-                        </Route>
-                        <Route exact path="/logout-callback">
-                            <h1>
-                                Error: logout failed; you are still logged in.
-                            </h1>
-                        </Route>
-                        <Route>
-                            <h1>
-                                <FormattedMessage id="PageNotFound" />
-                            </h1>
-                        </Route>
-                    </Switch>
-                ) : (
-                    <AuthenticationRouter
-                        userManager={userManager}
-                        signInCallbackError={signInCallbackError}
-                        dispatch={authenticationDispatch}
-                        history={history}
-                        location={location}
-                    />
-                )}
+                <CardErrorBoundary>
+                    {user !== null ? (
+                        <Switch>
+                            <Route exact path="/">
+                                <Box mt={1}>
+                                    <RootContainer />
+                                </Box>
+                            </Route>
+                            <Route exact path="/sign-in-callback">
+                                <Redirect to={getPreLoginPath() || '/'} />
+                            </Route>
+                            <Route exact path="/logout-callback">
+                                <h1>
+                                    Error: logout failed; you are still logged in.
+                                </h1>
+                            </Route>
+                            <Route>
+                                <h1>
+                                    <FormattedMessage id="PageNotFound" />
+                                </h1>
+                            </Route>
+                        </Switch>
+                    ) : (
+                        <AuthenticationRouter
+                            userManager={userManager}
+                            signInCallbackError={signInCallbackError}
+                            dispatch={authenticationDispatch}
+                            history={history}
+                            location={location}
+                        />
+                    )}
+                </CardErrorBoundary>
             </React.Fragment>
         </ThemeProvider>
     );
