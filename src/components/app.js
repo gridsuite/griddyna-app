@@ -28,6 +28,7 @@ import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
     TopBar,
     AuthenticationRouter,
+    CardErrorBoundary,
     logout,
     getPreLoginPath,
     initializeAuthenticationProd,
@@ -179,6 +180,7 @@ const App = () => {
                         user={user}
                         appsAndUrls={appsAndUrls}
                     />
+                    <CardErrorBoundary>
                     {user !== null ? (
                         <Routes>
                             <Route
@@ -225,6 +227,7 @@ const App = () => {
                             location={location}
                         />
                     )}
+                    </CardErrorBoundary>
                 </React.Fragment>
             </ThemeProvider>
         </StyledEngineProvider>

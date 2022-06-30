@@ -21,15 +21,28 @@ import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
 
 import {
+    CardErrorBoundary,
     top_bar_en,
     top_bar_fr,
     login_fr,
     login_en,
+    card_error_boundary_en,
+    card_error_boundary_fr,
 } from '@gridsuite/commons-ui';
 
 const messages = {
-    en: { ...messages_en, ...login_en, ...top_bar_en },
-    fr: { ...messages_fr, ...login_fr, ...top_bar_fr },
+    en: {
+        ...messages_en,
+        ...login_en,
+        ...top_bar_en,
+        ...card_error_boundary_en,
+    },
+    fr: {
+        ...messages_fr,
+        ...login_fr,
+        ...top_bar_fr,
+        ...card_error_boundary_fr,
+    },
 };
 
 const language = navigator.language.split(/[-_]/)[0]; // language without region code
@@ -42,7 +55,9 @@ root.render(
     <IntlProvider locale={language} messages={messages[language]}>
         <Provider store={store}>
             <BrowserRouter basename={basename}>
-                <App />
+                <CardErrorBoundary>
+                    <App />
+                </CardErrorBoundary>
             </BrowserRouter>
         </Provider>
     </IntlProvider>
