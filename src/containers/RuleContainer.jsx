@@ -22,7 +22,7 @@ import Rule from '../components/3-organisms/Rule';
 import FiltersTemplate from '../components/4-templates/FiltersTemplate';
 import FilterContainer from './FilterContainer';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import {
     convertCompositionArrayToString,
     convertCompositionStringToArray,

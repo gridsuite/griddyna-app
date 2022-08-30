@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { List, ListItem } from '@material-ui/core';
+import { List, ListItem } from '@mui/material';
 import { useStyles } from './FiltersTemplateStyles';
 
 const FiltersTemplate = (props) => {

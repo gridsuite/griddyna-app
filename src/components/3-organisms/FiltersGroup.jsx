@@ -7,11 +7,10 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, List, Paper, Typography } from '@material-ui/core';
+import { Box, Grid, List, Paper, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { useStyles } from './FiltersGroupStyles';
 import { AddIconButton } from '../1-atoms/buttons';
-import Box from '@material-ui/core/Box';
 
 const requirementsLabel = 'of the following conditions are met:';
 const addFilterLabel = 'Add a filter to this group';

@@ -7,8 +7,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Tooltip } from '@material-ui/core';
-import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import { Button, Tooltip } from '@mui/material';
+import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 const NewButton = ({ onClick, className, disabled, tooltip }) => (
     <Tooltip title={tooltip}>

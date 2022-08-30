@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { IconButton as MuiIconButton, Tooltip } from '@material-ui/core';
+import { IconButton as MuiIconButton, Tooltip } from '@mui/material';
 
 const IconButton = ({ onClick, icon, tooltip, disabled, ...styleProps }) => {
     const button = (

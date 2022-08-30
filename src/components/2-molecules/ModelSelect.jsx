@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid, Typography } from '@material-ui/core';
+import { Box, Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './ModelSelectStyle';

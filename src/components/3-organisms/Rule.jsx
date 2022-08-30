@@ -14,8 +14,8 @@ import {
     CopyButton,
     DeleteButton,
 } from '../1-atoms/buttons';
-import { Grid, Paper, TextField, Tooltip, Typography } from '@material-ui/core';
-import ErrorIcon from '@material-ui/icons/Error';
+import { Grid, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 import { getEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';

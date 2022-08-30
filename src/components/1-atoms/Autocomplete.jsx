@@ -7,8 +7,11 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Autocomplete as MuiAutocomplete } from '@material-ui/lab';
-import { Popper, TextField } from '@material-ui/core';
+import {
+    Autocomplete as MuiAutocomplete,
+    Popper,
+    TextField,
+} from '@mui/material';
 import { useStyles } from './AutocompleteStyles';
 
 const PRECISION = 10e-8;

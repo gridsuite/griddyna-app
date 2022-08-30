@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Box, Drawer } from '@material-ui/core';
+import { Box, Drawer } from '@mui/material';
 
 import { useStyles } from './PageTemplateStyles';
 

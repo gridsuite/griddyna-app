@@ -8,7 +8,7 @@
 import 'typeface-roboto';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
@@ -36,13 +36,14 @@ const language = navigator.language.split(/[-_]/)[0]; // language without region
 
 const basename = new URL(document.querySelector('base').href).pathname;
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
     <IntlProvider locale={language} messages={messages[language]}>
         <Provider store={store}>
             <BrowserRouter basename={basename}>
                 <App />
             </BrowserRouter>
         </Provider>
-    </IntlProvider>,
-    document.getElementById('root')
+    </IntlProvider>
 );
