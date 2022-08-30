@@ -1,7 +1,7 @@
 // app.test.js
 
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 
 import { IntlProvider } from 'react-intl';
@@ -19,24 +19,26 @@ beforeEach(() => {
 
 afterEach(() => {
     // cleanup on exiting
-    unmountComponentAtNode(container);
     container.remove();
     container = null;
 });
 
 it('renders', async () => {
+    const root = createRoot(container);
     await act(async () =>
-        render(
+        root.render(
             <IntlProvider locale="en">
                 <Provider store={store}>
                     <BrowserRouter>
                         <App />
                     </BrowserRouter>
                 </Provider>
-            </IntlProvider>,
-            container
+            </IntlProvider>
         )
     );
 
     expect(container.textContent).toContain('GridDyna');
+    act(() => {
+        root.unmount();
+    });
 });
