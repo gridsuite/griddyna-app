@@ -181,52 +181,52 @@ const App = () => {
                         appsAndUrls={appsAndUrls}
                     />
                     <CardErrorBoundary>
-                    {user !== null ? (
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={
-                                    <Box mt={1}>
-                                        <RootContainer />
-                                    </Box>
-                                }
+                        {user !== null ? (
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={
+                                        <Box mt={1}>
+                                            <RootContainer />
+                                        </Box>
+                                    }
+                                />
+                                <Route
+                                    path="/sign-in-callback"
+                                    element={
+                                        <Navigate
+                                            replace
+                                            to={getPreLoginPath() || '/'}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/logout-callback"
+                                    element={
+                                        <h1>
+                                            Error: logout failed; you are still
+                                            logged in.
+                                        </h1>
+                                    }
+                                />
+                                <Route
+                                    path="*"
+                                    element={
+                                        <h1>
+                                            <FormattedMessage id="PageNotFound" />
+                                        </h1>
+                                    }
+                                />
+                            </Routes>
+                        ) : (
+                            <AuthenticationRouter
+                                userManager={userManager}
+                                signInCallbackError={signInCallbackError}
+                                dispatch={authenticationDispatch}
+                                navigate={navigate}
+                                location={location}
                             />
-                            <Route
-                                path="/sign-in-callback"
-                                element={
-                                    <Navigate
-                                        replace
-                                        to={getPreLoginPath() || '/'}
-                                    />
-                                }
-                            />
-                            <Route
-                                path="/logout-callback"
-                                element={
-                                    <h1>
-                                        Error: logout failed; you are still
-                                        logged in.
-                                    </h1>
-                                }
-                            />
-                            <Route
-                                path="*"
-                                element={
-                                    <h1>
-                                        <FormattedMessage id="PageNotFound" />
-                                    </h1>
-                                }
-                            />
-                        </Routes>
-                    ) : (
-                        <AuthenticationRouter
-                            userManager={userManager}
-                            signInCallbackError={signInCallbackError}
-                            dispatch={authenticationDispatch}
-                            navigate={navigate}
-                            location={location}
-                        />
-                    )}
+                        )}
                     </CardErrorBoundary>
                 </React.Fragment>
             </ThemeProvider>
