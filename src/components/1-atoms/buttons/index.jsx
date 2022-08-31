@@ -6,14 +6,14 @@
  */
 
 import IconButton from './IconButton';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from 'react';
-import PublishOutlinedIcon from '@material-ui/icons/PublishOutlined';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
-import LoopIcon from '@material-ui/icons/Loop';
+import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import LoopIcon from '@mui/icons-material//Loop';
 
 export const AddIconButton = (props) => (
     <IconButton icon={<AddCircleIcon />} {...props} />

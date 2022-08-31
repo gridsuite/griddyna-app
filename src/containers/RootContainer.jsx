@@ -11,7 +11,7 @@ import PageTemplate from '../components/4-templates/PageTemplate';
 import MappingContainer from './MappingContainer';
 import MenuContainer from './MenuContainer';
 import ScriptContainer from './ScriptContainer';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 const RootContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);

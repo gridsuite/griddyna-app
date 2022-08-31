@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Tab, Tabs } from '@material-ui/core';
+import { Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const FilterBar = (props) => {

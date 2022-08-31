@@ -20,7 +20,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-} from '@material-ui/core';
+} from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import { GroupEditionOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';

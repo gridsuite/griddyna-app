@@ -8,8 +8,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ParameterOrigin, ParameterType } from '../../constants/models';
-import { Box, Grid, TextField, Tooltip, Typography } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
+import { Box, Grid, TextField, Tooltip, Typography } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import * as _ from 'lodash';
 import { isParameterValueValid } from '../../utils/parameters';
 

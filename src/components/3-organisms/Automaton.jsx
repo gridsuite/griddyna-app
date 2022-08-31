@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@mui/material';
 import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonStyle';

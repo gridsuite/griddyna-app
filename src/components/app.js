@@ -10,15 +10,19 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
-    Redirect,
+    Navigate,
+    Routes,
     Route,
-    Switch,
-    useHistory,
+    useNavigate,
     useLocation,
 } from 'react-router-dom';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import {
+    createTheme,
+    ThemeProvider,
+    StyledEngineProvider,
+} from '@mui/material/styles';
 import { LIGHT_THEME } from '../redux/slices/Theme';
 
 import {
@@ -30,24 +34,24 @@ import {
     initializeAuthenticationDev,
 } from '@gridsuite/commons-ui';
 
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import Box from '@material-ui/core/Box';
+import Box from '@mui/material/Box';
 
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import { fetchAppsAndUrls } from '../utils/rest-api';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
-const lightTheme = createMuiTheme({
+const lightTheme = createTheme({
     palette: {
-        type: 'light',
+        mode: 'light',
     },
     mapboxStyle: 'mapbox://styles/mapbox/light-v9',
 });
 
-const darkTheme = createMuiTheme({
+const darkTheme = createTheme({
     palette: {
-        type: 'dark',
+        mode: 'dark',
     },
     mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
 });
@@ -75,7 +79,7 @@ const App = () => {
 
     const [appsAndUrls, setAppsAndUrls] = React.useState([]);
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
@@ -86,11 +90,10 @@ const App = () => {
 
     const location = useLocation();
 
-    // Can't use lazy initializer because useRouteMatch is a hook
+    // Can't use lazy initializer because useMatch is a hook
     const [initialMatchSilentRenewCallbackUrl] = useState(
-        useRouteMatch({
+        useMatch({
             path: '/silent-renew-callback',
-            exact: true,
         })
     );
 
@@ -146,7 +149,7 @@ const App = () => {
     }, [initialize, initialMatchSilentRenewCallbackUrl]);
 
     function onLogoClicked() {
-        history.replace('/');
+        navigate('/', { replace: true });
     }
 
     useEffect(() => {
@@ -158,53 +161,73 @@ const App = () => {
     }, [user]);
 
     return (
-        <ThemeProvider theme={getMuiTheme(theme)}>
-            <React.Fragment>
-                <CssBaseline />
-                <TopBar
-                    appName="Dyna"
-                    appColor="grey"
-                    onParametersClick={() => console.log('onParametersClick')}
-                    onLogoutClick={() =>
-                        logout(authenticationDispatch, userManager.instance)
-                    }
-                    onLogoClick={() => onLogoClicked()}
-                    appLogo={<PowsyblLogo />}
-                    user={user}
-                    appsAndUrls={appsAndUrls}
-                />
-                {user !== null ? (
-                    <Switch>
-                        <Route exact path="/">
-                            <Box mt={1}>
-                                <RootContainer />
-                            </Box>
-                        </Route>
-                        <Route exact path="/sign-in-callback">
-                            <Redirect to={getPreLoginPath() || '/'} />
-                        </Route>
-                        <Route exact path="/logout-callback">
-                            <h1>
-                                Error: logout failed; you are still logged in.
-                            </h1>
-                        </Route>
-                        <Route>
-                            <h1>
-                                <FormattedMessage id="PageNotFound" />
-                            </h1>
-                        </Route>
-                    </Switch>
-                ) : (
-                    <AuthenticationRouter
-                        userManager={userManager}
-                        signInCallbackError={signInCallbackError}
-                        dispatch={authenticationDispatch}
-                        history={history}
-                        location={location}
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={getMuiTheme(theme)}>
+                <React.Fragment>
+                    <CssBaseline />
+                    <TopBar
+                        appName="Dyna"
+                        appColor="grey"
+                        onParametersClick={() =>
+                            console.log('onParametersClick')
+                        }
+                        onLogoutClick={() =>
+                            logout(authenticationDispatch, userManager.instance)
+                        }
+                        onLogoClick={() => onLogoClicked()}
+                        appLogo={<PowsyblLogo />}
+                        user={user}
+                        appsAndUrls={appsAndUrls}
                     />
-                )}
-            </React.Fragment>
-        </ThemeProvider>
+                    {user !== null ? (
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <Box mt={1}>
+                                        <RootContainer />
+                                    </Box>
+                                }
+                            />
+                            <Route
+                                path="/sign-in-callback"
+                                element={
+                                    <Navigate
+                                        replace
+                                        to={getPreLoginPath() || '/'}
+                                    />
+                                }
+                            />
+                            <Route
+                                path="/logout-callback"
+                                element={
+                                    <h1>
+                                        Error: logout failed; you are still
+                                        logged in.
+                                    </h1>
+                                }
+                            />
+                            <Route
+                                path="*"
+                                element={
+                                    <h1>
+                                        <FormattedMessage id="PageNotFound" />
+                                    </h1>
+                                }
+                            />
+                        </Routes>
+                    ) : (
+                        <AuthenticationRouter
+                            userManager={userManager}
+                            signInCallbackError={signInCallbackError}
+                            dispatch={authenticationDispatch}
+                            navigate={navigate}
+                            location={location}
+                        />
+                    )}
+                </React.Fragment>
+            </ThemeProvider>
+        </StyledEngineProvider>
     );
 };
 

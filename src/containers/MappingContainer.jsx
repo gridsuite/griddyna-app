@@ -34,7 +34,7 @@ import {
     Paper,
     Switch,
     Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -43,7 +43,7 @@ import {
     AutomatonFamily,
     EquipmentType,
 } from '../constants/equipmentDefinition';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';

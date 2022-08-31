@@ -15,7 +15,7 @@ import {
     InputLabel,
     MenuItem,
     Select as MuiSelect,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { MenuProps, useStyles } from './SelectStyles';
 

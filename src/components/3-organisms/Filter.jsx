@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import * as _ from 'lodash';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
