@@ -28,6 +28,7 @@ import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
     TopBar,
     AuthenticationRouter,
+    CardErrorBoundary,
     logout,
     getPreLoginPath,
     initializeAuthenticationProd,
@@ -179,52 +180,54 @@ const App = () => {
                         user={user}
                         appsAndUrls={appsAndUrls}
                     />
-                    {user !== null ? (
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={
-                                    <Box mt={1}>
-                                        <RootContainer />
-                                    </Box>
-                                }
+                    <CardErrorBoundary>
+                        {user !== null ? (
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={
+                                        <Box mt={1}>
+                                            <RootContainer />
+                                        </Box>
+                                    }
+                                />
+                                <Route
+                                    path="/sign-in-callback"
+                                    element={
+                                        <Navigate
+                                            replace
+                                            to={getPreLoginPath() || '/'}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path="/logout-callback"
+                                    element={
+                                        <h1>
+                                            Error: logout failed; you are still
+                                            logged in.
+                                        </h1>
+                                    }
+                                />
+                                <Route
+                                    path="*"
+                                    element={
+                                        <h1>
+                                            <FormattedMessage id="PageNotFound" />
+                                        </h1>
+                                    }
+                                />
+                            </Routes>
+                        ) : (
+                            <AuthenticationRouter
+                                userManager={userManager}
+                                signInCallbackError={signInCallbackError}
+                                dispatch={authenticationDispatch}
+                                navigate={navigate}
+                                location={location}
                             />
-                            <Route
-                                path="/sign-in-callback"
-                                element={
-                                    <Navigate
-                                        replace
-                                        to={getPreLoginPath() || '/'}
-                                    />
-                                }
-                            />
-                            <Route
-                                path="/logout-callback"
-                                element={
-                                    <h1>
-                                        Error: logout failed; you are still
-                                        logged in.
-                                    </h1>
-                                }
-                            />
-                            <Route
-                                path="*"
-                                element={
-                                    <h1>
-                                        <FormattedMessage id="PageNotFound" />
-                                    </h1>
-                                }
-                            />
-                        </Routes>
-                    ) : (
-                        <AuthenticationRouter
-                            userManager={userManager}
-                            signInCallbackError={signInCallbackError}
-                            dispatch={authenticationDispatch}
-                            navigate={navigate}
-                            location={location}
-                        />
-                    )}
+                        )}
+                    </CardErrorBoundary>
                 </React.Fragment>
             </ThemeProvider>
         </StyledEngineProvider>
