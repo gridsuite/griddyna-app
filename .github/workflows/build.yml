@@ -34,7 +34,7 @@ jobs:
                   name: gridsuite/griddyna-app
                   username: gridsuiteci
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
-                  tags: ${{ GITHUB_REF_NAME#v }}
+                  tags: "${GITHUB_REF_NAME#v}"
 
             - name: Broadcast update event
               if: github.ref == 'refs/heads/main'
