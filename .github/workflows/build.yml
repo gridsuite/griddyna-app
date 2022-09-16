@@ -19,13 +19,22 @@ jobs:
                   npm run-script build
                   npm run-script test
 
-            - name: Build and publish Docker image
+            - name: Build and publish Docker image - Main
               if: github.ref == 'refs/heads/main'
               uses: elgohr/Publish-Docker-Github-Action@master
               with:
                   name: gridsuite/griddyna-app
                   username: gridsuiteci
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and publish Docker image - Tag
+              if: startsWith(github.ref, 'refs/tags/')
+              uses: elgohr/Publish-Docker-Github-Action@master
+              with:
+                  name: gridsuite/griddyna-app
+                  username: gridsuiteci
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+                  tags: ${GITHUB_REF_NAME#v}
 
             - name: Broadcast update event
               if: github.ref == 'refs/heads/main'
