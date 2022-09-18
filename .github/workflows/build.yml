@@ -12,6 +12,10 @@ jobs:
               with:
                   persist-credentials: false
 
+            - name: Parse tag
+              id: vars
+              run: echo ::set-output name=tag::${GITHUB_REF#refs/*/v}
+
             - name: Install and Build
               run: |
                   npm install
@@ -34,7 +38,7 @@ jobs:
                   name: gridsuite/griddyna-app
                   username: gridsuiteci
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
-                  tags: "${GITHUB_REF_NAME#v}"
+                  tags: ${{ steps.vars.outputs.tag }}
 
             - name: Broadcast update event
               if: github.ref == 'refs/heads/main'
