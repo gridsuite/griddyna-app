@@ -19,7 +19,8 @@ const PREFIX_USER_ADMIN_SERVER_QUERIES =
 //         : process.env.REACT_APP_USER_ADMIN_URI);
 
 export function fetchValidateUser(user) {
-    if (!user?.profile?.sub)
+    const sub = user?.profile?.sub;
+    if (!sub)
         return Promise.reject(
             new Error(
                 'Error : Fetching access for missing user.profile.sub : ' + user
@@ -28,7 +29,7 @@ export function fetchValidateUser(user) {
 
     console.info(`Fetching access for user...`);
     const CheckAccessUrl =
-        PREFIX_USER_ADMIN_SERVER_QUERIES + `/v1/users/${user?.profile?.sub}`;
+        PREFIX_USER_ADMIN_SERVER_QUERIES + `/v1/users/${sub}`;
     console.debug(CheckAccessUrl);
 
     return fetch(CheckAccessUrl, {
