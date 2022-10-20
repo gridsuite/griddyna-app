@@ -6,11 +6,18 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
-import { SIGNIN_CALLBACK_ERROR, USER } from '@gridsuite/commons-ui';
+import {
+    USER,
+    SIGNIN_CALLBACK_ERROR,
+    UNAUTHORIZED_USER_INFO,
+    SHOW_AUTH_INFO_LOGIN,
+} from '@gridsuite/commons-ui';
 
 const initialState = {
     user: null,
     signInCallbackError: null,
+    unauthorizedUserInfo: null,
+    showAuthenticationRouterLogin: false,
 };
 
 // Selectors
@@ -22,9 +29,19 @@ const reducers = {
         // TODO: GridSuite: Should be payload
         state.user = action.payload.user;
     },
+
     [SIGNIN_CALLBACK_ERROR]: (state, action) => {
         // TODO: GridSuite: Should be payload
         state.signInCallbackError = action.payload.signInCallbackError;
+    },
+
+    [UNAUTHORIZED_USER_INFO]: (state, action) => {
+        state.unauthorizedUserInfo = action.payload.unauthorizedUserInfo;
+    },
+
+    [SHOW_AUTH_INFO_LOGIN]: (state, action) => {
+        state.showAuthenticationRouterLogin =
+            action.payload.showAuthenticationRouterLogin;
     },
 };
 
