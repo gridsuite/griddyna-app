@@ -12,7 +12,7 @@ const PREFIX_USER_ADMIN_SERVER_QUERIES =
 // and use the user-admin-server directly. SetupProxy should allow this.
 // const PREFIX_USER_ADMIN_SERVER_QUERIES =
 //     process.env.REACT_APP_API_PREFIX +
-//     (process.env.REACT_APP_USE_AUTHENTICATION === 'true' 
+//     (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
 //         ? process.env.REACT_APP_API_GATEWAY + '/user-admin'
 //         : process.env.REACT_APP_USER_ADMIN_URI);
 
