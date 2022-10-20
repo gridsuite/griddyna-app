@@ -6,7 +6,9 @@
  */
 
 const PREFIX_USER_ADMIN_SERVER_QUERIES =
-    process.env.REACT_APP_API_GATEWAY + '/user-admin';
+    process.env.REACT_APP_API_PREFIX +
+    process.env.REACT_APP_GATEWAY_PREFIX +
+    '/user-admin';
 
 // If you want to use user-admin-server in dev mode you must avoid passing through gateway
 // and use the user-admin-server directly. SetupProxy should allow this.
@@ -17,9 +19,11 @@ const PREFIX_USER_ADMIN_SERVER_QUERIES =
 //         : process.env.REACT_APP_USER_ADMIN_URI);
 
 export function fetchValidateUser(user) {
-    if (!user)
+    if (!user?.profile?.sub)
         return Promise.reject(
-            new Error('Error : Fetching access for missing user : ' + user)
+            new Error(
+                'Error : Fetching access for missing user.profile.sub : ' + user
+            )
         );
 
     console.info(`Fetching access for user...`);
