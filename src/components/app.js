@@ -33,6 +33,7 @@ import {
     getPreLoginPath,
     initializeAuthenticationProd,
     initializeAuthenticationDev,
+    setShowAuthenticationRouterLogin,
 } from '@gridsuite/commons-ui';
 
 import { useMatch } from 'react-router-dom';
@@ -40,7 +41,7 @@ import { FormattedMessage } from 'react-intl';
 import Box from '@mui/material/Box';
 
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
-import { fetchAppsAndUrls } from '../utils/rest-api';
+import { fetchAppsAndUrls, fetchValidateUser } from '../utils/rest-api';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
 const lightTheme = createTheme({
@@ -75,6 +76,12 @@ const App = () => {
     const signInCallbackError = useSelector(
         (state) => state.user.signInCallbackError
     );
+    const unauthorizedUserInfo = useSelector(
+        (state) => state.user.unauthorizedUserInfo
+    );
+    const showAuthenticationRouterLogin = useSelector(
+        (state) => state.user.showAuthenticationRouterLogin
+    );
 
     const [userManager, setUserManager] = useState(noUserManager);
 
@@ -103,13 +110,15 @@ const App = () => {
             return initializeAuthenticationProd(
                 authenticationDispatch,
                 initialMatchSilentRenewCallbackUrl != null,
-                fetch('idpSettings.json')
+                fetch('idpSettings.json'),
+                fetchValidateUser
             );
         } else {
             console.log('devauth');
             return initializeAuthenticationDev(
                 authenticationDispatch,
-                initialMatchSilentRenewCallbackUrl != null
+                initialMatchSilentRenewCallbackUrl != null,
+                fetchValidateUser
             );
         }
         // Note: initialMatchSilentRenewCallbackUrl and dispatch don't change
@@ -119,12 +128,15 @@ const App = () => {
         initialize()
             .then((userManager) => {
                 setUserManager({ instance: userManager, error: null });
-                userManager.getUser().then((user) => {
+                return userManager.getUser().then((user) => {
                     if (
                         user == null &&
                         initialMatchSilentRenewCallbackUrl == null
                     ) {
-                        userManager.signinSilent().catch((error) => {
+                        return userManager.signinSilent().catch((error) => {
+                            authenticationDispatch(
+                                setShowAuthenticationRouterLogin(true)
+                            );
                             const oidcHackReloaded =
                                 'gridsuite-oidc-hack-reloaded';
                             if (
@@ -145,9 +157,14 @@ const App = () => {
             .catch(function (error) {
                 setUserManager({ instance: null, error: error.message });
                 console.debug('error when importing the idp settings');
+                authenticationDispatch(setShowAuthenticationRouterLogin(true));
             });
         // Note: initialize and initialMatchSilentRenewCallbackUrl won't change
-    }, [initialize, initialMatchSilentRenewCallbackUrl]);
+    }, [
+        initialize,
+        initialMatchSilentRenewCallbackUrl,
+        authenticationDispatch,
+    ]);
 
     function onLogoClicked() {
         navigate('/', { replace: true });
@@ -222,6 +239,10 @@ const App = () => {
                             <AuthenticationRouter
                                 userManager={userManager}
                                 signInCallbackError={signInCallbackError}
+                                unauthorizedUserInfo={unauthorizedUserInfo}
+                                showAuthenticationRouterLogin={
+                                    showAuthenticationRouterLogin
+                                }
                                 dispatch={authenticationDispatch}
                                 navigate={navigate}
                                 location={location}
