@@ -170,7 +170,6 @@ const Autocomplete = (props) => {
             renderOption={renderOption}
             className={classes.inputWidth}
             renderInput={(params) => <TextField {...params} error={error} />}
-            isOptionEqualToValue={(option, value) => option.value === value.value}
             PopperComponent={(props) => (
                 <Popper
                     {...props}
