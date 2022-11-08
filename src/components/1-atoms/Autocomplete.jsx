@@ -138,20 +138,22 @@ const Autocomplete = (props) => {
         }
     };
 
-    const renderOption = (option) =>
-        highlightOptions
-            .map((option) => option.value)
-            .includes(option.value) ? (
-            <b
-                style={{
-                    'text-shadow': '#FFF 1px 0px 2px',
-                }}
-            >
-                {option.label}
-            </b>
-        ) : (
-            option.label
-        );
+    const renderOption = (props, option) =>
+        (<div {...props} key={option.value}>
+            {highlightOptions
+                .find((elem) => elem.value === option.value) ? (
+                <b
+                    style={{
+                        'text-shadow': '#FFF 1px 0px 2px',
+                    }}
+                >
+                    {option.label}
+                </b>
+                ) : (
+                    option.label
+                )
+            }
+       </div>);
 
     return (
         <MuiAutocomplete
@@ -168,6 +170,7 @@ const Autocomplete = (props) => {
             renderOption={renderOption}
             className={classes.inputWidth}
             renderInput={(params) => <TextField {...params} error={error} />}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
             PopperComponent={(props) => (
                 <Popper
                     {...props}
