@@ -77,7 +77,7 @@ const App = () => {
         (state) => state.user.signInCallbackError
     );
     const authenticationRouterError = useSelector(
-        (state) => state.authenticationRouterError
+        (state) => state.user.authenticationRouterError
     );
     const showAuthenticationRouterLogin = useSelector(
         (state) => state.user.showAuthenticationRouterLogin
