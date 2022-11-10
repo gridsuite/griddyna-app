@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getNetworkMatchesFromRule,
@@ -72,19 +72,31 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
         // operands only allow one string to select
         !multipleOperands.includes(operand);
 
-    const setValue = (value) => {
-        dispatch(
-            MappingSlice.actions.changeFilterValue({
-                ruleIndex,
-                filterIndex,
-                value: isUniqueSelectFilter ? [value] : value,
-            })
-        );
-        // Other cases called in RuleContainer, only case left is filter value change
-        if (networkValues.length > 0 && isRuleValid && value) {
-            dispatch(getNetworkMatchesFromRule(ruleIndex));
-        }
-    };
+    const hasNetworkValues = networkValues.length > 0;
+
+    const setValue = useCallback(
+        (value) => {
+            dispatch(
+                MappingSlice.actions.changeFilterValue({
+                    ruleIndex,
+                    filterIndex,
+                    value: isUniqueSelectFilter ? [value] : value,
+                })
+            );
+            // Other cases called in RuleContainer, only case left is filter value change
+            if (hasNetworkValues && isRuleValid && value) {
+                dispatch(getNetworkMatchesFromRule(ruleIndex));
+            }
+        },
+        [
+            dispatch,
+            ruleIndex,
+            filterIndex,
+            isUniqueSelectFilter,
+            hasNetworkValues,
+            isRuleValid,
+        ]
+    );
     const deleteFilter = () =>
         dispatch(
             MappingSlice.actions.deleteFilter({
