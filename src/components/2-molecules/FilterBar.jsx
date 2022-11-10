@@ -23,14 +23,13 @@ const FilterBar = (props) => {
                     disabled={option.disabled}
                 />
             ))}
-            <Tab style={{ display: 'none' }} value="" />
         </Tabs>
     );
 };
 
 FilterBar.propTypes = {
     options: PropTypes.array.isRequired,
-    value: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
     setFilter: PropTypes.func.isRequired,
 };
 

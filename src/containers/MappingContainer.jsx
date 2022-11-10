@@ -71,10 +71,10 @@ const MappingContainer = () => {
     const currentNetwork = useSelector(getCurrentNetworkObj);
     const sortedRulesNumber = useSelector(getSortedRulesNumber);
     const filteredType = useSelector(
-        (state) => state.mappings.filteredRuleType
+        (state) => state.mappings.filteredRuleType || false
     );
     const filteredFamily = useSelector(
-        (state) => state.mappings.filteredAutomatonFamily
+        (state) => state.mappings.filteredAutomatonFamily || false
     );
     const automataNumber = useSelector(getAutomataNumber);
     const sortedAutomataNumber = useSelector(getSortedAutomataNumber);

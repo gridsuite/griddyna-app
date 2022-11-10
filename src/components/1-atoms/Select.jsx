@@ -72,8 +72,8 @@ const Select = (props) => {
                 // Either mess with the style (disappearing overflow) or allow scroll while Select is open
                 MenuProps={{ disableScrollLock: true }}
             >
-                {options.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                {options.map((option, index) => (
+                    <MenuItem key={index} value={option.value}>
                         {option.label}
                     </MenuItem>
                 ))}
@@ -91,7 +91,7 @@ Select.propTypes = {
     error: PropTypes.bool,
     disabled: PropTypes.bool,
     options: PropTypes.array.isRequired,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     setValue: PropTypes.func,
 };
 

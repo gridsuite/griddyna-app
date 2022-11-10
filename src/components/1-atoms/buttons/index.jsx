@@ -13,7 +13,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import LoopIcon from '@mui/icons-material//Loop';
+import LoopIcon from '@mui/icons-material/Loop';
 
 export const AddIconButton = (props) => (
     <IconButton icon={<AddCircleIcon />} {...props} />
