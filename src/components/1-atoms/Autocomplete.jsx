@@ -139,7 +139,7 @@ const Autocomplete = (props) => {
     };
 
     const renderOption = (props, option) => (
-        <div {...props} key={option.value}>
+        <li {...props} key={option.value}>
             {highlightOptions.find((elem) => elem.value === option.value) ? (
                 <b
                     style={{
@@ -151,7 +151,7 @@ const Autocomplete = (props) => {
             ) : (
                 option.label
             )}
-        </div>
+        </li>
     );
 
     return (
