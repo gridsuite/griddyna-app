@@ -60,6 +60,17 @@ export const makeGetPossibleWatchedElements = () =>
             return ids;
         }
     );
+
+// from current network id => get network object
+export const getCurrentNetworkObj = (state) => {
+    const currentNetwork = state.network.currentNetwork;
+    return (
+        currentNetwork &&
+        state.network.knownNetworks?.find(
+            (knowNetwork) => knowNetwork.networkId === currentNetwork
+        )
+    );
+};
 // Reducers
 
 export const getPropertyValuesFromFile = createAsyncThunk(
