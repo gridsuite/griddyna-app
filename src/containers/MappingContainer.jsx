@@ -19,6 +19,7 @@ import {
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
 import {
+    getCurrentNetworkObj,
     getNetworkNames,
     getPropertyValuesFromFile,
     getPropertyValuesFromNetworkId,
@@ -67,6 +68,7 @@ const MappingContainer = () => {
     const isMappingValid = useSelector(isMappingValidSelector);
     const networks = useSelector((state) => state.network.knownNetworks);
     const networkValues = useSelector((state) => state.network.propertyValues);
+    const currentNetwork = useSelector(getCurrentNetworkObj);
     const sortedRulesNumber = useSelector(getSortedRulesNumber);
     const filteredType = useSelector(
         (state) => state.mappings.filteredRuleType
@@ -175,6 +177,7 @@ const MappingContainer = () => {
             <Paper>
                 <Header
                     name={activeMapping}
+                    currentNetwork={currentNetwork}
                     isModified={isModified}
                     isValid={isMappingValid && areParametersValid}
                     save={saveMapping}
