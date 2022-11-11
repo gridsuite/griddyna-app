@@ -14,7 +14,7 @@ const FilterBar = (props) => {
     const onChange = (_event, value) => setFilter(value);
 
     return (
-        <Tabs value={value} onChange={onChange} centered>
+        <Tabs value={value || false} onChange={onChange} centered>
             {options.map((option) => (
                 <Tab
                     key={option.value}
@@ -29,7 +29,7 @@ const FilterBar = (props) => {
 
 FilterBar.propTypes = {
     options: PropTypes.array.isRequired,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
+    value: PropTypes.string.isRequired,
     setFilter: PropTypes.func.isRequired,
 };
 
