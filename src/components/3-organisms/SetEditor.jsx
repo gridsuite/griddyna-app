@@ -16,7 +16,7 @@ import { isParameterValueValid } from '../../utils/parameters';
 const infoTypeLabel = 'This parameter is of type ';
 const networkLabel = ' From Network';
 const SetEditor = (props) => {
-    const { definitions, set, saveSet } = props;
+    const { definitions, filterByOrigin, set, saveSet } = props;
     const valueOrigin = (origin) => {
         switch (origin) {
             case ParameterOrigin.USER:
@@ -49,6 +49,11 @@ const SetEditor = (props) => {
         <Box>
             <Typography variant="h2"> {set.name}</Typography>
             {_.cloneDeep(definitions)
+                .filter((definition) =>
+                    filterByOrigin
+                        ? filterByOrigin.includes(definition.origin)
+                        : true
+                )
                 .sort((a, b) => valueOrigin(a.origin) - valueOrigin(b.origin))
                 .map((definition) => {
                     const correspondingParameter = set.parameters.find(
@@ -100,6 +105,7 @@ const SetEditor = (props) => {
 SetEditor.propTypes = {
     set: PropTypes.object.isRequired,
     definitions: PropTypes.array.isRequired,
+    filterByOrigin: PropTypes.array, // undefined => show all, [] => do not show, [origin1, origin2] => show only in origin1 and origin2 category
     saveSet: PropTypes.func.isRequired,
 };
 

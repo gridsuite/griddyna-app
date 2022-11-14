@@ -22,7 +22,11 @@ import {
     DialogTitle,
 } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
-import { GroupEditionOrigin, SetType } from '../constants/models';
+import {
+    GroupEditionOrigin,
+    ParameterOrigin,
+    SetType,
+} from '../constants/models';
 import PropTypes from 'prop-types';
 import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
@@ -173,6 +177,7 @@ const ParametersContainer = ({
                 ) : (
                     <SetEditor
                         definitions={definitions}
+                        filterByOrigin={[ParameterOrigin.USER]} // FIX and NETWORK can not be modified here
                         saveSet={addOrModifySet}
                         set={currentSet}
                     />
