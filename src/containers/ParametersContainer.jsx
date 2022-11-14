@@ -20,6 +20,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Grid,
 } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import { GroupEditionOrigin, SetType } from '../constants/models';
@@ -28,7 +29,7 @@ import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
-import Select from '../components/1-atoms/Select';
+import VerticalStepper from '../components/2-molecules/VerticalStepper';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -156,23 +157,14 @@ const ParametersContainer = ({
         close();
     };
 
-    const DropdownSetComponent = () =>
-        step && (
-            <Select
-                options={currentGroup.sets.map((set, index) => ({
-                    label: set.name,
-                    value: index + 1,
-                }))}
-                value={step}
-                setValue={(slectedStep) => {
-                    setStep(slectedStep);
-                }}
-                error={!!!step}
-            />
-        );
-
     return (
-        <Dialog open={true} onClose={onClose}>
+        <Dialog
+            open={true}
+            onClose={onClose}
+            fullWidth={!!step}
+            maxWidth={'md'}
+            scroll="paper"
+        >
             <DialogTitle>
                 {step === 0 ? groupTitleLabel : setTitleLabel}
             </DialogTitle>
@@ -187,11 +179,25 @@ const ParametersContainer = ({
                         isAbsolute={isAbsolute}
                     />
                 ) : (
-                    <SetEditor
-                        definitions={definitions}
-                        saveSet={addOrModifySet}
-                        set={currentSet}
-                    />
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <VerticalStepper
+                                steps={currentGroup.sets.map((set, index) => ({
+                                    label: set.name,
+                                    value: index + 1,
+                                }))}
+                                step={step - 1}
+                                setStep={setStep}
+                            />
+                        </Grid>
+                        <Grid item xs={8}>
+                            <SetEditor
+                                definitions={definitions}
+                                saveSet={addOrModifySet}
+                                set={currentSet}
+                            />
+                        </Grid>
+                    </Grid>
                 )}
             </DialogContent>
             {showSteps ? (
@@ -202,7 +208,6 @@ const ParametersContainer = ({
                     onFinish={saveSetGroup}
                     onCancel={close}
                     disabled={isError}
-                    extraComponent={DropdownSetComponent}
                 />
             ) : (
                 <DialogActions>
