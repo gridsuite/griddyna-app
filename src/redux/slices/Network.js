@@ -64,12 +64,8 @@ export const makeGetPossibleWatchedElements = () =>
 // from current network id => get network object
 export const getCurrentNetworkObj = (state) => {
     const currentNetwork = state.network.currentNetwork;
-    return (
-        (currentNetwork &&
-            state.network.knownNetworks?.find(
-                (knowNetwork) => knowNetwork.networkId === currentNetwork
-            )) ||
-        undefined
+    return state.network.knownNetworks?.find(
+        (knowNetwork) => knowNetwork.networkId === currentNetwork
     );
 };
 // Reducers
