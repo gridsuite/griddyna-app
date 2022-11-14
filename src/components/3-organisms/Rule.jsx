@@ -47,6 +47,7 @@ const Rule = (props) => {
         mappedModel,
         setGroup,
         groupType,
+        filtersNumber,
         matches = [],
     } = rule;
     const classes = useStyles(isRuleValid);
@@ -101,7 +102,7 @@ const Rule = (props) => {
                     </Grid>
                 </Grid>
                 <Grid item>
-                    {rule.filtersNumber > 1 && (
+                    {filtersNumber > 1 && (
                         <ChangeButton
                             onClick={changeCompositionMode}
                             disabled={isAdvancedMode && !canUseBasicMode}
@@ -119,7 +120,7 @@ const Rule = (props) => {
                     <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
                 </Grid>
             </Grid>
-            {rule.filtersNumber > 1 && isAdvancedMode && (
+            {filtersNumber > 1 && isAdvancedMode && (
                 <Grid container justify={'flex-start'}>
                     <Grid item xs={2} className={classes.label}>
                         <Typography>{`${compositionLabel} :`}</Typography>
@@ -163,7 +164,7 @@ const Rule = (props) => {
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
             />
-            {isNetworkAttached && (
+            {isNetworkAttached && !!filtersNumber && (
                 <Paper className={classes.matches}>
                     <Grid container>
                         <Grid item xs={4}>
