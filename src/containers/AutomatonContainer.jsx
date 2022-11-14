@@ -13,7 +13,10 @@ import {
     MappingSlice,
 } from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/Model';
-import { makeGetPossibleWatchedElements } from '../redux/slices/Network';
+import {
+    getCurrentNetworkId,
+    makeGetPossibleWatchedElements,
+} from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
 import { GroupEditionOrigin, SetType } from '../constants/models';
@@ -38,6 +41,8 @@ const AutomatonContainer = ({ index, editParameters }) => {
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
+
+    const currentNetworkId = useSelector(getCurrentNetworkId);
     const dispatch = useDispatch();
     const changeFamily = (newFamily) =>
         dispatch(
@@ -150,6 +155,7 @@ const AutomatonContainer = ({ index, editParameters }) => {
             copyAutomaton={copyAutomaton}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
+            isNetworkAttached={!!currentNetworkId}
         />
     );
 };
