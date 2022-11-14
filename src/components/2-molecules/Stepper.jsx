@@ -23,6 +23,7 @@ const Stepper = (props) => {
         onFinish,
         onCancel,
         disabled = false,
+        extraComponent: ExtraComponent,
     } = props;
 
     return (
@@ -33,22 +34,26 @@ const Stepper = (props) => {
                     size="small"
                     onClick={step === 0 ? onCancel : () => setStep(step - 1)}
                 >
-                    {' '}
                     <KeyboardArrowLeft />
                     {step === 0 ? cancelLabel : backLabel}
                 </Button>
             }
             nextButton={
-                <Button
-                    size="small"
-                    onClick={
-                        step === maxStep ? onFinish : () => setStep(step + 1)
-                    }
-                    disabled={disabled}
-                >
-                    {step === maxStep ? saveLabel : nextLabel}
-                    <KeyboardArrowRight />
-                </Button>
+                <>
+                    <ExtraComponent />
+                    <Button
+                        size="small"
+                        onClick={
+                            step === maxStep
+                                ? onFinish
+                                : () => setStep(step + 1)
+                        }
+                        disabled={disabled}
+                    >
+                        {step === maxStep ? saveLabel : nextLabel}
+                        <KeyboardArrowRight />
+                    </Button>
+                </>
             }
             steps={maxStep + 1}
             activeStep={step}
@@ -64,6 +69,7 @@ Stepper.propTypes = {
     onFinish: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
+    extraComponent: PropTypes.element,
 };
 
 export default Stepper;

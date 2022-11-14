@@ -28,6 +28,7 @@ import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
+import Select from '../components/1-atoms/Select';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -155,6 +156,21 @@ const ParametersContainer = ({
         close();
     };
 
+    const DropdownSetComponent = () =>
+        step && (
+            <Select
+                options={currentGroup.sets.map((set, index) => ({
+                    label: set.name,
+                    value: index + 1,
+                }))}
+                value={step}
+                setValue={(slectedStep) => {
+                    setStep(slectedStep);
+                }}
+                error={!!!step}
+            />
+        );
+
     return (
         <Dialog open={true} onClose={onClose}>
             <DialogTitle>
@@ -186,6 +202,7 @@ const ParametersContainer = ({
                     onFinish={saveSetGroup}
                     onCancel={close}
                     disabled={isError}
+                    extraComponent={DropdownSetComponent}
                 />
             ) : (
                 <DialogActions>
