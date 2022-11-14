@@ -146,9 +146,9 @@ ModelSelect.propTypes = {
     model: PropTypes.string.isRequired,
     setGroup: PropTypes.string.isRequired,
     groupType: PropTypes.string.isRequired,
-    models: PropTypes.arrayOf(PropTypes.string).isRequired,
+    models: PropTypes.arrayOf(PropTypes.object).isRequired,
     changeModel: PropTypes.func.isRequired,
-    changeGroup: PropTypes.string.isRequired,
+    changeGroup: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
 };

@@ -14,7 +14,7 @@ const FilterBar = (props) => {
     const onChange = (_event, value) => setFilter(value);
 
     return (
-        <Tabs value={value} onChange={onChange} centered>
+        <Tabs value={value || false} onChange={onChange} centered>
             {options.map((option) => (
                 <Tab
                     key={option.value}
@@ -23,7 +23,6 @@ const FilterBar = (props) => {
                     disabled={option.disabled}
                 />
             ))}
-            <Tab style={{ display: 'none' }} value="" />
         </Tabs>
     );
 };
