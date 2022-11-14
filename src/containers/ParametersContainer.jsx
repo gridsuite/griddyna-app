@@ -110,18 +110,20 @@ const ParametersContainer = ({
     const addOrModifySet = (newSet) =>
         dispatch(ModelSlice.actions.addOrModifySet(newSet));
     const saveSetGroup = () => {
-        dispatch(postModelSetsGroup(controlledParameters));
-        const actionToDispatch =
-            origin === GroupEditionOrigin.RULE
-                ? MappingSlice.actions.changeRuleParameters
-                : MappingSlice.actions.changeAutomatonParameters;
-        dispatch(
-            actionToDispatch({
-                index: originIndex,
-                parameters: currentGroup.name,
-                type: currentGroup.type,
-            })
-        );
+        (async () => {
+            await dispatch(postModelSetsGroup(controlledParameters));
+            const actionToDispatch =
+                origin === GroupEditionOrigin.RULE
+                    ? MappingSlice.actions.changeRuleParameters
+                    : MappingSlice.actions.changeAutomatonParameters;
+            dispatch(
+                actionToDispatch({
+                    index: originIndex,
+                    parameters: currentGroup.name,
+                    type: currentGroup.type,
+                })
+            );
+        })();
         close();
     };
 

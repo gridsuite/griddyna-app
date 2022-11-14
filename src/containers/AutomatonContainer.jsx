@@ -74,11 +74,11 @@ const AutomatonContainer = ({ index, editParameters }) => {
     );
 
     const changeParameters = useCallback(
-        (newParameters) =>
+        (group) =>
             dispatch(
                 MappingSlice.actions.changeAutomatonParameters({
                     index,
-                    parameters: newParameters,
+                    parameters: group.name,
                 })
             ),
         [dispatch, index]
