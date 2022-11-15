@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getModelDefinitions,
@@ -92,6 +92,15 @@ const ParametersContainer = ({
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
 
+    const initialCompleted = useMemo(() => {
+        const completed = {};
+        currentGroup.sets.forEach((set, index) => {
+            completed[index + 1] = isSetValid(set, definitions);
+        });
+        return { ...completed };
+    }, [currentGroup, definitions]);
+    const completed = useRef(initialCompleted);
+
     const showSteps =
         (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
 
@@ -132,6 +141,7 @@ const ParametersContainer = ({
     const isErrorName =
         currentGroup.name === '' || otherGroups.includes(currentGroup.name);
     const isErrorSets = !isSetValid(currentSet, definitions);
+    completed.current[step] = !isErrorSets;
 
     const isError = isErrorName || (step > 0 && isErrorSets);
 
@@ -188,6 +198,7 @@ const ParametersContainer = ({
                                 }))}
                                 step={step - 1}
                                 setStep={setStep}
+                                completed={completed.current}
                             />
                         </Grid>
                         <Grid item xs={8}>
@@ -207,7 +218,7 @@ const ParametersContainer = ({
                     setStep={setStep}
                     onFinish={saveSetGroup}
                     onCancel={close}
-                    disabled={isError}
+                    disabled={step === maxStep && isError}
                 />
             ) : (
                 <DialogActions>
