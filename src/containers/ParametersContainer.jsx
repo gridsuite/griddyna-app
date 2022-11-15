@@ -159,6 +159,10 @@ const ParametersContainer = ({
         close();
     };
 
+    // FIX and NETWORK can not be modified here
+    const definitionFilter = (definition) =>
+        [ParameterOrigin.USER].includes(definition.origin);
+
     return (
         <Dialog open={true} onClose={onClose}>
             <DialogTitle>
@@ -177,7 +181,7 @@ const ParametersContainer = ({
                 ) : (
                     <SetEditor
                         definitions={definitions}
-                        filterByOrigin={[ParameterOrigin.USER]} // FIX and NETWORK can not be modified here
+                        filter={definitionFilter}
                         saveSet={addOrModifySet}
                         set={currentSet}
                     />
