@@ -96,14 +96,6 @@ const ParametersContainer = ({
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
 
-    const completed = useMemo(() => {
-        const completed = {};
-        currentGroup.sets.forEach((set, index) => {
-            completed[index + 1] = isSetValid(set, definitions);
-        });
-        return completed;
-    }, [currentGroup, definitions]);
-
     const showSteps =
         (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
 
@@ -143,12 +135,23 @@ const ParametersContainer = ({
 
     const isErrorName =
         currentGroup.name === '' || otherGroups.includes(currentGroup.name);
+    const isErrorSets = !isSetValid(currentSet, definitions);
 
+    // for vertical stepper
+    const completed = useMemo(() => {
+        const completed = {};
+        currentGroup.sets.forEach((set, index) => {
+            completed[index + 1] = isSetValid(set, definitions);
+        });
+        return completed;
+    }, [currentGroup, definitions]);
+    const showVerticalSteps = showSteps && maxStep > 2;
     const isAllCompleted = () => {
         return Object.values(completed).every((v) => v);
     };
 
-    const isError = isErrorName || (step > 0 && !isAllCompleted());
+    const isError =
+        isErrorName || (step > 0 && (isErrorSets || !isAllCompleted()));
 
     useEffect(() => {
         // Populate currentGroup
@@ -180,7 +183,7 @@ const ParametersContainer = ({
         <Dialog
             open={true}
             onClose={onClose}
-            fullWidth={showSteps && step > 0 && maxStep > 2}
+            fullWidth={showVerticalSteps && step > 0}
             maxWidth={'md'}
             scroll="paper"
         >
@@ -199,7 +202,7 @@ const ParametersContainer = ({
                     />
                 ) : (
                     <Grid container>
-                        {showSteps && maxStep > 2 && (
+                        {showVerticalSteps && (
                             <Grid item xs={4}>
                                 <VerticalStepper
                                     steps={currentGroup.sets.map(
@@ -214,7 +217,7 @@ const ParametersContainer = ({
                                 />
                             </Grid>
                         )}
-                        <Grid item xs={showSteps && maxStep > 2 ? 8 : 12}>
+                        <Grid item xs={showVerticalSteps ? 8 : 12}>
                             <SetEditor
                                 definitions={definitions}
                                 filter={definitionFilter}
@@ -232,7 +235,7 @@ const ParametersContainer = ({
                     setStep={setStep}
                     onFinish={saveSetGroup}
                     onCancel={close}
-                    disabled={step === maxStep && isError}
+                    disabled={(step === maxStep || step === 0) && isError}
                 />
             ) : (
                 <DialogActions>
