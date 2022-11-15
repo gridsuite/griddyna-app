@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getModelDefinitions,
@@ -96,14 +96,13 @@ const ParametersContainer = ({
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
 
-    const initialCompleted = useMemo(() => {
+    const completed = useMemo(() => {
         const completed = {};
         currentGroup.sets.forEach((set, index) => {
             completed[index + 1] = isSetValid(set, definitions);
         });
-        return { ...completed };
+        return completed;
     }, [currentGroup, definitions]);
-    const completed = useRef(initialCompleted);
 
     const showSteps =
         (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
@@ -144,10 +143,12 @@ const ParametersContainer = ({
 
     const isErrorName =
         currentGroup.name === '' || otherGroups.includes(currentGroup.name);
-    const isErrorSets = !isSetValid(currentSet, definitions);
-    completed.current[step] = !isErrorSets;
 
-    const isError = isErrorName || (step > 0 && isErrorSets);
+    const isAllCompleted = () => {
+        return Object.values(completed).every((v) => v);
+    };
+
+    const isError = isErrorName || (step > 0 && !isAllCompleted());
 
     useEffect(() => {
         // Populate currentGroup
@@ -179,7 +180,7 @@ const ParametersContainer = ({
         <Dialog
             open={true}
             onClose={onClose}
-            fullWidth={!!step}
+            fullWidth={showSteps && step > 0 && maxStep > 2}
             maxWidth={'md'}
             scroll="paper"
         >
@@ -198,18 +199,22 @@ const ParametersContainer = ({
                     />
                 ) : (
                     <Grid container>
-                        <Grid item xs={4}>
-                            <VerticalStepper
-                                steps={currentGroup.sets.map((set, index) => ({
-                                    label: set.name,
-                                    value: index + 1,
-                                }))}
-                                step={step - 1}
-                                setStep={setStep}
-                                completed={completed.current}
-                            />
-                        </Grid>
-                        <Grid item xs={8}>
+                        {showSteps && maxStep > 2 && (
+                            <Grid item xs={4}>
+                                <VerticalStepper
+                                    steps={currentGroup.sets.map(
+                                        (set, index) => ({
+                                            label: set.name,
+                                            value: index + 1,
+                                        })
+                                    )}
+                                    step={step - 1}
+                                    setStep={setStep}
+                                    completed={completed}
+                                />
+                            </Grid>
+                        )}
+                        <Grid item xs={showSteps && maxStep > 2 ? 8 : 12}>
                             <SetEditor
                                 definitions={definitions}
                                 filter={definitionFilter}

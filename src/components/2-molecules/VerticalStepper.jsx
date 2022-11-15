@@ -4,6 +4,7 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import PropTypes from 'prop-types';
+import { StepLabel } from '@mui/material';
 
 function VerticalStepper(props) {
     const { steps, step, setStep, completed } = props;
@@ -15,16 +16,28 @@ function VerticalStepper(props) {
     return (
         <Box sx={{ width: '100%' }}>
             <Stepper nonLinear activeStep={step} orientation="vertical">
-                {steps.map((elem) => (
-                    <Step key={elem.value} completed={completed[elem.value]}>
-                        <StepButton
-                            color="inherit"
-                            onClick={handleStep(elem.value)}
+                {steps.map((elem) => {
+                    // config error color
+                    const labelProps = {};
+                    if (!completed[elem.value]) {
+                        labelProps.error = true;
+                    }
+                    return (
+                        <Step
+                            key={elem.value}
+                            completed={completed[elem.value]}
                         >
-                            {elem.label}
-                        </StepButton>
-                    </Step>
-                ))}
+                            <StepButton
+                                color="inherit"
+                                onClick={handleStep(elem.value)}
+                            >
+                                <StepLabel {...labelProps}>
+                                    {elem.label}
+                                </StepLabel>
+                            </StepButton>
+                        </Step>
+                    );
+                })}
             </Stepper>
         </Box>
     );
