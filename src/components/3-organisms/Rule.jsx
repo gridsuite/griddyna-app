@@ -163,6 +163,7 @@ const Rule = (props) => {
                 changeGroup={changeParameters}
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
+                isNetworkAttached={isNetworkAttached}
             />
             {isNetworkAttached && !!filtersNumber && (
                 <Paper className={classes.matches}>

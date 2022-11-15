@@ -61,6 +61,8 @@ export const makeGetPossibleWatchedElements = () =>
         }
     );
 
+export const getCurrentNetworkId = (state) => state.network.currentNetwork;
+
 // from current network id => get network object
 export const getCurrentNetworkObj = (state) => {
     const currentNetwork = state.network.currentNetwork;
@@ -68,6 +70,7 @@ export const getCurrentNetworkObj = (state) => {
         (knowNetwork) => knowNetwork.networkId === currentNetwork
     );
 };
+
 // Reducers
 
 export const getPropertyValuesFromFile = createAsyncThunk(

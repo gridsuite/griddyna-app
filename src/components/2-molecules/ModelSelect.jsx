@@ -30,6 +30,7 @@ const ModelSelect = (props) => {
         changeGroup,
         editGroup,
         controlledParameters = false,
+        isNetworkAttached,
     } = props;
     const mappedModel = models.find(
         (modelToTest) => modelToTest.name === model
@@ -101,6 +102,7 @@ const ModelSelect = (props) => {
                             <Checkbox
                                 checked={isAbsolute}
                                 onChange={onAbsoluteChange}
+                                disabled={!isNetworkAttached}
                             />
                         </Grid>
                     </Grid>
@@ -151,6 +153,7 @@ ModelSelect.propTypes = {
     changeGroup: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
+    isNetworkAttached: PropTypes.bool.isRequired,
 };
 
 export default ModelSelect;

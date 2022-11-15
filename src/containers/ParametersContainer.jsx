@@ -23,7 +23,11 @@ import {
     Grid,
 } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
-import { GroupEditionOrigin, SetType } from '../constants/models';
+import {
+    GroupEditionOrigin,
+    ParameterOrigin,
+    SetType,
+} from '../constants/models';
 import PropTypes from 'prop-types';
 import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
@@ -167,6 +171,10 @@ const ParametersContainer = ({
         close();
     };
 
+    // FIX and NETWORK can not be modified here
+    const definitionFilter = (definition) =>
+        [ParameterOrigin.USER].includes(definition.origin);
+
     return (
         <Dialog
             open={true}
@@ -204,6 +212,7 @@ const ParametersContainer = ({
                         <Grid item xs={8}>
                             <SetEditor
                                 definitions={definitions}
+                                filter={definitionFilter}
                                 saveSet={addOrModifySet}
                                 set={currentSet}
                             />
