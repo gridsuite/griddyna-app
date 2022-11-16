@@ -1,10 +1,13 @@
+/**
+ * Copyright (c) 2021, RTE (http://www.rte-france.com)
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepButton from '@mui/material/StepButton';
+import { Box, Step, StepButton, StepLabel, Stepper } from '@mui/material';
 import PropTypes from 'prop-types';
-import { StepLabel } from '@mui/material';
 
 function VerticalStepper(props) {
     const { steps, step, setStep, completed } = props;
