@@ -20,6 +20,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Grid,
 } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import {
@@ -32,6 +33,7 @@ import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
+import VerticalStepper from '../components/2-molecules/VerticalStepper';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -135,7 +137,21 @@ const ParametersContainer = ({
         currentGroup.name === '' || otherGroups.includes(currentGroup.name);
     const isErrorSets = !isSetValid(currentSet, definitions);
 
-    const isError = isErrorName || (step > 0 && isErrorSets);
+    // for vertical stepper
+    const completed = useMemo(() => {
+        const completed = {};
+        currentGroup.sets.forEach((set, index) => {
+            completed[index + 1] = isSetValid(set, definitions);
+        });
+        return completed;
+    }, [currentGroup, definitions]);
+    const showVerticalSteps = showSteps && maxStep > 2;
+    const isAllCompleted = () => {
+        return Object.values(completed).every((v) => v);
+    };
+
+    const isError =
+        isErrorName || (step > 0 && (isErrorSets || !isAllCompleted()));
 
     useEffect(() => {
         // Populate currentGroup
@@ -164,7 +180,13 @@ const ParametersContainer = ({
         [ParameterOrigin.USER].includes(definition.origin);
 
     return (
-        <Dialog open={true} onClose={onClose}>
+        <Dialog
+            open={true}
+            onClose={onClose}
+            fullWidth={showVerticalSteps && step > 0}
+            maxWidth={'md'}
+            scroll="paper"
+        >
             <DialogTitle>
                 {step === 0 ? groupTitleLabel : setTitleLabel}
             </DialogTitle>
@@ -179,12 +201,31 @@ const ParametersContainer = ({
                         isAbsolute={isAbsolute}
                     />
                 ) : (
-                    <SetEditor
-                        definitions={definitions}
-                        filter={definitionFilter}
-                        saveSet={addOrModifySet}
-                        set={currentSet}
-                    />
+                    <Grid container>
+                        {showVerticalSteps && (
+                            <Grid item xs={4}>
+                                <VerticalStepper
+                                    steps={currentGroup.sets.map(
+                                        (set, index) => ({
+                                            label: set.name,
+                                            value: index + 1,
+                                        })
+                                    )}
+                                    step={step - 1}
+                                    setStep={setStep}
+                                    completed={completed}
+                                />
+                            </Grid>
+                        )}
+                        <Grid item xs={showVerticalSteps ? 8 : 12}>
+                            <SetEditor
+                                definitions={definitions}
+                                filter={definitionFilter}
+                                saveSet={addOrModifySet}
+                                set={currentSet}
+                            />
+                        </Grid>
+                    </Grid>
                 )}
             </DialogContent>
             {showSteps ? (
@@ -194,7 +235,7 @@ const ParametersContainer = ({
                     setStep={setStep}
                     onFinish={saveSetGroup}
                     onCancel={close}
-                    disabled={isError}
+                    disabled={(step === maxStep || step === 0) && isError}
                 />
             ) : (
                 <DialogActions>

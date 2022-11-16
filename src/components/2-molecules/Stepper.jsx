@@ -33,7 +33,6 @@ const Stepper = (props) => {
                     size="small"
                     onClick={step === 0 ? onCancel : () => setStep(step - 1)}
                 >
-                    {' '}
                     <KeyboardArrowLeft />
                     {step === 0 ? cancelLabel : backLabel}
                 </Button>
