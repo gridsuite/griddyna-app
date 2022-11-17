@@ -145,7 +145,7 @@ const ParametersContainer = ({
         });
         return completed;
     }, [currentGroup, definitions]);
-    const showVerticalSteps = showSteps && maxStep > 2;
+    const showVerticalSteps = showSteps && maxStep > 1;
     const isAllCompleted = () => {
         return Object.values(completed).every((v) => v);
     };
