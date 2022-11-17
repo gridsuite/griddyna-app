@@ -14,6 +14,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import LoopIcon from '@mui/icons-material/Loop';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import DoneIcon from '@mui/icons-material/Done';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 export const AddIconButton = (props) => (
     <IconButton icon={<AddCircleIcon />} {...props} />
@@ -41,4 +44,14 @@ export const AttachButton = (props) => (
 
 export const ChangeButton = (props) => (
     <IconButton icon={<LoopIcon />} {...props} />
+);
+
+export const ResetButton = (props) => (
+    <IconButton icon={<RestartAltIcon />} {...props} />
+);
+export const ApplyOneButton = (props) => (
+    <IconButton icon={<DoneIcon />} {...props} />
+);
+export const ApplyAllButton = (props) => (
+    <IconButton icon={<DoneAllIcon />} {...props} />
 );
