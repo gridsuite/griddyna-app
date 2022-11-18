@@ -205,7 +205,7 @@ const ParametersContainer = ({
                 ) : (
                     <Grid container>
                         {showVerticalSteps && (
-                            <Grid item xs={3}>
+                            <Grid item xs={3} pt={10}>
                                 <VerticalStepper
                                     steps={currentGroup.sets.map(
                                         (set, index) => ({
@@ -219,7 +219,7 @@ const ParametersContainer = ({
                                 />
                             </Grid>
                         )}
-                        <Grid item xs={showVerticalSteps ? 6 : 9}>
+                        <Grid item xs={showVerticalSteps ? 5 : 8}>
                             <SetEditor
                                 definitions={definitions}
                                 filter={definitionFilter}
@@ -227,7 +227,7 @@ const ParametersContainer = ({
                                 set={currentSet}
                             />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={4} pt={10}>
                             <SetSearch />
                         </Grid>
                     </Grid>

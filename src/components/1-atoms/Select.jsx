@@ -30,6 +30,7 @@ const Select = (props) => {
         outlined,
         error = false,
         disabled = false,
+        fullWidth,
     } = props;
     const classes = useStyles();
 
@@ -62,9 +63,11 @@ const Select = (props) => {
             variant={outlined ? 'outlined' : undefined}
             className={classes.form}
             error={error}
+            fullWidth={fullWidth}
         >
             {label !== undefined && <InputLabel>{label}</InputLabel>}
             <MuiSelect
+                label={label}
                 value={value}
                 onChange={onChange}
                 {...multipleProps}
@@ -93,6 +96,7 @@ Select.propTypes = {
     options: PropTypes.array.isRequired,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     setValue: PropTypes.func,
+    fullWidth: PropTypes.bool,
 };
 
 export default Select;
