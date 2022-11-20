@@ -56,13 +56,13 @@ const Autocomplete = (props) => {
             isMultiple
                 ? matchMultipleOptions(options, value)
                 : options?.find((option) => option.value === value) || {
-                      label: value.toString(),
+                      label: value?.toString() ?? '',
                       value,
                   },
         [options, value, isMultiple, matchMultipleOptions]
     );
     const [inputValue, setInputValue] = useState(
-        isMultiple ? '' : value.toString()
+        isMultiple ? '' : value?.toString() ?? ''
     );
 
     const classes = useStyles({

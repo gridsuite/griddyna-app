@@ -23,35 +23,113 @@ import Select from '../1-atoms/Select';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { useStyles } from './SetSearchStyle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 const RESET_SET_SEARCH_LABEL = 'Clear filter';
 const APPLY_ONE_SET_SEARCH_LABEL = 'Apply one';
 const APPLY_ALL_SET_SEARCH_LABEL = 'Apply all';
 const SET_SEARCH_LABEL = 'Parameters Set';
 
-SetSearch.propTypes = {};
+SetSearch.propTypes = {
+    typeFilter: PropTypes.string,
+    modelsSelector: PropTypes.func,
+    groupsSelector: PropTypes.func,
+    setsSelector: PropTypes.func,
+    onChangeGroup: PropTypes.func,
+    onReset: PropTypes.func,
+    onApply: PropTypes.func,
+};
 
 function SetSearch(props) {
-    const [expanded, setExpanded] = useState(true);
+    const {
+        typeFilter,
+        modelsSelector,
+        groupsSelector,
+        setsSelector,
+        onChangeGroup,
+        onReset,
+        onApply,
+    } = props;
+
     const classes = useStyles({ isValid: true, isSelect: true });
-    const models = [
-        { label: 'GeneratorSynchronousThreeWindings', value: 1 },
-        {
-            label: 'GeneratorSynchronousFourWindingsProportionalRegulations',
-            value: 2,
-        },
-        { label: 'CurrentLimitAutomaton', value: 3 },
-    ];
-    const groups = [
-        { label: 'GSTW', value: 1 },
-        { label: 'IEEE14', value: 2 },
-        { label: 'CLA', value: 3 },
-    ];
-    const sets = [
-        { label: 'IEEE14_GEN____1_SM', value: 1 },
-        { label: 'IEEE14_GEN____2_SM', value: 2 },
-        { label: 'IEEE14_GEN____3_SM', value: 3 },
-    ];
+    const [expanded, setExpanded] = useState(true);
+
+    // local state to manage set search selections
+    const [model, setModel] = useState();
+    const [group, setGroup] = useState();
+    const [set, setSet] = useState();
+
+    // use selectors configured by the parent components
+    const models = useSelector((state) => modelsSelector(state, typeFilter));
+    const groups = useSelector((state) => groupsSelector(state, model));
+    const sets = useSelector(setsSelector);
+
+    // handle events
+    const handleSetModel = (value) => {
+        setModel(models[value]);
+        setGroup(undefined);
+        setSet(undefined);
+
+        // reset search result saved in store
+        onReset();
+    };
+
+    const handleSetGroup = (value) => {
+        const selectedGroup = groups[value];
+        setGroup(selectedGroup);
+        onChangeGroup(model, selectedGroup);
+    };
+
+    const handleChangeSet = (value) => {
+        setSet(sets[value]);
+    };
+
+    const handleReset = () => {
+        handleSetModel(undefined);
+    };
+
+    const handleApplyOne = () => {
+        onApply(set, false); // false i.e. apply for current editing set
+    };
+
+    const handleApplyAll = () => {
+        onApply(set, true); // true i.e. apply for all sets in the editing group
+    };
+
+    // transformations to representational format
+    const _models =
+        models?.map((model, index) => ({
+            label: model.name,
+            value: index,
+        })) ?? [];
+
+    const _groups =
+        groups?.map((group, index) => ({
+            label: group.name,
+            value: index,
+        })) ?? [];
+
+    const _sets =
+        sets?.map((set, index) => ({
+            label: set.name,
+            value: index,
+        })) ?? [];
+
+    // current selected elements in representational format
+    const getModel = () => {
+        return _models?.find((elem) => elem.label === model?.name);
+    };
+
+    const getGroup = () => {
+        return _groups?.find((elem) => elem.label === group?.name);
+    };
+
+    const getSet = () => {
+        return _sets?.find((elem) => elem.label === set?.name);
+    };
+
+    // render
     return (
         <Accordion
             expanded={expanded}
@@ -71,12 +149,10 @@ function SetSearch(props) {
                     alignItems={'stretch'}
                     spacing={2}
                     direction={'column'}
-                    xs={12}
                 >
                     <Grid item xs={12}>
                         <Grid
                             container
-                            xs={12}
                             justifyContent={'flex-start'}
                             alignItems={'stretch'}
                             direction={'column'}
@@ -84,30 +160,30 @@ function SetSearch(props) {
                             <Grid item xs={12}>
                                 <Select
                                     label={'Model'}
-                                    options={models}
-                                    value={2}
-                                    setValue={() => {}}
+                                    options={_models}
+                                    value={getModel()?.value ?? ''}
+                                    setValue={handleSetModel}
                                     error={false}
                                     fullWidth
                                 ></Select>
                             </Grid>
-                            <Grid item s={12}>
+                            <Grid item xs={12}>
                                 <Select
                                     label={'Group'}
-                                    options={groups}
-                                    value={2}
-                                    setValue={() => {}}
+                                    options={_groups}
+                                    value={getGroup()?.value ?? ''}
+                                    setValue={handleSetGroup}
                                     error={false}
                                     fullWidth
                                 ></Select>
                             </Grid>
-                            <Grid item s={12} className={classes.value}>
+                            <Grid item xs={12} className={classes.value}>
                                 <Autocomplete
                                     isFree={false}
                                     isMultiple={false}
-                                    value={2 === '' ? [] : 2}
-                                    onChange={() => {}}
-                                    options={sets}
+                                    value={getSet()?.value ?? ''}
+                                    onChange={handleChangeSet}
+                                    options={_sets}
                                     highlightOptions={[]}
                                     type={undefined}
                                     error={false}
@@ -122,24 +198,23 @@ function SetSearch(props) {
                             container
                             justifyContent="flex-end"
                             alignItems={'flex-start'}
-                            xs={12}
                             spacing={1}
                         >
                             <Grid item>
                                 <ApplyOneButton
-                                    onClick={() => {}}
+                                    onClick={handleApplyOne}
                                     tooltip={APPLY_ONE_SET_SEARCH_LABEL}
                                 />
                             </Grid>
                             <Grid item>
                                 <ApplyAllButton
-                                    onClick={() => {}}
+                                    onClick={handleApplyAll}
                                     tooltip={APPLY_ALL_SET_SEARCH_LABEL}
                                 />
                             </Grid>
                             <Grid item>
                                 <ResetButton
-                                    onClick={() => {}}
+                                    onClick={handleReset}
                                     tooltip={RESET_SET_SEARCH_LABEL}
                                 />
                             </Grid>

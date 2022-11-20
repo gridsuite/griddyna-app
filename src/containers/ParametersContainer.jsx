@@ -35,6 +35,7 @@ import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
 import VerticalStepper from '../components/2-molecules/VerticalStepper';
 import SetSearch from '../components/3-organisms/SetSearch';
+import useSetSearch from '../components/3-organisms/hooks/useSetSearch';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -181,12 +182,22 @@ const ParametersContainer = ({
     const definitionFilter = (definition) =>
         [ParameterOrigin.USER].includes(definition.origin);
 
+    // hook for SetSearch component
+    const {
+        modelsSelector,
+        groupsSelector,
+        setsSelector,
+        handleChangeGroup,
+        handleResetSetSearch,
+        handleApplySet,
+    } = useSetSearch(currentGroup, currentSet);
+
     return (
         <Dialog
             open={true}
             onClose={onClose}
-            fullWidth={showVerticalSteps && !isFirstStep}
-            maxWidth={'lg'}
+            fullWidth={!isFirstStep}
+            maxWidth={isFirstStep ? 'xs' : showVerticalSteps ? 'lg' : 'md'}
             scroll="paper"
         >
             <DialogTitle>
@@ -228,7 +239,15 @@ const ParametersContainer = ({
                             />
                         </Grid>
                         <Grid item xs={4} pt={10}>
-                            <SetSearch />
+                            <SetSearch
+                                typeFilter={modelToEdit?.type}
+                                modelsSelector={modelsSelector}
+                                groupsSelector={groupsSelector}
+                                setsSelector={setsSelector}
+                                onChangeGroup={handleChangeGroup}
+                                onReset={handleResetSetSearch}
+                                onApply={handleApplySet}
+                            />
                         </Grid>
                     </Grid>
                 )}

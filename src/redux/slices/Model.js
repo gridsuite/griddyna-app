@@ -36,7 +36,9 @@ export const makeGetModels = () =>
         (state) => state.models.models,
         (_, equipmentType) => equipmentType,
         (models, equipmentType) =>
-            models.filter((model) => model.type === equipmentType)
+            equipmentType
+                ? models.filter((model) => model.type === equipmentType)
+                : models
     );
 
 export const makeGetModel = () =>
@@ -46,6 +48,19 @@ export const makeGetModel = () =>
         (models, modelName) => models.find((model) => model.name === modelName)
     );
 
+export const makeGetGroupByModel = () =>
+    createSelector(
+        (state) => state,
+        (_, model) => model,
+        (state, model) => model?.groups
+    );
+
+export const makeGetSearchSets = () =>
+    createSelector(
+        (state) => state.models,
+        (_) => _,
+        (models, _) => models.currentGroup.searchSets
+    );
 // Reducers
 
 export const getModels = createAsyncThunk(
@@ -79,6 +94,28 @@ export const getModelSets = createAsyncThunk(
                 modelName,
                 groupName,
                 groupType !== '' ? groupType : SetType.FIXED,
+                token
+            );
+
+            if (!response.ok) {
+                throw response;
+            }
+            return response.json();
+        } else {
+            return [];
+        }
+    }
+);
+
+export const getSearchedModelSets = createAsyncThunk(
+    'models/sets/candidate',
+    async ({ modelName, groupName, groupType }, { getState }) => {
+        if (groupName) {
+            const token = getState()?.user.user?.id_token;
+            const response = await modelsAPI.getModelSets(
+                modelName,
+                groupName,
+                groupType ?? '',
                 token
             );
 
@@ -196,15 +233,21 @@ const reducers = {
         state.currentGroup = currentGroup;
     },
     addOrModifySet: (state, action) => {
-        const newSet = action.payload;
-        const setIndex = state.currentGroup.sets.findIndex(
-            (setToTest) => setToTest.name === newSet.name
-        );
-        if (setIndex === -1) {
-            state.currentGroup.sets.push(newSet);
-        } else {
-            state.currentGroup.sets[setIndex] = newSet;
-        }
+        const newSets = action.payload;
+
+        _.forEach(Array.isArray(newSets) ? newSets : [newSets], (newSet) => {
+            const setIndex = state.currentGroup.sets.findIndex(
+                (setToTest) => setToTest.name === newSet.name
+            );
+            if (setIndex === -1) {
+                state.currentGroup.sets.push(newSet);
+            } else {
+                state.currentGroup.sets[setIndex] = newSet;
+            }
+        });
+    },
+    resetSearchSets: (state) => {
+        state.currentGroup.searchSets = [];
     },
 };
 
@@ -224,6 +267,12 @@ const extraReducers = {
             receivedSets.concat(state.currentGroup.sets),
             'name'
         );
+        state.status = RequestStatus.SUCCESS;
+    },
+    [getSearchedModelSets.fulfilled]: (state, action) => {
+        const candidateSets = action.payload;
+
+        state.currentGroup.searchSets = _.uniqBy(candidateSets, 'name');
         state.status = RequestStatus.SUCCESS;
     },
     [postModelSetsGroup.fulfilled]: (state, action) => {
