@@ -289,6 +289,10 @@ export const makeIsFilterValid = () =>
             checkFilterValidity(rules[indexes.rule].filters[indexes.filter])
     );
 
+const checkAllFiltersValidity = (rule) => {
+    return rule.filters.every((filter) => checkFilterValidity(filter));
+};
+
 const checkRuleValidity = (rule) => {
     return (
         rule.type !== '' &&
@@ -296,10 +300,7 @@ const checkRuleValidity = (rule) => {
         rule.mappedModel !== '' &&
         rule.setGroup !== '' &&
         rule.groupType !== '' &&
-        rule.filters.reduce(
-            (acc, filter) => acc && checkFilterValidity(filter),
-            true
-        )
+        checkAllFiltersValidity(rule)
     );
 };
 
@@ -583,6 +584,13 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
         const { rules, filteredRuleType } = state?.mappings;
         const networkId = state?.network.currentNetwork;
         const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
+
+        // pre-condition before calling API
+        const isAllFiltersValid = checkAllFiltersValidity(foundRule);
+        if (!isAllFiltersValid || !networkId) {
+            return {};
+        }
+
         const ruleToMatch = {
             ruleIndex,
             composition: foundRule.composition,
@@ -598,6 +606,14 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
             throw response;
         }
         return response.json();
+    }
+);
+
+// a fake async action which allows to daisy-chain with other async action
+export const changeFilterValueAsync = createAsyncThunk(
+    'mappings/rules/changeFilterValue',
+    async ({ ruleIndex, filterIndex, value }, { getState }) => {
+        return Promise.resolve({ ruleIndex, filterIndex, value });
     }
 );
 
@@ -707,9 +723,8 @@ const reducers = {
                 );
                 newCompositionArray[groupIndex].push(groupOperator);
                 newCompositionArray[groupIndex].push(newId);
-                const newComposition =
+                selectedRule.composition =
                     convertCompositionArrayToString(newCompositionArray);
-                selectedRule.composition = newComposition;
             } catch (e) {
                 console.error(e);
             }
@@ -984,6 +999,8 @@ const extraReducers = {
     [getNetworkMatchesFromRule.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { ruleIndex, matchedIds } = action.payload;
+        if (ruleIndex === undefined) return;
+
         const foundRule = filterRulesByType(
             state.rules,
             state.filteredRuleType
@@ -995,6 +1012,9 @@ const extraReducers = {
     },
     [getNetworkMatchesFromRule.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
+    },
+    [changeFilterValueAsync.fulfilled]: (state, action) => {
+        reducers.changeFilterValue(state, action);
     },
 };
 
