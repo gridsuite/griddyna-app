@@ -27,6 +27,8 @@ const Autocomplete = (props) => {
         error,
         isMultiple = false,
         ignoreReset = false,
+        label,
+        fullWidth,
     } = props;
 
     const matchMultipleOptions = useCallback(
@@ -54,13 +56,13 @@ const Autocomplete = (props) => {
             isMultiple
                 ? matchMultipleOptions(options, value)
                 : options?.find((option) => option.value === value) || {
-                      label: value.toString(),
+                      label: value?.toString() ?? '',
                       value,
                   },
         [options, value, isMultiple, matchMultipleOptions]
     );
     const [inputValue, setInputValue] = useState(
-        isMultiple ? '' : value.toString()
+        isMultiple ? '' : value?.toString() ?? ''
     );
 
     const classes = useStyles({
@@ -74,6 +76,7 @@ const Autocomplete = (props) => {
                   )
                 : 0),
         selectedOptions: isMultiple ? value.length : 0,
+        fullWidth: fullWidth,
     });
 
     const [updateFlag, setUpdateFlag] = useState(false);
@@ -168,7 +171,9 @@ const Autocomplete = (props) => {
             autoHighlight={!isFree}
             renderOption={renderOption}
             className={classes.inputWidth}
-            renderInput={(params) => <TextField {...params} error={error} />}
+            renderInput={(params) => (
+                <TextField {...params} label={label} error={error} />
+            )}
             isOptionEqualToValue={(option, value) =>
                 option.value === value.value
             }
@@ -198,6 +203,8 @@ Autocomplete.propTypes = {
     type: PropTypes.string,
     error: PropTypes.bool,
     ignoreReset: PropTypes.bool,
+    label: PropTypes.string,
+    fullWidth: PropTypes.bool,
 };
 
 export default Autocomplete;

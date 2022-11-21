@@ -34,6 +34,8 @@ import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
 import VerticalStepper from '../components/2-molecules/VerticalStepper';
+import SetSearch from '../components/3-organisms/SetSearch';
+import useSetSearch from '../components/3-organisms/hooks/useSetSearch';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -95,7 +97,7 @@ const ParametersContainer = ({
     );
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
-
+    const isFirstStep = step === 0;
     const showSteps =
         (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
 
@@ -107,6 +109,7 @@ const ParametersContainer = ({
         })),
     };
     const maxStep = currentGroup.sets.length;
+    const isMaxStep = step === maxStep;
 
     const changeGroupName = (newName) => {
         dispatch(ModelSlice.actions.changeGroupName(newName));
@@ -179,19 +182,29 @@ const ParametersContainer = ({
     const definitionFilter = (definition) =>
         [ParameterOrigin.USER].includes(definition.origin);
 
+    // hook for SetSearch component
+    const {
+        modelsSelector,
+        groupsSelector,
+        setsSelector,
+        handleChangeGroup,
+        handleResetSetSearch,
+        handleApplySet,
+    } = useSetSearch(currentGroup, currentSet);
+
     return (
         <Dialog
             open={true}
             onClose={onClose}
-            fullWidth={showVerticalSteps && step > 0}
-            maxWidth={'md'}
+            fullWidth={!isFirstStep}
+            maxWidth={isFirstStep ? 'xs' : showVerticalSteps ? 'lg' : 'md'}
             scroll="paper"
         >
             <DialogTitle>
-                {step === 0 ? groupTitleLabel : setTitleLabel}
+                {isFirstStep ? groupTitleLabel : setTitleLabel}
             </DialogTitle>
             <DialogContent>
-                {step === 0 ? (
+                {isFirstStep ? (
                     <SetGroupEditor
                         name={currentGroup.name}
                         isError={isErrorName}
@@ -203,7 +216,7 @@ const ParametersContainer = ({
                 ) : (
                     <Grid container>
                         {showVerticalSteps && (
-                            <Grid item xs={4}>
+                            <Grid item xs={3} pt={10}>
                                 <VerticalStepper
                                     steps={currentGroup.sets.map(
                                         (set, index) => ({
@@ -217,12 +230,23 @@ const ParametersContainer = ({
                                 />
                             </Grid>
                         )}
-                        <Grid item xs={showVerticalSteps ? 8 : 12}>
+                        <Grid item xs={showVerticalSteps ? 5 : 8}>
                             <SetEditor
                                 definitions={definitions}
                                 filter={definitionFilter}
                                 saveSet={addOrModifySet}
                                 set={currentSet}
+                            />
+                        </Grid>
+                        <Grid item xs={4} pt={10}>
+                            <SetSearch
+                                typeFilter={modelToEdit?.type}
+                                modelsSelector={modelsSelector}
+                                groupsSelector={groupsSelector}
+                                setsSelector={setsSelector}
+                                onChangeGroup={handleChangeGroup}
+                                onReset={handleResetSetSearch}
+                                onApply={handleApplySet}
                             />
                         </Grid>
                     </Grid>
@@ -235,7 +259,7 @@ const ParametersContainer = ({
                     setStep={setStep}
                     onFinish={saveSetGroup}
                     onCancel={close}
-                    disabled={(step === maxStep || step === 0) && isError}
+                    disabled={(isMaxStep || isFirstStep) && isError}
                 />
             ) : (
                 <DialogActions>
