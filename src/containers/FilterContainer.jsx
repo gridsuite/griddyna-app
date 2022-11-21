@@ -11,7 +11,6 @@ import {
     getNetworkMatchesFromRule,
     makeGetFilter,
     makeIsFilterValid,
-    makeIsRuleValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
 import { makeGetNetworkValues } from '../redux/slices/Network';
@@ -36,11 +35,6 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     const isFilterValid = useMemo(makeIsFilterValid, []);
     const isValid = useSelector((state) =>
         isFilterValid(state, { rule: ruleIndex, filter: filterIndex })
-    );
-
-    const isRuleValidSelector = useMemo(makeIsRuleValid, []);
-    const isRuleValid = useSelector((state) =>
-        isRuleValidSelector(state, ruleIndex)
     );
 
     const getNetworkValues = useMemo(makeGetNetworkValues, []);
@@ -84,7 +78,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
                 })
             );
             // Other cases called in RuleContainer, only case left is filter value change
-            if (hasNetworkValues && isRuleValid && value) {
+            if (hasNetworkValues && isValid && value) {
                 dispatch(getNetworkMatchesFromRule(ruleIndex));
             }
         },
@@ -94,7 +88,7 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
             filterIndex,
             isUniqueSelectFilter,
             hasNetworkValues,
-            isRuleValid,
+            isValid,
         ]
     );
     const deleteFilter = () =>
