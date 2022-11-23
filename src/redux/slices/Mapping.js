@@ -293,6 +293,17 @@ const checkAllFiltersValidity = (rule) => {
     return rule.filters.every((filter) => checkFilterValidity(filter));
 };
 
+export const makeIsAllFiltersValid = () =>
+    createSelector(
+        (state) =>
+            filterRulesByType(
+                state.mappings.rules,
+                state.mappings.filteredRuleType
+            ),
+        (_state, ruleIndex) => ruleIndex,
+        (rules, ruleIndex) => checkAllFiltersValidity(rules[ruleIndex])
+    );
+
 const checkRuleValidity = (rule) => {
     return (
         rule.type !== '' &&
@@ -584,13 +595,6 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
         const { rules, filteredRuleType } = state?.mappings;
         const networkId = state?.network.currentNetwork;
         const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
-
-        // pre-condition before calling API
-        const isAllFiltersValid = checkAllFiltersValidity(foundRule);
-        if (!isAllFiltersValid || !networkId) {
-            return {};
-        }
-
         const ruleToMatch = {
             ruleIndex,
             composition: foundRule.composition,
@@ -608,6 +612,32 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
         return response.json();
     }
 );
+
+export const changeFilterValueThenGetNetworkMatches = ({
+    ruleIndex,
+    filterIndex,
+    value,
+}) => {
+    return (dispatch, getState) => {
+        dispatch(
+            MappingSlice.actions.changeFilterValue({
+                ruleIndex,
+                filterIndex,
+                value,
+            })
+        );
+        // add condition to fire the second action
+        // TODO add hasNetworkValues condition
+        const isAllFiltersValid = makeIsAllFiltersValid()(
+            getState(),
+            ruleIndex
+        );
+        if (!isAllFiltersValid) {
+            return;
+        }
+        dispatch(getNetworkMatchesFromRule(ruleIndex));
+    };
+};
 
 const reducers = {
     // Active Mapping

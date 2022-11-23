@@ -8,7 +8,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getNetworkMatchesFromRule,
+    changeFilterValueThenGetNetworkMatches,
     makeGetFilter,
     makeIsFilterValid,
     MappingSlice,
@@ -70,16 +70,23 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
 
     const setValue = useCallback(
         (value) => {
+            /*            dispatch(
+    MappingSlice.actions.changeFilterValue({
+        ruleIndex,
+        filterIndex,
+        value: isUniqueSelectFilter ? [value] : value,
+    })
+);
+hasNetworkValues &&
+    value &&
+    dispatch(getNetworkMatchesFromRule(ruleIndex));*/
             dispatch(
-                MappingSlice.actions.changeFilterValue({
+                changeFilterValueThenGetNetworkMatches({
                     ruleIndex,
                     filterIndex,
                     value: isUniqueSelectFilter ? [value] : value,
                 })
             );
-            hasNetworkValues &&
-                value &&
-                dispatch(getNetworkMatchesFromRule(ruleIndex));
         },
         [
             dispatch,
