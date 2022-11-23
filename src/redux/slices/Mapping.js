@@ -609,14 +609,6 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
     }
 );
 
-// a fake async action which allows to daisy-chain with other async action
-export const changeFilterValueAsync = createAsyncThunk(
-    'mappings/rules/changeFilterValue',
-    async ({ ruleIndex, filterIndex, value }, { getState }) => {
-        return Promise.resolve({ ruleIndex, filterIndex, value });
-    }
-);
-
 const reducers = {
     // Active Mapping
 
@@ -1012,9 +1004,6 @@ const extraReducers = {
     },
     [getNetworkMatchesFromRule.pending]: (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [changeFilterValueAsync.fulfilled]: (state, action) => {
-        reducers.changeFilterValue(state, action);
     },
 };
 

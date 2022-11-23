@@ -8,7 +8,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    changeFilterValueAsync,
     getNetworkMatchesFromRule,
     makeGetFilter,
     makeIsFilterValid,
@@ -71,20 +70,16 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
 
     const setValue = useCallback(
         (value) => {
-            // the second dispatch depends on new filter property value of the
-            // first dispatch => must chaining while dispatching the first action
             dispatch(
-                changeFilterValueAsync({
+                MappingSlice.actions.changeFilterValue({
                     ruleIndex,
                     filterIndex,
                     value: isUniqueSelectFilter ? [value] : value,
                 })
-            ).then(
-                () =>
-                    hasNetworkValues &&
-                    value &&
-                    dispatch(getNetworkMatchesFromRule(ruleIndex))
             );
+            hasNetworkValues &&
+                value &&
+                dispatch(getNetworkMatchesFromRule(ruleIndex));
         },
         [
             dispatch,
