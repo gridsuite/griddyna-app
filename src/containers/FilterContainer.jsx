@@ -66,20 +66,8 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
         // operands only allow one string to select
         !multipleOperands.includes(operand);
 
-    const hasNetworkValues = networkValues.length > 0;
-
     const setValue = useCallback(
         (value) => {
-            /*            dispatch(
-    MappingSlice.actions.changeFilterValue({
-        ruleIndex,
-        filterIndex,
-        value: isUniqueSelectFilter ? [value] : value,
-    })
-);
-hasNetworkValues &&
-    value &&
-    dispatch(getNetworkMatchesFromRule(ruleIndex));*/
             dispatch(
                 changeFilterValueThenGetNetworkMatches({
                     ruleIndex,
@@ -88,14 +76,9 @@ hasNetworkValues &&
                 })
             );
         },
-        [
-            dispatch,
-            ruleIndex,
-            filterIndex,
-            isUniqueSelectFilter,
-            hasNetworkValues,
-        ]
+        [dispatch, ruleIndex, filterIndex, isUniqueSelectFilter]
     );
+
     const deleteFilter = () =>
         dispatch(
             MappingSlice.actions.deleteFilter({

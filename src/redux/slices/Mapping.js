@@ -27,6 +27,7 @@ import {
     getMaxDepthParentheses,
 } from '../../utils/composition';
 import * as networkAPI from '../../rest/networkAPI';
+import { makeGetNetworkValues } from './Network';
 
 const initialState = {
     mappings: [],
@@ -452,6 +453,31 @@ export const makeGetMatches = () =>
         (rules, index) => rules[index]?.matches ?? []
     );
 
+export const makeGetNetworkValuesFromFilter = () =>
+    createSelector(
+        (state) => state,
+        (_state, indexes) => indexes,
+        (state, indexes) => {
+            // get type
+            const rule = makeGetRule()(state, indexes.rule);
+            const { type } = rule;
+
+            // get full property
+            const filter = makeGetFilter()(state, {
+                rule: indexes.rule,
+                filter: indexes.filter,
+            });
+            const { property } = filter;
+            const fullProperty = type ? getProperty(type, property) : undefined;
+
+            // get network value from filter
+            return makeGetNetworkValues()(state, {
+                equipmentType: type,
+                fullProperty: fullProperty,
+            });
+        }
+    );
+
 // Reducers
 const augmentFilter = (ruleType) => (filter) => ({
     ...filter,
@@ -626,15 +652,26 @@ export const changeFilterValueThenGetNetworkMatches = ({
                 value,
             })
         );
-        // add condition to fire the second action
-        // TODO add hasNetworkValues condition
+
+        // --- Conditions to fire the second action --- //
+        // network values must be present
+        const networkValues = makeGetNetworkValuesFromFilter()(getState(), {
+            rule: ruleIndex,
+            filter: filterIndex,
+        });
+        const hasNetworkValues = networkValues.length > 0;
+
+        // every filter in the same rule must be valid
         const isAllFiltersValid = makeIsAllFiltersValid()(
             getState(),
             ruleIndex
         );
-        if (!isAllFiltersValid) {
+
+        // check all conditions
+        if (!isAllFiltersValid || !hasNetworkValues) {
             return;
         }
+
         dispatch(getNetworkMatchesFromRule(ruleIndex));
     };
 };
