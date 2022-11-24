@@ -27,7 +27,7 @@ import {
     getMaxDepthParentheses,
 } from '../../utils/composition';
 import * as networkAPI from '../../rest/networkAPI';
-import { makeGetNetworkValues } from './Network';
+import { getNetworkValues } from './Network';
 
 const initialState = {
     mappings: [],
@@ -294,17 +294,6 @@ const checkAllFiltersValidity = (rule) => {
     return rule.filters.every((filter) => checkFilterValidity(filter));
 };
 
-export const makeIsAllFiltersValid = () =>
-    createSelector(
-        (state) =>
-            filterRulesByType(
-                state.mappings.rules,
-                state.mappings.filteredRuleType
-            ),
-        (_state, ruleIndex) => ruleIndex,
-        (rules, ruleIndex) => checkAllFiltersValidity(rules[ruleIndex])
-    );
-
 const checkRuleValidity = (rule) => {
     return (
         rule.type !== '' &&
@@ -453,30 +442,28 @@ export const makeGetMatches = () =>
         (rules, index) => rules[index]?.matches ?? []
     );
 
-export const makeGetNetworkValuesFromFilter = () =>
-    createSelector(
-        (state) => state,
-        (_state, indexes) => indexes,
-        (state, indexes) => {
-            // get type
-            const rule = makeGetRule()(state, indexes.rule);
-            const { type } = rule;
+const getNetworkValuesFromFilter = (
+    propertyValues,
+    rules,
+    filterRuleType,
+    indexes
+) => {
+    // get type
+    const filteredRules = filterRulesByType(rules, filterRuleType);
+    const rule = filteredRules[indexes.rule];
+    const { type } = rule;
 
-            // get full property
-            const filter = makeGetFilter()(state, {
-                rule: indexes.rule,
-                filter: indexes.filter,
-            });
-            const { property } = filter;
-            const fullProperty = type ? getProperty(type, property) : undefined;
+    // get full property
+    const filter = rule.filters[indexes.filter];
+    const { property } = filter;
+    const fullProperty = type ? getProperty(type, property) : undefined;
 
-            // get network value from filter
-            return makeGetNetworkValues()(state, {
-                equipmentType: type,
-                fullProperty: fullProperty,
-            });
-        }
-    );
+    // get network values from filter
+    return getNetworkValues(propertyValues, {
+        equipmentType: type,
+        fullProperty: fullProperty,
+    });
+};
 
 // Reducers
 const augmentFilter = (ruleType) => (filter) => ({
@@ -639,6 +626,7 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
     }
 );
 
+// daisy-chain action creators
 export const changeFilterValueThenGetNetworkMatches = ({
     ruleIndex,
     filterIndex,
@@ -654,17 +642,23 @@ export const changeFilterValueThenGetNetworkMatches = ({
         );
 
         // --- Conditions to fire the second action --- //
+        const state = getState();
+
         // network values must be present
-        const networkValues = makeGetNetworkValuesFromFilter()(getState(), {
-            rule: ruleIndex,
-            filter: filterIndex,
-        });
+        const networkValues = getNetworkValuesFromFilter(
+            state.network.propertyValues,
+            state.mappings.rules,
+            state.mappings.filteredRuleType,
+            {
+                rule: ruleIndex,
+                filter: filterIndex,
+            }
+        );
         const hasNetworkValues = networkValues.length > 0;
 
         // every filter in the same rule must be valid
-        const isAllFiltersValid = makeIsAllFiltersValid()(
-            getState(),
-            ruleIndex
+        const isAllFiltersValid = checkAllFiltersValidity(
+            state.mappings.rules[ruleIndex]
         );
 
         // check all conditions

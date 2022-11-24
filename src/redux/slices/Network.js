@@ -23,22 +23,25 @@ const initialState = {
 };
 
 // Selectors
+export const getNetworkValues = (
+    propertyValues,
+    { equipmentType, fullProperty }
+) =>
+    propertyValues
+        ?.find(
+            (propertyValuesItem) => propertyValuesItem.type === equipmentType
+        )
+        ?.values[fullProperty?.name]?.map((value) =>
+            fullProperty?.type === PropertyType.BOOLEAN
+                ? value === 'true'
+                : value
+        ) ?? [];
 
 export const makeGetNetworkValues = () =>
     createSelector(
         (state) => state.network.propertyValues,
         (_state, args) => args,
-        (propertyValues, { equipmentType, fullProperty }) =>
-            propertyValues
-                ?.find(
-                    (propertyValuesItem) =>
-                        propertyValuesItem.type === equipmentType
-                )
-                ?.values[fullProperty?.name]?.map((value) =>
-                    fullProperty?.type === PropertyType.BOOLEAN
-                        ? value === 'true'
-                        : value
-                ) ?? []
+        getNetworkValues
     );
 
 export const makeGetPossibleWatchedElements = () =>
@@ -114,9 +117,9 @@ const reducers = {
 
 const extraReducers = {
     /* TODO
-    [GET_EQUIPMENTS] // read the idm (only if we want
-    [GET_TYPES] // Get the properties
-     */
+[GET_EQUIPMENTS] // read the idm (only if we want
+[GET_TYPES] // Get the properties
+*/
     [getPropertyValuesFromFile.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { propertyValues, networkId } = action.payload;
