@@ -641,7 +641,7 @@ export const changeFilterValueThenGetNetworkMatches = ({
             })
         );
 
-        // --- Conditions to fire the second action --- //
+        // --- Fail-fast check conditions to fire the next action --- //
         const state = getState();
 
         // network values must be present
@@ -655,17 +655,15 @@ export const changeFilterValueThenGetNetworkMatches = ({
             }
         );
         const hasNetworkValues = networkValues.length > 0;
+        if (!hasNetworkValues) return;
 
         // every filter in the same rule must be valid
         const isAllFiltersValid = checkAllFiltersValidity(
             state.mappings.rules[ruleIndex]
         );
+        if (!isAllFiltersValid) return;
 
-        // check all conditions
-        if (!isAllFiltersValid || !hasNetworkValues) {
-            return;
-        }
-
+        // --- All conditions passed => dispatch the next action --- //
         dispatch(getNetworkMatchesFromRule(ruleIndex));
     };
 };
