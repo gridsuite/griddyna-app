@@ -14,6 +14,7 @@ import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
 import { PropertyType } from '../../constants/equipmentDefinition';
 import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automata';
+import { createParameterSelector } from '../selectorUtil';
 
 const initialState = {
     propertyValues: [],
@@ -22,11 +23,20 @@ const initialState = {
     status: RequestStatus.IDLE,
 };
 
+// base selectors
+export const getPropertyValues = (state) => state.network.propertyValues;
+
+// parameter selectors
+// property param object {equipmentType, fullProperty, ..}
+const getEquipmentTypeParam = createParameterSelector(
+    ({ equipmentType }) => equipmentType
+);
+const getFullPropertyParam = createParameterSelector(
+    ({ fullProperty }) => fullProperty
+);
+
 // Selectors
-export const getNetworkValues = (
-    propertyValues,
-    { equipmentType, fullProperty }
-) =>
+export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
     propertyValues
         ?.find(
             (propertyValuesItem) => propertyValuesItem.type === equipmentType
@@ -39,8 +49,9 @@ export const getNetworkValues = (
 
 export const makeGetNetworkValues = () =>
     createSelector(
-        (state) => state.network.propertyValues,
-        (_state, args) => args,
+        getPropertyValues,
+        getEquipmentTypeParam,
+        getFullPropertyParam,
         getNetworkValues
     );
 

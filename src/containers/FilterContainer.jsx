@@ -8,7 +8,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    changeFilterValueThenGetNetworkMatches,
+    makeChangeFilterValueThenGetNetworkMatches,
     makeGetFilter,
     makeIsFilterValid,
     MappingSlice,
@@ -66,6 +66,10 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
         // operands only allow one string to select
         !multipleOperands.includes(operand);
 
+    const changeFilterValueThenGetNetworkMatches = useMemo(
+        makeChangeFilterValueThenGetNetworkMatches,
+        []
+    );
     const setValue = useCallback(
         (value) => {
             dispatch(
@@ -76,7 +80,13 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
                 })
             );
         },
-        [dispatch, ruleIndex, filterIndex, isUniqueSelectFilter]
+        [
+            dispatch,
+            ruleIndex,
+            filterIndex,
+            isUniqueSelectFilter,
+            changeFilterValueThenGetNetworkMatches,
+        ]
     );
 
     const deleteFilter = () =>
