@@ -8,10 +8,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getNetworkMatchesFromRule,
+    makeChangeFilterValueThenGetNetworkMatches,
     makeGetFilter,
     makeIsFilterValid,
-    makeIsRuleValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
 import { makeGetNetworkValues } from '../redux/slices/Network';
@@ -36,11 +35,6 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     const isFilterValid = useMemo(makeIsFilterValid, []);
     const isValid = useSelector((state) =>
         isFilterValid(state, { rule: ruleIndex, filter: filterIndex })
-    );
-
-    const isRuleValidSelector = useMemo(makeIsRuleValid, []);
-    const isRuleValid = useSelector((state) =>
-        isRuleValidSelector(state, ruleIndex)
     );
 
     const getNetworkValues = useMemo(makeGetNetworkValues, []);
@@ -72,31 +66,29 @@ const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
         // operands only allow one string to select
         !multipleOperands.includes(operand);
 
-    const hasNetworkValues = networkValues.length > 0;
-
+    const changeFilterValueThenGetNetworkMatches = useMemo(
+        makeChangeFilterValueThenGetNetworkMatches,
+        []
+    );
     const setValue = useCallback(
         (value) => {
             dispatch(
-                MappingSlice.actions.changeFilterValue({
+                changeFilterValueThenGetNetworkMatches({
                     ruleIndex,
                     filterIndex,
                     value: isUniqueSelectFilter ? [value] : value,
                 })
             );
-            // Other cases called in RuleContainer, only case left is filter value change
-            if (hasNetworkValues && isRuleValid && value) {
-                dispatch(getNetworkMatchesFromRule(ruleIndex));
-            }
         },
         [
             dispatch,
             ruleIndex,
             filterIndex,
             isUniqueSelectFilter,
-            hasNetworkValues,
-            isRuleValid,
+            changeFilterValueThenGetNetworkMatches,
         ]
     );
+
     const deleteFilter = () =>
         dispatch(
             MappingSlice.actions.deleteFilter({

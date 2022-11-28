@@ -14,6 +14,7 @@ import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
 import { PropertyType } from '../../constants/equipmentDefinition';
 import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automata';
+import { createParameterSelector } from '../selectorUtil';
 
 const initialState = {
     propertyValues: [],
@@ -22,23 +23,36 @@ const initialState = {
     status: RequestStatus.IDLE,
 };
 
+// base selectors
+export const getPropertyValues = (state) => state.network.propertyValues;
+
+// parameter selectors
+// property param object {equipmentType, fullProperty, ..}
+const getEquipmentTypeParam = createParameterSelector(
+    ({ equipmentType }) => equipmentType
+);
+const getFullPropertyParam = createParameterSelector(
+    ({ fullProperty }) => fullProperty
+);
+
 // Selectors
+export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
+    propertyValues
+        ?.find(
+            (propertyValuesItem) => propertyValuesItem.type === equipmentType
+        )
+        ?.values[fullProperty?.name]?.map((value) =>
+            fullProperty?.type === PropertyType.BOOLEAN
+                ? value === 'true'
+                : value
+        ) ?? [];
 
 export const makeGetNetworkValues = () =>
     createSelector(
-        (state) => state.network.propertyValues,
-        (_state, args) => args,
-        (propertyValues, { equipmentType, fullProperty }) =>
-            propertyValues
-                ?.find(
-                    (propertyValuesItem) =>
-                        propertyValuesItem.type === equipmentType
-                )
-                ?.values[fullProperty?.name]?.map((value) =>
-                    fullProperty?.type === PropertyType.BOOLEAN
-                        ? value === 'true'
-                        : value
-                ) ?? []
+        getPropertyValues,
+        getEquipmentTypeParam,
+        getFullPropertyParam,
+        getNetworkValues
     );
 
 export const makeGetPossibleWatchedElements = () =>
@@ -114,9 +128,9 @@ const reducers = {
 
 const extraReducers = {
     /* TODO
-    [GET_EQUIPMENTS] // read the idm (only if we want
-    [GET_TYPES] // Get the properties
-     */
+[GET_EQUIPMENTS] // read the idm (only if we want
+[GET_TYPES] // Get the properties
+*/
     [getPropertyValuesFromFile.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { propertyValues, networkId } = action.payload;
