@@ -625,15 +625,14 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
 );
 
 // daisy-chain action creators
-export const makeChangeFilterValueThenGetNetworkMatches =
-    () =>
-    ({ ruleIndex, filterIndex, value }) => {
-        // create memorizing selectors this action creator
-        const getRule = makeGetRule();
-        const getFilter = makeGetFilter();
-        const getNetworkValues = makeGetNetworkValues();
-        const getIsAllFiltersValid = makeGetIsAllFiltersValid();
+export const makeChangeFilterValueThenGetNetworkMatches = () => {
+    // create memorizing selectors for this action creator
+    const getRule = makeGetRule();
+    const getFilter = makeGetFilter();
+    const getNetworkValues = makeGetNetworkValues();
+    const getIsAllFiltersValid = makeGetIsAllFiltersValid();
 
+    return ({ ruleIndex, filterIndex, value }) => {
         return (dispatch, getState) => {
             dispatch(
                 MappingSlice.actions.changeFilterValue({
@@ -675,6 +674,7 @@ export const makeChangeFilterValueThenGetNetworkMatches =
             dispatch(getNetworkMatchesFromRule(ruleIndex));
         };
     };
+};
 
 const reducers = {
     // Active Mapping
