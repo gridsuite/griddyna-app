@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { backendFetch, backendFetchJson } from '../utils/rest-api';
 
 const API_URL =
     process.env.REACT_APP_API_PREFIX +
@@ -13,72 +14,86 @@ const API_URL =
     '/scripts';
 
 export function convertToScript(mappingName, token) {
-    return fetch(`${API_URL}/from/${mappingName}`, {
-        method: 'GET',
-        headers: {
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/from/${mappingName}`,
+        {
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export function getScripts(token) {
-    return fetch(`${API_URL}/`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export function deleteScript(scriptName, token) {
-    return fetch(`${API_URL}/${scriptName}`, {
-        method: 'DELETE',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetch(
+        `${API_URL}/${scriptName}`,
+        {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export async function copyScript(originalName, copyName, token) {
-    return fetch(`${API_URL}/copy/${originalName}/to/${copyName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/copy/${originalName}/to/${copyName}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export async function renameScript(nameToReplace, newName, token) {
-    return fetch(`${API_URL}/rename/${nameToReplace}/to/${newName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/rename/${nameToReplace}/to/${newName}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export function postScript(scriptName, script, token) {
-    return fetch(`${API_URL}/${scriptName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/${scriptName}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+            body: JSON.stringify({ name: scriptName, script }),
         },
-        cache: 'default',
-        body: JSON.stringify({ name: scriptName, script }),
-    });
+        token
+    );
 }

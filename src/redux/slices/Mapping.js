@@ -527,18 +527,13 @@ export const postMapping = createAsyncThunk(
                   )?.controlledParameters
                 : state?.mappings.controlledParameters;
 
-        const response = await mappingsAPI.postMapping(
+        return await mappingsAPI.postMapping(
             mappingName,
             augmentedRules,
             formattedAutomata,
             controlledParameters,
             token
         );
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
     }
 );
 
@@ -546,8 +541,7 @@ export const getMappings = createAsyncThunk(
     'mappings/get',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.getMappings(token);
-        return response.json();
+        return await mappingsAPI.getMappings(token);
     }
 );
 
@@ -555,12 +549,7 @@ export const deleteMapping = createAsyncThunk(
     'mappings/delete',
     async (mappingName, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.deleteMapping(mappingName, token);
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.text();
+        return await mappingsAPI.deleteMapping(mappingName, token);
     }
 );
 
@@ -568,16 +557,7 @@ export const renameMapping = createAsyncThunk(
     'mappings/rename',
     async ({ nameToReplace, newName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.renameMapping(
-            nameToReplace,
-            newName,
-            token
-        );
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
+        return await mappingsAPI.renameMapping(nameToReplace, newName, token);
     }
 );
 
@@ -585,16 +565,7 @@ export const copyMapping = createAsyncThunk(
     'mappings/copy',
     async ({ originalName, copyName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.copyMapping(
-            originalName,
-            copyName,
-            token
-        );
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
+        return await mappingsAPI.copyMapping(originalName, copyName, token);
     }
 );
 
@@ -612,15 +583,11 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
             equipmentType: foundRule.type,
             filters: foundRule.filters.map(augmentFilter(foundRule.type)),
         };
-        const response = await networkAPI.getNetworkMatchesFromRule(
+        return await networkAPI.getNetworkMatchesFromRule(
             networkId,
             ruleToMatch,
             token
         );
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
     }
 );
 

@@ -5,6 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { store } from '../redux/store';
 const PREFIX_USER_ADMIN_SERVER_QUERIES =
     process.env.REACT_APP_API_PREFIX +
     process.env.REACT_APP_GATEWAY_PREFIX +
@@ -18,6 +19,51 @@ const PREFIX_USER_ADMIN_SERVER_QUERIES =
 //         ? process.env.REACT_APP_API_GATEWAY + '/user-admin'
 //         : process.env.REACT_APP_USER_ADMIN_URI);
 
+function getToken() {
+    const state = store.getState();
+    return state.user.id_token;
+}
+
+function handleResponse(response, expectsJson) {
+    if (response.ok) {
+        return expectsJson ? response.json() : response;
+    } else {
+        return response.text().then((text) => {
+            return Promise.reject({
+                message: text ? text : response.statusText,
+                status: response.status,
+                statusText: response.statusText,
+            });
+        });
+    }
+}
+
+function prepareRequest(init, token) {
+    if (!(typeof init == 'undefined' || typeof init == 'object')) {
+        throw new TypeError(
+            'Argument 2 of backendFetch is not an object' + typeof init
+        );
+    }
+    const initCopy = Object.assign({}, init);
+    initCopy.headers = new Headers(initCopy.headers || {});
+    const tokenCopy = token ? token : getToken();
+    initCopy.headers.append('Authorization', 'Bearer ' + tokenCopy);
+    return initCopy;
+}
+
+export function backendFetch(url, init, token) {
+    const initCopy = prepareRequest(init, token);
+    return fetch(url, initCopy).then((response) =>
+        handleResponse(response, false)
+    );
+}
+
+export function backendFetchJson(url, init, token) {
+    const initCopy = prepareRequest(init, token);
+    return fetch(url, initCopy).then((response) =>
+        handleResponse(response, true)
+    );
+}
 export function fetchValidateUser(user) {
     const sub = user?.profile?.sub;
     if (!sub)
@@ -32,17 +78,21 @@ export function fetchValidateUser(user) {
         PREFIX_USER_ADMIN_SERVER_QUERIES + `/v1/users/${sub}`;
     console.debug(CheckAccessUrl);
 
-    return fetch(CheckAccessUrl, {
-        method: 'head',
-        headers: {
-            Authorization: 'Bearer ' + user?.id_token,
+    return backendFetch(
+        CheckAccessUrl,
+        {
+            method: 'head',
         },
-    }).then((response) => {
-        if (response.status === 200) return true;
-        else if (response.status === 204 || response.status === 403)
-            return false;
-        else throw new Error(response.status + ' ' + response.statusText);
-    });
+        user?.id_token
+    )
+        .then((response) => {
+            //if the response is ok, the responseCode will be either 200 or 204 otherwise it's an error and it will be caught
+            return response.status === 200;
+        })
+        .catch((error) => {
+            if (error.status === 403) return false;
+            else throw new Error(error.status + ' ' + error.statusText);
+        });
 }
 
 export function fetchAppsAndUrls() {

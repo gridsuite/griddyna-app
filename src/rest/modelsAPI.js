@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { backendFetchJson } from '../utils/rest-api';
 
 const API_URL =
     process.env.REACT_APP_API_PREFIX +
@@ -13,46 +14,49 @@ const API_URL =
     '/models';
 
 export function getModels(token) {
-    return fetch(`${API_URL}/`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-        },
-        cache: 'default',
-    });
-}
-
-export function getModelDefinitions(modelName, token) {
-    return fetch(`${API_URL}/${modelName}/parameters/definitions/`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
-        },
-        cache: 'default',
-    });
-}
-
-export function getModelSets(modelName, groupName, groupType, token) {
-    return fetch(
-        `${API_URL}/${modelName}/parameters/sets/${groupName}/${groupType}`,
+    return backendFetchJson(
+        `${API_URL}/`,
         {
-            method: 'GET',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token,
             },
             cache: 'default',
-        }
+        },
+        token
+    );
+}
+
+export function getModelDefinitions(modelName, token) {
+    return backendFetchJson(
+        `${API_URL}/${modelName}/parameters/definitions/`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        true
+    );
+}
+
+export function getModelSets(modelName, groupName, groupType, token) {
+    return backendFetchJson(
+        `${API_URL}/${modelName}/parameters/sets/${groupName}/${groupType}`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        token
     );
 }
 
 export function postModelSetsGroup(setGroup, strict, token) {
-    return fetch(
+    return backendFetchJson(
         `${API_URL}/${setGroup.modelName}/parameters/sets${
             strict ? '/strict' : ''
         }/`,
@@ -61,10 +65,10 @@ export function postModelSetsGroup(setGroup, strict, token) {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + token,
             },
             cache: 'default',
             body: JSON.stringify(setGroup),
-        }
+        },
+        token
     );
 }
