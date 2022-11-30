@@ -37,7 +37,7 @@ export function getModelDefinitions(modelName, token) {
             },
             cache: 'default',
         },
-        true
+        token
     );
 }
 
