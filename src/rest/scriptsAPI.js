@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { backendFetch, backendFetchJson } from '../utils/rest-api';
+import { backendFetchText, backendFetchJson } from '../utils/rest-api';
 
 const API_URL =
     process.env.REACT_APP_API_PREFIX +
@@ -38,7 +38,7 @@ export function getScripts(token) {
 }
 
 export function deleteScript(scriptName, token) {
-    return backendFetch(
+    return backendFetchText(
         `${API_URL}/${scriptName}`,
         {
             method: 'DELETE',
