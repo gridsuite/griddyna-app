@@ -91,11 +91,7 @@ export const getPropertyValuesFromFile = createAsyncThunk(
     'network/getValuesFromFile',
     async (file, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await networkAPI.getPropertyValuesFromFile(
-            file,
-            token
-        );
-        return response.json();
+        return await networkAPI.getPropertyValuesFromFile(file, token);
     }
 );
 
@@ -103,11 +99,7 @@ export const getPropertyValuesFromNetworkId = createAsyncThunk(
     'network/getValuesFromId',
     async (networkId, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await networkAPI.getPropertyValuesFromId(
-            networkId,
-            token
-        );
-        return response.json();
+        return await networkAPI.getPropertyValuesFromId(networkId, token);
     }
 );
 
@@ -115,8 +107,7 @@ export const getNetworkNames = createAsyncThunk(
     'network/getNetworks',
     async (_args, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await networkAPI.getNetworksName(token);
-        return response.json();
+        return await networkAPI.getNetworksName(token);
     }
 );
 
