@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Box, Tooltip, Typography } from '@material-ui/core';
+import { Box, Tooltip, Typography } from '@mui/material';
 import {
     AddIconButton,
     AttachButton,
@@ -23,6 +23,7 @@ const outdatedLabel =
 const Header = (props) => {
     const {
         name,
+        currentNetwork,
         isModified = false,
         isValid = true,
         save,
@@ -39,13 +40,19 @@ const Header = (props) => {
     return (
         <Box className={classes.headerBox}>
             <Box width="100%" display="flex">
-                <Box className={classes.titleBox}>
+                <Box
+                    className={classes.titleBox}
+                    display="flex"
+                    alignItems="baseline"
+                >
                     <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                        <Typography
-                            variant="h2"
-                            className={classes.title}
-                        >{`${name}${isModified ? '*' : ''} :`}</Typography>
+                        <Typography variant="h2" className={classes.title}>
+                            {`${name}${isModified ? '*' : ''} :`}
+                        </Typography>
                     </Tooltip>
+                    <Typography variant="h3" className={classes.title}>
+                        {`${currentNetwork?.networkName ?? ''}`}
+                    </Typography>
                 </Box>
                 <Box className={classes.buttonBox}>
                     {convert !== undefined && (
@@ -82,6 +89,10 @@ const Header = (props) => {
 
 Header.propTypes = {
     name: PropTypes.string.isRequired,
+    currentNetwork: PropTypes.shape({
+        networkId: PropTypes.string,
+        networkName: PropTypes.string,
+    }),
     isModified: PropTypes.bool,
     isValid: PropTypes.bool,
     isCurrent: PropTypes.bool,

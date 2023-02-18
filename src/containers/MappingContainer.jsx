@@ -19,6 +19,7 @@ import {
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
 import {
+    getCurrentNetworkObj,
     getNetworkNames,
     getPropertyValuesFromFile,
     getPropertyValuesFromNetworkId,
@@ -34,7 +35,7 @@ import {
     Paper,
     Switch,
     Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -43,7 +44,7 @@ import {
     AutomatonFamily,
     EquipmentType,
 } from '../constants/equipmentDefinition';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
@@ -67,6 +68,7 @@ const MappingContainer = () => {
     const isMappingValid = useSelector(isMappingValidSelector);
     const networks = useSelector((state) => state.network.knownNetworks);
     const networkValues = useSelector((state) => state.network.propertyValues);
+    const currentNetwork = useSelector(getCurrentNetworkObj);
     const sortedRulesNumber = useSelector(getSortedRulesNumber);
     const filteredType = useSelector(
         (state) => state.mappings.filteredRuleType
@@ -175,6 +177,7 @@ const MappingContainer = () => {
             <Paper>
                 <Header
                     name={activeMapping}
+                    currentNetwork={currentNetwork}
                     isModified={isModified}
                     isValid={isMappingValid && areParametersValid}
                     save={saveMapping}

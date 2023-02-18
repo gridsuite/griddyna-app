@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid, Typography } from '@material-ui/core';
+import { Box, Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './ModelSelectStyle';
@@ -30,6 +30,7 @@ const ModelSelect = (props) => {
         changeGroup,
         editGroup,
         controlledParameters = false,
+        isNetworkAttached,
     } = props;
     const mappedModel = models.find(
         (modelToTest) => modelToTest.name === model
@@ -101,6 +102,7 @@ const ModelSelect = (props) => {
                             <Checkbox
                                 checked={isAbsolute}
                                 onChange={onAbsoluteChange}
+                                disabled={!isNetworkAttached}
                             />
                         </Grid>
                     </Grid>
@@ -146,11 +148,12 @@ ModelSelect.propTypes = {
     model: PropTypes.string.isRequired,
     setGroup: PropTypes.string.isRequired,
     groupType: PropTypes.string.isRequired,
-    models: PropTypes.arrayOf(PropTypes.string).isRequired,
+    models: PropTypes.arrayOf(PropTypes.object).isRequired,
     changeModel: PropTypes.func.isRequired,
-    changeGroup: PropTypes.string.isRequired,
+    changeGroup: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
+    isNetworkAttached: PropTypes.bool.isRequired,
 };
 
 export default ModelSelect;

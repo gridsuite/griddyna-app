@@ -22,7 +22,7 @@ import Rule from '../components/3-organisms/Rule';
 import FiltersTemplate from '../components/4-templates/FiltersTemplate';
 import FilterContainer from './FilterContainer';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import {
     convertCompositionArrayToString,
     convertCompositionStringToArray,
@@ -30,6 +30,7 @@ import {
 import BooleanOperatorSelect from '../components/2-molecules/BooleanOperatorSelect';
 import FiltersGroup from '../components/3-organisms/FiltersGroup';
 import { GroupEditionOrigin } from '../constants/models';
+import { getCurrentNetworkId } from '../redux/slices/Network';
 
 const RuleContainer = ({ index, editParameters }) => {
     const getRule = useMemo(makeGetRule, []);
@@ -73,7 +74,7 @@ const RuleContainer = ({ index, editParameters }) => {
         (state) => state.mappings.controlledParameters
     );
 
-    const currentNetwork = useSelector((state) => state.network.currentNetwork);
+    const currentNetworkId = useSelector(getCurrentNetworkId);
     const dispatch = useDispatch();
     const [isAdvancedComposition, setIsAdvancedComposition] = useState(
         !canUseBasicMode
@@ -242,10 +243,10 @@ const RuleContainer = ({ index, editParameters }) => {
 
     const showAdvanced = isAdvancedComposition || filtersNumber === 1;
     useEffect(() => {
-        if (currentNetwork !== '' && isRuleValid) {
+        if (!!currentNetworkId && isRuleValid) {
             dispatch(getNetworkMatchesFromRule(index));
         }
-    }, [currentNetwork, isRuleValid, index, composition, dispatch]);
+    }, [currentNetworkId, isRuleValid, index, composition, dispatch]);
 
     return (
         <Rule
@@ -265,7 +266,7 @@ const RuleContainer = ({ index, editParameters }) => {
             unusedFilters={unusedFilters}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
-            isNetworkAttached={currentNetwork !== ''}
+            isNetworkAttached={!!currentNetworkId}
         >
             {rule.filtersNumber > 0 ? (
                 <>

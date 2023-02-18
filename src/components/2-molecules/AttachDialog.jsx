@@ -6,17 +6,21 @@
  */
 
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Grid,
+    Typography,
+    ListItem,
+    ListItemText,
+    List,
+} from '@mui/material';
 import PropTypes from 'prop-types';
-import { Divider, Grid, Typography } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import List from '@material-ui/core/List';
 import { useStyles } from './AttachDialogStyles';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { useDispatch } from 'react-redux';

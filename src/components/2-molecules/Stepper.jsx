@@ -6,10 +6,9 @@
  */
 
 import React from 'react';
-import Button from '@material-ui/core/Button';
+import { Button, MobileStepper } from '@mui/material';
 import PropTypes from 'prop-types';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
-import { MobileStepper } from '@material-ui/core';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 
 const saveLabel = 'Save';
 const nextLabel = 'Next';
@@ -34,7 +33,6 @@ const Stepper = (props) => {
                     size="small"
                     onClick={step === 0 ? onCancel : () => setStep(step - 1)}
                 >
-                    {' '}
                     <KeyboardArrowLeft />
                     {step === 0 ? cancelLabel : backLabel}
                 </Button>

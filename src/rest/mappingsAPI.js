@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { backendFetchJson, backendFetchText } from '../utils/rest-api';
 
 const API_URL =
     process.env.REACT_APP_API_PREFIX +
@@ -19,67 +20,81 @@ export function postMapping(
     controlledParameters,
     token
 ) {
-    return fetch(`${API_URL}/${mappingName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/${mappingName}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+            body: JSON.stringify({
+                name: mappingName,
+                rules,
+                automata,
+                controlledParameters,
+            }),
         },
-        cache: 'default',
-        body: JSON.stringify({
-            name: mappingName,
-            rules,
-            automata,
-            controlledParameters,
-        }),
-    });
+        token
+    );
 }
 
 export function getMappings(token) {
-    return fetch(`${API_URL}/`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export function deleteMapping(mappingName, token) {
-    return fetch(`${API_URL}/${mappingName}`, {
-        method: 'DELETE',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchText(
+        `${API_URL}/${mappingName}`,
+        {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export async function renameMapping(nameToReplace, newName, token) {
-    return fetch(`${API_URL}/rename/${nameToReplace}/to/${newName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/rename/${nameToReplace}/to/${newName}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export async function copyMapping(originalName, copyName, token) {
-    return fetch(`${API_URL}/copy/${originalName}/to/${copyName}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/copy/${originalName}/to/${copyName}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }

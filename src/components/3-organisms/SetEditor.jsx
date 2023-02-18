@@ -8,15 +8,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ParameterOrigin, ParameterType } from '../../constants/models';
-import { Box, Grid, TextField, Tooltip, Typography } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
+import { Box, Grid, TextField, Tooltip, Typography } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import * as _ from 'lodash';
 import { isParameterValueValid } from '../../utils/parameters';
 
 const infoTypeLabel = 'This parameter is of type ';
 const networkLabel = ' From Network';
 const SetEditor = (props) => {
-    const { definitions, set, saveSet } = props;
+    const { definitions, filter, set, saveSet } = props;
+    const filteredDefinitions = filter
+        ? definitions.filter(filter)
+        : definitions;
+
     const valueOrigin = (origin) => {
         switch (origin) {
             case ParameterOrigin.USER:
@@ -33,7 +37,7 @@ const SetEditor = (props) => {
         const parameterChanged = event.target.id;
         const newValue = event.target.value;
         const newValueToUse =
-            definitions.find(
+            filteredDefinitions.find(
                 (definition) => definition.name === parameterChanged
             ).type === ParameterType.BOOL
                 ? newValue.replace(',', '.')
@@ -48,7 +52,7 @@ const SetEditor = (props) => {
     return (
         <Box>
             <Typography variant="h2"> {set.name}</Typography>
-            {_.cloneDeep(definitions)
+            {_.cloneDeep(filteredDefinitions)
                 .sort((a, b) => valueOrigin(a.origin) - valueOrigin(b.origin))
                 .map((definition) => {
                     const correspondingParameter = set.parameters.find(
@@ -100,6 +104,7 @@ const SetEditor = (props) => {
 SetEditor.propTypes = {
     set: PropTypes.object.isRequired,
     definitions: PropTypes.array.isRequired,
+    filter: PropTypes.func,
     saveSet: PropTypes.func.isRequired,
 };
 

@@ -5,9 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import * as _ from 'lodash';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
@@ -39,7 +39,10 @@ const Filter = (props) => {
         copyFilter,
     } = props;
 
-    const onAutocompleteChange = (newValue) => setValue(newValue);
+    const handleAutocompleteChange = useCallback(
+        (newValue) => setValue(newValue),
+        [setValue]
+    );
 
     const operands = propertyType ? getOperandsOptions(propertyType) : [];
 
@@ -113,7 +116,7 @@ const Filter = (props) => {
                             isFree={!isSelect}
                             isMultiple={multiple}
                             value={value === '' ? [] : value}
-                            onChange={onAutocompleteChange}
+                            onChange={handleAutocompleteChange}
                             options={joinOptions}
                             highlightOptions={networkValues}
                             type={autocompleteType(propertyType)}

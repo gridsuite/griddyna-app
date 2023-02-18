@@ -6,28 +6,18 @@
  */
 
 import makeStyles from '@mui/styles/makeStyles';
+
 export const useStyles = makeStyles((theme) => ({
-    automatonPaper: (isValid) => ({
-        border: '2px solid',
-        borderRadius: '5px',
-        borderColor: isValid ? 'black' : 'red',
-        marginBottom: '5px',
-        '& >.MuiGrid-root': {
-            marginTop: '5px',
-        },
-    }),
-    titleLabel: (isValid) => ({
+    label: ({ isValid }) => ({
+        textAlign: 'right',
+        marginTop: '12px',
         '& .MuiTypography-root': {
             fontWeight: 'bold',
             color: !isValid ? 'red' : theme.palette.text.primary,
         },
     }),
-    label: {
-        textAlign: 'right',
-        marginTop: '12px',
-        '& .MuiTypography-root': {
-            fontWeight: 'bold',
-        },
+    filter: {
+        justifyContent: 'center',
     },
     value: {
         margin: '8px',
@@ -39,5 +29,4 @@ export const useStyles = makeStyles((theme) => ({
             },
         },
     },
-    select: {},
 }));

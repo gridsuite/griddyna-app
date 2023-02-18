@@ -5,16 +5,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 
 const FONT_SIZE = '0.875em';
 const MINIMUM_WIDTH = '150px';
 export const useStyles = makeStyles((theme) => ({
-    inputWidth: ({ labelLength, selectedOptions }) => {
+    inputWidth: ({ labelLength, selectedOptions, fullWidth }) => {
         return {
-            width: `max(${MINIMUM_WIDTH},calc(${FONT_SIZE} * ${labelLength} + 80px * ${selectedOptions} +  ${
-                selectedOptions !== 0 ? 1 : 0
-            } * 50px))`,
+            width: fullWidth
+                ? '100%'
+                : `max(${MINIMUM_WIDTH},calc(${FONT_SIZE} * ${labelLength} + 80px * ${selectedOptions} +  ${
+                      selectedOptions !== 0 ? 1 : 0
+                  } * 50px))`,
         };
     },
 }));

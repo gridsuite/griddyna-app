@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Tab, Tabs } from '@material-ui/core';
+import { Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const FilterBar = (props) => {
@@ -14,7 +14,7 @@ const FilterBar = (props) => {
     const onChange = (_event, value) => setFilter(value);
 
     return (
-        <Tabs value={value} onChange={onChange} centered>
+        <Tabs value={value || false} onChange={onChange} centered>
             {options.map((option) => (
                 <Tab
                     key={option.value}
@@ -23,7 +23,6 @@ const FilterBar = (props) => {
                     disabled={option.disabled}
                 />
             ))}
-            <Tab style={{ display: 'none' }} value="" />
         </Tabs>
     );
 };

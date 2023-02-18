@@ -13,8 +13,8 @@ import {
     ListItemText,
     IconButton,
     ListItemSecondaryAction,
-} from '@material-ui/core';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import ContextMenu from './ContextMenu';
 import RenameDialog from './RenameDialog';

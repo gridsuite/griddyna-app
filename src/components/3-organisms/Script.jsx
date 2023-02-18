@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-monokai';
-import { Divider, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@mui/material';
 
 const parametersLabel = 'models.par';
 const Script = (props) => {

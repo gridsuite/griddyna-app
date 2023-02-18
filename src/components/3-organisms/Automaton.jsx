@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@mui/material';
 import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonStyle';
@@ -32,6 +32,7 @@ const Automaton = (props) => {
         copyAutomaton,
         editGroup = () => {},
         controlledParameters = false,
+        isNetworkAttached = false,
     } = props;
     const { family, watchedElement, model, setGroup, properties } = automaton;
     const classes = useStyles(isAutomatonValid);
@@ -146,6 +147,7 @@ const Automaton = (props) => {
                 changeGroup={changeParameters}
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
+                isNetworkAttached={isNetworkAttached}
             />
         </Paper>
     );
@@ -165,6 +167,7 @@ Automaton.propTypes = {
     copyAutomaton: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
+    isNetworkAttached: PropTypes.bool,
 };
 
 export default Automaton;

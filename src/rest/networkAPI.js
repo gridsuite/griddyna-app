@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { backendFetchJson } from '../utils/rest-api';
 
 const API_URL =
     process.env.REACT_APP_API_PREFIX +
@@ -16,52 +17,62 @@ export function getPropertyValuesFromFile(networkFile, token) {
     const formData = new FormData();
     formData.append('file', networkFile);
 
-    return fetch(`${API_URL}/new`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/new`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+            },
+            cache: 'default',
+            body: formData,
         },
-        cache: 'default',
-        body: formData,
-    });
+        token
+    );
 }
 
 export function getPropertyValuesFromId(networkId, token) {
-    return fetch(`${API_URL}/${networkId}/values`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/${networkId}/values`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export function getNetworksName(token) {
-    return fetch(`${API_URL}/`, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
         },
-        cache: 'default',
-    });
+        token
+    );
 }
 
 export function getNetworkMatchesFromRule(networkId, ruleToMatch, token) {
-    return fetch(`${API_URL}/${networkId}/matches/rule`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + token,
+    return backendFetchJson(
+        `${API_URL}/${networkId}/matches/rule`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+            body: JSON.stringify(ruleToMatch),
         },
-        cache: 'default',
-        body: JSON.stringify(ruleToMatch),
-    });
+        token
+    );
 }
 
 export function deleteNetwork(networkId, token) {

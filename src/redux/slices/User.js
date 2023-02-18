@@ -6,11 +6,21 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
-import { SIGNIN_CALLBACK_ERROR, USER } from '@gridsuite/commons-ui';
+import {
+    USER,
+    SIGNIN_CALLBACK_ERROR,
+    UNAUTHORIZED_USER_INFO,
+    LOGOUT_ERROR,
+    USER_VALIDATION_ERROR,
+    RESET_AUTHENTICATION_ROUTER_ERROR,
+    SHOW_AUTH_INFO_LOGIN,
+} from '@gridsuite/commons-ui';
 
 const initialState = {
     user: null,
     signInCallbackError: null,
+    authenticationRouterError: null,
+    showAuthenticationRouterLogin: false,
 };
 
 // Selectors
@@ -22,9 +32,31 @@ const reducers = {
         // TODO: GridSuite: Should be payload
         state.user = action.payload.user;
     },
+
     [SIGNIN_CALLBACK_ERROR]: (state, action) => {
         // TODO: GridSuite: Should be payload
         state.signInCallbackError = action.payload.signInCallbackError;
+    },
+
+    [UNAUTHORIZED_USER_INFO]: (state, action) => {
+        state.authenticationRouterError = action.authenticationRouterError;
+    },
+
+    [LOGOUT_ERROR]: (state, action) => {
+        state.authenticationRouterError = action.authenticationRouterError;
+    },
+
+    [USER_VALIDATION_ERROR]: (state, action) => {
+        state.authenticationRouterError = action.authenticationRouterError;
+    },
+
+    [RESET_AUTHENTICATION_ROUTER_ERROR]: (state, action) => {
+        state.authenticationRouterError = null;
+    },
+
+    [SHOW_AUTH_INFO_LOGIN]: (state, action) => {
+        state.showAuthenticationRouterLogin =
+            action.payload.showAuthenticationRouterLogin;
     },
 };
 

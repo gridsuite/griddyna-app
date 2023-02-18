@@ -20,14 +20,22 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-} from '@material-ui/core';
+    Grid,
+} from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
-import { GroupEditionOrigin, SetType } from '../constants/models';
+import {
+    GroupEditionOrigin,
+    ParameterOrigin,
+    SetType,
+} from '../constants/models';
 import PropTypes from 'prop-types';
 import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
 import SetEditor from '../components/3-organisms/SetEditor';
 import { isSetValid } from '../utils/parameters';
+import VerticalStepper from '../components/2-molecules/VerticalStepper';
+import SetSearch from '../components/3-organisms/SetSearch';
+import useSetSearch from '../components/3-organisms/hooks/useSetSearch';
 
 // TODO intl
 const groupTitleLabel = 'Group Creation';
@@ -89,7 +97,7 @@ const ParametersContainer = ({
     );
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
-
+    const isFirstStep = step === 0;
     const showSteps =
         (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
 
@@ -101,6 +109,7 @@ const ParametersContainer = ({
         })),
     };
     const maxStep = currentGroup.sets.length;
+    const isMaxStep = step === maxStep;
 
     const changeGroupName = (newName) => {
         dispatch(ModelSlice.actions.changeGroupName(newName));
@@ -110,18 +119,20 @@ const ParametersContainer = ({
     const addOrModifySet = (newSet) =>
         dispatch(ModelSlice.actions.addOrModifySet(newSet));
     const saveSetGroup = () => {
-        dispatch(postModelSetsGroup(controlledParameters));
-        const actionToDispatch =
-            origin === GroupEditionOrigin.RULE
-                ? MappingSlice.actions.changeRuleParameters
-                : MappingSlice.actions.changeAutomatonParameters;
-        dispatch(
-            actionToDispatch({
-                index: originIndex,
-                parameters: currentGroup.name,
-                type: currentGroup.type,
-            })
-        );
+        (async () => {
+            await dispatch(postModelSetsGroup(controlledParameters));
+            const actionToDispatch =
+                origin === GroupEditionOrigin.RULE
+                    ? MappingSlice.actions.changeRuleParameters
+                    : MappingSlice.actions.changeAutomatonParameters;
+            dispatch(
+                actionToDispatch({
+                    index: originIndex,
+                    parameters: currentGroup.name,
+                    type: currentGroup.type,
+                })
+            );
+        })();
         close();
     };
 
@@ -129,7 +140,21 @@ const ParametersContainer = ({
         currentGroup.name === '' || otherGroups.includes(currentGroup.name);
     const isErrorSets = !isSetValid(currentSet, definitions);
 
-    const isError = isErrorName || (step > 0 && isErrorSets);
+    // for vertical stepper
+    const completed = useMemo(() => {
+        const completed = {};
+        currentGroup.sets.forEach((set, index) => {
+            completed[index + 1] = isSetValid(set, definitions);
+        });
+        return completed;
+    }, [currentGroup, definitions]);
+    const showVerticalSteps = showSteps && maxStep > 1;
+    const isAllCompleted = () => {
+        return Object.values(completed).every((v) => v);
+    };
+
+    const isError =
+        isErrorName || (step > 0 && (isErrorSets || !isAllCompleted()));
 
     useEffect(() => {
         // Populate currentGroup
@@ -153,13 +178,33 @@ const ParametersContainer = ({
         close();
     };
 
+    // FIX and NETWORK can not be modified here
+    const definitionFilter = (definition) =>
+        [ParameterOrigin.USER].includes(definition.origin);
+
+    // hook for SetSearch component
+    const {
+        modelsSelector,
+        groupsSelector,
+        setsSelector,
+        handleChangeGroup,
+        handleResetSetSearch,
+        handleApplySet,
+    } = useSetSearch(currentGroup, currentSet);
+
     return (
-        <Dialog open={true} onClose={onClose}>
+        <Dialog
+            open={true}
+            onClose={onClose}
+            fullWidth={!isFirstStep}
+            maxWidth={isFirstStep ? 'xs' : showVerticalSteps ? 'lg' : 'md'}
+            scroll="paper"
+        >
             <DialogTitle>
-                {step === 0 ? groupTitleLabel : setTitleLabel}
+                {isFirstStep ? groupTitleLabel : setTitleLabel}
             </DialogTitle>
             <DialogContent>
-                {step === 0 ? (
+                {isFirstStep ? (
                     <SetGroupEditor
                         name={currentGroup.name}
                         isError={isErrorName}
@@ -169,11 +214,42 @@ const ParametersContainer = ({
                         isAbsolute={isAbsolute}
                     />
                 ) : (
-                    <SetEditor
-                        definitions={definitions}
-                        saveSet={addOrModifySet}
-                        set={currentSet}
-                    />
+                    <Grid container>
+                        {showVerticalSteps && (
+                            <Grid item xs={3} pt={10}>
+                                <VerticalStepper
+                                    steps={currentGroup.sets.map(
+                                        (set, index) => ({
+                                            label: set.name,
+                                            value: index + 1,
+                                        })
+                                    )}
+                                    step={step - 1}
+                                    setStep={setStep}
+                                    completed={completed}
+                                />
+                            </Grid>
+                        )}
+                        <Grid item xs={showVerticalSteps ? 5 : 8}>
+                            <SetEditor
+                                definitions={definitions}
+                                filter={definitionFilter}
+                                saveSet={addOrModifySet}
+                                set={currentSet}
+                            />
+                        </Grid>
+                        <Grid item xs={4} pt={10}>
+                            <SetSearch
+                                typeFilter={modelToEdit?.type}
+                                modelsSelector={modelsSelector}
+                                groupsSelector={groupsSelector}
+                                setsSelector={setsSelector}
+                                onChangeGroup={handleChangeGroup}
+                                onReset={handleResetSetSearch}
+                                onApply={handleApplySet}
+                            />
+                        </Grid>
+                    </Grid>
                 )}
             </DialogContent>
             {showSteps ? (
@@ -183,7 +259,7 @@ const ParametersContainer = ({
                     setStep={setStep}
                     onFinish={saveSetGroup}
                     onCancel={close}
-                    disabled={isError}
+                    disabled={(isMaxStep || isFirstStep) && isError}
                 />
             ) : (
                 <DialogActions>

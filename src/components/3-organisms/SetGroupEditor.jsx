@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Grid, TextField, Typography } from '@material-ui/core';
+import { Grid, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import { SetType } from '../../constants/models';

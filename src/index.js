@@ -8,7 +8,7 @@
 import 'typeface-roboto';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
@@ -21,28 +21,44 @@ import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
 
 import {
+    CardErrorBoundary,
     top_bar_en,
     top_bar_fr,
     login_fr,
     login_en,
+    card_error_boundary_en,
+    card_error_boundary_fr,
 } from '@gridsuite/commons-ui';
 
 const messages = {
-    en: { ...messages_en, ...login_en, ...top_bar_en },
-    fr: { ...messages_fr, ...login_fr, ...top_bar_fr },
+    en: {
+        ...messages_en,
+        ...login_en,
+        ...top_bar_en,
+        ...card_error_boundary_en,
+    },
+    fr: {
+        ...messages_fr,
+        ...login_fr,
+        ...top_bar_fr,
+        ...card_error_boundary_fr,
+    },
 };
 
 const language = navigator.language.split(/[-_]/)[0]; // language without region code
 
 const basename = new URL(document.querySelector('base').href).pathname;
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
     <IntlProvider locale={language} messages={messages[language]}>
         <Provider store={store}>
             <BrowserRouter basename={basename}>
-                <App />
+                <CardErrorBoundary>
+                    <App />
+                </CardErrorBoundary>
             </BrowserRouter>
         </Provider>
-    </IntlProvider>,
-    document.getElementById('root')
+    </IntlProvider>
 );

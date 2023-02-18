@@ -12,7 +12,7 @@ import {
     postScript,
     ScriptsSlice,
 } from '../redux/slices/Script';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 import Header from '../components/2-molecules/Header';
 import Script from '../components/3-organisms/Script';
 

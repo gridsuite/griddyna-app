@@ -7,8 +7,11 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Autocomplete as MuiAutocomplete } from '@material-ui/lab';
-import { Popper, TextField } from '@material-ui/core';
+import {
+    Autocomplete as MuiAutocomplete,
+    Popper,
+    TextField,
+} from '@mui/material';
 import { useStyles } from './AutocompleteStyles';
 
 const PRECISION = 10e-8;
@@ -24,6 +27,8 @@ const Autocomplete = (props) => {
         error,
         isMultiple = false,
         ignoreReset = false,
+        label,
+        fullWidth,
     } = props;
 
     const matchMultipleOptions = useCallback(
@@ -51,13 +56,13 @@ const Autocomplete = (props) => {
             isMultiple
                 ? matchMultipleOptions(options, value)
                 : options?.find((option) => option.value === value) || {
-                      label: value.toString(),
+                      label: value?.toString() ?? '',
                       value,
                   },
         [options, value, isMultiple, matchMultipleOptions]
     );
     const [inputValue, setInputValue] = useState(
-        isMultiple ? '' : value.toString()
+        isMultiple ? '' : value?.toString() ?? ''
     );
 
     const classes = useStyles({
@@ -71,6 +76,7 @@ const Autocomplete = (props) => {
                   )
                 : 0),
         selectedOptions: isMultiple ? value.length : 0,
+        fullWidth: fullWidth,
     });
 
     const [updateFlag, setUpdateFlag] = useState(false);
@@ -135,20 +141,21 @@ const Autocomplete = (props) => {
         }
     };
 
-    const renderOption = (option) =>
-        highlightOptions
-            .map((option) => option.value)
-            .includes(option.value) ? (
-            <b
-                style={{
-                    'text-shadow': '#FFF 1px 0px 2px',
-                }}
-            >
-                {option.label}
-            </b>
-        ) : (
-            option.label
-        );
+    const renderOption = (props, option) => (
+        <li {...props} key={option.value}>
+            {highlightOptions.find((elem) => elem.value === option.value) ? (
+                <b
+                    style={{
+                        'text-shadow': '#FFF 1px 0px 2px',
+                    }}
+                >
+                    {option.label}
+                </b>
+            ) : (
+                option.label
+            )}
+        </li>
+    );
 
     return (
         <MuiAutocomplete
@@ -164,7 +171,12 @@ const Autocomplete = (props) => {
             autoHighlight={!isFree}
             renderOption={renderOption}
             className={classes.inputWidth}
-            renderInput={(params) => <TextField {...params} error={error} />}
+            renderInput={(params) => (
+                <TextField {...params} label={label} error={error} />
+            )}
+            isOptionEqualToValue={(option, value) =>
+                option.value === value.value
+            }
             PopperComponent={(props) => (
                 <Popper
                     {...props}
@@ -191,6 +203,8 @@ Autocomplete.propTypes = {
     type: PropTypes.string,
     error: PropTypes.bool,
     ignoreReset: PropTypes.bool,
+    label: PropTypes.string,
+    fullWidth: PropTypes.bool,
 };
 
 export default Autocomplete;

@@ -14,8 +14,8 @@ import {
     CopyButton,
     DeleteButton,
 } from '../1-atoms/buttons';
-import { Grid, Paper, TextField, Tooltip, Typography } from '@material-ui/core';
-import ErrorIcon from '@material-ui/icons/Error';
+import { Grid, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 import { getEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
@@ -47,6 +47,7 @@ const Rule = (props) => {
         mappedModel,
         setGroup,
         groupType,
+        filtersNumber,
         matches = [],
     } = rule;
     const classes = useStyles(isRuleValid);
@@ -101,7 +102,7 @@ const Rule = (props) => {
                     </Grid>
                 </Grid>
                 <Grid item>
-                    {rule.filtersNumber > 1 && (
+                    {filtersNumber > 1 && (
                         <ChangeButton
                             onClick={changeCompositionMode}
                             disabled={isAdvancedMode && !canUseBasicMode}
@@ -119,7 +120,7 @@ const Rule = (props) => {
                     <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
                 </Grid>
             </Grid>
-            {rule.filtersNumber > 1 && isAdvancedMode && (
+            {filtersNumber > 1 && isAdvancedMode && (
                 <Grid container justify={'flex-start'}>
                     <Grid item xs={2} className={classes.label}>
                         <Typography>{`${compositionLabel} :`}</Typography>
@@ -162,8 +163,9 @@ const Rule = (props) => {
                 changeGroup={changeParameters}
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
+                isNetworkAttached={isNetworkAttached}
             />
-            {isNetworkAttached && (
+            {isNetworkAttached && !!filtersNumber && (
                 <Paper className={classes.matches}>
                     <Grid container>
                         <Grid item xs={4}>

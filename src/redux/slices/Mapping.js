@@ -27,6 +27,8 @@ import {
     getMaxDepthParentheses,
 } from '../../utils/composition';
 import * as networkAPI from '../../rest/networkAPI';
+import { makeGetNetworkValues } from './Network';
+import { createParameterSelector } from '../selectorUtil';
 
 const initialState = {
     mappings: [],
@@ -136,6 +138,15 @@ const postProcessComposition = (composition) =>
         // remove useless parentheses around the whole string
         .replace(/^\(([^(]+)\)$/g, '$1');
 
+// base selectors
+export const getRules = (state) => state.mappings.rules;
+export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
+
+// parameter selectors
+// filter param object {rule, filter, ..}
+const getRuleIndexParam = createParameterSelector(({ rule }) => rule);
+const getFilterIndexParam = createParameterSelector(({ filter }) => filter);
+
 // Selectors
 
 export const getSortedRulesNumber = (state) => {
@@ -184,14 +195,12 @@ export const getSortedAutomataNumber = (state) => {
 
 export const makeGetRule = () =>
     createSelector(
-        (state) =>
-            filterRulesByType(
-                state.mappings.rules,
-                state.mappings.filteredRuleType
-            ),
+        getRules,
+        getFilteredRuleType,
         (_state, index) => index,
-        (rules, index) => {
-            const foundRule = rules[index];
+        (rules, filteredRuleType, index) => {
+            const filteredRules = filterRulesByType(rules, filteredRuleType);
+            const foundRule = filteredRules[index];
             const {
                 type,
                 composition,
@@ -249,13 +258,14 @@ export const makeGetUnusedFilters = () =>
 
 export const makeGetFilter = () =>
     createSelector(
-        (state) =>
-            filterRulesByType(
-                state.mappings.rules,
-                state.mappings.filteredRuleType
-            ),
-        (_state, indexes) => indexes,
-        (rules, indexes) => rules[indexes.rule].filters[indexes.filter]
+        getRules,
+        getFilteredRuleType,
+        getRuleIndexParam,
+        getFilterIndexParam,
+        (rules, filteredRuleType, ruleIndex, filterIndex) => {
+            const filteredRules = filterRulesByType(rules, filteredRuleType);
+            return filteredRules[ruleIndex].filters[filterIndex];
+        }
     );
 
 export const makeGetFilterIndexes = () =>
@@ -289,6 +299,22 @@ export const makeIsFilterValid = () =>
             checkFilterValidity(rules[indexes.rule].filters[indexes.filter])
     );
 
+const checkAllFiltersValidity = (rule) => {
+    return rule.filters.every((filter) => checkFilterValidity(filter));
+};
+
+export const makeGetIsAllFiltersValid = () =>
+    createSelector(
+        getRules,
+        getFilteredRuleType,
+        (_state, ruleIndex) => ruleIndex,
+        (rules, filteredRuleType, ruleIndex) => {
+            return checkAllFiltersValidity(
+                filterRulesByType(rules, filteredRuleType)[ruleIndex]
+            );
+        }
+    );
+
 const checkRuleValidity = (rule) => {
     return (
         rule.type !== '' &&
@@ -296,10 +322,7 @@ const checkRuleValidity = (rule) => {
         rule.mappedModel !== '' &&
         rule.setGroup !== '' &&
         rule.groupType !== '' &&
-        rule.filters.reduce(
-            (acc, filter) => acc && checkFilterValidity(filter),
-            true
-        )
+        checkAllFiltersValidity(rule)
     );
 };
 
@@ -504,18 +527,13 @@ export const postMapping = createAsyncThunk(
                   )?.controlledParameters
                 : state?.mappings.controlledParameters;
 
-        const response = await mappingsAPI.postMapping(
+        return await mappingsAPI.postMapping(
             mappingName,
             augmentedRules,
             formattedAutomata,
             controlledParameters,
             token
         );
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
     }
 );
 
@@ -523,8 +541,7 @@ export const getMappings = createAsyncThunk(
     'mappings/get',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.getMappings(token);
-        return response.json();
+        return await mappingsAPI.getMappings(token);
     }
 );
 
@@ -532,12 +549,7 @@ export const deleteMapping = createAsyncThunk(
     'mappings/delete',
     async (mappingName, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.deleteMapping(mappingName, token);
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.text();
+        return await mappingsAPI.deleteMapping(mappingName, token);
     }
 );
 
@@ -545,16 +557,7 @@ export const renameMapping = createAsyncThunk(
     'mappings/rename',
     async ({ nameToReplace, newName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.renameMapping(
-            nameToReplace,
-            newName,
-            token
-        );
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
+        return await mappingsAPI.renameMapping(nameToReplace, newName, token);
     }
 );
 
@@ -562,16 +565,7 @@ export const copyMapping = createAsyncThunk(
     'mappings/copy',
     async ({ originalName, copyName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await mappingsAPI.copyMapping(
-            originalName,
-            copyName,
-            token
-        );
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
+        return await mappingsAPI.copyMapping(originalName, copyName, token);
     }
 );
 
@@ -589,17 +583,65 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
             equipmentType: foundRule.type,
             filters: foundRule.filters.map(augmentFilter(foundRule.type)),
         };
-        const response = await networkAPI.getNetworkMatchesFromRule(
+        return await networkAPI.getNetworkMatchesFromRule(
             networkId,
             ruleToMatch,
             token
         );
-        if (!response.ok) {
-            throw response;
-        }
-        return response.json();
     }
 );
+
+// daisy-chain action creators
+export const makeChangeFilterValueThenGetNetworkMatches = () => {
+    // create memorizing selectors for this action creator
+    const getRule = makeGetRule();
+    const getFilter = makeGetFilter();
+    const getNetworkValues = makeGetNetworkValues();
+    const getIsAllFiltersValid = makeGetIsAllFiltersValid();
+
+    return ({ ruleIndex, filterIndex, value }) => {
+        return (dispatch, getState) => {
+            dispatch(
+                MappingSlice.actions.changeFilterValue({
+                    ruleIndex,
+                    filterIndex,
+                    value,
+                })
+            );
+
+            // --- Fail-fast check conditions to fire the next action --- //
+            const state = getState();
+            // network values must be present
+            // get type
+            const rule = getRule(state, ruleIndex);
+            const { type } = rule;
+
+            // get full property
+            const filter = getFilter(state, {
+                rule: ruleIndex,
+                filter: filterIndex,
+            });
+            const { property } = filter;
+            const fullProperty = type ? getProperty(type, property) : undefined;
+
+            // get network value from filter
+            const networkValues = getNetworkValues(state, {
+                equipmentType: type,
+                fullProperty: fullProperty,
+            });
+
+            const hasNetworkValues = networkValues.length > 0;
+            if (!hasNetworkValues) return;
+
+            // every filter in the same rule must be valid
+            const isAllFiltersValid = getIsAllFiltersValid(state, ruleIndex);
+            if (!isAllFiltersValid) return;
+
+            // --- All conditions passed => dispatch the next action --- //
+            dispatch(getNetworkMatchesFromRule(ruleIndex));
+        };
+    };
+};
 
 const reducers = {
     // Active Mapping
@@ -707,9 +749,8 @@ const reducers = {
                 );
                 newCompositionArray[groupIndex].push(groupOperator);
                 newCompositionArray[groupIndex].push(newId);
-                const newComposition =
+                selectedRule.composition =
                     convertCompositionArrayToString(newCompositionArray);
-                selectedRule.composition = newComposition;
             } catch (e) {
                 console.error(e);
             }
@@ -984,6 +1025,8 @@ const extraReducers = {
     [getNetworkMatchesFromRule.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { ruleIndex, matchedIds } = action.payload;
+        if (ruleIndex === undefined) return;
+
         const foundRule = filterRulesByType(
             state.rules,
             state.filteredRuleType
