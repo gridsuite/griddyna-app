@@ -18,6 +18,7 @@ export const StringOperands = {
     IN: 'IN',
     NOT_IN: 'NOT_IN',
 };
+
 export const NumberOperands = {
     ...BaseOperands,
     LOWER: 'LOWER',
