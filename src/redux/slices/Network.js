@@ -115,12 +115,7 @@ export const deleteNetwork = createAsyncThunk(
     'network/delete',
     async (networkId, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        const response = await networkAPI.deleteNetwork(networkId, token);
-
-        if (!response.ok) {
-            throw response;
-        }
-        return response.text();
+        return await networkAPI.deleteNetwork(networkId, token);
     }
 );
 

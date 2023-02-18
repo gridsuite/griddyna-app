@@ -76,7 +76,7 @@ export function getNetworkMatchesFromRule(networkId, ruleToMatch, token) {
 }
 
 export function deleteNetwork(networkId, token) {
-    return fetch(`${API_URL}/${networkId}`, {
+    return backendFetchJson(`${API_URL}/${networkId}`, {
         method: 'DELETE',
         headers: {
             Accept: 'application/json',

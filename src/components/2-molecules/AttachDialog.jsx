@@ -16,23 +16,28 @@ import {
     Divider,
     Grid,
     Typography,
-    ListItem,
     ListItemText,
     List,
+    IconButton,
+    ListItem,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useStyles } from './AttachDialogStyles';
 import Autocomplete from '../1-atoms/Autocomplete';
-import { useDispatch } from 'react-redux';
-import { deleteNetwork as deleteMappingAction } from '../../redux/slices/Network';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const AttachDialog = (props) => {
-    const { open, handleClose, attachWithFile, networks, attachWithId } = props;
+    const {
+        open,
+        handleClose,
+        attachWithFile,
+        networks,
+        attachWithId,
+        onDeleteNetwork,
+    } = props;
     const [file, setFile] = useState(null);
     const [networkId, setNetworkId] = useState('');
     const classes = useStyles();
-
-    const dispatch = useDispatch();
 
     const onChangeFile = (event) => {
         setFile(event.target.files[0]);
@@ -51,10 +56,6 @@ const AttachDialog = (props) => {
         handleClose();
         setFile(null);
         setNetworkId('');
-    };
-
-    const deleteNetwork = (networkId) => {
-        dispatch(deleteMappingAction(networkId));
     };
 
     return (
@@ -123,13 +124,21 @@ const AttachDialog = (props) => {
                 <List>
                     {networks.map((network) => (
                         <ListItem
-                            button
                             key={network.networkName}
-                            onClick={() => deleteNetwork(network.networkId)}
+                            divider
+                            secondaryAction={
+                                <IconButton
+                                    onClick={() =>
+                                        onDeleteNetwork(network.networkId)
+                                    }
+                                    edge="end"
+                                    aria-label="delete"
+                                >
+                                    <DeleteForeverIcon />
+                                </IconButton>
+                            }
                         >
-                            <ListItemText>
-                                primary={`${network.networkName}`}
-                            </ListItemText>
+                            <ListItemText primary={`${network.networkName}`} />
                         </ListItem>
                     ))}
                 </List>
