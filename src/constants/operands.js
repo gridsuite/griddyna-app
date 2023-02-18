@@ -28,6 +28,12 @@ export const NumberOperands = {
     NOT_IN: 'NOT_IN',
 };
 
+export const EnumOperands = {
+    ...BaseOperands,
+    IN: 'IN',
+    NOT_IN: 'NOT_IN',
+};
+
 export const multipleOperands = [
     NumberOperands.IN,
     NumberOperands.NOT_IN,
