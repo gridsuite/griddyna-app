@@ -18,12 +18,19 @@ export const StringOperands = {
     IN: 'IN',
     NOT_IN: 'NOT_IN',
 };
+
 export const NumberOperands = {
     ...BaseOperands,
     LOWER: 'LOWER',
     LOWER_OR_EQUALS: 'LOWER_OR_EQUALS',
     HIGHER_OR_EQUALS: 'HIGHER_OR_EQUALS',
     HIGHER: 'HIGHER',
+    IN: 'IN',
+    NOT_IN: 'NOT_IN',
+};
+
+export const EnumOperands = {
+    ...BaseOperands,
     IN: 'IN',
     NOT_IN: 'NOT_IN',
 };
