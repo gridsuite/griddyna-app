@@ -7,6 +7,7 @@
 
 import {
     BaseOperands,
+    EnumOperands,
     NumberOperands,
     StringOperands,
 } from '../constants/operands';
@@ -108,6 +109,25 @@ export function getOperandsOptions(propertyType) {
                 },
                 {
                     value: StringOperands.NOT_IN,
+                    label: 'is not in',
+                },
+            ];
+        case PropertyType.ENUM:
+            return [
+                {
+                    value: EnumOperands.EQUALS,
+                    label: '=',
+                },
+                {
+                    value: EnumOperands.NOT_EQUALS,
+                    label: '!=',
+                },
+                {
+                    value: EnumOperands.IN,
+                    label: 'is in',
+                },
+                {
+                    value: EnumOperands.NOT_IN,
                     label: 'is not in',
                 },
             ];
