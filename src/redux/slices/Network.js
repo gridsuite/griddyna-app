@@ -166,9 +166,9 @@ const extraReducers = {
     },
     [deleteNetwork.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        const name = action.payload;
+        const networkId = action.payload;
         state.knownNetworks = state.knownNetworks.filter(
-            (network) => network.networkId !== name
+            (network) => network.networkId !== networkId
         );
     },
     [deleteNetwork.rejected]: (state, _action) => {
