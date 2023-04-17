@@ -42,7 +42,9 @@ export function convertCompositionArrayToString(compositionArray) {
         if (Array.isArray(element)) {
             if (element.length === 1) {
                 return element[0];
-            } else return `(${convertCompositionArrayToString(element)})`;
+            } else {
+                return `(${convertCompositionArrayToString(element)})`;
+            }
         }
         return element;
     });

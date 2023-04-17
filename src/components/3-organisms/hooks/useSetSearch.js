@@ -44,7 +44,9 @@ export default function useSetSearch(currentGroup, currentSet) {
 
     const handleApplySet = useCallback(
         (set, isAll) => {
-            if (!set) return;
+            if (!set) {
+                return;
+            }
 
             const updatedSets = isAll
                 ? _.reduce(
