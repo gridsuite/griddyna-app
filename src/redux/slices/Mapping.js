@@ -631,11 +631,15 @@ export const makeChangeFilterValueThenGetNetworkMatches = () => {
             });
 
             const hasNetworkValues = networkValues.length > 0;
-            if (!hasNetworkValues) return;
+            if (!hasNetworkValues) {
+                return;
+            }
 
             // every filter in the same rule must be valid
             const isAllFiltersValid = getIsAllFiltersValid(state, ruleIndex);
-            if (!isAllFiltersValid) return;
+            if (!isAllFiltersValid) {
+                return;
+            }
 
             // --- All conditions passed => dispatch the next action --- //
             dispatch(getNetworkMatchesFromRule(ruleIndex));
@@ -1025,7 +1029,9 @@ const extraReducers = {
     [getNetworkMatchesFromRule.fulfilled]: (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { ruleIndex, matchedIds } = action.payload;
-        if (ruleIndex === undefined) return;
+        if (ruleIndex === undefined) {
+            return;
+        }
 
         const foundRule = filterRulesByType(
             state.rules,
