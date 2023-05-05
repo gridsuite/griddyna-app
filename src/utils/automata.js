@@ -19,6 +19,6 @@ export const getPossibleEquipmentTypesFromAutomatonFamily = (family) => {
     }
 };
 
-export const getAutomatonProperty = (automatonFamily, property) => {
-    return AutomatonProperties[automatonFamily][property];
+export const getAutomatonProperty = (automatonFamily, model, property) => {
+    return AutomatonProperties[automatonFamily][model][property];
 };

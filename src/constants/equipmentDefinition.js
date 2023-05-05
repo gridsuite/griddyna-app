@@ -8,8 +8,14 @@
 export const EquipmentType = {
     GENERATOR: 'GENERATOR',
     LOAD: 'LOAD',
+    BUS: 'BUS',
+    LINE: 'LINE',
+    TWO_WINDINGS_TRANSFORMER: 'TWO_WINDINGS_TRANSFORMER',
 };
 Object.freeze(EquipmentType);
+
+export const RuleEquipmentTypes = [EquipmentType.GENERATOR, EquipmentType.LOAD];
+Object.freeze(RuleEquipmentTypes);
 
 export const PropertyType = {
     STRING: 'STRING',
@@ -123,23 +129,49 @@ Object.freeze(EquipmentProperties);
 
 export const AutomatonFamily = {
     CURRENT_LIMIT: 'CURRENT_LIMIT',
+    VOLTAGE: 'VOLTAGE',
 };
 Object.freeze(AutomatonFamily);
 
+export const AutomatonModels = {
+    CURRENT_LIMIT_AUTOMATON: 'CurrentLimitAutomaton',
+    TAP_CHANGER_BLOCKING: 'TapChangerBlocking',
+};
+
 export const AutomatonProperties = {
-    CURRENT_LIMIT: {
-        side: {
-            type: 'string',
-            values: [
-                {
-                    value: 'Branch.Side.ONE',
-                    label: 'One',
-                },
-                {
-                    value: 'Branch.Side.TWO',
-                    label: 'Two',
-                },
-            ],
+    [AutomatonFamily.CURRENT_LIMIT]: {
+        [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
+            side: {
+                type: 'string',
+                values: [
+                    {
+                        value: 'Branch.Side.ONE',
+                        label: 'One',
+                    },
+                    {
+                        value: 'Branch.Side.TWO',
+                        label: 'Two',
+                    },
+                ],
+            },
+        },
+    },
+    [AutomatonFamily.VOLTAGE]: {
+        [AutomatonModels.TAP_CHANGER_BLOCKING]: {
+            name: {
+                type: 'string',
+            },
+            uMeasurement: {
+                type: 'string',
+                equipmentTypes: [EquipmentType.BUS],
+            },
+            transformer: {
+                type: 'string',
+                equipmentTypes: [
+                    EquipmentType.LOAD,
+                    EquipmentType.TWO_WINDINGS_TRANSFORMER,
+                ],
+            },
         },
     },
 };

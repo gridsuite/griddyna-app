@@ -8,6 +8,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    makeChangeAutomatonModelThenEnrichPossibleValues,
     makeGetAutomaton,
     makeIsAutomatonValid,
     MappingSlice,
@@ -67,15 +68,19 @@ const AutomatonContainer = ({ index, editParameters }) => {
             })
         );
 
+    const changeAutomatonModelThenEnrichPossibleValues = useMemo(
+        makeChangeAutomatonModelThenEnrichPossibleValues,
+        []
+    );
     const changeModel = useCallback(
         (newModel) =>
             dispatch(
-                MappingSlice.actions.changeAutomatonModel({
+                changeAutomatonModelThenEnrichPossibleValues({
                     index,
                     model: newModel,
                 })
             ),
-        [dispatch, index]
+        [dispatch, index, changeAutomatonModelThenEnrichPossibleValues]
     );
 
     const changeParameters = useCallback(

@@ -11,11 +11,17 @@ import Select from '../1-atoms/Select';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@mui/material';
 import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
-import Autocomplete from '../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonStyle';
-import { getAutomatonProperty } from '../../utils/automata';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
+import CurrentLimitAutomatonProperties from './automaton/CurrentLimitAutomatonProperties';
+import { AutomatonModels } from '../../constants/equipmentDefinition';
+import TapChangerBlockingProperties from './automaton/TapChangerBlockingProperties';
+
+const AutomatonModelPropertiesComponents = {
+    [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: CurrentLimitAutomatonProperties,
+    [AutomatonModels.TAP_CHANGER_BLOCKING]: TapChangerBlockingProperties,
+};
 
 const Automaton = (props) => {
     const {
@@ -41,12 +47,12 @@ const Automaton = (props) => {
     const deleteAutomatonLabel = 'Delete automaton';
     const copyAutomatonLabel = 'Copy automaton';
     const familyLabel = 'Of Family';
-    const watchedElementLabel = 'On equipment';
-    const propertiesLabel = 'Additional properties';
 
     const onChangeProperty = (propertyName) => (propertyValue) => {
         changeProperty({ name: propertyName, value: propertyValue });
     };
+
+    const PropertiesComponent = AutomatonModelPropertiesComponents[model];
 
     return (
         <Paper elevation={0} className={classes.automatonPaper}>
@@ -78,66 +84,17 @@ const Automaton = (props) => {
                     />
                 </Grid>
             </Grid>
-            <Grid container justify={'flex-start'}>
-                <Grid item xs="auto" className={classes.label}>
-                    <Typography>{`${watchedElementLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs="auto" className={classes.value}>
-                    <Autocomplete
-                        isFree
-                        value={watchedElement}
-                        onChange={changeWatchedElement}
-                        options={networkIds}
-                        error={watchedElement === ''}
-                    />
-                </Grid>
-            </Grid>
-            {properties.length > 0 && (
-                <Grid container justify={'flex-start'}>
-                    <Grid item xs="auto" className={classes.label}>
-                        <Typography>{`${propertiesLabel} :`}</Typography>
-                    </Grid>
-                </Grid>
+            {PropertiesComponent && (
+                <PropertiesComponent
+                    family={family}
+                    model={model}
+                    equipmentIds={networkIds}
+                    watchedElement={watchedElement}
+                    onChangeWatchedElement={changeWatchedElement}
+                    properties={properties}
+                    onChangeProperty={onChangeProperty}
+                />
             )}
-            {properties.map((property) => {
-                const modelProperty = getAutomatonProperty(
-                    family,
-                    property.name
-                );
-                return (
-                    <Grid container justify={'flex-start'} key={property.name}>
-                        <Grid item xs={1} />
-                        <Grid item xs="auto" className={classes.label}>
-                            <Typography>{`${property.name} :`}</Typography>
-                        </Grid>
-                        <Grid item xs="auto" className={classes.value}>
-                            <Autocomplete
-                                isFree={
-                                    !(
-                                        modelProperty?.values &&
-                                        modelProperty?.values?.length > 0
-                                    )
-                                }
-                                value={property.value}
-                                onChange={onChangeProperty(property.name)}
-                                options={modelProperty?.values}
-                                type={
-                                    modelProperty?.type === 'number'
-                                        ? 'number'
-                                        : undefined
-                                }
-                                error={property.value === ''}
-                                ignoreReset={
-                                    !(
-                                        modelProperty?.values &&
-                                        modelProperty?.values?.length > 0
-                                    )
-                                }
-                            />
-                        </Grid>
-                    </Grid>
-                );
-            })}
             <ModelSelect
                 model={model}
                 models={models}

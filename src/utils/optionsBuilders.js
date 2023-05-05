@@ -14,14 +14,14 @@ import {
 import {
     AutomatonFamily,
     EquipmentProperties,
-    EquipmentType,
+    RuleEquipmentTypes,
     PropertyType,
 } from '../constants/equipmentDefinition';
 import { SetType } from '../constants/models';
 
-export function getEquipmentTypesOptions() {
-    return Object.keys(EquipmentType).map((key) => {
-        const type = EquipmentType[key];
+export function getRuleEquipmentTypesOptions() {
+    return RuleEquipmentTypes.map((elem) => {
+        const type = elem;
         // TODO intl
         return { value: type, label: type };
     });

@@ -142,17 +142,17 @@ const Autocomplete = (props) => {
     };
 
     const renderOption = (props, option) => (
-        <li {...props} key={option.value}>
+        <li {...props} key={option.value ?? option}>
             {highlightOptions.find((elem) => elem.value === option.value) ? (
                 <b
                     style={{
                         'text-shadow': '#FFF 1px 0px 2px',
                     }}
                 >
-                    {option.label}
+                    {option.label ?? option}
                 </b>
             ) : (
-                option.label
+                option.label ?? option
             )}
         </li>
     );
@@ -167,7 +167,7 @@ const Autocomplete = (props) => {
             onChange={onValueChange}
             onInputChange={onInputChange}
             options={options}
-            getOptionLabel={(option) => option?.label ?? ''}
+            getOptionLabel={(option) => option?.label ?? option}
             autoHighlight={!isFree}
             renderOption={renderOption}
             className={classes.inputWidth}

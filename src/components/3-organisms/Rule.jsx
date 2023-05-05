@@ -16,7 +16,7 @@ import {
 } from '../1-atoms/buttons';
 import { Grid, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-import { getEquipmentTypesOptions } from '../../utils/optionsBuilders';
+import { getRuleEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 
@@ -79,7 +79,7 @@ const Rule = (props) => {
                         </Grid>
                         <Grid item className={classes.titleSelect}>
                             <Select
-                                options={getEquipmentTypesOptions()}
+                                options={getRuleEquipmentTypesOptions()}
                                 value={type}
                                 setValue={changeType}
                                 error={type === ''}

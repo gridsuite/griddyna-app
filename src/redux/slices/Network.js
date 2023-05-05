@@ -55,6 +55,9 @@ export const makeGetNetworkValues = () =>
         getNetworkValues
     );
 
+export const makeGetPropertyValues = () =>
+    createSelector(getPropertyValues, (propertyValues) => propertyValues);
+
 export const makeGetPossibleWatchedElements = () =>
     createSelector(
         (state) => state.network.propertyValues,
@@ -62,15 +65,22 @@ export const makeGetPossibleWatchedElements = () =>
         (propertyValues, family) => {
             const possibleTypes =
                 getPossibleEquipmentTypesFromAutomatonFamily(family);
-            const ids = [];
-            possibleTypes.forEach((possibleTime) => {
-                ids.concat(
-                    propertyValues?.find(
+
+            console.log('possibleTypes', possibleTypes);
+            console.log('propertyValues', propertyValues);
+
+            const ids = possibleTypes.reduce(
+                (arr, possibleType) => [
+                    ...arr,
+                    ...(propertyValues?.find(
                         (propertyValuesItem) =>
-                            propertyValuesItem.type === possibleTime
-                    )?.values['id'] ?? []
-                );
-            });
+                            propertyValuesItem.type === possibleType
+                    )?.values['id'] ?? []),
+                ],
+                []
+            );
+
+            console.log('ids', ids);
             return ids;
         }
     );

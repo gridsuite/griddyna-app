@@ -42,7 +42,7 @@ import AttachDialog from '../components/2-molecules/AttachDialog';
 import FilterBar from '../components/2-molecules/FilterBar';
 import {
     AutomatonFamily,
-    EquipmentType,
+    RuleEquipmentTypes,
 } from '../constants/equipmentDefinition';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
@@ -92,7 +92,7 @@ const MappingContainer = () => {
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
 
-    const filterRulesOptions = Object.values(EquipmentType).map((type) => ({
+    const filterRulesOptions = RuleEquipmentTypes.map((type) => ({
         value: type,
         // TODO: intl
         label: `${type} (${sortedRulesNumber[type]})`,
