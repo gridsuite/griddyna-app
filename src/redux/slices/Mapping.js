@@ -17,6 +17,7 @@ import { getProperty } from '../../utils/properties';
 import { multipleOperands } from '../../constants/operands';
 import {
     AutomatonFamily,
+    AutomatonModelProperties,
     AutomatonModels,
     AutomatonProperties,
     RuleEquipmentTypes,
@@ -28,9 +29,8 @@ import {
     getMaxDepthParentheses,
 } from '../../utils/composition';
 import * as networkAPI from '../../rest/networkAPI';
-import { makeGetNetworkValues, makeGetPropertyValues } from './Network';
+import { makeGetNetworkValues } from './Network';
 import { createParameterSelector } from '../selectorUtil';
-import { getAutomatonProperty } from '../../utils/automata';
 
 const initialState = {
     mappings: [],
@@ -56,7 +56,6 @@ const DEFAULT_RULE = {
 
 const DEFAULT_AUTOMATON = {
     family: '',
-    watchedElement: '',
     model: '',
     setGroup: '',
     properties: [],
@@ -596,35 +595,6 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
 );
 
 // daisy-chain action creators
-export const makeChangeAutomatonModelThenEnrichPossibleValues = () => {
-    // create memorizing selectors for this action creator
-    const getPropertyValues = makeGetPropertyValues();
-
-    return ({ index, model }) => {
-        return (dispatch, getState) => {
-            dispatch(
-                MappingSlice.actions.changeAutomatonModel({
-                    index,
-                    model,
-                })
-            );
-
-            // get all propertyValues from network slice
-            const state = getState();
-            const propertyValues = getPropertyValues(state);
-
-            // enrich possible values for properties of currently selected automaton
-            dispatch(
-                MappingSlice.actions.enrichPropertyValues({
-                    index,
-                    propertyValues,
-                })
-            );
-        };
-    };
-};
-
-// daisy-chain action creators
 export const makeChangeFilterValueThenGetNetworkMatches = () => {
     // create memorizing selectors for this action creator
     const getRule = makeGetRule();
@@ -875,11 +845,8 @@ const reducers = {
         console.log('changeAutomatonFamily', family);
         selectedAutomaton.family = family;
         selectedAutomaton.model = DEFAULT_AUTOMATON.model;
-        selectedAutomaton.watchedElement = DEFAULT_AUTOMATON.watchedElement;
         selectedAutomaton.properties = Object.keys(
-            AutomatonProperties[selectedAutomaton.family]?.[
-                selectedAutomaton.model
-            ] ?? {}
+            AutomatonProperties[selectedAutomaton.model] ?? {}
         ).map((propertyName) => ({
             name: propertyName,
             value: '',
@@ -894,48 +861,26 @@ const reducers = {
         console.log('changeAutomatonModel', model);
         selectedAutomaton.model = model;
         selectedAutomaton.properties = Object.keys(
-            AutomatonProperties[selectedAutomaton.family]?.[
-                selectedAutomaton.model
-            ] ?? {}
+            AutomatonProperties[selectedAutomaton.model] ?? {}
         ).map((propertyName) => ({
             name: propertyName,
             value: '',
         }));
-    },
-    enrichPropertyValues: (state, action) => {
-        const { index, propertyValues } = action.payload;
-        const selectedAutomaton = filterAutomataByFamily(
-            state.automata,
-            state.filteredAutomatonFamily
-        )[index];
 
-        console.log('selectedAutomaton', [selectedAutomaton]);
-        selectedAutomaton.properties = selectedAutomaton.properties.map(
-            (property) => {
-                const propertyDefinition = getAutomatonProperty(
-                    selectedAutomaton.family,
-                    selectedAutomaton.model,
-                    property.name
-                );
-                const possibleValues =
-                    propertyDefinition?.values ??
-                    (propertyDefinition?.equipmentTypes &&
-                        propertyDefinition.equipmentTypes.reduce(
-                            (arr, possibleType) => [
-                                ...arr,
-                                ...(propertyValues.find(
-                                    (elem) => elem.type === possibleType
-                                )?.values?.['id'] ?? []),
-                            ],
-                            []
-                        ));
-                console.log('property', [property]);
-                console.log('possibleValues', [possibleValues]);
-                return {
-                    ...property,
-                    values: possibleValues,
-                };
-            }
+        // clean all others automaton models properties
+        const allModelProperties = Object.values(
+            AutomatonModelProperties
+        ).reduce(
+            (arr, modelPropertiesDefinition) => [
+                ...arr,
+                ...Object.keys(modelPropertiesDefinition),
+            ],
+            []
+        );
+        allModelProperties.forEach(
+            (modelProperty) =>
+                (selectedAutomaton[modelProperty] =
+                    DEFAULT_AUTOMATON[modelProperty])
         );
     },
     changeAutomatonParameters: (state, action) => {
@@ -946,13 +891,13 @@ const reducers = {
         )[index];
         selectedAutomaton.setGroup = parameters;
     },
-    changeAutomatonWatchedElement: (state, action) => {
-        const { index, watchedElement } = action.payload;
+    changeAutomatonModelPropertyValue: (state, action) => {
+        const { index, property } = action.payload;
         const selectedAutomaton = filterAutomataByFamily(
             state.automata,
             state.filteredAutomatonFamily
         )[index];
-        selectedAutomaton.watchedElement = watchedElement;
+        property.value && (selectedAutomaton[property.name] = property.value);
     },
     changeAutomatonPropertyValue: (state, action) => {
         const { index, property } = action.payload;

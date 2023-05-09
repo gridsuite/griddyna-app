@@ -7,36 +7,20 @@
 import { Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import React from 'react';
-import { useStyles } from './CurrentLimitAutomatonPropertiesStyle';
+import { useStyles } from './AutomatonPropertiesStyle';
+import { getAutomatonProperty } from '../../../utils/automata';
 
-const CurrentLimitAutomatonProperties = ({
-    isAutomatonValid = true,
-    equipmentIds = [],
-    watchedElement,
-    onChangeWatchedElement = () => {},
+const propertiesLabel = 'Additional properties';
+
+const AutomatonProperties = ({
+    model,
     properties = [],
     onChangeProperty = () => {},
 }) => {
-    const watchedElementLabel = 'On equipment';
-    const propertiesLabel = 'Additional properties';
-
-    const classes = useStyles(isAutomatonValid);
+    console.log('automaton properties', properties);
+    const classes = useStyles();
     return (
         <>
-            <Grid container justify={'flex-start'}>
-                <Grid item xs="auto" className={classes.label}>
-                    <Typography>{`${watchedElementLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs="auto" className={classes.value}>
-                    <Autocomplete
-                        isFree={!(equipmentIds && equipmentIds.length > 0)}
-                        value={watchedElement}
-                        onChange={onChangeWatchedElement}
-                        options={equipmentIds}
-                        error={watchedElement === ''}
-                    />
-                </Grid>
-            </Grid>
             {properties.length > 0 && (
                 <Grid container justify={'flex-start'}>
                     <Grid item xs="auto" className={classes.label}>
@@ -45,9 +29,12 @@ const CurrentLimitAutomatonProperties = ({
                 </Grid>
             )}
             {properties.map((property) => {
+                const modelProperty = getAutomatonProperty(
+                    model,
+                    property.name
+                );
                 return (
                     <Grid container justify={'flex-start'} key={property.name}>
-                        <Grid item xs={1} />
                         <Grid item xs="auto" className={classes.label}>
                             <Typography>{`${property.name} :`}</Typography>
                         </Grid>
@@ -55,23 +42,23 @@ const CurrentLimitAutomatonProperties = ({
                             <Autocomplete
                                 isFree={
                                     !(
-                                        property?.values &&
-                                        property?.values?.length > 0
+                                        modelProperty?.values &&
+                                        modelProperty?.values?.length > 0
                                     )
                                 }
                                 value={property.value}
                                 onChange={onChangeProperty(property.name)}
-                                options={property?.values}
+                                options={modelProperty?.values}
                                 type={
-                                    property?.type === 'number'
+                                    modelProperty?.type === 'number'
                                         ? 'number'
                                         : undefined
                                 }
                                 error={property.value === ''}
                                 ignoreReset={
                                     !(
-                                        property?.values &&
-                                        property?.values?.length > 0
+                                        modelProperty?.values &&
+                                        modelProperty?.values?.length > 0
                                     )
                                 }
                             />
@@ -83,4 +70,4 @@ const CurrentLimitAutomatonProperties = ({
     );
 };
 
-export default CurrentLimitAutomatonProperties;
+export default AutomatonProperties;

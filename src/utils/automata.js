@@ -6,19 +6,44 @@
  */
 
 import {
-    AutomatonFamily,
+    AutomatonModelProperties,
     AutomatonProperties,
 } from '../constants/equipmentDefinition';
 
-export const getPossibleEquipmentTypesFromAutomatonFamily = (family) => {
-    switch (family) {
-        case AutomatonFamily.CURRENT_LIMIT:
-            return ['LINE'];
-        default:
-            return [];
-    }
+export const getPossibleEquipmentTypesFromAutomatonModel = (
+    model,
+    property
+) => {
+    return AutomatonModelProperties[model]?.[property]?.equipmentTypes;
 };
 
-export const getAutomatonProperty = (automatonFamily, model, property) => {
-    return AutomatonProperties[automatonFamily][model][property];
+export const getAutomatonProperty = (model, property) => {
+    return AutomatonProperties[model]?.[property];
+};
+
+export const getPossibleOptionsModelProperty = (
+    model,
+    sourceProperty,
+    targetProperty,
+    propertyValues
+) => {
+    const possibleTypes =
+        getPossibleEquipmentTypesFromAutomatonModel(model, sourceProperty) ??
+        [];
+
+    console.log('possibleTypes', possibleTypes);
+    console.log('propertyValues', propertyValues);
+
+    const ids = possibleTypes.reduce(
+        (arr, possibleType) => [
+            ...arr,
+            ...(propertyValues?.find(
+                (propertyValuesItem) => propertyValuesItem.type === possibleType
+            )?.values[targetProperty] ?? []),
+        ],
+        []
+    );
+
+    console.log('ids', ids);
+    return ids;
 };

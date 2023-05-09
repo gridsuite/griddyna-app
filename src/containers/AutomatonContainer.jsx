@@ -8,7 +8,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    makeChangeAutomatonModelThenEnrichPossibleValues,
     makeGetAutomaton,
     makeIsAutomatonValid,
     MappingSlice,
@@ -16,7 +15,7 @@ import {
 import { makeGetModels } from '../redux/slices/Model';
 import {
     getCurrentNetworkId,
-    makeGetPossibleWatchedElements,
+    makeGetPropertyValues,
 } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
@@ -25,20 +24,19 @@ import { GroupEditionOrigin, SetType } from '../constants/models';
 const AutomatonContainer = ({ index, editParameters }) => {
     const getAutomaton = useMemo(makeGetAutomaton, []);
     const automaton = useSelector((state) => getAutomaton(state, index));
-    const { model, family, setGroup } = automaton;
+    const { model, setGroup } = automaton;
     const isAutomatonValidSelector = useMemo(makeIsAutomatonValid, []);
     const isAutomatonValid = useSelector((state) =>
         isAutomatonValidSelector(state, index)
     );
     const getModels = useMemo(makeGetModels, []);
     const models = useSelector((state) => getModels(state, automaton.family));
-    const getPossibleWatchedElements = useMemo(
-        makeGetPossibleWatchedElements,
-        []
+
+    const getPropertyValues = useMemo(makeGetPropertyValues, []);
+    const networkPropertyValues = useSelector((state) =>
+        getPropertyValues(state)
     );
-    const networkIds = useSelector((state) =>
-        getPossibleWatchedElements(state, family)
-    );
+
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
@@ -52,11 +50,12 @@ const AutomatonContainer = ({ index, editParameters }) => {
                 family: newFamily,
             })
         );
-    const changeWatchedElement = (newWatchedElement) =>
+
+    const handleChangeAutomatonModelElement = (property) =>
         dispatch(
-            MappingSlice.actions.changeAutomatonWatchedElement({
+            MappingSlice.actions.changeAutomatonModelPropertyValue({
                 index,
-                watchedElement: newWatchedElement,
+                property,
             })
         );
 
@@ -68,19 +67,15 @@ const AutomatonContainer = ({ index, editParameters }) => {
             })
         );
 
-    const changeAutomatonModelThenEnrichPossibleValues = useMemo(
-        makeChangeAutomatonModelThenEnrichPossibleValues,
-        []
-    );
     const changeModel = useCallback(
         (newModel) =>
             dispatch(
-                changeAutomatonModelThenEnrichPossibleValues({
+                MappingSlice.actions.changeAutomatonModel({
                     index,
                     model: newModel,
                 })
             ),
-        [dispatch, index, changeAutomatonModelThenEnrichPossibleValues]
+        [dispatch, index]
     );
 
     const changeParameters = useCallback(
@@ -150,17 +145,17 @@ const AutomatonContainer = ({ index, editParameters }) => {
             automaton={automaton}
             isAutomatonValid={isAutomatonValid}
             changeFamily={changeFamily}
-            changeWatchedElement={changeWatchedElement}
             changeModel={changeModel}
             changeParameters={changeParameters}
             changeProperty={changeProperty}
             models={models}
-            networkIds={networkIds}
             deleteAutomaton={deleteAutomaton}
             copyAutomaton={copyAutomaton}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
             isNetworkAttached={!!currentNetworkId}
+            networkPropertyValues={networkPropertyValues}
+            onChangeModelProperty={handleChangeAutomatonModelElement}
         />
     );
 };

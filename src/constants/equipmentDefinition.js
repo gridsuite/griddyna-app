@@ -139,40 +139,53 @@ export const AutomatonModels = {
 };
 
 export const AutomatonProperties = {
-    [AutomatonFamily.CURRENT_LIMIT]: {
-        [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
-            side: {
-                type: 'string',
-                values: [
-                    {
-                        value: 'Branch.Side.ONE',
-                        label: 'One',
-                    },
-                    {
-                        value: 'Branch.Side.TWO',
-                        label: 'Two',
-                    },
-                ],
-            },
-        },
-    },
-    [AutomatonFamily.VOLTAGE]: {
-        [AutomatonModels.TAP_CHANGER_BLOCKING]: {
-            name: {
-                type: 'string',
-            },
-            uMeasurement: {
-                type: 'string',
-                equipmentTypes: [EquipmentType.BUS],
-            },
-            transformer: {
-                type: 'string',
-                equipmentTypes: [
-                    EquipmentType.LOAD,
-                    EquipmentType.TWO_WINDINGS_TRANSFORMER,
-                ],
-            },
+    [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
+        side: {
+            type: 'string',
+            values: [
+                {
+                    value: 'Branch.Side.ONE',
+                    label: 'One',
+                },
+                {
+                    value: 'Branch.Side.TWO',
+                    label: 'Two',
+                },
+            ],
         },
     },
 };
 Object.freeze(AutomatonProperties);
+
+export const AutomatonModelProperties = {
+    [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
+        watchedElement: {
+            type: 'string',
+            label: 'On equipment',
+            equipmentTypes: [EquipmentType.LINE],
+            networkProperty: 'id',
+        },
+    },
+    [AutomatonModels.TAP_CHANGER_BLOCKING]: {
+        name: {
+            type: 'string',
+            label: 'Name',
+        },
+        uMeasurements: {
+            type: 'string',
+            label: 'U Measurement',
+            equipmentTypes: [EquipmentType.BUS],
+            networkProperty: 'id',
+        },
+        transformers: {
+            type: 'string',
+            label: 'Transformers',
+            equipmentTypes: [
+                EquipmentType.LOAD,
+                EquipmentType.TWO_WINDINGS_TRANSFORMER,
+            ],
+            networkProperty: 'id',
+        },
+    },
+};
+Object.freeze(AutomatonModelProperties);

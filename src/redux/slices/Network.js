@@ -13,7 +13,6 @@ import {
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
 import { PropertyType } from '../../constants/equipmentDefinition';
-import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automata';
 import { createParameterSelector } from '../selectorUtil';
 
 const initialState = {
@@ -57,33 +56,6 @@ export const makeGetNetworkValues = () =>
 
 export const makeGetPropertyValues = () =>
     createSelector(getPropertyValues, (propertyValues) => propertyValues);
-
-export const makeGetPossibleWatchedElements = () =>
-    createSelector(
-        (state) => state.network.propertyValues,
-        (_state, family) => family,
-        (propertyValues, family) => {
-            const possibleTypes =
-                getPossibleEquipmentTypesFromAutomatonFamily(family);
-
-            console.log('possibleTypes', possibleTypes);
-            console.log('propertyValues', propertyValues);
-
-            const ids = possibleTypes.reduce(
-                (arr, possibleType) => [
-                    ...arr,
-                    ...(propertyValues?.find(
-                        (propertyValuesItem) =>
-                            propertyValuesItem.type === possibleType
-                    )?.values['id'] ?? []),
-                ],
-                []
-            );
-
-            console.log('ids', ids);
-            return ids;
-        }
-    );
 
 export const getCurrentNetworkId = (state) => state.network.currentNetwork;
 

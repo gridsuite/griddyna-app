@@ -14,33 +14,27 @@ import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
-import CurrentLimitAutomatonProperties from './automaton/CurrentLimitAutomatonProperties';
-import { AutomatonModels } from '../../constants/equipmentDefinition';
-import TapChangerBlockingProperties from './automaton/TapChangerBlockingProperties';
-
-const AutomatonModelPropertiesComponents = {
-    [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: CurrentLimitAutomatonProperties,
-    [AutomatonModels.TAP_CHANGER_BLOCKING]: TapChangerBlockingProperties,
-};
+import AutomatonProperties from './automaton/AutomatonProperties';
+import AutomatonModelProperties from './automaton/AutomatonModelProperties';
 
 const Automaton = (props) => {
     const {
         automaton,
         isAutomatonValid = true,
         changeFamily,
-        changeWatchedElement,
         changeModel,
         changeParameters,
         changeProperty,
         models,
-        networkIds = [],
         deleteAutomaton,
         copyAutomaton,
         editGroup = () => {},
         controlledParameters = false,
         isNetworkAttached = false,
+        networkPropertyValues = [],
+        onChangeModelProperty,
     } = props;
-    const { family, watchedElement, model, setGroup, properties } = automaton;
+    const { family, model, setGroup, properties } = automaton;
     const classes = useStyles(isAutomatonValid);
     // TODO intl
     const automatonLabel = 'Automaton';
@@ -52,7 +46,9 @@ const Automaton = (props) => {
         changeProperty({ name: propertyName, value: propertyValue });
     };
 
-    const PropertiesComponent = AutomatonModelPropertiesComponents[model];
+    const handleChangeModelProperty = (propertyName) => (propertyValue) => {
+        onChangeModelProperty({ name: propertyName, value: propertyValue });
+    };
 
     return (
         <Paper elevation={0} className={classes.automatonPaper}>
@@ -84,17 +80,16 @@ const Automaton = (props) => {
                     />
                 </Grid>
             </Grid>
-            {PropertiesComponent && (
-                <PropertiesComponent
-                    family={family}
-                    model={model}
-                    equipmentIds={networkIds}
-                    watchedElement={watchedElement}
-                    onChangeWatchedElement={changeWatchedElement}
-                    properties={properties}
-                    onChangeProperty={onChangeProperty}
-                />
-            )}
+            <AutomatonModelProperties
+                automaton={automaton}
+                networkPropertyValues={networkPropertyValues}
+                onChangeModelProperty={handleChangeModelProperty}
+            />
+            <AutomatonProperties
+                model={model}
+                properties={properties}
+                onChangeProperty={onChangeProperty}
+            />
             <ModelSelect
                 model={model}
                 models={models}
@@ -114,12 +109,10 @@ Automaton.propTypes = {
     automaton: PropTypes.object.isRequired,
     isAutomatonValid: PropTypes.bool,
     changeFamily: PropTypes.func.isRequired,
-    changeWatchedElement: PropTypes.func.isRequired,
     changeModel: PropTypes.func.isRequired,
     changeParameters: PropTypes.func.isRequired,
     changeProperty: PropTypes.func.isRequired,
     models: PropTypes.array.isRequired,
-    networkIds: PropTypes.array,
     deleteAutomaton: PropTypes.func.isRequired,
     copyAutomaton: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
