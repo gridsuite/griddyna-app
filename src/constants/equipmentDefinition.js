@@ -138,7 +138,7 @@ export const AutomatonModels = {
     TAP_CHANGER_BLOCKING: 'TapChangerBlocking',
 };
 
-export const AutomatonProperties = {
+export const AutomatonAdditionalProperties = {
     [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
         side: {
             type: 'string',
@@ -155,7 +155,7 @@ export const AutomatonProperties = {
         },
     },
 };
-Object.freeze(AutomatonProperties);
+Object.freeze(AutomatonAdditionalProperties);
 
 export const AutomatonModelProperties = {
     [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
@@ -176,6 +176,7 @@ export const AutomatonModelProperties = {
             label: 'U Measurement',
             equipmentTypes: [EquipmentType.BUS],
             networkProperty: 'id',
+            multiple: true,
         },
         transformers: {
             type: 'string',
@@ -185,6 +186,7 @@ export const AutomatonModelProperties = {
                 EquipmentType.TWO_WINDINGS_TRANSFORMER,
             ],
             networkProperty: 'id',
+            multiple: true,
         },
     },
 };

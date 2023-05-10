@@ -19,7 +19,7 @@ import {
     AutomatonFamily,
     AutomatonModelProperties,
     AutomatonModels,
-    AutomatonProperties,
+    AutomatonAdditionalProperties,
     RuleEquipmentTypes,
 } from '../../constants/equipmentDefinition';
 import {
@@ -31,6 +31,10 @@ import {
 import * as networkAPI from '../../rest/networkAPI';
 import { makeGetNetworkValues } from './Network';
 import { createParameterSelector } from '../selectorUtil';
+import {
+    getAutomatonAdditionalProperties,
+    getAutomatonModelProperties,
+} from '../../utils/automata';
 
 const initialState = {
     mappings: [],
@@ -89,25 +93,38 @@ const transformMapping = (receivedMapping) => {
     } else {
         mapping['automata'] = receivedMapping.automata.map(
             (receivedAutomaton) => {
-                const {
-                    family,
-                    watchedElement,
-                    model,
-                    setGroup,
-                    ...additionalProperties
-                } = receivedAutomaton;
-                return {
-                    family,
-                    watchedElement,
-                    model,
-                    setGroup,
-                    properties: Object.keys(additionalProperties).map(
-                        (propertyKey) => ({
-                            name: propertyKey,
-                            value: additionalProperties[propertyKey],
-                        })
-                    ),
-                };
+                const { family, model, setGroup, ...otherProperties } =
+                    receivedAutomaton;
+
+                const modelPropertyNames = Object.keys(
+                    getAutomatonModelProperties(model) ?? {}
+                );
+
+                // init transformed automaton with basic attributes
+                const automaton = { family, model, setGroup };
+
+                // set properties depending on model
+                modelPropertyNames.forEach((modelPropertyName) => {
+                    automaton[modelPropertyName] =
+                        otherProperties[modelPropertyName];
+                });
+
+                // set additional properties
+                const additionalPropertyNames = Object.keys(
+                    getAutomatonAdditionalProperties(model) ?? {}
+                );
+                automaton.properties = additionalPropertyNames.reduce(
+                    (arr, additionalPropertyName) => [
+                        ...arr,
+                        {
+                            name: additionalPropertyName,
+                            value: otherProperties[additionalPropertyName],
+                        },
+                    ],
+                    []
+                );
+
+                return automaton;
             }
         );
     }
@@ -509,14 +526,23 @@ export const postMapping = createAsyncThunk(
                   )?.automata
                 : state?.mappings.automata;
         const formattedAutomata = automata.map((automaton) => {
-            const { family, watchedElement, model, setGroup, properties } =
-                automaton;
+            const { family, model, setGroup, properties } = automaton;
             const formattedAutomaton = {
                 family,
-                watchedElement,
                 model,
                 setGroup,
             };
+
+            // for specific properties of model
+            const modelPropertyNames = Object.keys(
+                getAutomatonModelProperties(model)
+            );
+            modelPropertyNames.forEach((modelPropertyName) => {
+                formattedAutomaton[modelPropertyName] =
+                    automaton[modelPropertyName];
+            });
+
+            // for additional properties of automaton
             properties.forEach((property) => {
                 formattedAutomaton[property.name] = property.value;
             });
@@ -842,11 +868,10 @@ const reducers = {
             state.automata,
             state.filteredAutomatonFamily
         )[index];
-        console.log('changeAutomatonFamily', family);
         selectedAutomaton.family = family;
         selectedAutomaton.model = DEFAULT_AUTOMATON.model;
         selectedAutomaton.properties = Object.keys(
-            AutomatonProperties[selectedAutomaton.model] ?? {}
+            AutomatonAdditionalProperties[selectedAutomaton.model] ?? {}
         ).map((propertyName) => ({
             name: propertyName,
             value: '',
@@ -858,10 +883,9 @@ const reducers = {
             state.automata,
             state.filteredAutomatonFamily
         )[index];
-        console.log('changeAutomatonModel', model);
         selectedAutomaton.model = model;
         selectedAutomaton.properties = Object.keys(
-            AutomatonProperties[selectedAutomaton.model] ?? {}
+            AutomatonAdditionalProperties[selectedAutomaton.model] ?? {}
         ).map((propertyName) => ({
             name: propertyName,
             value: '',
@@ -897,7 +921,7 @@ const reducers = {
             state.automata,
             state.filteredAutomatonFamily
         )[index];
-        property.value && (selectedAutomaton[property.name] = property.value);
+        selectedAutomaton[property.name] = property.value;
     },
     changeAutomatonPropertyValue: (state, action) => {
         const { index, property } = action.payload;

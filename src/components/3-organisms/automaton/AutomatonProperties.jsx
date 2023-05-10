@@ -8,7 +8,7 @@ import { Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import React from 'react';
 import { useStyles } from './AutomatonPropertiesStyle';
-import { getAutomatonProperty } from '../../../utils/automata';
+import { getAutomatonAdditionalProperty } from '../../../utils/automata';
 
 const propertiesLabel = 'Additional properties';
 
@@ -17,7 +17,6 @@ const AutomatonProperties = ({
     properties = [],
     onChangeProperty = () => {},
 }) => {
-    console.log('automaton properties', properties);
     const classes = useStyles();
     return (
         <>
@@ -29,7 +28,7 @@ const AutomatonProperties = ({
                 </Grid>
             )}
             {properties.map((property) => {
-                const modelProperty = getAutomatonProperty(
+                const additionalProperty = getAutomatonAdditionalProperty(
                     model,
                     property.name
                 );
@@ -42,23 +41,28 @@ const AutomatonProperties = ({
                             <Autocomplete
                                 isFree={
                                     !(
-                                        modelProperty?.values &&
-                                        modelProperty?.values?.length > 0
+                                        additionalProperty?.values &&
+                                        additionalProperty?.values?.length > 0
                                     )
                                 }
+                                isMultiple={additionalProperty.multiple}
                                 value={property.value}
                                 onChange={onChangeProperty(property.name)}
-                                options={modelProperty?.values}
+                                options={additionalProperty?.values}
                                 type={
-                                    modelProperty?.type === 'number'
+                                    additionalProperty?.type === 'number'
                                         ? 'number'
                                         : undefined
                                 }
-                                error={property.value === ''}
+                                error={
+                                    property.value === '' ||
+                                    (Array.isArray(property.value) &&
+                                        property.value.length === 0)
+                                }
                                 ignoreReset={
                                     !(
-                                        modelProperty?.values &&
-                                        modelProperty?.values?.length > 0
+                                        additionalProperty?.values &&
+                                        additionalProperty?.values?.length > 0
                                     )
                                 }
                             />

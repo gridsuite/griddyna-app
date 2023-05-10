@@ -7,8 +7,16 @@
 
 import {
     AutomatonModelProperties,
-    AutomatonProperties,
+    AutomatonAdditionalProperties,
 } from '../constants/equipmentDefinition';
+
+export const getAutomatonAdditionalProperty = (model, property) => {
+    return AutomatonAdditionalProperties[model]?.[property];
+};
+
+export const getAutomatonAdditionalProperties = (model) => {
+    return AutomatonAdditionalProperties[model];
+};
 
 export const getPossibleEquipmentTypesFromAutomatonModel = (
     model,
@@ -17,8 +25,8 @@ export const getPossibleEquipmentTypesFromAutomatonModel = (
     return AutomatonModelProperties[model]?.[property]?.equipmentTypes;
 };
 
-export const getAutomatonProperty = (model, property) => {
-    return AutomatonProperties[model]?.[property];
+export const getAutomatonModelProperties = (model) => {
+    return AutomatonModelProperties[model];
 };
 
 export const getPossibleOptionsModelProperty = (
@@ -31,10 +39,7 @@ export const getPossibleOptionsModelProperty = (
         getPossibleEquipmentTypesFromAutomatonModel(model, sourceProperty) ??
         [];
 
-    console.log('possibleTypes', possibleTypes);
-    console.log('propertyValues', propertyValues);
-
-    const ids = possibleTypes.reduce(
+    const possibleValues = possibleTypes.reduce(
         (arr, possibleType) => [
             ...arr,
             ...(propertyValues?.find(
@@ -44,6 +49,8 @@ export const getPossibleOptionsModelProperty = (
         []
     );
 
-    console.log('ids', ids);
-    return ids;
+    return possibleValues.map((possibleValue) => ({
+        value: possibleValue,
+        label: possibleValue,
+    }));
 };

@@ -20,7 +20,7 @@ const AutomatonModelProperties = ({
     const modelPropertyNames = Object.keys(
         ModelPropertiesDefinitions[automaton?.model] ?? {}
     );
-    console.log('modelPropertyNames', [modelPropertyNames]);
+
     return (
         <>
             {modelPropertyNames.map((modelPropertyName) => {
@@ -36,6 +36,7 @@ const AutomatonModelProperties = ({
                 );
 
                 const value = automaton[modelPropertyName];
+
                 return (
                     <Grid container justify={'flex-start'}>
                         <Grid item xs="auto" className={classes.label}>
@@ -44,12 +45,24 @@ const AutomatonModelProperties = ({
                         <Grid item xs="auto" className={classes.value}>
                             <Autocomplete
                                 isFree={!(options && options.length > 0)}
-                                value={value}
+                                isMultiple={modelProperty.multiple}
+                                value={
+                                    value ??
+                                    (modelProperty.multiple ? [] : value)
+                                }
                                 onChange={onChangeModelProperty(
                                     modelPropertyName
                                 )}
                                 options={options}
-                                error={value === ''}
+                                type={
+                                    modelProperty?.type === 'number'
+                                        ? 'number'
+                                        : undefined
+                                }
+                                error={
+                                    value === '' ||
+                                    (Array.isArray(value) && value.length === 0)
+                                }
                             />
                         </Grid>
                     </Grid>
