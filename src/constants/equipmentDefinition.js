@@ -167,12 +167,6 @@ export const AutomatonModelProperties = {
         },
     },
     [AutomatonModels.TAP_CHANGER_BLOCKING]: {
-        watchedElement: {
-            type: 'string',
-            label: 'On equipment',
-            equipmentTypes: [EquipmentType.LINE],
-            networkProperty: 'id',
-        },
         name: {
             type: 'string',
             label: 'Name',
