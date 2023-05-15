@@ -14,7 +14,7 @@ import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
-import AutomatonProperties from './automaton/AutomatonProperties';
+import AutomatonAdditionalProperties from './automaton/AutomatonAdditionalProperties';
 import AutomatonModelProperties from './automaton/AutomatonModelProperties';
 
 const Automaton = (props) => {
@@ -85,7 +85,7 @@ const Automaton = (props) => {
                 networkPropertyValues={networkPropertyValues}
                 onChangeModelProperty={handleChangeModelProperty}
             />
-            <AutomatonProperties
+            <AutomatonAdditionalProperties
                 model={model}
                 properties={properties}
                 onChangeProperty={onChangeProperty}

@@ -7,12 +7,12 @@
 import { Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import React from 'react';
-import { useStyles } from './AutomatonPropertiesStyle';
+import { useStyles } from './AutomatonAdditionalPropertiesStyle';
 import { getAutomatonAdditionalProperty } from '../../../utils/automata';
 
 const propertiesLabel = 'Additional properties';
 
-const AutomatonProperties = ({
+const AutomatonAdditionalProperties = ({
     model,
     properties = [],
     onChangeProperty = () => {},
@@ -74,4 +74,4 @@ const AutomatonProperties = ({
     );
 };
 
-export default AutomatonProperties;
+export default AutomatonAdditionalProperties;
