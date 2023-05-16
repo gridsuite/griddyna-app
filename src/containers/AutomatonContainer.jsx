@@ -51,14 +51,6 @@ const AutomatonContainer = ({ index, editParameters }) => {
             })
         );
 
-    const handleChangeAutomatonModelElement = (property) =>
-        dispatch(
-            MappingSlice.actions.changeAutomatonModelPropertyValue({
-                index,
-                property,
-            })
-        );
-
     const changeProperty = (property) =>
         dispatch(
             MappingSlice.actions.changeAutomatonPropertyValue({
@@ -155,7 +147,6 @@ const AutomatonContainer = ({ index, editParameters }) => {
             controlledParameters={controlledParameters}
             isNetworkAttached={!!currentNetworkId}
             networkPropertyValues={networkPropertyValues}
-            onChangeModelProperty={handleChangeAutomatonModelElement}
         />
     );
 };

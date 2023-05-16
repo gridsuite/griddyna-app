@@ -5,46 +5,24 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    AutomatonModelProperties,
-    AutomatonAdditionalProperties,
-} from '../constants/equipmentDefinition';
+import { AutomatonProperties } from '../constants/equipmentDefinition';
 
-export const getAutomatonAdditionalProperty = (model, property) => {
-    return AutomatonAdditionalProperties[model]?.[property];
+export const getAutomatonPropertiesByModel = (model) => {
+    return AutomatonProperties[model];
 };
 
-export const getAutomatonAdditionalProperties = (model) => {
-    return AutomatonAdditionalProperties[model];
-};
-
-export const getPossibleEquipmentTypesFromAutomatonModel = (
-    model,
-    property
+export const getPossibleOptionsForProperty = (
+    propertyMappingDefinition,
+    networkPropertyValues
 ) => {
-    return AutomatonModelProperties[model]?.[property]?.equipmentTypes;
-};
-
-export const getAutomatonModelProperties = (model) => {
-    return AutomatonModelProperties[model];
-};
-
-export const getPossibleOptionsModelProperty = (
-    model,
-    sourceProperty,
-    targetProperty,
-    propertyValues
-) => {
-    const possibleTypes =
-        getPossibleEquipmentTypesFromAutomatonModel(model, sourceProperty) ??
-        [];
-
+    const possibleTypes = propertyMappingDefinition.equipmentType;
     const possibleValues = possibleTypes.reduce(
         (arr, possibleType) => [
             ...arr,
-            ...(propertyValues?.find(
-                (propertyValuesItem) => propertyValuesItem.type === possibleType
-            )?.values[targetProperty] ?? []),
+            ...(networkPropertyValues?.find(
+                (networkPropertyValues) =>
+                    networkPropertyValues.type === possibleType
+            )?.values[propertyMappingDefinition.equipmentProperty] ?? []),
         ],
         []
     );
@@ -53,4 +31,32 @@ export const getPossibleOptionsModelProperty = (
         value: possibleValue,
         label: possibleValue,
     }));
+};
+
+const FIELD_GROUP = 'group';
+export const UNKNOWN_GROUP = 'Unknown Group';
+
+/**
+ * Get automaton property definitions of a model then grouping in an object
+ * @param model a model's name
+ * @returns {{}} an object which groups property definitions of a model
+ */
+export const getAutomatonPropertiesByModelThenGroup = (model) => {
+    const propertiesDefinition = getAutomatonPropertiesByModel(model) ?? {};
+
+    // grouping by the 'group' attribute, absence of 'group' attribute means UNKNOWN_GROUP
+    return Object.entries(propertiesDefinition).reduce(
+        (result, [key, value]) => {
+            let groupName = value[FIELD_GROUP];
+            if (!groupName) {
+                groupName = UNKNOWN_GROUP;
+            }
+            if (!result[groupName]) {
+                result[`${groupName}`] = {};
+            }
+            result[`${groupName}`][key] = value;
+            return result;
+        },
+        {}
+    );
 };

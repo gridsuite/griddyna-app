@@ -138,10 +138,23 @@ export const AutomatonModels = {
     TAP_CHANGER_BLOCKING: 'TapChangerBlocking',
 };
 
-export const AutomatonAdditionalProperties = {
+export const PropertyGroups = {
+    ADDITIONAL: 'Additional properties',
+};
+
+export const AutomatonProperties = {
     [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
+        watchedElement: {
+            type: 'string',
+            label: 'On equipment',
+            mapping: {
+                equipmentType: [EquipmentType.LINE],
+                equipmentProperty: 'id',
+            },
+        },
         side: {
             type: 'string',
+            label: 'Side',
             values: [
                 {
                     value: 'Branch.Side.ONE',
@@ -152,18 +165,7 @@ export const AutomatonAdditionalProperties = {
                     label: 'Two',
                 },
             ],
-        },
-    },
-};
-Object.freeze(AutomatonAdditionalProperties);
-
-export const AutomatonModelProperties = {
-    [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
-        watchedElement: {
-            type: 'string',
-            label: 'On equipment',
-            equipmentTypes: [EquipmentType.LINE],
-            networkProperty: 'id',
+            group: PropertyGroups.ADDITIONAL,
         },
     },
     [AutomatonModels.TAP_CHANGER_BLOCKING]: {
@@ -174,20 +176,25 @@ export const AutomatonModelProperties = {
         uMeasurements: {
             type: 'string',
             label: 'U Measurement',
-            equipmentTypes: [EquipmentType.BUS],
-            networkProperty: 'id',
+            mapping: {
+                equipmentType: [EquipmentType.BUS],
+                equipmentProperty: 'id',
+            },
+            max: 5,
             multiple: true,
         },
         transformers: {
             type: 'string',
             label: 'Transformers',
-            equipmentTypes: [
-                EquipmentType.LOAD,
-                EquipmentType.TWO_WINDINGS_TRANSFORMER,
-            ],
-            networkProperty: 'id',
+            mapping: {
+                equipmentType: [
+                    EquipmentType.LOAD,
+                    EquipmentType.TWO_WINDINGS_TRANSFORMER,
+                ],
+                equipmentProperty: 'id',
+            },
             multiple: true,
         },
     },
 };
-Object.freeze(AutomatonModelProperties);
+Object.freeze(AutomatonProperties);

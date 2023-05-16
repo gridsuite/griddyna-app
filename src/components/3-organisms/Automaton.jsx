@@ -14,8 +14,7 @@ import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
-import AutomatonAdditionalProperties from './automaton/AutomatonAdditionalProperties';
-import AutomatonModelProperties from './automaton/AutomatonModelProperties';
+import AutomatonProperties from './automaton/AutomatonProperties';
 
 const Automaton = (props) => {
     const {
@@ -32,9 +31,8 @@ const Automaton = (props) => {
         controlledParameters = false,
         isNetworkAttached = false,
         networkPropertyValues = [],
-        onChangeModelProperty,
     } = props;
-    const { family, model, setGroup, properties } = automaton;
+    const { family, model, setGroup } = automaton;
     const classes = useStyles(isAutomatonValid);
     // TODO intl
     const automatonLabel = 'Automaton';
@@ -44,10 +42,6 @@ const Automaton = (props) => {
 
     const onChangeProperty = (propertyName) => (propertyValue) => {
         changeProperty({ name: propertyName, value: propertyValue });
-    };
-
-    const handleChangeModelProperty = (propertyName) => (propertyValue) => {
-        onChangeModelProperty({ name: propertyName, value: propertyValue });
     };
 
     return (
@@ -80,14 +74,9 @@ const Automaton = (props) => {
                     />
                 </Grid>
             </Grid>
-            <AutomatonModelProperties
+            <AutomatonProperties
                 automaton={automaton}
                 networkPropertyValues={networkPropertyValues}
-                onChangeModelProperty={handleChangeModelProperty}
-            />
-            <AutomatonAdditionalProperties
-                model={model}
-                properties={properties}
                 onChangeProperty={onChangeProperty}
             />
             <ModelSelect
