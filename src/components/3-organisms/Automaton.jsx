@@ -25,12 +25,12 @@ const Automaton = (props) => {
         changeParameters,
         changeProperty,
         models,
+        networkPropertyValues = [],
         deleteAutomaton,
         copyAutomaton,
         editGroup = () => {},
         controlledParameters = false,
         isNetworkAttached = false,
-        networkPropertyValues = [],
     } = props;
     const { family, model, setGroup } = automaton;
     const classes = useStyles(isAutomatonValid);
@@ -102,6 +102,7 @@ Automaton.propTypes = {
     changeParameters: PropTypes.func.isRequired,
     changeProperty: PropTypes.func.isRequired,
     models: PropTypes.array.isRequired,
+    networkPropertyValues: PropTypes.array,
     deleteAutomaton: PropTypes.func.isRequired,
     copyAutomaton: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,

@@ -345,6 +345,7 @@ const checkCanUseBasicMode = (inputComposition) => {
 const checkAutomatonValidity = (automaton) =>
     automaton.family !== '' &&
     automaton.model !== '' &&
+    automaton.setGroup !== '' &&
     Object.keys(getAutomatonPropertiesByModel(automaton.model)).reduce(
         (acc, propertyName) => acc && automaton[propertyName] !== '',
         true

@@ -141,12 +141,12 @@ const AutomatonContainer = ({ index, editParameters }) => {
             changeParameters={changeParameters}
             changeProperty={changeProperty}
             models={models}
+            networkPropertyValues={networkPropertyValues}
             deleteAutomaton={deleteAutomaton}
             copyAutomaton={copyAutomaton}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
             isNetworkAttached={!!currentNetworkId}
-            networkPropertyValues={networkPropertyValues}
         />
     );
 };
