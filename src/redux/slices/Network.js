@@ -12,8 +12,8 @@ import {
 } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
-import { PropertyType } from '../../constants/equipmentDefinition';
 import { createParameterSelector } from '../selectorUtil';
+import { PropertyType } from '../../constants/equipmentType';
 
 const initialState = {
     propertyValues: [],

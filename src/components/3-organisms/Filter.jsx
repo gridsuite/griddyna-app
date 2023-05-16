@@ -12,10 +12,10 @@ import * as _ from 'lodash';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
-import { PropertyType } from '../../constants/equipmentDefinition';
 import { multipleOperands } from '../../constants/operands';
 import { useStyles } from './FilterStyle';
 import Autocomplete from '../1-atoms/Autocomplete';
+import { PropertyType } from '../../constants/equipmentType';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';

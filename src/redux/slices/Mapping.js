@@ -16,11 +16,6 @@ import RequestStatus from '../../constants/RequestStatus';
 import { getProperty } from '../../utils/properties';
 import { multipleOperands } from '../../constants/operands';
 import {
-    AutomatonFamily,
-    RuleEquipmentTypes,
-    AutomatonProperties,
-} from '../../constants/equipmentDefinition';
-import {
     checkCompositionArrayValidity,
     convertCompositionArrayToString,
     convertCompositionStringToArray,
@@ -30,6 +25,11 @@ import * as networkAPI from '../../rest/networkAPI';
 import { makeGetNetworkValues } from './Network';
 import { createParameterSelector } from '../selectorUtil';
 import { getAutomatonPropertiesByModel } from '../../utils/automata';
+import {
+    AutomatonFamily,
+    AutomatonProperties,
+} from '../../constants/automatonDefinition';
+import { RuleEquipmentTypes } from '../../constants/equipmentType';
 
 const initialState = {
     mappings: [],

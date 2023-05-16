@@ -11,13 +11,10 @@ import {
     NumberOperands,
     StringOperands,
 } from '../constants/operands';
-import {
-    AutomatonFamily,
-    EquipmentProperties,
-    RuleEquipmentTypes,
-    PropertyType,
-} from '../constants/equipmentDefinition';
+import { EquipmentProperties } from '../constants/equipmentDefinition';
 import { SetType } from '../constants/models';
+import { AutomatonFamily } from '../constants/automatonDefinition';
+import { PropertyType, RuleEquipmentTypes } from '../constants/equipmentType';
 
 export function getRuleEquipmentTypesOptions() {
     return RuleEquipmentTypes.map((elem) => {

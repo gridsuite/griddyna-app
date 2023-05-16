@@ -40,15 +40,13 @@ import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import FilterBar from '../components/2-molecules/FilterBar';
-import {
-    AutomatonFamily,
-    RuleEquipmentTypes,
-} from '../constants/equipmentDefinition';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
+import { AutomatonFamily } from '../constants/automatonDefinition';
+import { RuleEquipmentTypes } from '../constants/equipmentType';
 
 // TODO intl
 const ADD_RULE_LABEL = 'Add a rule';

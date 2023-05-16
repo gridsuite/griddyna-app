@@ -5,28 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export const EquipmentType = {
-    GENERATOR: 'GENERATOR',
-    LOAD: 'LOAD',
-    BUS: 'BUS',
-    LINE: 'LINE',
-    TWO_WINDINGS_TRANSFORMER: 'TWO_WINDINGS_TRANSFORMER',
-};
-Object.freeze(EquipmentType);
-
-export const RuleEquipmentTypes = [EquipmentType.GENERATOR, EquipmentType.LOAD];
-Object.freeze(RuleEquipmentTypes);
-
-export const PropertyType = {
-    STRING: 'STRING',
-    BOOLEAN: 'BOOLEAN',
-    NUMBER: 'NUMBER',
-    ENUM: 'ENUM',
-};
-Object.freeze(PropertyType);
+import { EquipmentType, PropertyType } from './equipmentType';
 
 export const EquipmentProperties = {
-    GENERATOR: [
+    [EquipmentType.GENERATOR]: [
         {
             name: 'energySource',
             type: PropertyType.ENUM,
@@ -83,7 +65,7 @@ export const EquipmentProperties = {
             type: PropertyType.NUMBER,
         },
     ],
-    LOAD: [
+    [EquipmentType.LOAD]: [
         {
             name: 'loadType',
             type: PropertyType.ENUM,
@@ -126,75 +108,3 @@ export const EquipmentProperties = {
     ],
 };
 Object.freeze(EquipmentProperties);
-
-export const AutomatonFamily = {
-    CURRENT_LIMIT: 'CURRENT_LIMIT',
-    VOLTAGE: 'VOLTAGE',
-};
-Object.freeze(AutomatonFamily);
-
-export const AutomatonModels = {
-    CURRENT_LIMIT_AUTOMATON: 'CurrentLimitAutomaton',
-    TAP_CHANGER_BLOCKING: 'TapChangerBlocking',
-};
-
-export const PropertyGroups = {
-    ADDITIONAL: 'Additional properties',
-};
-
-export const AutomatonProperties = {
-    [AutomatonModels.CURRENT_LIMIT_AUTOMATON]: {
-        watchedElement: {
-            type: 'string',
-            label: 'On equipment',
-            mapping: {
-                equipmentType: [EquipmentType.LINE],
-                equipmentProperty: 'id',
-            },
-        },
-        side: {
-            type: 'string',
-            label: 'Side',
-            values: [
-                {
-                    value: 'Branch.Side.ONE',
-                    label: 'One',
-                },
-                {
-                    value: 'Branch.Side.TWO',
-                    label: 'Two',
-                },
-            ],
-            group: PropertyGroups.ADDITIONAL,
-        },
-    },
-    [AutomatonModels.TAP_CHANGER_BLOCKING]: {
-        name: {
-            type: 'string',
-            label: 'Name',
-        },
-        uMeasurements: {
-            type: 'string',
-            label: 'U Measurement',
-            mapping: {
-                equipmentType: [EquipmentType.BUS],
-                equipmentProperty: 'id',
-            },
-            max: 5,
-            multiple: true,
-        },
-        transformers: {
-            type: 'string',
-            label: 'Transformers',
-            mapping: {
-                equipmentType: [
-                    EquipmentType.LOAD,
-                    EquipmentType.TWO_WINDINGS_TRANSFORMER,
-                ],
-                equipmentProperty: 'id',
-            },
-            multiple: true,
-        },
-    },
-};
-Object.freeze(AutomatonProperties);
