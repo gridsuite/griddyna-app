@@ -5,6 +5,6 @@ import TapChangerBlockingModelPlugin from './automaton/model/TapChangerBlockingM
 export const AutomatonModelGroupPlugins = [
     {
         id: 'TapChangerBlockingModelPlugin',
-        modePlugin: TapChangerBlockingModelPlugin,
+        modelPlugin: TapChangerBlockingModelPlugin,
     },
 ];

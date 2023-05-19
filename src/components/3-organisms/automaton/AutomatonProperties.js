@@ -5,9 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
-import React from 'react';
 import { useStyles } from './AutomatonPropertiesStyle';
 import {
     getPossibleOptionsForProperty,
@@ -113,6 +114,12 @@ const AutomatonProperties = ({
             })}
         </>
     );
+};
+
+AutomatonProperties.propTypes = {
+    automaton: PropTypes.object,
+    networkPropertyValues: PropTypes.array,
+    onChangeProperty: PropTypes.func,
 };
 
 export default AutomatonProperties;

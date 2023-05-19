@@ -46,7 +46,7 @@ export const AutomatonProperties = {
         },
     },
     ...AutomatonModelGroupPlugins.reduce(
-        (obj, plugin) => ({ ...obj, ...plugin.modePlugin }),
+        (obj, plugin) => ({ ...obj, ...plugin.modelPlugin }),
         {}
     ),
 };
