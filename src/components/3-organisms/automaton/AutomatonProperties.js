@@ -34,18 +34,13 @@ const AutomatonProperties = ({
                 const propertyNames = Object.keys(propertiesInGroup);
                 return (
                     <>
-                        {propertiesInGroup.length > 0 &&
-                            groupName !== UNKNOWN_GROUP && (
-                                <Grid container justify={'flex-start'}>
-                                    <Grid
-                                        item
-                                        xs="auto"
-                                        className={classes.label}
-                                    >
-                                        <Typography>{`${groupName} :`}</Typography>
-                                    </Grid>
+                        {groupName !== UNKNOWN_GROUP && (
+                            <Grid container justify={'flex-start'}>
+                                <Grid item xs="auto" className={classes.label}>
+                                    <Typography>{`${groupName} :`}</Typography>
                                 </Grid>
-                            )}
+                            </Grid>
+                        )}
                         {propertyNames.map((propertyName) => {
                             const propertyDefinition =
                                 propertiesInGroup[propertyName];
