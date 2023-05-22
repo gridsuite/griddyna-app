@@ -5,8 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { AutomatonModelGroupPlugins } from '../plugins';
-import { EquipmentType, PropertyType } from './equipmentType';
+import { CommonAutomatonModelGroupPlugins } from './automaton';
+import { ExtendedAutomatonModelGroupPlugins } from '../plugins';
 
 export const AutomatonFamily = {
     CURRENT_LIMIT: 'CURRENT_LIMIT',
@@ -14,40 +14,9 @@ export const AutomatonFamily = {
 };
 Object.freeze(AutomatonFamily);
 
-export const PropertyGroups = {
-    ADDITIONAL: 'Additional properties',
-};
-Object.freeze(PropertyGroups);
-
 export const AutomatonProperties = {
-    CurrentLimitAutomaton: {
-        watchedElement: {
-            type: PropertyType.STRING,
-            label: 'On equipment',
-            mapping: {
-                equipmentType: [EquipmentType.LINE],
-                equipmentProperty: 'id',
-            },
-        },
-        side: {
-            type: PropertyType.STRING,
-            label: 'Side',
-            values: [
-                {
-                    value: 'Branch.Side.ONE',
-                    label: 'One',
-                },
-                {
-                    value: 'Branch.Side.TWO',
-                    label: 'Two',
-                },
-            ],
-            group: PropertyGroups.ADDITIONAL,
-        },
-    },
-    ...AutomatonModelGroupPlugins.reduce(
-        (obj, plugin) => ({ ...obj, ...plugin.modelPlugin }),
-        {}
-    ),
+    ...CommonAutomatonModelGroupPlugins.concat(
+        ExtendedAutomatonModelGroupPlugins
+    ).reduce((obj, plugin) => ({ ...obj, ...plugin.model }), {}),
 };
 Object.freeze(AutomatonProperties);

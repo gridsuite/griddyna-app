@@ -346,8 +346,13 @@ const checkAutomatonValidity = (automaton) =>
     automaton.family !== '' &&
     automaton.model !== '' &&
     automaton.setGroup !== '' &&
+    // check empty
     Object.keys(getAutomatonPropertiesByModel(automaton.model)).reduce(
-        (acc, propertyName) => acc && automaton[propertyName] !== '',
+        (acc, propertyName) =>
+            acc &&
+            ((typeof automaton[propertyName] === 'string' &&
+                automaton[propertyName] !== '') ||
+                !_.isEmpty(automaton[propertyName])),
         true
     );
 

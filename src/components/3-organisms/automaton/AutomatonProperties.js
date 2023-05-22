@@ -34,7 +34,7 @@ const AutomatonProperties = ({
                 const propertiesInGroup = propertiesByGroup[groupName];
                 const propertyNames = Object.keys(propertiesInGroup);
                 return (
-                    <>
+                    <div key={groupName}>
                         {groupName !== UNKNOWN_GROUP && (
                             <Grid container justify={'flex-start'}>
                                 <Grid item xs="auto" className={classes.label}>
@@ -109,7 +109,7 @@ const AutomatonProperties = ({
                                 </Grid>
                             );
                         })}
-                    </>
+                    </div>
                 );
             })}
         </>

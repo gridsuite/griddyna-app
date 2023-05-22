@@ -5,9 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { EquipmentType, PropertyType } from '../../../constants/equipmentType';
+import { EquipmentType, PropertyType } from '../../equipmentType';
 
-const TapChangerBlockingModelPlugin = {
+const TapChangerBlockingModel = {
     TapChangerBlocking: {
         name: {
             type: PropertyType.STRING,
@@ -38,4 +38,4 @@ const TapChangerBlockingModelPlugin = {
     },
 };
 
-export default TapChangerBlockingModelPlugin;
+export default TapChangerBlockingModel;
