@@ -125,8 +125,14 @@ const Filter = (props) => {
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid item xs={2}>
-                <Grid container justify="center">
+            <Grid
+                item
+                xs={2}
+                container
+                justifyContent={'center'}
+                alignItems={'center'}
+            >
+                <Grid container justifyContent="flex-end">
                     <Grid item xs="auto">
                         <DeleteButton
                             onClick={deleteFilter}
