@@ -44,7 +44,7 @@ const AutomatonProperties = ({
 
                     return (
                         <Grid container key={propertyName}>
-                            <Grid container justify={'flex-start'} xs={6}>
+                            <Grid container item justify={'flex-start'} xs={6}>
                                 <Grid container>
                                     <Grid item xs={4} className={classes.label}>
                                         <Typography>{`${propertyDefinition.label} :`}</Typography>
@@ -57,7 +57,6 @@ const AutomatonProperties = ({
                                             isMultiple={
                                                 propertyDefinition.multiple
                                             }
-                                            adaptiveWidth={false}
                                             value={
                                                 propertyValue ??
                                                 (propertyDefinition.multiple

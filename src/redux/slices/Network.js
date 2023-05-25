@@ -96,6 +96,7 @@ export const getNetworkNames = createAsyncThunk(
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
+        state.currentNetwork = '';
     },
 };
 
