@@ -15,6 +15,7 @@ import { useStyles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
 import AutomatonProperties from './automaton/AutomatonProperties';
+import SetGroupSelect from '../2-molecules/SetGroupSelect';
 
 const Automaton = (props) => {
     const {
@@ -79,17 +80,21 @@ const Automaton = (props) => {
                 model={model}
                 models={models}
                 changeModel={changeModel}
+            />
+            <AutomatonProperties
+                automaton={automaton}
+                networkPropertyValues={networkPropertyValues}
+                onChangeProperty={onChangeProperty}
+            />
+            <SetGroupSelect
+                model={model}
+                models={models}
                 setGroup={setGroup}
                 groupType={SetType.FIXED}
                 changeGroup={changeParameters}
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
                 isNetworkAttached={isNetworkAttached}
-            />
-            <AutomatonProperties
-                automaton={automaton}
-                networkPropertyValues={networkPropertyValues}
-                onChangeProperty={onChangeProperty}
             />
         </Paper>
     );

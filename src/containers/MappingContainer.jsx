@@ -49,11 +49,11 @@ import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 
 // TODO intl
-const ADD_RULE_LABEL = 'Add a rule';
+const ADD_MODEL_LABEL = 'Add a model';
 const CONVERT_LABEL = 'Convert to script';
 const SAVE_LABEL = 'Save Mapping';
 const ATTACH_LABEL = 'Attach a Network';
-const RULES_TITLE = 'Rules';
+const MODELS_TITLE = 'Models';
 const AUTOMATA_TITLE = 'Automata';
 const ADD_AUTOMATON_LABEL = 'Add an automaton';
 const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
@@ -201,7 +201,7 @@ const MappingContainer = () => {
                 </Grid>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{RULES_TITLE}</Typography>
+                        <Typography>{MODELS_TITLE}</Typography>
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
@@ -216,7 +216,7 @@ const MappingContainer = () => {
                             <Grid item xs={1}>
                                 <AddIconButton
                                     onClick={addRule}
-                                    tooltip={ADD_RULE_LABEL}
+                                    tooltip={ADD_MODEL_LABEL}
                                 />
                             </Grid>
                         </Grid>
