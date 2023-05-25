@@ -75,11 +75,6 @@ const Automaton = (props) => {
                 </Grid>
                 <Grid item xs></Grid>
             </Grid>
-            <AutomatonProperties
-                automaton={automaton}
-                networkPropertyValues={networkPropertyValues}
-                onChangeProperty={onChangeProperty}
-            />
             <ModelSelect
                 model={model}
                 models={models}
@@ -90,6 +85,11 @@ const Automaton = (props) => {
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}
                 isNetworkAttached={isNetworkAttached}
+            />
+            <AutomatonProperties
+                automaton={automaton}
+                networkPropertyValues={networkPropertyValues}
+                onChangeProperty={onChangeProperty}
             />
         </Paper>
     );
