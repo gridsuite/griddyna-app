@@ -8,14 +8,14 @@
 import makeStyles from '@mui/styles/makeStyles';
 export const useStyles = makeStyles((theme) => ({
     label: {
-        textAlign: 'right',
+        textAlign: 'left',
         marginTop: '12px',
         '& .MuiTypography-root': {
             fontWeight: 'bold',
         },
     },
     value: {
-        margin: '8px',
+        padding: '8px 8px',
         '& .MuiFormControl-root .MuiInput-root': {
             minHeight: '2em',
             '& .MuiSelect-root': {
@@ -23,5 +23,8 @@ export const useStyles = makeStyles((theme) => ({
                 paddingBottom: 0,
             },
         },
+    },
+    group: {
+        backgroundColor: 'rgba(255, 255, 255, 0.16)',
     },
 }));

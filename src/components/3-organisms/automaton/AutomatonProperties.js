@@ -7,13 +7,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@mui/material';
+import { Divider, Grid, Paper, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonPropertiesStyle';
 import {
+    getAutomatonPropertiesByModel,
     getPossibleOptionsForProperty,
-    getAutomatonPropertiesByModelThenGroup,
-    UNKNOWN_GROUP,
 } from '../../../utils/automata';
 
 const AutomatonProperties = ({
@@ -23,56 +22,34 @@ const AutomatonProperties = ({
 }) => {
     const classes = useStyles();
 
-    const propertiesByGroup = getAutomatonPropertiesByModelThenGroup(
-        automaton?.model
-    );
-    const groupNames = Object.keys(propertiesByGroup);
+    const automatonProperties =
+        getAutomatonPropertiesByModel(automaton?.model) ?? {};
+    const propertyNames = Object.keys(automatonProperties);
 
     return (
-        <>
-            {groupNames.map((groupName) => {
-                const propertiesInGroup = propertiesByGroup[groupName];
-                const propertyNames = Object.keys(propertiesInGroup);
-                return (
-                    <div key={groupName}>
-                        {groupName !== UNKNOWN_GROUP && (
-                            <Grid container justify={'flex-start'}>
-                                <Grid item xs="auto" className={classes.label}>
-                                    <Typography>{`${groupName} :`}</Typography>
-                                </Grid>
-                            </Grid>
-                        )}
-                        {propertyNames.map((propertyName) => {
-                            const propertyDefinition =
-                                propertiesInGroup[propertyName];
-                            const propertyValue = automaton[propertyName];
-                            const options =
-                                propertyDefinition?.values ??
-                                (propertyDefinition?.mapping &&
-                                    getPossibleOptionsForProperty(
-                                        propertyDefinition?.mapping,
-                                        networkPropertyValues
-                                    )) ??
-                                [];
+        propertyNames?.length > 0 && (
+            <Paper className={classes.group}>
+                {propertyNames.map((propertyName, index) => {
+                    const propertyDefinition =
+                        automatonProperties[propertyName];
+                    const propertyValue = automaton[propertyName];
+                    const options =
+                        propertyDefinition?.values ??
+                        (propertyDefinition?.mapping &&
+                            getPossibleOptionsForProperty(
+                                propertyDefinition?.mapping,
+                                networkPropertyValues
+                            )) ??
+                        [];
 
-                            return (
-                                <Grid
-                                    container
-                                    justify={'flex-start'}
-                                    key={propertyName}
-                                >
-                                    <Grid
-                                        item
-                                        xs="auto"
-                                        className={classes.label}
-                                    >
+                    return (
+                        <Grid container key={propertyName}>
+                            <Grid container justify={'flex-start'} xs={6}>
+                                <Grid container>
+                                    <Grid item xs={4} className={classes.label}>
                                         <Typography>{`${propertyDefinition.label} :`}</Typography>
                                     </Grid>
-                                    <Grid
-                                        item
-                                        xs="auto"
-                                        className={classes.value}
-                                    >
+                                    <Grid item xs={8} className={classes.value}>
                                         <Autocomplete
                                             isFree={
                                                 !(options && options.length > 0)
@@ -80,6 +57,7 @@ const AutomatonProperties = ({
                                             isMultiple={
                                                 propertyDefinition.multiple
                                             }
+                                            adaptiveWidth={false}
                                             value={
                                                 propertyValue ??
                                                 (propertyDefinition.multiple
@@ -104,15 +82,26 @@ const AutomatonProperties = ({
                                             ignoreReset={
                                                 !(options && options.length > 0)
                                             }
+                                            fixedWidth
                                         />
                                     </Grid>
                                 </Grid>
-                            );
-                        })}
-                    </div>
-                );
-            })}
-        </>
+                                {index !== propertyNames.length - 1 && (
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sx={{ paddingRight: '8px' }}
+                                    >
+                                        <Divider />
+                                    </Grid>
+                                )}
+                            </Grid>
+                            <Grid item xs></Grid>
+                        </Grid>
+                    );
+                })}
+            </Paper>
+        )
     );
 };
 

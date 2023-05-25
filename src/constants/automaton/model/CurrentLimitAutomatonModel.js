@@ -30,7 +30,6 @@ const CurrentLimitAutomatonModel = {
                     label: 'Two',
                 },
             ],
-            group: 'Additional properties',
         },
     },
 };

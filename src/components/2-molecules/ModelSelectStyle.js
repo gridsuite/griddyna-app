@@ -8,7 +8,9 @@
 import makeStyles from '@mui/styles/makeStyles';
 
 export const useStyles = makeStyles((theme) => ({
-    titleSelect: {},
+    titleSelect: {
+        textAlign: 'right',
+    },
     box: {},
     infoGrid: {
         height: '100%',

@@ -28,7 +28,8 @@ const Autocomplete = (props) => {
         isMultiple = false,
         ignoreReset = false,
         label,
-        fullWidth,
+        fixedWidth = false,
+        ...rest
     } = props;
 
     const matchMultipleOptions = useCallback(
@@ -66,17 +67,7 @@ const Autocomplete = (props) => {
     );
 
     const classes = useStyles({
-        labelLength:
-            inputValue.length +
-            (isMultiple
-                ? selectedOption.reduce(
-                      (accLength, currentValue) =>
-                          accLength + currentValue.label.length,
-                      0
-                  )
-                : 0),
-        selectedOptions: isMultiple ? value.length : 0,
-        fullWidth: fullWidth,
+        inputLength: fixedWidth ? undefined : inputValue.length,
     });
 
     const [updateFlag, setUpdateFlag] = useState(false);
@@ -184,6 +175,7 @@ const Autocomplete = (props) => {
                     style={{ width: 'fit-content' }}
                 />
             )}
+            {...rest}
         />
     );
 };
@@ -204,7 +196,7 @@ Autocomplete.propTypes = {
     error: PropTypes.bool,
     ignoreReset: PropTypes.bool,
     label: PropTypes.string,
-    fullWidth: PropTypes.bool,
+    fixedWidth: PropTypes.bool,
 };
 
 export default Autocomplete;

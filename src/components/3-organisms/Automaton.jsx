@@ -62,10 +62,10 @@ const Automaton = (props) => {
                 </Grid>
             </Grid>
             <Grid container justify={'flex-start'}>
-                <Grid item xs="auto" className={classes.label}>
+                <Grid item xs={2} className={classes.label}>
                     <Typography>{`${familyLabel} :`}</Typography>
                 </Grid>
-                <Grid item xs="auto" className={classes.select}>
+                <Grid item xs={4} className={classes.select}>
                     <Select
                         options={getAutomatonFamiliesOptions()}
                         value={family}
@@ -73,6 +73,7 @@ const Automaton = (props) => {
                         error={family === ''}
                     />
                 </Grid>
+                <Grid item xs></Grid>
             </Grid>
             <AutomatonProperties
                 automaton={automaton}

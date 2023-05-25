@@ -5,7 +5,7 @@ import { useStyles } from './ModelSelectStyle';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { SetType } from '../../constants/models';
-import { SaveButton } from '../1-atoms/buttons';
+import { EditButton } from '../1-atoms/buttons';
 
 const modelLabel = 'should be mapped to';
 const setLabel = 'and use parameters group';
@@ -80,12 +80,12 @@ const ModelSelect = (props) => {
     return (
         <Box className={classes.box}>
             <Grid container justify={'center'}>
-                <Grid item xs="auto">
+                <Grid item xs={6}>
                     <Grid container justify={'center'}>
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${modelLabel} :`}</Typography>
                         </Grid>
-                        <Grid item xs="auto" className={classes.titleSelect}>
+                        <Grid item xs className={classes.titleSelect}>
                             <Select
                                 options={getModelsOptions(models)}
                                 value={model}
@@ -98,7 +98,7 @@ const ModelSelect = (props) => {
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${isAbsoluteLabel} :`}</Typography>
                         </Grid>
-                        <Grid item xs="auto">
+                        <Grid item container xs justifyContent={'flex-end'}>
                             <Checkbox
                                 checked={isAbsolute}
                                 onChange={onAbsoluteChange}
@@ -110,7 +110,7 @@ const ModelSelect = (props) => {
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${setLabel} :`}</Typography>
                         </Grid>
-                        <Grid item xs="auto" className={classes.titleSelect}>
+                        <Grid item xs className={classes.titleSelect}>
                             <Select
                                 options={groupOptions}
                                 value={foundGroup}
@@ -120,24 +120,24 @@ const ModelSelect = (props) => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={2}>
-                    <Grid container className={classes.infoGrid}>
-                        <Grid item xs={3} className={classes.tooltip}></Grid>
-                        <Grid item xs={9} className={classes.button}>
-                            <SaveButton
-                                onClick={editGroup(isAbsolute)}
-                                disabled={
-                                    model === '' ||
-                                    (setGroup && !controlledParameters)
-                                }
-                                tooltip={
-                                    setGroup && !controlledParameters
-                                        ? simpledEditLabel
-                                        : editGroupLabel
-                                }
-                            />
-                        </Grid>
-                    </Grid>
+                <Grid
+                    item
+                    xs={1}
+                    className={classes.button}
+                    alignItems={'flex-end'}
+                >
+                    <EditButton
+                        onClick={editGroup(isAbsolute)}
+                        disabled={
+                            model === '' || (setGroup && !controlledParameters)
+                        }
+                        tooltip={
+                            setGroup && !controlledParameters
+                                ? simpledEditLabel
+                                : editGroupLabel
+                        }
+                        sx={{ marginBottom: 1 }}
+                    />
                 </Grid>
             </Grid>
         </Box>
