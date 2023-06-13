@@ -141,6 +141,9 @@ export const AutomatonProperties = {
                 },
             ],
         },
+        controlledQuadripole: {
+            type: 'string',
+        },
     },
 };
 Object.freeze(AutomatonProperties);
