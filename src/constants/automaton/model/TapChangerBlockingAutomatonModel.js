@@ -7,8 +7,8 @@
 
 import { EquipmentType, PropertyType } from '../../equipmentType';
 
-const TapChangerBlockingModel = {
-    TapChangerBlocking: {
+const TapChangerBlockingAutomatonModel = {
+    TapChangerBlockingAutomaton: {
         name: {
             type: PropertyType.STRING,
             label: 'Name',
@@ -38,4 +38,4 @@ const TapChangerBlockingModel = {
     },
 };
 
-export default TapChangerBlockingModel;
+export default TapChangerBlockingAutomatonModel;

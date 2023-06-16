@@ -5,13 +5,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import TapChangerBlockingModel from './model/TapChangerBlockingModel';
+import TapChangerBlockingAutomatonModel from './model/TapChangerBlockingAutomatonModel';
 import CurrentLimitAutomatonModel from './model/CurrentLimitAutomatonModel';
 
 export const CommonAutomatonModelGroupPlugins = [
     {
-        id: 'TapChangerBlockingModel',
-        model: TapChangerBlockingModel,
+        id: 'TapChangerBlockingAutomatonModel',
+        model: TapChangerBlockingAutomatonModel,
     },
     {
         id: 'CurrentLimitAutomatonModel',
