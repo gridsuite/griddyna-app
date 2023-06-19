@@ -87,19 +87,30 @@ const transformMapping = (receivedMapping) => {
     } else {
         mapping['automata'] = receivedMapping.automata.map(
             (receivedAutomaton) => {
-                const { family, model, setGroup, ...otherProperties } =
+                const { family, model, setGroup, properties } =
                     receivedAutomaton;
 
                 // init transformed automaton with basic attributes
                 const automaton = { family, model, setGroup };
 
                 // set properties depending on model
+                const modelPropertyDefinitions =
+                    getAutomatonPropertiesByModel(model);
                 const propertiesNames = Object.keys(
-                    getAutomatonPropertiesByModel(model) ?? {}
+                    modelPropertyDefinitions ?? {}
                 );
                 propertiesNames.forEach((modelPropertyName) => {
-                    automaton[modelPropertyName] =
-                        otherProperties[modelPropertyName];
+                    const foundIndex = properties.findIndex(
+                        (property) => property.name === modelPropertyName
+                    );
+                    if (foundIndex !== -1) {
+                        const value = properties[foundIndex].value;
+                        automaton[modelPropertyName] = modelPropertyDefinitions[
+                            modelPropertyName
+                        ].multiple
+                            ? _.split(value, ', ')
+                            : value;
+                    }
                 });
 
                 return automaton;
@@ -506,20 +517,30 @@ export const postMapping = createAsyncThunk(
                   )?.automata
                 : state?.mappings.automata;
         const formattedAutomata = automata.map((automaton) => {
-            const { family, model, setGroup } = automaton;
+            const { family, model, setGroup, ...otherProperties } = automaton;
             const formattedAutomaton = {
                 family,
                 model,
                 setGroup,
+                properties: [],
             };
 
             // for specific properties of model
+            const modelPropertyDefinitions =
+                getAutomatonPropertiesByModel(model);
             const modelPropertyNames = Object.keys(
-                getAutomatonPropertiesByModel(model)
+                modelPropertyDefinitions ?? {}
             );
             modelPropertyNames.forEach((modelPropertyName) => {
-                formattedAutomaton[modelPropertyName] =
-                    automaton[modelPropertyName];
+                const value = otherProperties[modelPropertyName];
+                formattedAutomaton.properties = [
+                    ...formattedAutomaton.properties,
+                    {
+                        name: modelPropertyName,
+                        value: _.isArray(value) ? _.join(value, ', ') : value,
+                        type: modelPropertyDefinitions[modelPropertyName].type,
+                    },
+                ];
             });
 
             return formattedAutomaton;

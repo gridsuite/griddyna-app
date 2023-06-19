@@ -9,7 +9,7 @@ import { EquipmentType, PropertyType } from '../../equipmentType';
 
 const CurrentLimitAutomatonModel = {
     CurrentLimitAutomaton: {
-        watchedElement: {
+        staticId: {
             type: PropertyType.STRING,
             label: 'On equipment',
             mapping: {
@@ -18,7 +18,7 @@ const CurrentLimitAutomatonModel = {
             },
         },
         side: {
-            type: PropertyType.STRING,
+            type: PropertyType.ENUM,
             label: 'Side',
             values: [
                 {
