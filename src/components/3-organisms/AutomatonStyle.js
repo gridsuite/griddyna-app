@@ -23,21 +23,13 @@ export const useStyles = makeStyles((theme) => ({
         },
     }),
     label: {
-        textAlign: 'right',
+        textAlign: 'left',
         marginTop: '12px',
         '& .MuiTypography-root': {
             fontWeight: 'bold',
         },
     },
-    value: {
-        margin: '8px',
-        '& .MuiFormControl-root .MuiInput-root': {
-            minHeight: '2em',
-            '& .MuiSelect-root': {
-                paddingTop: 0,
-                paddingBottom: 0,
-            },
-        },
+    select: {
+        textAlign: 'right',
     },
-    select: {},
 }));

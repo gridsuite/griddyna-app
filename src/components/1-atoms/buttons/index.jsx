@@ -17,6 +17,7 @@ import LoopIcon from '@mui/icons-material/Loop';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
 
 export const AddIconButton = (props) => (
     <IconButton icon={<AddCircleIcon />} {...props} />
@@ -54,4 +55,7 @@ export const ApplyOneButton = (props) => (
 );
 export const ApplyAllButton = (props) => (
     <IconButton icon={<DoneAllIcon />} {...props} />
+);
+export const EditButton = (props) => (
+    <IconButton icon={<SaveAsIcon />} {...props} />
 );

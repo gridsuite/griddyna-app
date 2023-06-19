@@ -10,6 +10,7 @@ import makeStyles from '@mui/styles/makeStyles';
 export const useStyles = makeStyles({
     idVerticalAlign: {
         marginTop: '1em',
+        marginLeft: '1em',
     },
     margins: {
         padding: '1em',

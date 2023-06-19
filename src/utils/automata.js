@@ -5,20 +5,30 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    AutomatonFamily,
-    AutomatonProperties,
-} from '../constants/equipmentDefinition';
+import { AutomatonProperties } from '../constants/automatonDefinition';
 
-export const getPossibleEquipmentTypesFromAutomatonFamily = (family) => {
-    switch (family) {
-        case AutomatonFamily.CURRENT_LIMIT:
-            return ['LINE'];
-        default:
-            return [];
-    }
+export const getAutomatonPropertiesByModel = (model) => {
+    return AutomatonProperties[model];
 };
 
-export const getAutomatonProperty = (automatonFamily, property) => {
-    return AutomatonProperties[automatonFamily][property];
+export const getPossibleOptionsForProperty = (
+    propertyMappingDefinition,
+    networkPropertyValues
+) => {
+    const possibleTypes = propertyMappingDefinition.equipmentType;
+    const possibleValues = possibleTypes.reduce(
+        (arr, possibleType) => [
+            ...arr,
+            ...(networkPropertyValues?.find(
+                (networkPropertyValues) =>
+                    networkPropertyValues.type === possibleType
+            )?.values[propertyMappingDefinition.equipmentProperty] ?? []),
+        ],
+        []
+    );
+
+    return possibleValues.map((possibleValue) => ({
+        value: possibleValue,
+        label: possibleValue,
+    }));
 };

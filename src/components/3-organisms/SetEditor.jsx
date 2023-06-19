@@ -59,11 +59,15 @@ const SetEditor = (props) => {
                         (param) => param.name === definition.name
                     );
                     return (
-                        <Grid container justify="space-evenly">
-                            <Grid item xs={5}>
+                        <Grid
+                            container
+                            justify="space-evenly"
+                            sx={{ padding: '8px 0px' }}
+                        >
+                            <Grid item xs={7}>
                                 <Typography>{definition.name}</Typography>
                             </Grid>
-                            <Grid item xs={5}>
+                            <Grid item xs={4}>
                                 <TextField
                                     id={definition.name}
                                     value={
@@ -85,9 +89,16 @@ const SetEditor = (props) => {
                                         definition.origin !==
                                         ParameterOrigin.USER
                                     }
+                                    sx={{ width: '100%' }}
                                 />
                             </Grid>
-                            <Grid item xs={1}>
+                            <Grid
+                                item
+                                xs
+                                container
+                                alignItems={'center'}
+                                justifyContent={'center'}
+                            >
                                 <Tooltip
                                     title={infoTypeLabel + definition.type}
                                 >
