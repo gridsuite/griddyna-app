@@ -9,6 +9,10 @@ import { EquipmentType, PropertyType } from '../../equipmentType';
 
 const CurrentLimitAutomatonModel = {
     CurrentLimitAutomaton: {
+        name: {
+            type: PropertyType.STRING,
+            label: 'Name',
+        },
         staticId: {
             type: PropertyType.STRING,
             label: 'On equipment',
