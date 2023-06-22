@@ -5,34 +5,53 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Divider, Grid, Paper, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonPropertiesStyle';
-import {
-    getAutomatonPropertiesByModel,
-    getPossibleOptionsForProperty,
-} from '../../../utils/automata';
+import { getPossibleOptionsForProperty } from '../../../utils/automata';
+import * as _ from 'lodash';
 
 const AutomatonProperties = ({
     automaton,
+    automatonDefinition,
     networkPropertyValues,
     onChangeProperty = () => {},
 }) => {
     const classes = useStyles();
 
-    const automatonProperties =
-        getAutomatonPropertiesByModel(automaton?.model) ?? {};
-    const propertyNames = Object.keys(automatonProperties);
+    const propertyNames = Object.keys(automatonDefinition);
 
+    const handleChangeProperty = useCallback(
+        (propertyName, propertyType) => (propertyValue) => {
+            onChangeProperty(
+                propertyName,
+                propertyType
+            )(
+                // convert an array to a string content with ',' delimiter
+                _.isArray(propertyValue)
+                    ? _.join(propertyValue, ', ')
+                    : propertyValue
+            );
+        },
+        [onChangeProperty]
+    );
     return (
         propertyNames?.length > 0 && (
             <Paper className={classes.group}>
                 {propertyNames.map((propertyName, index) => {
                     const propertyDefinition =
-                        automatonProperties[propertyName];
-                    const propertyValue = automaton[propertyName];
+                        automatonDefinition[propertyName];
+                    const property = automaton.properties.find(
+                        (elem) => elem.name === propertyName
+                    );
+
+                    // convert a string content with ',' delimiter to an array
+                    const propertyValue = propertyDefinition.multiple
+                        ? _.split(property?.value, ', ')
+                        : property?.value;
+
                     const options =
                         propertyDefinition?.values ??
                         (propertyDefinition?.mapping &&
@@ -63,8 +82,9 @@ const AutomatonProperties = ({
                                                     ? []
                                                     : propertyValue)
                                             }
-                                            onChange={onChangeProperty(
-                                                propertyName
+                                            onChange={handleChangeProperty(
+                                                propertyName,
+                                                propertyDefinition?.type
                                             )}
                                             options={options}
                                             type={
@@ -106,6 +126,7 @@ const AutomatonProperties = ({
 
 AutomatonProperties.propTypes = {
     automaton: PropTypes.object,
+    automatonDefinition: PropTypes.object,
     networkPropertyValues: PropTypes.array,
     onChangeProperty: PropTypes.func,
 };

@@ -5,12 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { AutomatonProperties } from '../constants/automatonDefinition';
-
-export const getAutomatonPropertiesByModel = (model) => {
-    return AutomatonProperties[model];
-};
-
 export const getPossibleOptionsForProperty = (
     propertyMappingDefinition,
     networkPropertyValues

@@ -5,18 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { CommonAutomatonModelGroupPlugins } from './automaton';
-import { ExtendedAutomatonModelGroupPlugins } from '../plugins';
-
 export const AutomatonFamily = {
     CURRENT_LIMIT: 'CURRENT_LIMIT',
     VOLTAGE: 'VOLTAGE',
 };
 Object.freeze(AutomatonFamily);
-
-export const AutomatonProperties = {
-    ...CommonAutomatonModelGroupPlugins.concat(
-        ExtendedAutomatonModelGroupPlugins
-    ).reduce((obj, plugin) => ({ ...obj, ...plugin.model }), {}),
-};
-Object.freeze(AutomatonProperties);

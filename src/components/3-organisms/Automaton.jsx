@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
@@ -20,6 +20,7 @@ import SetGroupSelect from '../2-molecules/SetGroupSelect';
 const Automaton = (props) => {
     const {
         automaton,
+        automatonDefinition = {},
         isAutomatonValid = true,
         changeFamily,
         changeModel,
@@ -41,9 +42,16 @@ const Automaton = (props) => {
     const copyAutomatonLabel = 'Copy automaton';
     const familyLabel = 'Of Family';
 
-    const onChangeProperty = (propertyName) => (propertyValue) => {
-        changeProperty({ name: propertyName, value: propertyValue });
-    };
+    const onChangeProperty = useCallback(
+        (propertyName, propertyType) => (propertyValue) => {
+            changeProperty({
+                name: propertyName,
+                value: propertyValue,
+                type: propertyType,
+            });
+        },
+        [changeProperty]
+    );
 
     return (
         <Paper elevation={0} className={classes.automatonPaper}>
@@ -83,6 +91,7 @@ const Automaton = (props) => {
             />
             <AutomatonProperties
                 automaton={automaton}
+                automatonDefinition={automatonDefinition}
                 networkPropertyValues={networkPropertyValues}
                 onChangeProperty={onChangeProperty}
             />
@@ -102,6 +111,7 @@ const Automaton = (props) => {
 
 Automaton.propTypes = {
     automaton: PropTypes.object.isRequired,
+    automatonDefinition: PropTypes.object.isRequired,
     isAutomatonValid: PropTypes.bool,
     changeFamily: PropTypes.func.isRequired,
     changeModel: PropTypes.func.isRequired,

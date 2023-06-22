@@ -12,7 +12,10 @@ import {
     makeIsAutomatonValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
-import { makeGetModels } from '../redux/slices/Model';
+import {
+    makeGetAutomatonDefinition,
+    makeGetModels,
+} from '../redux/slices/Model';
 import {
     getCurrentNetworkId,
     makeGetPropertyValues,
@@ -25,6 +28,12 @@ const AutomatonContainer = ({ index, editParameters }) => {
     const getAutomaton = useMemo(makeGetAutomaton, []);
     const automaton = useSelector((state) => getAutomaton(state, index));
     const { model, setGroup } = automaton;
+
+    const getAutomatonDefinition = useMemo(makeGetAutomatonDefinition, []);
+    const automatonDefinition = useSelector((state) =>
+        getAutomatonDefinition(state, model)
+    );
+
     const isAutomatonValidSelector = useMemo(makeIsAutomatonValid, []);
     const isAutomatonValid = useSelector((state) =>
         isAutomatonValidSelector(state, index)
@@ -51,13 +60,16 @@ const AutomatonContainer = ({ index, editParameters }) => {
             })
         );
 
-    const changeProperty = (property) =>
-        dispatch(
-            MappingSlice.actions.changeAutomatonPropertyValue({
-                index,
-                property,
-            })
-        );
+    const changeProperty = useCallback(
+        (property) =>
+            dispatch(
+                MappingSlice.actions.changeAutomatonPropertyValue({
+                    index,
+                    property,
+                })
+            ),
+        [dispatch, index]
+    );
 
     const changeModel = useCallback(
         (newModel) =>
@@ -135,6 +147,7 @@ const AutomatonContainer = ({ index, editParameters }) => {
     return (
         <Automaton
             automaton={automaton}
+            automatonDefinition={automatonDefinition}
             isAutomatonValid={isAutomatonValid}
             changeFamily={changeFamily}
             changeModel={changeModel}
