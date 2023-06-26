@@ -22,7 +22,6 @@ jobs:
                   npm run-script test
                   npm run-script build
                   npm run-script test
-                  ls -lR node_modules
 
             - name: Archive artifacts
               uses: actions/upload-artifact@v3
