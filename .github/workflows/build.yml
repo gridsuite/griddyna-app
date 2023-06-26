@@ -22,6 +22,14 @@ jobs:
                   npm run-script test
                   npm run-script build
                   npm run-script test
+                  ls -lR node_modules
+
+            - name: Archive artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: dist-without-markdown
+                path: |
+                  node_modules/common-libraries
 
             - name: Build and publish Docker image - Main
               if: github.ref == 'refs/heads/main'
