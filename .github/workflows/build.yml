@@ -27,9 +27,9 @@ jobs:
             - name: Archive artifacts
               uses: actions/upload-artifact@v3
               with:
-                name: dist-without-markdown
+                name: node-modules-gridsuite
                 path: |
-                  node_modules/common-libraries
+                  node_modules/@gridsuite
 
             - name: Build and publish Docker image - Main
               if: github.ref == 'refs/heads/main'
