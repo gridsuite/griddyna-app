@@ -87,7 +87,7 @@ const AutomatonContainer = ({ index, editParameters }) => {
             dispatch(
                 MappingSlice.actions.changeAutomatonParameters({
                     index,
-                    parameters: group.name,
+                    parameters: group?.name,
                 })
             ),
         [dispatch, index]

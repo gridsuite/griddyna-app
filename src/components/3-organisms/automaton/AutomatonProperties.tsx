@@ -6,35 +6,51 @@
  */
 
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { Divider, Grid, Paper, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
 import * as _ from 'lodash';
+import { Automaton } from '../../../redux/types/mapping';
+import {
+    AutomationDefinition,
+    PropertyMappingDefinition,
+} from '../../../redux/types/model';
+import { EquipmentValues } from '../../../redux/types/network';
+
+export interface AutomatonPropertiesProps {
+    automaton: Automaton;
+    automatonDefinition: AutomationDefinition;
+    networkPropertyValues: EquipmentValues[];
+    onChangeProperty: (
+        propertyName: string,
+        propertyType?: string
+    ) => (propertyValue: string) => void;
+}
 
 const AutomatonProperties = ({
     automaton,
     automatonDefinition,
     networkPropertyValues,
-    onChangeProperty = () => {},
-}) => {
+    onChangeProperty,
+}: AutomatonPropertiesProps) => {
     const classes = useStyles();
 
     const propertyNames = Object.keys(automatonDefinition);
 
     const handleChangeProperty = useCallback(
-        (propertyName, propertyType) => (propertyValue) => {
-            onChangeProperty(
-                propertyName,
-                propertyType
-            )(
-                // convert an array to a string content with ',' delimiter
-                _.isArray(propertyValue)
-                    ? _.join(propertyValue, ', ')
-                    : propertyValue
-            );
-        },
+        (propertyName: string, propertyType?: string) =>
+            (propertyValue: string) => {
+                onChangeProperty(
+                    propertyName,
+                    propertyType
+                )(
+                    // convert an array to a string content with ',' delimiter
+                    _.isArray(propertyValue)
+                        ? _.join(propertyValue, ', ')
+                        : propertyValue
+                );
+            },
         [onChangeProperty]
     );
     return (
@@ -50,20 +66,25 @@ const AutomatonProperties = ({
                     // convert a string content with ',' delimiter to an array
                     const propertyValue = propertyDefinition.multiple
                         ? _.split(property?.value, ', ')
-                        : property?.value;
+                        : property?.value ?? '';
 
                     const options =
                         propertyDefinition?.values ??
                         (propertyDefinition?.mapping &&
                             getPossibleOptionsForProperty(
-                                propertyDefinition?.mapping,
+                                propertyDefinition?.mapping as PropertyMappingDefinition,
                                 networkPropertyValues
                             )) ??
                         [];
 
                     return (
                         <Grid container key={propertyName}>
-                            <Grid container item justify={'flex-start'} xs={6}>
+                            <Grid
+                                container
+                                item
+                                justifyContent={'flex-start'}
+                                xs={6}
+                            >
                                 <Grid container>
                                     <Grid item xs={4} className={classes.label}>
                                         <Typography>{`${propertyDefinition.label} :`}</Typography>
@@ -122,13 +143,6 @@ const AutomatonProperties = ({
             </Paper>
         )
     );
-};
-
-AutomatonProperties.propTypes = {
-    automaton: PropTypes.object,
-    automatonDefinition: PropTypes.object,
-    networkPropertyValues: PropTypes.array,
-    onChangeProperty: PropTypes.func,
 };
 
 export default AutomatonProperties;

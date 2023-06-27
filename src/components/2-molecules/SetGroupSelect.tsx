@@ -9,9 +9,9 @@ import { Box, Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { useStyles } from './SetGroupSelectStyle';
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
+import { Group, Model } from '../../redux/types/model';
 
 const setLabel = 'and use parameters group';
 const editGroupLabel = 'Edit the parameters group and/or the parameters sets';
@@ -20,12 +20,25 @@ const simpledEditLabel =
 const newGroupLabel = 'Create new group';
 const isAbsoluteLabel = 'All equipments share the same .par file';
 
-const parName = (type, name) =>
-    (type === SetType.SUFFIX ? '{id}' : '') +
-    name +
-    (type === SetType.PREFIX ? '{id}' : '');
+const parName = (group: Group) =>
+    (group.type === SetType.SUFFIX ? '{id}' : '') +
+    group.name +
+    (group.type === SetType.PREFIX ? '{id}' : '');
 
-const SetGroupSelect = (props) => {
+interface SetGroupSelectProps {
+    model: string;
+    models: Model[];
+    setGroup: string;
+    groupType: string;
+    changeGroup: (group: Group) => void;
+    editGroup: (isAbsolute: boolean) => (group: Group) => void;
+    controlledParameters: boolean;
+    isNetworkAttached: boolean;
+}
+
+const newEmptyGroup = { name: '', type: '', setsNumber: 0 };
+
+const SetGroupSelect = (props: SetGroupSelectProps) => {
     const {
         model,
         models,
@@ -42,7 +55,7 @@ const SetGroupSelect = (props) => {
 
     const groups = mappedModel ? mappedModel.groups : [];
 
-    const foundGroup = mappedModel?.groups.find(
+    const foundGroup: Group | undefined = mappedModel?.groups.find(
         (group) => group.name === setGroup && group.type === groupType
     );
 
@@ -61,19 +74,19 @@ const SetGroupSelect = (props) => {
 
     const onAbsoluteChange = () => {
         setIsAbsolute(!isAbsolute);
-        changeGroup({ name: '', type: '' });
+        changeGroup(newEmptyGroup);
     };
-    const groupOptions = groups
+    let groupOptions: { label: string; value?: Group }[] = groups
         .filter((group) =>
             isAbsolute
                 ? group.type === SetType.FIXED
                 : group.type !== SetType.FIXED
         )
         .map((group) => ({
-            label: parName(group.type, group.name),
+            label: parName(group),
             value: group,
         }));
-    groupOptions.push({ label: newGroupLabel, value: '' });
+    groupOptions.push({ label: newGroupLabel });
 
     const errorInParams =
         controlledParameters &&
@@ -83,9 +96,9 @@ const SetGroupSelect = (props) => {
 
     return (
         <Box className={classes.box}>
-            <Grid container justify={'center'}>
+            <Grid container justifyContent={'flex-start'}>
                 <Grid item xs={6}>
-                    <Grid container justify={'center'}>
+                    <Grid container justifyContent={'flex-start'}>
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${isAbsoluteLabel} :`}</Typography>
                         </Grid>
@@ -97,14 +110,14 @@ const SetGroupSelect = (props) => {
                             />
                         </Grid>
                     </Grid>
-                    <Grid container justify={'center'}>
+                    <Grid container justifyContent={'flex-start'}>
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${setLabel} :`}</Typography>
                         </Grid>
                         <Grid item xs className={classes.titleSelect}>
                             <Select
                                 options={groupOptions}
-                                value={foundGroup}
+                                value={foundGroup ?? newEmptyGroup}
                                 setValue={changeGroup}
                                 error={foundGroup === undefined}
                             />
@@ -133,17 +146,6 @@ const SetGroupSelect = (props) => {
             </Grid>
         </Box>
     );
-};
-
-SetGroupSelect.propTypes = {
-    model: PropTypes.string.isRequired,
-    models: PropTypes.arrayOf(PropTypes.object).isRequired,
-    setGroup: PropTypes.string.isRequired,
-    groupType: PropTypes.string.isRequired,
-    changeGroup: PropTypes.func.isRequired,
-    editGroup: PropTypes.func.isRequired,
-    controlledParameters: PropTypes.bool,
-    isNetworkAttached: PropTypes.bool.isRequired,
 };
 
 export default SetGroupSelect;

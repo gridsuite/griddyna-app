@@ -6,7 +6,8 @@
  */
 
 import makeStyles from '@mui/styles/makeStyles';
-export const useStyles = makeStyles((theme) => ({
+import { Theme } from '@mui/material';
+export const useStyles = makeStyles<Theme>((theme) => ({
     label: {
         textAlign: 'left',
         marginTop: '12px',

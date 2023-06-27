@@ -5,20 +5,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { PropertyMappingDefinition } from '../redux/types/model';
+import { EquipmentValues } from '../redux/types/network';
+
 export const getPossibleOptionsForProperty = (
-    propertyMappingDefinition,
-    networkPropertyValues
+    propertyMappingDefinition: PropertyMappingDefinition,
+    networkPropertyValues: EquipmentValues[]
 ) => {
-    const possibleTypes = propertyMappingDefinition.equipmentType;
+    const possibleTypes = propertyMappingDefinition.equipmentTypes;
     const possibleValues = possibleTypes.reduce(
         (arr, possibleType) => [
             ...arr,
             ...(networkPropertyValues?.find(
-                (networkPropertyValues) =>
-                    networkPropertyValues.type === possibleType
+                (equipmentValues) => equipmentValues.type === possibleType
             )?.values[propertyMappingDefinition.equipmentProperty] ?? []),
         ],
-        []
+        [] as string[]
     );
 
     return possibleValues.map((possibleValue) => ({

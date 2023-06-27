@@ -6,8 +6,13 @@
  */
 
 import makeStyles from '@mui/styles/makeStyles';
+import { Theme } from '@mui/material';
 
-export const useStyles = makeStyles((theme) => ({
+export interface StyleProps {
+    errorInParams: boolean;
+}
+
+export const useStyles = makeStyles<Theme, StyleProps>((theme) => ({
     titleSelect: {
         textAlign: 'right',
     },
