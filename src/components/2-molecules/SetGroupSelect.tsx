@@ -11,7 +11,7 @@ import { useStyles } from './SetGroupSelectStyle';
 import React, { useEffect, useState } from 'react';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
-import { Group, Model } from '../../redux/types/model';
+import { Group, Model } from '../../redux/types/model.type';
 
 const setLabel = 'and use parameters group';
 const editGroupLabel = 'Edit the parameters group and/or the parameters sets';

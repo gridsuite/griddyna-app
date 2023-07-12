@@ -11,12 +11,12 @@ import Autocomplete from '../../1-atoms/Autocomplete';
 import { useStyles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
 import * as _ from 'lodash';
-import { Automaton } from '../../../redux/types/mapping';
+import { Automaton } from '../../../redux/types/mapping.type';
 import {
     AutomationDefinition,
     PropertyMappingDefinition,
-} from '../../../redux/types/model';
-import { EquipmentValues } from '../../../redux/types/network';
+} from '../../../redux/types/model.type';
+import { EquipmentValues } from '../../../redux/types/network.type';
 
 export interface AutomatonPropertiesProps {
     automaton: Automaton;

@@ -5,8 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { PropertyMappingDefinition } from '../redux/types/model';
-import { EquipmentValues } from '../redux/types/network';
+import { PropertyMappingDefinition } from '../redux/types/model.type';
+import { EquipmentValues } from '../redux/types/network.type';
 
 export const getPossibleOptionsForProperty = (
     propertyMappingDefinition: PropertyMappingDefinition,
