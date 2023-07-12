@@ -8,23 +8,8 @@
 import makeStyles from '@mui/styles/makeStyles';
 
 export const useStyles = makeStyles((theme) => ({
-    titleSelect: {},
+    titleSelect: {
+        textAlign: 'right',
+    },
     box: {},
-    infoGrid: {
-        height: '100%',
-    },
-    tooltip: {
-        marginTop: '3em',
-        justifyContent: 'center',
-        display: 'flex',
-    },
-    button: ({ errorInParams }) => ({
-        justifyContent: 'center',
-        display: 'flex',
-        '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
-            fontSize: '2em',
-            pointerEvents: 'auto',
-            color: errorInParams ? 'red' : 'unset',
-        },
-    }),
 }));

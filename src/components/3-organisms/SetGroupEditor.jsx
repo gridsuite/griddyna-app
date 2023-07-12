@@ -30,10 +30,10 @@ const SetGroupEditor = (props) => {
     return (
         <>
             <Grid container>
-                <Grid item xs="auto">
+                <Grid item xs>
                     <Typography> {`${nameLabel} :`}</Typography>
                 </Grid>
-                <Grid item xs="8">
+                <Grid item xs={8}>
                     <TextField
                         autoFocus
                         margin="dense"
@@ -48,7 +48,7 @@ const SetGroupEditor = (props) => {
             </Grid>
             {!isAbsolute && (
                 <Grid container>
-                    <Grid item xs="auto">
+                    <Grid item xs>
                         <Typography> {`${typeLabel} :`} </Typography>
                     </Grid>
                     <Grid item xs={8}>

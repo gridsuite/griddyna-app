@@ -18,8 +18,8 @@ import { getPropertiesOptions } from '../utils/optionsBuilders';
 import Filter from '../components/3-organisms/Filter';
 import { getProperty, getValuesOption } from '../utils/properties';
 import PropTypes from 'prop-types';
-import { PropertyType } from '../constants/equipmentDefinition';
 import { multipleOperands } from '../constants/operands';
+import { PropertyType } from '../constants/equipmentType';
 
 const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
     // Data

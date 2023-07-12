@@ -16,9 +16,10 @@ import {
 } from '../1-atoms/buttons';
 import { Grid, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-import { getEquipmentTypesOptions } from '../../utils/optionsBuilders';
+import { getRuleEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { useStyles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
+import SetGroupSelect from '../2-molecules/SetGroupSelect';
 
 const Rule = (props) => {
     const {
@@ -57,8 +58,8 @@ const Rule = (props) => {
     const filterLabel = 'Where';
     const addFilterLabel = 'Add filter';
     const addFilterGroupLabel = 'Add filter group';
-    const deleteRuleLabel = 'Delete rule';
-    const copyRuleLabel = 'Copy Rule';
+    const deleteRuleLabel = 'Delete model';
+    const copyRuleLabel = 'Copy model';
     const useBasicModeLabel = 'Use simple filters mode';
     const useAdvancedModeLabel = 'Use advanced filters mode';
     const unusedFiltersLabel = 'You have unused filter(s)';
@@ -79,7 +80,7 @@ const Rule = (props) => {
                         </Grid>
                         <Grid item className={classes.titleSelect}>
                             <Select
-                                options={getEquipmentTypesOptions()}
+                                options={getRuleEquipmentTypesOptions()}
                                 value={type}
                                 setValue={changeType}
                                 error={type === ''}
@@ -156,10 +157,14 @@ const Rule = (props) => {
 
             <ModelSelect
                 model={mappedModel}
-                setGroup={setGroup}
-                groupType={groupType}
                 models={models}
                 changeModel={changeModel}
+            />
+            <SetGroupSelect
+                model={mappedModel}
+                models={models}
+                setGroup={setGroup}
+                groupType={groupType}
                 changeGroup={changeParameters}
                 editGroup={editGroup}
                 controlledParameters={controlledParameters}

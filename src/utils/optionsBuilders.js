@@ -11,17 +11,14 @@ import {
     NumberOperands,
     StringOperands,
 } from '../constants/operands';
-import {
-    AutomatonFamily,
-    EquipmentProperties,
-    EquipmentType,
-    PropertyType,
-} from '../constants/equipmentDefinition';
+import { EquipmentProperties } from '../constants/equipmentDefinition';
 import { SetType } from '../constants/models';
+import { AutomatonFamily } from '../constants/automatonDefinition';
+import { PropertyType, RuleEquipmentTypes } from '../constants/equipmentType';
 
-export function getEquipmentTypesOptions() {
-    return Object.keys(EquipmentType).map((key) => {
-        const type = EquipmentType[key];
+export function getRuleEquipmentTypesOptions() {
+    return RuleEquipmentTypes.map((elem) => {
+        const type = elem;
         // TODO intl
         return { value: type, label: type };
     });
