@@ -39,7 +39,7 @@ const SetEditor = (props) => {
         const newValueToUse =
             filteredDefinitions.find(
                 (definition) => definition.name === parameterChanged
-            ).type === ParameterType.BOOL
+            ).type === ParameterType.DOUBLE
                 ? newValue.replace(',', '.')
                 : newValue;
         const updatedSet = _.cloneDeep(set);
