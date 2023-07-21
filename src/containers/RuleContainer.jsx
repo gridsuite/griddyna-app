@@ -133,8 +133,8 @@ const RuleContainer = ({ index, editParameters }) => {
             dispatch(
                 MappingSlice.actions.changeRuleParameters({
                     index,
-                    parameters: group.name,
-                    type: group.type,
+                    parameters: group?.name,
+                    type: group?.type,
                 })
             ),
         [dispatch, index]
