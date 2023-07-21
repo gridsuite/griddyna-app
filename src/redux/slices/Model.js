@@ -45,7 +45,7 @@ export const makeGetModels = () =>
         (models, equipmentType) =>
             equipmentType
                 ? models.filter((model) => model.type === equipmentType)
-                : models
+                : []
     );
 
 export const makeGetModel = () =>
