@@ -67,6 +67,7 @@ const AttachDialog = (props) => {
                                     }))}
                                     value={networkId}
                                     onChange={setNetworkId}
+                                    fixedWidth
                                 />
                             </Grid>
                             <Grid item xs={2}>
@@ -97,6 +98,7 @@ const AttachDialog = (props) => {
                             <Grid item xs={2}>
                                 <Button
                                     onClick={() => onAttach('file')}
+                                    className={classes.idVerticalAlign}
                                     disabled={file === null}
                                 >
                                     Attach

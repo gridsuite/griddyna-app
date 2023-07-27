@@ -12,9 +12,8 @@ import {
 } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
-import { PropertyType } from '../../constants/equipmentDefinition';
-import { getPossibleEquipmentTypesFromAutomatonFamily } from '../../utils/automata';
 import { createParameterSelector } from '../selectorUtil';
+import { PropertyType } from '../../constants/equipmentType';
 
 const initialState = {
     propertyValues: [],
@@ -55,25 +54,8 @@ export const makeGetNetworkValues = () =>
         getNetworkValues
     );
 
-export const makeGetPossibleWatchedElements = () =>
-    createSelector(
-        (state) => state.network.propertyValues,
-        (_state, family) => family,
-        (propertyValues, family) => {
-            const possibleTypes =
-                getPossibleEquipmentTypesFromAutomatonFamily(family);
-            const ids = [];
-            possibleTypes.forEach((possibleTime) => {
-                ids.concat(
-                    propertyValues?.find(
-                        (propertyValuesItem) =>
-                            propertyValuesItem.type === possibleTime
-                    )?.values['id'] ?? []
-                );
-            });
-            return ids;
-        }
-    );
+export const makeGetPropertyValues = () =>
+    createSelector(getPropertyValues, (propertyValues) => propertyValues);
 
 export const getCurrentNetworkId = (state) => state.network.currentNetwork;
 
@@ -114,6 +96,7 @@ export const getNetworkNames = createAsyncThunk(
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
+        state.currentNetwork = '';
     },
 };
 

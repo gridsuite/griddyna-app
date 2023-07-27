@@ -40,22 +40,20 @@ import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import FilterBar from '../components/2-molecules/FilterBar';
-import {
-    AutomatonFamily,
-    EquipmentType,
-} from '../constants/equipmentDefinition';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
+import { AutomatonFamily } from '../constants/automatonDefinition';
+import { RuleEquipmentTypes } from '../constants/equipmentType';
 
 // TODO intl
-const ADD_RULE_LABEL = 'Add a rule';
+const ADD_MODEL_LABEL = 'Add a model';
 const CONVERT_LABEL = 'Convert to script';
 const SAVE_LABEL = 'Save Mapping';
 const ATTACH_LABEL = 'Attach a Network';
-const RULES_TITLE = 'Rules';
+const MODELS_TITLE = 'Models';
 const AUTOMATA_TITLE = 'Automata';
 const ADD_AUTOMATON_LABEL = 'Add an automaton';
 const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
@@ -92,7 +90,7 @@ const MappingContainer = () => {
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
 
-    const filterRulesOptions = Object.values(EquipmentType).map((type) => ({
+    const filterRulesOptions = RuleEquipmentTypes.map((type) => ({
         value: type,
         // TODO: intl
         label: `${type} (${sortedRulesNumber[type]})`,
@@ -203,7 +201,7 @@ const MappingContainer = () => {
                 </Grid>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{RULES_TITLE}</Typography>
+                        <Typography>{MODELS_TITLE}</Typography>
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
@@ -218,7 +216,7 @@ const MappingContainer = () => {
                             <Grid item xs={1}>
                                 <AddIconButton
                                     onClick={addRule}
-                                    tooltip={ADD_RULE_LABEL}
+                                    tooltip={ADD_MODEL_LABEL}
                                 />
                             </Grid>
                         </Grid>

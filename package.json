@@ -64,6 +64,7 @@
         ]
     },
     "devDependencies": {
+        "@types/lodash": "^4.14.195",
         "eslint-config-prettier": "^8.0.0",
         "eslint-plugin-prettier": "^4.0.0",
         "http-proxy-middleware": "^2.0.0",

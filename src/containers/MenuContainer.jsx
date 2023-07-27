@@ -27,7 +27,7 @@ import {
     ScriptsSlice,
 } from '../redux/slices/Script';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
-import { getModels } from '../redux/slices/Model';
+import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 
 import { Divider, Typography } from '@mui/material';
 
@@ -48,6 +48,7 @@ const MenuContainer = () => {
         dispatch(getScripts());
         dispatch(getNetworkNames());
         dispatch(getModels());
+        dispatch(getAutomatonDefinitions());
     }, [dispatch]);
 
     // Mappings

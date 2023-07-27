@@ -5,22 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export const EquipmentType = {
-    GENERATOR: 'GENERATOR',
-    LOAD: 'LOAD',
-};
-Object.freeze(EquipmentType);
-
-export const PropertyType = {
-    STRING: 'STRING',
-    BOOLEAN: 'BOOLEAN',
-    NUMBER: 'NUMBER',
-    ENUM: 'ENUM',
-};
-Object.freeze(PropertyType);
+import { EquipmentType, PropertyType } from './equipmentType';
 
 export const EquipmentProperties = {
-    GENERATOR: [
+    [EquipmentType.GENERATOR]: [
         {
             name: 'energySource',
             type: PropertyType.ENUM,
@@ -77,7 +65,7 @@ export const EquipmentProperties = {
             type: PropertyType.NUMBER,
         },
     ],
-    LOAD: [
+    [EquipmentType.LOAD]: [
         {
             name: 'loadType',
             type: PropertyType.ENUM,
@@ -120,30 +108,3 @@ export const EquipmentProperties = {
     ],
 };
 Object.freeze(EquipmentProperties);
-
-export const AutomatonFamily = {
-    CURRENT_LIMIT: 'CURRENT_LIMIT',
-};
-Object.freeze(AutomatonFamily);
-
-export const AutomatonProperties = {
-    CURRENT_LIMIT: {
-        side: {
-            type: 'string',
-            values: [
-                {
-                    value: 'Branch.Side.ONE',
-                    label: 'One',
-                },
-                {
-                    value: 'Branch.Side.TWO',
-                    label: 'Two',
-                },
-            ],
-        },
-        controlledQuadripole: {
-            type: 'string',
-        },
-    },
-};
-Object.freeze(AutomatonProperties);

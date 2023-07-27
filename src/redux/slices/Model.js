@@ -26,10 +26,17 @@ const initialState = {
     models: [],
     currentGroup: DEFAULT_GROUP,
     parameterDefinitions: [],
+    automatonDefinitions: [],
     status: RequestStatus.IDLE,
 };
 
 // Selectors
+export const makeGetAutomatonDefinition = () =>
+    createSelector(
+        (state) => state.models.automatonDefinitions,
+        (_, model) => model,
+        (automatonDefinitions, model) => automatonDefinitions[model] ?? {}
+    );
 
 export const makeGetModels = () =>
     createSelector(
@@ -38,7 +45,7 @@ export const makeGetModels = () =>
         (models, equipmentType) =>
             equipmentType
                 ? models.filter((model) => model.type === equipmentType)
-                : models
+                : []
     );
 
 export const makeGetModel = () =>
@@ -119,6 +126,14 @@ export const postModelSetsGroup = createAsyncThunk(
         const token = getState()?.user.user?.id_token;
         const setGroup = getState()?.models.currentGroup;
         return await modelsAPI.postModelSetsGroup(setGroup, strict, token);
+    }
+);
+
+export const getAutomatonDefinitions = createAsyncThunk(
+    'models/automaton/get/definitions',
+    async (_arg, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+        return await modelsAPI.getAutomatonDefinitions(token);
     }
 );
 
@@ -271,6 +286,17 @@ const extraReducers = {
                 updatedModel.groups[groupIndex] = simpleUpdatedGroup;
             }
         }
+        state.status = RequestStatus.SUCCESS;
+    },
+    [getAutomatonDefinitions.fulfilled]: (state, action) => {
+        const automatonDefinitions = action.payload;
+
+        // received automatonDefinitions is an array of automaton models
+        // => aggregate this array into an object map for the reason of simplicity
+        state.automatonDefinitions = automatonDefinitions.reduce(
+            (obj, automaton) => ({ ...obj, ...automaton }),
+            {}
+        );
         state.status = RequestStatus.SUCCESS;
     },
 };
