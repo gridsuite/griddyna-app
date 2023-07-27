@@ -27,6 +27,7 @@ jobs:
               uses: actions/upload-artifact@v3
               with:
                 name: node-modules-gridsuite
+                retention-days: 2
                 path: |
                   node_modules/@gridsuite
 
