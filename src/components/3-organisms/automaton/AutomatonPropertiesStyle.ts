@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-import { Theme } from '@mui/material';
-export const useStyles = makeStyles<Theme>((theme) => ({
+export const styles = {
     label: {
         textAlign: 'left',
         marginTop: '12px',
@@ -28,4 +26,4 @@ export const useStyles = makeStyles<Theme>((theme) => ({
     group: {
         backgroundColor: 'rgba(255, 255, 255, 0.16)',
     },
-}));
+};

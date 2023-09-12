@@ -5,19 +5,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-import { Theme } from '@mui/material';
-
 export interface StyleProps {
     errorInParams: boolean;
 }
 
-export const useStyles = makeStyles<Theme, StyleProps>((theme) => ({
+export const styles = {
     titleSelect: {
         textAlign: 'right',
     },
-    box: {},
-    button: ({ errorInParams }) => ({
+    button: ({ errorInParams }: StyleProps) => ({
         justifyContent: 'center',
         display: 'flex',
         '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
@@ -26,4 +22,4 @@ export const useStyles = makeStyles<Theme, StyleProps>((theme) => ({
             color: errorInParams ? 'red' : 'unset',
         },
     }),
-}));
+};

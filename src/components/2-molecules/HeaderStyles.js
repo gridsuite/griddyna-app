@@ -5,8 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
 const ICON_SIZE = '2em';
 
 const displayColor = (isValid, isCurrent) => {
@@ -19,17 +17,17 @@ const displayColor = (isValid, isCurrent) => {
     }
 };
 
-export const useStyles = makeStyles({
-    headerBox: ({ isValid, isCurrent }) => ({
+export const styles = ({isValid, isCurrent, isModified}) => ({
+    headerBox: {
         border: '5px solid',
         borderRadius: '10px',
         marginBottom: '5px',
         borderColor: displayColor(isValid, isCurrent),
-    }),
-    title: ({ isModified, isValid, isCurrent }) => ({
+    },
+    title: {
         fontStyle: isModified ? 'italic' : undefined,
         color: displayColor(isValid, isCurrent),
-    }),
+    },
     titleBox: {
         position: 'relative',
         width: '75%',

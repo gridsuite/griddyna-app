@@ -4,15 +4,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
-import makeStyles from '@mui/styles/makeStyles';
-export const useStyles = makeStyles((theme) => ({
-    label: ({ isValid }) => ({
+export const styles = {
+    label: (isValid) => ({
         textAlign: 'right',
         marginTop: '12px',
         '& .MuiTypography-root': {
             fontWeight: 'bold',
-            color: !isValid ? 'red' : theme.palette.text.primary,
+            color: !isValid ? 'red' : 'text.primary',
         },
     }),
     filter: {
@@ -28,4 +26,4 @@ export const useStyles = makeStyles((theme) => ({
             },
         },
     },
-}));
+};

@@ -7,7 +7,7 @@
 
 import { Box, Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
-import { useStyles } from './SetGroupSelectStyle';
+import { styles } from './SetGroupSelectStyle';
 import React, { useEffect, useState } from 'react';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
@@ -92,10 +92,8 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
         controlledParameters &&
         (foundGroup === undefined || foundGroup.setsNumber === 0);
 
-    const classes = useStyles({ errorInParams });
-
     return (
-        <Box className={classes.box}>
+        <Box>
             <Grid container justifyContent={'flex-start'}>
                 <Grid item xs={6}>
                     <Grid container justifyContent={'flex-start'}>
@@ -114,7 +112,7 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${setLabel} :`}</Typography>
                         </Grid>
-                        <Grid item xs className={classes.titleSelect}>
+                        <Grid item xs sx={styles.titleSelect}>
                             <Select
                                 options={groupOptions}
                                 value={foundGroup ?? newEmptyGroup}
@@ -127,7 +125,7 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                 <Grid
                     item
                     xs={1}
-                    className={classes.button}
+                    sx={styles.button({ errorInParams })}
                     alignItems={'flex-end'}
                 >
                     <EditButton

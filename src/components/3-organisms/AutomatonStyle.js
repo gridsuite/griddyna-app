@@ -5,8 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-export const useStyles = makeStyles((theme) => ({
+export const styles = {
     automatonPaper: (isValid) => ({
         border: '2px solid',
         borderRadius: '5px',
@@ -19,7 +18,7 @@ export const useStyles = makeStyles((theme) => ({
     titleLabel: (isValid) => ({
         '& .MuiTypography-root': {
             fontWeight: 'bold',
-            color: !isValid ? 'red' : theme.palette.text.primary,
+            color: !isValid ? 'red' : 'text.primary',
         },
     }),
     label: {
@@ -32,4 +31,4 @@ export const useStyles = makeStyles((theme) => ({
     select: {
         textAlign: 'right',
     },
-}));
+};

@@ -15,7 +15,7 @@ import {
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { useStyles } from './HeaderStyles';
+import { styles } from './HeaderStyles';
 
 const outdatedLabel =
     'Generated elements are outdated, re-generate them to delete this warning';
@@ -36,25 +36,25 @@ const Header = (props) => {
         attachTooltip,
         isCurrent = true,
     } = props;
-    const classes = useStyles({ isModified, isValid, isCurrent });
+    const sxStyles = styles({ isModified, isValid, isCurrent });
     return (
-        <Box className={classes.headerBox}>
+        <Box sx={sxStyles.headerBox}>
             <Box width="100%" display="flex">
                 <Box
-                    className={classes.titleBox}
+                    sx={sxStyles.titleBox}
                     display="flex"
                     alignItems="baseline"
                 >
                     <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                        <Typography variant="h2" className={classes.title}>
+                        <Typography variant="h2" sx={sxStyles.title}>
                             {`${name}${isModified ? '*' : ''} :`}
                         </Typography>
                     </Tooltip>
-                    <Typography variant="h3" className={classes.title}>
+                    <Typography variant="h3" sx={sxStyles.title}>
                         {`${currentNetwork?.networkName ?? ''}`}
                     </Typography>
                 </Box>
-                <Box className={classes.buttonBox}>
+                <Box sx={sxStyles.buttonBox}>
                     {convert !== undefined && (
                         <ConvertButton
                             onClick={convert}

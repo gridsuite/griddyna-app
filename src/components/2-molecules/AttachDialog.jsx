@@ -18,14 +18,13 @@ import {
     Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useStyles } from './AttachDialogStyles';
+import { styles } from './AttachDialogStyles';
 import Autocomplete from '../1-atoms/Autocomplete';
 
 const AttachDialog = (props) => {
     const { open, handleClose, attachWithFile, networks, attachWithId } = props;
     const [file, setFile] = useState(null);
     const [networkId, setNetworkId] = useState('');
-    const classes = useStyles();
 
     const onChangeFile = (event) => {
         setFile(event.target.files[0]);
@@ -58,7 +57,7 @@ const AttachDialog = (props) => {
                 {attachWithId && networks.length > 0 && (
                     <Box>
                         <Typography>Attach a known network :</Typography>
-                        <Grid container className={classes.margins}>
+                        <Grid container sx={styles.margins}>
                             <Grid item xs={10}>
                                 <Autocomplete
                                     options={networks.map((network) => ({
@@ -73,7 +72,7 @@ const AttachDialog = (props) => {
                             <Grid item xs={2}>
                                 <Button
                                     onClick={() => onAttach('id')}
-                                    className={classes.idVerticalAlign}
+                                    sx={styles.idVerticalAlign}
                                     disabled={networkId === ''}
                                 >
                                     Attach
@@ -87,7 +86,7 @@ const AttachDialog = (props) => {
                         <Typography>
                             Attach a new network using the iidm:
                         </Typography>
-                        <Grid container className={classes.margins}>
+                        <Grid container sx={styles.margins}>
                             <Grid item xs={10}>
                                 <input
                                     type="file"
@@ -98,7 +97,7 @@ const AttachDialog = (props) => {
                             <Grid item xs={2}>
                                 <Button
                                     onClick={() => onAttach('file')}
-                                    className={classes.idVerticalAlign}
+                                    sx={styles.idVerticalAlign}
                                     disabled={file === null}
                                 >
                                     Attach

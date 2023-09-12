@@ -17,7 +17,7 @@ import {
 import { Grid, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import { getRuleEquipmentTypesOptions } from '../../utils/optionsBuilders';
-import { useStyles } from './RuleStyle';
+import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
 
@@ -51,7 +51,6 @@ const Rule = (props) => {
         filtersNumber,
         matches = [],
     } = rule;
-    const classes = useStyles(isRuleValid);
     // TODO intl
     const equipmentLabel = 'Each';
     const compositionLabel = 'If';
@@ -69,7 +68,7 @@ const Rule = (props) => {
         changeComposition(event.target.value);
     };
     return (
-        <Paper elevation={0} className={classes.rulePaper}>
+        <Paper elevation={0} sx={styles.rulePaper(isRuleValid)}>
             <Grid container justify={'space-between'}>
                 <Grid item>
                     <Grid container justify={'flex-start'}>
@@ -78,7 +77,7 @@ const Rule = (props) => {
                                 {equipmentLabel}
                             </Typography>
                         </Grid>
-                        <Grid item className={classes.titleSelect}>
+                        <Grid item>
                             <Select
                                 options={getRuleEquipmentTypesOptions()}
                                 value={type}
@@ -90,7 +89,7 @@ const Rule = (props) => {
                             <Typography variant="h4">:</Typography>
                         </Grid>
                         {unusedFilters.length > 0 && (
-                            <Grid item className={classes.unused}>
+                            <Grid item sx={styles.unused}>
                                 <Tooltip
                                     title={`${unusedFiltersLabel}: ${unusedFilters.join(
                                         ', '
@@ -123,7 +122,7 @@ const Rule = (props) => {
             </Grid>
             {filtersNumber > 1 && isAdvancedMode && (
                 <Grid container justify={'flex-start'}>
-                    <Grid item xs={2} className={classes.label}>
+                    <Grid item xs={2} sx={styles.label}>
                         <Typography>{`${compositionLabel} :`}</Typography>
                     </Grid>
                     <Grid item xs={8}>
@@ -137,7 +136,7 @@ const Rule = (props) => {
                 </Grid>
             )}
             <Grid container justify={'space-between'}>
-                <Grid item xs={3} className={classes.filterLabel}>
+                <Grid item xs={3} sx={styles.filterLabel}>
                     <Typography>{`${filterLabel} :`}</Typography>
                 </Grid>
                 <Grid item xs={2}>
@@ -171,7 +170,7 @@ const Rule = (props) => {
                 isNetworkAttached={isNetworkAttached}
             />
             {isNetworkAttached && !!filtersNumber && (
-                <Paper className={classes.matches}>
+                <Paper sx={styles.matches}>
                     <Grid container>
                         <Grid item xs={4}>
                             <Typography variant="h6">

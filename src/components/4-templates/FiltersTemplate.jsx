@@ -7,13 +7,12 @@
 
 import React from 'react';
 import { List, ListItem } from '@mui/material';
-import { useStyles } from './FiltersTemplateStyles';
+import { styles } from './FiltersTemplateStyles';
 
 const FiltersTemplate = (props) => {
     const { children } = props;
-    const classes = useStyles();
     return (
-        <List className={classes.filters}>
+        <List sx={styles.filters}>
             {children.map((filter, index) => {
                 return <ListItem key={`filter-${index}`}>{filter}</ListItem>;
             })}

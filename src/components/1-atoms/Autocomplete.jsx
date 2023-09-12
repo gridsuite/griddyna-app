@@ -12,7 +12,7 @@ import {
     Popper,
     TextField,
 } from '@mui/material';
-import { useStyles } from './AutocompleteStyles';
+import { styles } from './AutocompleteStyles';
 
 const PRECISION = 10e-8;
 
@@ -66,7 +66,7 @@ const Autocomplete = (props) => {
         isMultiple ? '' : value?.toString() ?? ''
     );
 
-    const classes = useStyles({
+    const classes = styles({
         inputLength: fixedWidth ? undefined : inputValue.length,
     });
 
@@ -161,7 +161,7 @@ const Autocomplete = (props) => {
             getOptionLabel={(option) => option?.label ?? ''}
             autoHighlight={!isFree}
             renderOption={renderOption}
-            className={classes.inputWidth}
+            sx={classes.inputWidth}
             renderInput={(params) => (
                 <TextField {...params} label={label} error={error} />
             )}

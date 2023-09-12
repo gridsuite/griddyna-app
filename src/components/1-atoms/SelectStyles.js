@@ -5,23 +5,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export const useStyles = makeStyles((theme) => ({
+export const styles = {
     form: {
-        margin: theme.spacing(1),
+        m: 1,
         minWidth: 120,
         maxWidth: 300,
     },
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
-        marginTop: 0,
+        mt: 0,
     },
     chip: {
-        margin: 0,
+        m: 0,
     },
-}));
+};
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

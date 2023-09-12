@@ -11,7 +11,7 @@ import Select from '../1-atoms/Select';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@mui/material';
 import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
-import { useStyles } from './AutomatonStyle';
+import { styles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
 import AutomatonProperties from './automaton/AutomatonProperties';
@@ -35,7 +35,6 @@ const Automaton = (props) => {
         isNetworkAttached = false,
     } = props;
     const { family, model, setGroup } = automaton;
-    const classes = useStyles(isAutomatonValid);
     // TODO intl
     const automatonLabel = 'Automaton';
     const deleteAutomatonLabel = 'Delete automaton';
@@ -54,9 +53,9 @@ const Automaton = (props) => {
     );
 
     return (
-        <Paper elevation={0} className={classes.automatonPaper}>
+        <Paper elevation={0} sx={styles.automatonPaper(isAutomatonValid)}>
             <Grid container justify={'space-between'}>
-                <Grid item className={classes.titleLabel}>
+                <Grid item sx={styles.titleLabel(isAutomatonValid)}>
                     <Typography variant="h4">{automatonLabel}</Typography>
                 </Grid>
                 <Grid item>
@@ -71,10 +70,10 @@ const Automaton = (props) => {
                 </Grid>
             </Grid>
             <Grid container justify={'flex-start'}>
-                <Grid item xs={2} className={classes.label}>
+                <Grid item xs={2} sx={styles.label}>
                     <Typography>{`${familyLabel} :`}</Typography>
                 </Grid>
-                <Grid item xs={4} className={classes.select}>
+                <Grid item xs={4} sx={styles.select}>
                     <Select
                         options={getAutomatonFamiliesOptions()}
                         value={family}

@@ -13,7 +13,7 @@ import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import Select from '../1-atoms/Select';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { multipleOperands } from '../../constants/operands';
-import { useStyles } from './FilterStyle';
+import { styles } from './FilterStyle';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { PropertyType } from '../../constants/equipmentType';
 
@@ -48,7 +48,6 @@ const Filter = (props) => {
 
     const multiple = multipleOperands.includes(operand);
     const isSelect = possibleValues.length > 0;
-    const classes = useStyles({ isValid, isSelect });
 
     const joinOptions = _.uniqWith(
         [
@@ -92,7 +91,7 @@ const Filter = (props) => {
         <Grid container justify="space-between">
             <Grid item xs={10}>
                 <Grid container justify="center">
-                    <Grid item xs="auto" className={classes.label}>
+                    <Grid item xs="auto" sx={styles.label(isValid)}>
                         <Typography> {`${id} :`}</Typography>
                     </Grid>
                     <Grid item xs="auto">
@@ -111,7 +110,7 @@ const Filter = (props) => {
                             error={operand === ''}
                         />
                     </Grid>
-                    <Grid item xs="auto" className={classes.value}>
+                    <Grid item xs="auto" sx={styles.value}>
                         <Autocomplete
                             isFree={!isSelect}
                             isMultiple={multiple}
