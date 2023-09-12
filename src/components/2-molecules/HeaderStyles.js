@@ -17,7 +17,7 @@ const displayColor = (isValid, isCurrent) => {
     }
 };
 
-export const styles = ({isValid, isCurrent, isModified}) => ({
+export const styles = ({ isValid, isCurrent, isModified }) => ({
     headerBox: {
         border: '5px solid',
         borderRadius: '10px',

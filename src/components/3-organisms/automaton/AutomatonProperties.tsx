@@ -34,7 +34,6 @@ const AutomatonProperties = ({
     networkPropertyValues,
     onChangeProperty,
 }: AutomatonPropertiesProps) => {
-
     const propertyNames = Object.keys(automatonDefinition);
 
     const handleChangeProperty = useCallback(
