@@ -66,7 +66,7 @@ const Autocomplete = (props) => {
         isMultiple ? '' : value?.toString() ?? ''
     );
 
-    const classes = styles({
+    const sxStyles = styles({
         inputLength: fixedWidth ? undefined : inputValue.length,
     });
 
@@ -161,7 +161,7 @@ const Autocomplete = (props) => {
             getOptionLabel={(option) => option?.label ?? ''}
             autoHighlight={!isFree}
             renderOption={renderOption}
-            sx={classes.inputWidth}
+            sx={sxStyles.inputWidth}
             renderInput={(params) => (
                 <TextField {...params} label={label} error={error} />
             )}

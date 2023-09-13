@@ -16,6 +16,7 @@ import { multipleOperands } from '../../constants/operands';
 import { styles } from './FilterStyle';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { PropertyType } from '../../constants/equipmentType';
+import { mergeSx } from 'utils/functions';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';
@@ -91,7 +92,14 @@ const Filter = (props) => {
         <Grid container justify="space-between">
             <Grid item xs={10}>
                 <Grid container justify="center">
-                    <Grid item xs="auto" sx={styles.label(isValid)}>
+                    <Grid
+                        item
+                        xs="auto"
+                        sx={mergeSx(
+                            styles.label,
+                            !isValid && styles.invalidLabel
+                        )}
+                    >
                         <Typography> {`${id} :`}</Typography>
                     </Grid>
                     <Grid item xs="auto">

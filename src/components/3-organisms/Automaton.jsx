@@ -16,6 +16,7 @@ import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
 import AutomatonProperties from './automaton/AutomatonProperties';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
+import { mergeSx } from 'utils/functions';
 
 const Automaton = (props) => {
     const {
@@ -53,9 +54,21 @@ const Automaton = (props) => {
     );
 
     return (
-        <Paper elevation={0} sx={styles.automatonPaper(isAutomatonValid)}>
+        <Paper
+            elevation={0}
+            sx={mergeSx(
+                styles.automatonPaper,
+                !isAutomatonValid && styles.invalidAutomatonPaper
+            )}
+        >
             <Grid container justify={'space-between'}>
-                <Grid item sx={styles.titleLabel(isAutomatonValid)}>
+                <Grid
+                    item
+                    sx={mergeSx(
+                        styles.titleLabel,
+                        !isAutomatonValid && styles.invalidTitleLabel
+                    )}
+                >
                     <Typography variant="h4">{automatonLabel}</Typography>
                 </Grid>
                 <Grid item>

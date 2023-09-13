@@ -6,21 +6,29 @@
  */
 
 export const styles = {
-    automatonPaper: (isValid) => ({
+    automatonPaper: {
         border: '2px solid',
         borderRadius: '5px',
-        borderColor: isValid ? 'black' : 'red',
+        borderColor: 'black',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
         },
-    }),
-    titleLabel: (isValid) => ({
+    },
+    invalidAutomatonPaper: {
+        borderColor: 'red',
+    },
+    titleLabel: {
         '& .MuiTypography-root': {
             fontWeight: 'bold',
-            color: !isValid ? 'red' : 'text.primary',
+            color: 'text.primary',
         },
-    }),
+    },
+    invalidTitleLabel: {
+        '& .MuiTypography-root': {
+            color: 'red',
+        },
+    },
     label: {
         textAlign: 'left',
         marginTop: '12px',

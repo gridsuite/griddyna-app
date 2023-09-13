@@ -134,10 +134,7 @@ function SetSearch(props) {
             expanded={expanded}
             onChange={() => setExpanded((prev) => !prev)}
         >
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                sx={styles.label(true)}
-            >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={styles.label}>
                 <Typography>{SET_SEARCH_LABEL}</Typography>
             </AccordionSummary>
             <Divider />

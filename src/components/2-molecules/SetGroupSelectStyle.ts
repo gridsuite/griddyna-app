@@ -5,21 +5,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export interface StyleProps {
-    errorInParams: boolean;
-}
-
 export const styles = {
     titleSelect: {
         textAlign: 'right',
     },
-    button: ({ errorInParams }: StyleProps) => ({
+    button: {
         justifyContent: 'center',
         display: 'flex',
         '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
             fontSize: '2em',
             pointerEvents: 'auto',
-            color: errorInParams ? 'red' : 'unset',
         },
-    }),
+    },
+    errorButton: {
+        '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
+            color: 'red',
+        },
+    },
 };

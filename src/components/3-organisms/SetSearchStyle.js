@@ -6,14 +6,19 @@
  */
 
 export const styles = {
-    label: (isValid) => ({
+    label: {
         textAlign: 'right',
         marginTop: '12px',
         '& .MuiTypography-root': {
             fontWeight: 'bold',
-            color: !isValid ? 'red' : 'text.primary',
+            color: 'text.primary',
         },
-    }),
+    },
+    invalidLabel: {
+        '& .MuiTypography-root': {
+            color: 'red',
+        },
+    },
     filter: {
         justifyContent: 'center',
     },

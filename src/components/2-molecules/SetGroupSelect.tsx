@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
 import { Group, Model } from '../../redux/types/model.type';
+import { mergeSx } from 'utils/functions';
 
 const setLabel = 'and use parameters group';
 const editGroupLabel = 'Edit the parameters group and/or the parameters sets';
@@ -125,7 +126,10 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                 <Grid
                     item
                     xs={1}
-                    sx={styles.button({ errorInParams })}
+                    sx={mergeSx(
+                        styles.button,
+                        errorInParams && styles.errorButton
+                    )}
                     alignItems={'flex-end'}
                 >
                     <EditButton

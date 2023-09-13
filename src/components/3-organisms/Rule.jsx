@@ -20,6 +20,7 @@ import { getRuleEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
+import { mergeSx } from 'utils/functions';
 
 const Rule = (props) => {
     const {
@@ -68,7 +69,13 @@ const Rule = (props) => {
         changeComposition(event.target.value);
     };
     return (
-        <Paper elevation={0} sx={styles.rulePaper(isRuleValid)}>
+        <Paper
+            elevation={0}
+            sx={mergeSx(
+                styles.rulePaper,
+                !isRuleValid && styles.invalidRulePaper
+            )}
+        >
             <Grid container justify={'space-between'}>
                 <Grid item>
                     <Grid container justify={'flex-start'}>

@@ -7,17 +7,17 @@
 
 export const styles = {
     form: {
-        m: 1,
+        margin: 1,
         minWidth: 120,
         maxWidth: 300,
     },
     chips: {
         display: 'flex',
         flexWrap: 'wrap',
-        mt: 0,
+        marginTop: 0,
     },
     chip: {
-        m: 0,
+        margin: 0,
     },
 };
 

@@ -6,15 +6,18 @@
  */
 
 export const styles = {
-    rulePaper: (isValid) => ({
+    rulePaper: {
         border: '2px solid',
         borderRadius: '5px',
-        borderColor: isValid ? 'black' : 'red',
+        borderColor: 'black',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
         },
-    }),
+    },
+    invalidRulePaper: {
+        borderColor: 'red',
+    },
     label: {
         marginTop: '4px',
         textAlign: 'right',
