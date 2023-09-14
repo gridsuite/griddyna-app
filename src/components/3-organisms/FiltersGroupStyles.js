@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export const useStyles = makeStyles((theme) => ({
+export const styles = {
     filter: {
         border: 'solid white 1px',
         borderRadius: '5px',
@@ -22,4 +20,4 @@ export const useStyles = makeStyles((theme) => ({
     operatorSelect: {
         marginTop: '-12px',
     },
-}));
+};

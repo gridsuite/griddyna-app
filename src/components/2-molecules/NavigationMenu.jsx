@@ -19,7 +19,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContextMenu from './ContextMenu';
 import RenameDialog from './RenameDialog';
 import NewButton from '../1-atoms/buttons/NewButton';
-import { useStyles } from './NavigationMenuStyles';
+import { styles } from './NavigationMenuStyles';
 
 const NavigationMenu = (props) => {
     const {
@@ -38,7 +38,6 @@ const NavigationMenu = (props) => {
     const [anchor, setAnchor] = useState(null);
     //TODO ADD + Rename
     const [openDialog, setOpenDialog] = useState(null);
-    const classes = useStyles();
     const setMenu = (event) => setAnchor(event.currentTarget);
 
     const buildOptions = (itemName) => {
@@ -104,7 +103,7 @@ const NavigationMenu = (props) => {
             {addItem !== undefined && (
                 <NewButton
                     onClick={addItem}
-                    className={classes.new}
+                    sx={styles.new}
                     disabled={!canAdd}
                     tooltip={addTooltip}
                 />

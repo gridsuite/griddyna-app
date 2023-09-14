@@ -8,24 +8,23 @@
 import React from 'react';
 import { Box, Drawer } from '@mui/material';
 
-import { useStyles } from './PageTemplateStyles';
+import { styles } from './PageTemplateStyles';
 
 const PageTemplate = (props) => {
     const { menu, main, isMenuOpen = true } = props;
-    const classes = useStyles();
     return (
-        <Box className={classes.height}>
-            <Box className={classes.menuBox}>
+        <Box sx={styles.height}>
+            <Box sx={styles.menuBox}>
                 <Drawer
                     anchor="left"
                     variant="persistent"
                     open={isMenuOpen}
-                    className={classes.menu}
+                    sx={styles.menu}
                 >
                     {menu}
                 </Drawer>
             </Box>
-            <Box className={classes.mainBox}>{main}</Box>
+            <Box sx={styles.mainBox}>{main}</Box>
         </Box>
     );
 };

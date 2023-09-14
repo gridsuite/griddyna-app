@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export const useStyles = makeStyles({
+export const styles = {
     height: {
         height: 'calc(100vh - 72px)',
     },
@@ -39,4 +37,4 @@ export const useStyles = makeStyles({
         width: '17%',
         overflowY: 'auto',
     },
-});
+};

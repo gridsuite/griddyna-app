@@ -8,7 +8,7 @@
 import { Box, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
-import { useStyles } from './ModelSelectStyle';
+import { styles } from './ModelSelectStyle';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -17,17 +17,15 @@ const modelLabel = 'should be mapped to';
 const ModelSelect = (props) => {
     const { model, models, changeModel } = props;
 
-    const classes = useStyles();
-
     return (
-        <Box className={classes.box}>
+        <Box>
             <Grid container justify={'center'}>
                 <Grid item xs={6}>
                     <Grid container justify={'center'}>
                         <Grid item xs="auto">
                             <Typography variant="h4">{`${modelLabel} :`}</Typography>
                         </Grid>
-                        <Grid item xs className={classes.titleSelect}>
+                        <Grid item xs sx={styles.titleSelect}>
                             <Select
                                 options={getModelsOptions(models)}
                                 value={model}

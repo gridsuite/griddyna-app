@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export const useStyles = makeStyles({
+export const styles = {
     idVerticalAlign: {
         marginTop: '1em',
         marginLeft: '1em',
@@ -15,4 +13,4 @@ export const useStyles = makeStyles({
     margins: {
         padding: '1em',
     },
-});
+};

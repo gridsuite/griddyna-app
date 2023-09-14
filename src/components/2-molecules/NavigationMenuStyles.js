@@ -5,12 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export const useStyles = makeStyles({
+export const styles = {
     new: {
-        marginTop: 10,
+        marginTop: '10px',
         justifyContent: 'center',
         pointerEvents: 'auto !important',
     },
-});
+};
