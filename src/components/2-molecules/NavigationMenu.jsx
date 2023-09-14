@@ -103,7 +103,7 @@ const NavigationMenu = (props) => {
             {addItem !== undefined && (
                 <NewButton
                     onClick={addItem}
-                    styles={styles.new}
+                    sx={styles.new}
                     disabled={!canAdd}
                     tooltip={addTooltip}
                 />

@@ -16,6 +16,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { styles } from './HeaderStyles';
+import { mergeSx } from 'utils/functions';
 
 const outdatedLabel =
     'Generated elements are outdated, re-generate them to delete this warning';
@@ -36,25 +37,40 @@ const Header = (props) => {
         attachTooltip,
         isCurrent = true,
     } = props;
-    const sxStyles = styles({ isModified, isValid, isCurrent });
+
+    const getHeaderBoxStyle = () => {
+        if (!isValid) {
+            return mergeSx(styles.headerBox, styles.errorBorderColor);
+        } else if (!isCurrent) {
+            return mergeSx(styles.headerBox, styles.warningBorderColor);
+        } else {
+            return mergeSx(styles.headerBox);
+        }
+    };
+
+    const getTitleStyle = () => {
+        let titleStyle = isModified ? styles.modifiedTitle : {};
+        if (!isValid) {
+            titleStyle = mergeSx(titleStyle, styles.errorTitle);
+        } else if (!isCurrent) {
+            titleStyle = mergeSx(titleStyle, styles.warningTitle);
+        }
+        return titleStyle;
+    };
     return (
-        <Box sx={sxStyles.headerBox}>
+        <Box sx={getHeaderBoxStyle()}>
             <Box width="100%" display="flex">
-                <Box
-                    sx={sxStyles.titleBox}
-                    display="flex"
-                    alignItems="baseline"
-                >
+                <Box sx={styles.titleBox} display="flex" alignItems="baseline">
                     <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                        <Typography variant="h2" sx={sxStyles.title}>
+                        <Typography variant="h2" sx={getTitleStyle()}>
                             {`${name}${isModified ? '*' : ''} :`}
                         </Typography>
                     </Tooltip>
-                    <Typography variant="h3" sx={sxStyles.title}>
+                    <Typography variant="h3" sx={getTitleStyle()}>
                         {`${currentNetwork?.networkName ?? ''}`}
                     </Typography>
                 </Box>
-                <Box sx={sxStyles.buttonBox}>
+                <Box sx={styles.buttonBox}>
                     {convert !== undefined && (
                         <ConvertButton
                             onClick={convert}

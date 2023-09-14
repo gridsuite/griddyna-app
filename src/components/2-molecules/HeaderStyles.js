@@ -7,26 +7,26 @@
 
 const ICON_SIZE = '2em';
 
-const displayColor = (isValid, isCurrent) => {
-    if (!isValid) {
-        return 'red';
-    } else if (!isCurrent) {
-        return 'orange';
-    } else {
-        return undefined;
-    }
-};
-
-export const styles = ({ isValid, isCurrent, isModified }) => ({
+export const styles = {
     headerBox: {
         border: '5px solid',
         borderRadius: '10px',
         marginBottom: '5px',
-        borderColor: displayColor(isValid, isCurrent),
     },
-    title: {
-        fontStyle: isModified ? 'italic' : undefined,
-        color: displayColor(isValid, isCurrent),
+    errorBorderColor: {
+        borderColor: 'red',
+    },
+    warningBorderColor: {
+        borderColor: 'orange',
+    },
+    modifiedTitle: {
+        fontStyle: 'italic',
+    },
+    errorTitle: {
+        color: 'red',
+    },
+    warningTitle: {
+        color: 'orange',
     },
     titleBox: {
         position: 'relative',
@@ -47,4 +47,4 @@ export const styles = ({ isValid, isCurrent, isModified }) => ({
             },
         },
     },
-});
+};

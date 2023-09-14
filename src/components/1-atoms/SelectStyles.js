@@ -8,8 +8,8 @@
 export const styles = {
     form: {
         margin: 1,
-        minWidth: 120,
-        maxWidth: 300,
+        minWidth: '120px',
+        maxWidth: '300px',
     },
     chips: {
         display: 'flex',
