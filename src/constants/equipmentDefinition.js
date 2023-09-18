@@ -106,5 +106,11 @@ export const EquipmentProperties = {
             type: PropertyType.NUMBER,
         },
     ],
+    [EquipmentType.STATIC_VAR_COMPENSATOR]: [
+        {
+            name: 'id',
+            type: PropertyType.STRING,
+        }
+    ]
 };
 Object.freeze(EquipmentProperties);
