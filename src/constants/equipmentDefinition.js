@@ -111,6 +111,16 @@ export const EquipmentProperties = {
             name: 'id',
             type: PropertyType.STRING,
         },
+        {
+            name: 'terminal.voltageLevel.nominalV',
+            label: 'nominalV',
+            type: PropertyType.NUMBER,
+        },
+        {
+            name: 'terminal.voltageLevel.substation.country.name',
+            label: 'country',
+            type: PropertyType.STRING,
+        },
     ],
 };
 Object.freeze(EquipmentProperties);
