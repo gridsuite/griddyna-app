@@ -110,7 +110,7 @@ export const EquipmentProperties = {
         {
             name: 'id',
             type: PropertyType.STRING,
-        }
-    ]
+        },
+    ],
 };
 Object.freeze(EquipmentProperties);

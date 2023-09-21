@@ -15,7 +15,11 @@ export const EquipmentType = {
 };
 Object.freeze(EquipmentType);
 
-export const RuleEquipmentTypes = [EquipmentType.GENERATOR, EquipmentType.LOAD, EquipmentType.STATIC_VAR_COMPENSATOR];
+export const RuleEquipmentTypes = [
+    EquipmentType.GENERATOR,
+    EquipmentType.LOAD,
+    EquipmentType.STATIC_VAR_COMPENSATOR,
+];
 Object.freeze(RuleEquipmentTypes);
 
 export const PropertyType = {
