@@ -75,7 +75,7 @@ export function postModelSetsGroup(setGroup, strict, token) {
 
 export function getAutomatonDefinitions(token) {
     return backendFetchJson(
-        `${API_URL}/automaton-definitions/`,
+        `${API_URL}/automaton-definitions`,
         {
             headers: {
                 Accept: 'application/json',
