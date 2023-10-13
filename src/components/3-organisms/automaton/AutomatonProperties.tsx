@@ -8,7 +8,7 @@
 import React, { useCallback } from 'react';
 import { Divider, Grid, Paper, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
-import { useStyles } from './AutomatonPropertiesStyle';
+import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
 import * as _ from 'lodash';
 import { Automaton } from '../../../redux/types/mapping.type';
@@ -34,8 +34,6 @@ const AutomatonProperties = ({
     networkPropertyValues,
     onChangeProperty,
 }: AutomatonPropertiesProps) => {
-    const classes = useStyles();
-
     const propertyNames = Object.keys(automatonDefinition);
 
     const handleChangeProperty = useCallback(
@@ -55,7 +53,7 @@ const AutomatonProperties = ({
     );
     return (
         propertyNames?.length > 0 && (
-            <Paper className={classes.group}>
+            <Paper sx={styles.group}>
                 {propertyNames.map((propertyName, index) => {
                     const propertyDefinition =
                         automatonDefinition[propertyName];
@@ -86,10 +84,10 @@ const AutomatonProperties = ({
                                 xs={6}
                             >
                                 <Grid container>
-                                    <Grid item xs={4} className={classes.label}>
+                                    <Grid item xs={4} sx={styles.label}>
                                         <Typography>{`${propertyDefinition.label} :`}</Typography>
                                     </Grid>
-                                    <Grid item xs={8} className={classes.value}>
+                                    <Grid item xs={8} sx={styles.value}>
                                         <Autocomplete
                                             isFree={
                                                 !(options && options.length > 0)

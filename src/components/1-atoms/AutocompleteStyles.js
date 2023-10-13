@@ -5,15 +5,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
 const FONT_SIZE = 0.875; // em
 const MINIMUM_WIDTH = '150px';
-export const useStyles = makeStyles((theme) => ({
-    inputWidth: ({ inputLength }) => ({
+export const styles = ({ inputLength }) => ({
+    inputWidth: {
         minWidth: MINIMUM_WIDTH,
         width: inputLength
             ? `calc(${inputLength} * ${FONT_SIZE} * 16px)`
             : 'auto',
-    }),
-}));
+    },
+});

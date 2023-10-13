@@ -5,23 +5,30 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-export const useStyles = makeStyles((theme) => ({
-    automatonPaper: (isValid) => ({
+export const styles = {
+    automatonPaper: {
         border: '2px solid',
         borderRadius: '5px',
-        borderColor: isValid ? 'black' : 'red',
+        borderColor: 'black',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
         },
-    }),
-    titleLabel: (isValid) => ({
+    },
+    invalidAutomatonPaper: {
+        borderColor: 'red',
+    },
+    titleLabel: {
         '& .MuiTypography-root': {
             fontWeight: 'bold',
-            color: !isValid ? 'red' : theme.palette.text.primary,
+            color: 'text.primary',
         },
-    }),
+    },
+    invalidTitleLabel: {
+        '& .MuiTypography-root': {
+            color: 'red',
+        },
+    },
     label: {
         textAlign: 'left',
         marginTop: '12px',
@@ -32,4 +39,4 @@ export const useStyles = makeStyles((theme) => ({
     select: {
         textAlign: 'right',
     },
-}));
+};

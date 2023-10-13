@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid, List, Paper, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
-import { useStyles } from './FiltersGroupStyles';
+import { styles } from './FiltersGroupStyles';
 import { AddIconButton } from '../1-atoms/buttons';
 
 const requirementsLabel = 'of the following conditions are met:';
@@ -20,7 +20,6 @@ const andLabel = 'AND';
 const FiltersGroup = (props) => {
     const { filters, groupOperator, changeGroupOperator, addFilter } = props;
     const [operator, setOperator] = useState(groupOperator);
-    const classes = useStyles();
 
     const changeOperator = (newValue) => {
         setOperator(newValue);
@@ -28,7 +27,7 @@ const FiltersGroup = (props) => {
     };
 
     const operatorComponent = (index) => (
-        <Grid container justify="flex-start" className={classes.separator}>
+        <Grid container justify="flex-start" sx={styles.separator}>
             <Grid item xs={10}>
                 <Grid
                     container
@@ -46,7 +45,7 @@ const FiltersGroup = (props) => {
     );
 
     const elementsToDisplay = filters
-        .map((filter) => <Box className={classes?.filter}>{filter}</Box>)
+        .map((filter) => <Box sx={styles.filter}>{filter}</Box>)
         .flatMap((filter, index, array) =>
             array.length - 1 !== index
                 ? [filter, operatorComponent(index)]
@@ -54,12 +53,12 @@ const FiltersGroup = (props) => {
         );
 
     return (
-        <Paper className={classes.group}>
+        <Paper sx={styles.group}>
             <Grid container justify="space-between">
                 <Grid item>
                     {filters.length > 1 && (
                         <Grid container justify="flex-start">
-                            <Grid item className={classes.operatorSelect}>
+                            <Grid item sx={styles.operatorSelect}>
                                 <Select
                                     options={[
                                         { value: '||', label: 'Any' },

@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import Select from '../1-atoms/Select';
 import Autocomplete from '../1-atoms/Autocomplete';
-import { useStyles } from './SetSearchStyle';
+import { styles } from './SetSearchStyle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -52,7 +52,6 @@ function SetSearch(props) {
         onApply,
     } = props;
 
-    const classes = useStyles({ isValid: true, isSelect: true });
     const [expanded, setExpanded] = useState(true);
 
     // local state to manage set search selections
@@ -135,10 +134,7 @@ function SetSearch(props) {
             expanded={expanded}
             onChange={() => setExpanded((prev) => !prev)}
         >
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                className={classes.label}
-            >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={styles.label}>
                 <Typography>{SET_SEARCH_LABEL}</Typography>
             </AccordionSummary>
             <Divider />
@@ -177,7 +173,7 @@ function SetSearch(props) {
                                     fullWidth
                                 ></Select>
                             </Grid>
-                            <Grid item xs={12} className={classes.value}>
+                            <Grid item xs={12} sx={styles.value}>
                                 <Autocomplete
                                     isFree={false}
                                     isMultiple={false}

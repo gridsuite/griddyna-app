@@ -5,19 +5,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export const useStyles = makeStyles({
-    rulePaper: (isValid) => ({
+export const styles = {
+    rulePaper: {
         border: '2px solid',
         borderRadius: '5px',
-        borderColor: isValid ? 'black' : 'red',
+        borderColor: 'black',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
         },
-    }),
-    titleSelect: {},
+    },
+    invalidRulePaper: {
+        borderColor: 'red',
+    },
     label: {
         marginTop: '4px',
         textAlign: 'right',
@@ -38,12 +38,10 @@ export const useStyles = makeStyles({
         backgroundColor: 'rgba(255, 255, 255, 0.16)',
         maxHeight: '8em',
         '& .MuiGrid-container': {
-            // maxHeight: '10em',
-            // overflowY: 'auto',
             '& .MuiGrid-item': {
                 maxHeight: '7em',
                 overflowY: 'auto',
             },
         },
     },
-});
+};

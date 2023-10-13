@@ -8,6 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+    Box,
     Chip,
     FormControl,
     FormHelperText,
@@ -17,7 +18,7 @@ import {
     Select as MuiSelect,
 } from '@mui/material';
 
-import { MenuProps, useStyles } from './SelectStyles';
+import { MenuProps, styles } from './SelectStyles';
 
 const Select = (props) => {
     const {
@@ -32,7 +33,6 @@ const Select = (props) => {
         disabled = false,
         fullWidth,
     } = props;
-    const classes = useStyles();
 
     function onChange(event) {
         const { value } = event.target;
@@ -44,15 +44,11 @@ const Select = (props) => {
               input: <Input />,
               multiple: true,
               renderValue: (selected) => (
-                  <div className={classes.chips}>
+                  <Box sx={styles.chips}>
                       {selected.map((value) => (
-                          <Chip
-                              key={value}
-                              label={value}
-                              className={classes.chip}
-                          />
+                          <Chip key={value} label={value} sx={styles.chip} />
                       ))}
-                  </div>
+                  </Box>
               ),
               MenuProps: MenuProps,
           }
@@ -61,7 +57,7 @@ const Select = (props) => {
     return (
         <FormControl
             variant={outlined ? 'outlined' : undefined}
-            className={classes.form}
+            sx={styles.form}
             error={error}
             fullWidth={fullWidth}
         >
