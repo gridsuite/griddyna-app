@@ -29,7 +29,7 @@ export function getModels(token) {
 
 export function getModelDefinitions(modelName, token) {
     return backendFetchJson(
-        `${API_URL}/${modelName}/parameters/definitions/`,
+        `${API_URL}/${modelName}/parameters/definitions`,
         {
             headers: {
                 Accept: 'application/json',
@@ -59,7 +59,7 @@ export function postModelSetsGroup(setGroup, strict, token) {
     return backendFetchJson(
         `${API_URL}/${setGroup.modelName}/parameters/sets${
             strict ? '/strict' : ''
-        }/`,
+        }`,
         {
             method: 'POST',
             headers: {
