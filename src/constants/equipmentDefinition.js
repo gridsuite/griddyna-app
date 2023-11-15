@@ -106,5 +106,21 @@ export const EquipmentProperties = {
             type: PropertyType.NUMBER,
         },
     ],
+    [EquipmentType.STATIC_VAR_COMPENSATOR]: [
+        {
+            name: 'id',
+            type: PropertyType.STRING,
+        },
+        {
+            name: 'terminal.voltageLevel.nominalV',
+            label: 'nominalV',
+            type: PropertyType.NUMBER,
+        },
+        {
+            name: 'terminal.voltageLevel.substation.country.name',
+            label: 'country',
+            type: PropertyType.STRING,
+        },
+    ],
 };
 Object.freeze(EquipmentProperties);

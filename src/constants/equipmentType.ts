@@ -11,10 +11,15 @@ export const EquipmentType = {
     BUS: 'BUS',
     LINE: 'LINE',
     TWO_WINDINGS_TRANSFORMER: 'TWO_WINDINGS_TRANSFORMER',
+    STATIC_VAR_COMPENSATOR: 'STATIC_VAR_COMPENSATOR',
 };
 Object.freeze(EquipmentType);
 
-export const RuleEquipmentTypes = [EquipmentType.GENERATOR, EquipmentType.LOAD];
+export const RuleEquipmentTypes = [
+    EquipmentType.GENERATOR,
+    EquipmentType.LOAD,
+    EquipmentType.STATIC_VAR_COMPENSATOR,
+];
 Object.freeze(RuleEquipmentTypes);
 
 export const PropertyType = {
