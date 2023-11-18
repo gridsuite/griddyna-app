@@ -16,13 +16,25 @@ import {
     Divider,
     Grid,
     Typography,
+    ListItemText,
+    List,
+    IconButton,
+    ListItem,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { styles } from './AttachDialogStyles';
 import Autocomplete from '../1-atoms/Autocomplete';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const AttachDialog = (props) => {
-    const { open, handleClose, attachWithFile, networks, attachWithId } = props;
+    const {
+        open,
+        handleClose,
+        attachWithFile,
+        networks,
+        attachWithId,
+        onDeleteNetwork,
+    } = props;
     const [file, setFile] = useState(null);
     const [networkId, setNetworkId] = useState('');
 
@@ -106,6 +118,31 @@ const AttachDialog = (props) => {
                         </Grid>
                     </Box>
                 )}
+            </DialogContent>
+            <Divider />
+            <DialogContent>
+                <Typography>Delete a known network :</Typography>
+                <List>
+                    {networks.map((network) => (
+                        <ListItem
+                            key={network.networkName}
+                            divider
+                            secondaryAction={
+                                <IconButton
+                                    onClick={() =>
+                                        onDeleteNetwork(network.networkId)
+                                    }
+                                    edge="end"
+                                    aria-label="delete"
+                                >
+                                    <DeleteForeverIcon />
+                                </IconButton>
+                            }
+                        >
+                            <ListItemText primary={`${network.networkName}`} />
+                        </ListItem>
+                    ))}
+                </List>
             </DialogContent>
             <Divider />
             <DialogActions>

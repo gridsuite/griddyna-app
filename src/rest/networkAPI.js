@@ -74,3 +74,15 @@ export function getNetworkMatchesFromRule(networkId, ruleToMatch, token) {
         token
     );
 }
+
+export function deleteNetwork(networkId, token) {
+    return backendFetchJson(`${API_URL}/${networkId}`, {
+        method: 'DELETE',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+        },
+        cache: 'default',
+    });
+}

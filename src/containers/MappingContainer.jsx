@@ -19,6 +19,7 @@ import {
 } from '../redux/slices/Mapping';
 import { convertScript } from '../redux/slices/Script';
 import {
+    deleteNetwork,
     getCurrentNetworkObj,
     getNetworkNames,
     getPropertyValuesFromFile,
@@ -125,6 +126,10 @@ const MappingContainer = () => {
     function attachWithFile(file) {
         dispatch(getPropertyValuesFromFile(file));
     }
+
+    const handleDeleteNetwork = (networkId) => {
+        dispatch(deleteNetwork(networkId));
+    };
 
     function setFilteredType(type) {
         dispatch(MappingSlice.actions.changeFilteredType(type));
@@ -254,6 +259,7 @@ const MappingContainer = () => {
                 handleClose={() => setIsAttachedModalOpen(false)}
                 attachWithId={attachWithId}
                 attachWithFile={attachWithFile}
+                onDeleteNetwork={handleDeleteNetwork}
             />
             {editParameters && (
                 <ParametersContainer

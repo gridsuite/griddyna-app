@@ -78,6 +78,7 @@ export const deleteScript = createAsyncThunk(
         return await scriptsAPI.deleteScript(scriptName, token);
     }
 );
+
 export const copyScript = createAsyncThunk(
     'scripts/copy',
     async ({ originalName, copyName }, { getState }) => {
