@@ -40,7 +40,11 @@ import { FormattedMessage } from 'react-intl';
 import Box from '@mui/material/Box';
 
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
-import { fetchAppsAndUrls, fetchValidateUser } from '../utils/rest-api';
+import {
+    fetchAppsAndUrls,
+    fetchAuthorizationCodeFlowFeatureFlag,
+    fetchValidateUser,
+} from '../utils/rest-api';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
 const lightTheme = createTheme({
@@ -106,11 +110,16 @@ const App = () => {
 
     const initialize = useCallback(() => {
         if (process.env.REACT_APP_USE_AUTHENTICATION === 'true') {
-            return initializeAuthenticationProd(
-                authenticationDispatch,
-                initialMatchSilentRenewCallbackUrl != null,
-                fetch('idpSettings.json'),
-                fetchValidateUser
+            return fetchAuthorizationCodeFlowFeatureFlag().then(
+                (authorizationCodeFlowEnabled) => {
+                    return initializeAuthenticationProd(
+                        dispatch,
+                        initialMatchSilentRenewCallbackUrl != null,
+                        fetch('idpSettings.json'),
+                        fetchValidateUser,
+                        authorizationCodeFlowEnabled
+                    );
+                }
             );
         } else {
             console.log('devauth');
