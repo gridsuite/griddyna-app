@@ -113,7 +113,7 @@ const App = () => {
             return fetchAuthorizationCodeFlowFeatureFlag().then(
                 (authorizationCodeFlowEnabled) => {
                     return initializeAuthenticationProd(
-                        dispatch,
+                        authenticationDispatch,
                         initialMatchSilentRenewCallbackUrl != null,
                         fetch('idpSettings.json'),
                         fetchValidateUser,
