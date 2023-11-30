@@ -11,56 +11,59 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
     Navigate,
-    Routes,
     Route,
-    useNavigate,
+    Routes,
     useLocation,
+    useMatch,
+    useNavigate,
 } from 'react-router-dom';
 
-import CssBaseline from '@mui/material/CssBaseline';
+import { Box, CssBaseline } from '@mui/material';
 import {
     createTheme,
-    ThemeProvider,
     StyledEngineProvider,
+    ThemeProvider,
 } from '@mui/material/styles';
 import { LIGHT_THEME } from '../redux/slices/Theme';
 
 import {
-    TopBar,
     AuthenticationRouter,
     CardErrorBoundary,
-    logout,
     getPreLoginPath,
-    initializeAuthenticationProd,
     initializeAuthenticationDev,
+    initializeAuthenticationProd,
+    logout,
+    TopBar,
 } from '@gridsuite/commons-ui';
 
-import { useMatch } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import Box from '@mui/material/Box';
 
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
+import AppPackage from '../../package.json';
+
 import {
     fetchAppsAndUrls,
     fetchAuthorizationCodeFlowFeatureFlag,
     fetchValidateUser,
+    fetchVersion,
 } from '../utils/rest-api';
+import { getServersInfos } from '../rest/studyAPI';
+
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
+
 const lightTheme = createTheme({
     palette: {
         mode: 'light',
     },
     mapboxStyle: 'mapbox://styles/mapbox/light-v9',
 });
-
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
     },
     mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
 });
-
 const getMuiTheme = (theme) => {
     if (theme === LIGHT_THEME) {
         return lightTheme;
@@ -88,7 +91,7 @@ const App = () => {
 
     const [userManager, setUserManager] = useState(noUserManager);
 
-    const [appsAndUrls, setAppsAndUrls] = React.useState([]);
+    const [appsAndUrls, setAppsAndUrls] = useState([]);
 
     const navigate = useNavigate();
 
@@ -150,10 +153,6 @@ const App = () => {
         authenticationDispatch,
     ]);
 
-    function onLogoClicked() {
-        navigate('/', { replace: true });
-    }
-
     useEffect(() => {
         if (user !== null) {
             fetchAppsAndUrls().then((res) => {
@@ -170,16 +169,48 @@ const App = () => {
                     <TopBar
                         appName="Dyna"
                         appColor="grey"
+                        appLogo={<PowsyblLogo />}
+                        appVersion={AppPackage.version}
+                        appLicense={AppPackage.license}
+                        onLogoClick={() => navigate('/', { replace: true })}
                         onParametersClick={() =>
                             console.log('onParametersClick')
                         }
                         onLogoutClick={() =>
                             logout(authenticationDispatch, userManager.instance)
                         }
-                        onLogoClick={() => onLogoClicked()}
-                        appLogo={<PowsyblLogo />}
                         user={user}
                         appsAndUrls={appsAndUrls}
+                        getGlobalVersion={(setGlobalVersion) =>
+                            fetchVersion()
+                                .then((res) =>
+                                    setGlobalVersion(res.deployVersion)
+                                )
+                                .catch((reason) => setGlobalVersion(null))
+                        }
+                        getAdditionalComponents={(setServers) =>
+                            getServersInfos()
+                                .then((res) =>
+                                    setServers(
+                                        Object.entries(res).map(
+                                            ([name, infos]) => ({
+                                                name:
+                                                    infos?.build?.name ||
+                                                    infos?.build?.artifact ||
+                                                    name,
+                                                type: 'server',
+                                                version: infos?.build?.version,
+                                                gitTag:
+                                                    infos?.git?.tags ||
+                                                    infos?.git?.commit?.id[
+                                                        'describe-short'
+                                                    ],
+                                            })
+                                        )
+                                    )
+                                )
+                                .catch((reason) => setServers(null))
+                        }
                     />
                     <CardErrorBoundary>
                         {user !== null ? (
