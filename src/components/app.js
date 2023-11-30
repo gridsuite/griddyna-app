@@ -170,9 +170,6 @@ const App = () => {
                     <TopBar
                         appName="Dyna"
                         appColor="grey"
-                        onParametersClick={() =>
-                            console.log('onParametersClick')
-                        }
                         onLogoutClick={() =>
                             logout(authenticationDispatch, userManager.instance)
                         }
