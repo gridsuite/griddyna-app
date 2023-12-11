@@ -151,6 +151,13 @@ export function fetchAuthorizationCodeFlowFeatureFlag() {
                 }`
             );
             return res.authorizationCodeFlowFeatureFlag;
+        })
+        .catch((error) => {
+            console.error(error);
+            console.warn(
+                `Something wrong happened when retrieving authentication.json: authorization code flow will be disabled`
+            );
+            return false;
         });
 }
 
