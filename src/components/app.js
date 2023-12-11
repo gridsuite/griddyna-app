@@ -192,7 +192,7 @@ const App = () => {
                                 })
                         }
                         getAdditionalModules={(setServers) =>
-                            getServersInfos()
+                            getServersInfos(user?.id_token)
                                 .then((res) =>
                                     setServers(
                                         Object.entries(res).map(

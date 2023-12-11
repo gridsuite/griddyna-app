@@ -10,8 +10,18 @@ const API_URL =
     process.env.REACT_APP_API_PREFIX +
     (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
         ? process.env.REACT_APP_GATEWAY_PREFIX + '/study/v1'
-        : process.env.REACT_APP_URI);
+        : process.env.REACT_APP_STUDY_URI + '/v1');
 
-export function getServersInfos() {
-    return backendFetchJson(`${API_URL}/servers/infos`);
+export function getServersInfos(token) {
+    return backendFetchJson(
+        `${API_URL}/servers/infos`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        token
+    );
 }
