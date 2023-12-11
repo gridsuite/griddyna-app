@@ -173,9 +173,6 @@ const App = () => {
                         appVersion={AppPackage.version}
                         appLicense={AppPackage.license}
                         onLogoClick={() => navigate('/', { replace: true })}
-                        onParametersClick={() =>
-                            console.log('onParametersClick')
-                        }
                         onLogoutClick={() =>
                             logout(authenticationDispatch, userManager.instance)
                         }
@@ -186,9 +183,15 @@ const App = () => {
                                 .then((res) =>
                                     setGlobalVersion(res.deployVersion)
                                 )
-                                .catch((reason) => setGlobalVersion(null))
+                                .catch((reason) => {
+                                    console.error(
+                                        'Error while fetching the version : ' +
+                                            reason
+                                    );
+                                    setGlobalVersion(null);
+                                })
                         }
-                        getAdditionalComponents={(setServers) =>
+                        getAdditionalModules={(setServers) =>
                             getServersInfos()
                                 .then((res) =>
                                     setServers(
@@ -209,7 +212,13 @@ const App = () => {
                                         )
                                     )
                                 )
-                                .catch((reason) => setServers(null))
+                                .catch((reason) => {
+                                    console.error(
+                                        'Error while fetching the servers infos : ' +
+                                            reason
+                                    );
+                                    setServers(null);
+                                })
                         }
                     />
                     <CardErrorBoundary>

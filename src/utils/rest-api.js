@@ -137,7 +137,7 @@ function fetchEnv() {
 
 export function fetchAuthorizationCodeFlowFeatureFlag() {
     console.info(`Fetching authorization code flow feature flag...`);
-    fetchEnv()
+    return fetchEnv()
         .then((env) =>
             fetch(env.appsMetadataServerUrl + '/authentication.json')
         )
