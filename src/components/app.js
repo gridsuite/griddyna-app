@@ -111,6 +111,12 @@ const App = () => {
         })
     );
 
+    const [initialMatchSigninCallbackUrl] = useState(
+        useMatch({
+            path: '/sign-in-callback',
+        })
+    );
+
     const initialize = useCallback(() => {
         if (process.env.REACT_APP_USE_AUTHENTICATION === 'true') {
             return fetchAuthorizationCodeFlowFeatureFlag().then(
@@ -120,7 +126,8 @@ const App = () => {
                         initialMatchSilentRenewCallbackUrl != null,
                         fetch('idpSettings.json'),
                         fetchValidateUser,
-                        authorizationCodeFlowEnabled
+                        authorizationCodeFlowEnabled,
+                        initialMatchSigninCallbackUrl != null
                     );
                 }
             );
@@ -132,11 +139,16 @@ const App = () => {
                 () =>
                     new Promise((resolve) =>
                         window.setTimeout(() => resolve(true), 500)
-                    )
+                    ),
+                initialMatchSigninCallbackUrl != null
             );
         }
         // Note: initialMatchSilentRenewCallbackUrl and dispatch don't change
-    }, [initialMatchSilentRenewCallbackUrl, authenticationDispatch]);
+    }, [
+        initialMatchSilentRenewCallbackUrl,
+        authenticationDispatch,
+        initialMatchSigninCallbackUrl,
+    ]);
 
     useEffect(() => {
         initialize()
