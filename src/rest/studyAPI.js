@@ -14,7 +14,7 @@ const API_URL =
 
 export function getServersInfos(token) {
     return backendFetchJson(
-        `${API_URL}/servers/infos`,
+        `${API_URL}/servers/about?view=dyna`,
         {
             headers: {
                 Accept: 'application/json',
@@ -23,5 +23,8 @@ export function getServersInfos(token) {
             cache: 'default',
         },
         token
-    );
+    ).catch((reason) => {
+        console.error('Error while fetching the servers infos : ' + reason);
+        return reason;
+    });
 }
