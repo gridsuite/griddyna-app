@@ -132,8 +132,8 @@ const reducers = {
     },
 };
 
-const extraReducers = {
-    [convertScript.fulfilled]: (state, action) => {
+const extraReducers = (builder) => {
+    builder.addCase(convertScript.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const receivedScript = action.payload;
         const receivedName = receivedScript.name;
@@ -158,24 +158,24 @@ const extraReducers = {
         if (!isUpdate) {
             state.scripts.push(receivedScript);
         }
-    },
-    [convertScript.rejected]: (state, _action) => {
+    });
+    builder.addCase(convertScript.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [convertScript.pending]: (state, _action) => {
+    });
+    builder.addCase(convertScript.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [getScripts.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getScripts.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         state.scripts = action.payload;
-    },
-    [getScripts.rejected]: (state, _action) => {
+    });
+    builder.addCase(getScripts.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [getScripts.pending]: (state, _action) => {
+    });
+    builder.addCase(getScripts.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [deleteScript.fulfilled]: (state, action) => {
+    });
+    builder.addCase(deleteScript.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const name = action.payload;
         state.scripts = state.scripts.filter((script) => script.name !== name);
@@ -183,14 +183,14 @@ const extraReducers = {
             state.text = '';
             state.activeScript = '';
         }
-    },
-    [deleteScript.rejected]: (state, _action) => {
+    });
+    builder.addCase(deleteScript.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [deleteScript.pending]: (state, _action) => {
+    });
+    builder.addCase(deleteScript.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [postScript.fulfilled]: (state, action) => {
+    });
+    builder.addCase(postScript.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const receivedScript = action.payload;
         const foundScript = state.scripts.find(
@@ -199,14 +199,14 @@ const extraReducers = {
         if (foundScript) {
             foundScript.script = receivedScript.script;
         }
-    },
-    [postScript.rejected]: (state, _action) => {
+    });
+    builder.addCase(postScript.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [postScript.pending]: (state, _action) => {
+    });
+    builder.addCase(postScript.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [renameScript.fulfilled]: (state, action) => {
+    });
+    builder.addCase(renameScript.fulfilled, (state, action) => {
         const { oldName, newName } = action.payload;
         const scriptToRename = state.scripts.find(
             (script) => script.name === oldName
@@ -218,23 +218,23 @@ const extraReducers = {
             state.activeScript = newName;
         }
         state.status = RequestStatus.SUCCESS;
-    },
-    [renameScript.rejected]: (state, _action) => {
+    });
+    builder.addCase(renameScript.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [renameScript.pending]: (state, _action) => {
+    });
+    builder.addCase(renameScript.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [copyScript.fulfilled]: (state, action) => {
+    });
+    builder.addCase(copyScript.fulfilled, (state, action) => {
         state.scripts.push(action.payload);
         state.status = RequestStatus.SUCCESS;
-    },
-    [copyScript.rejected]: (state, _action) => {
+    });
+    builder.addCase(copyScript.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [copyScript.pending]: (state, _action) => {
+    });
+    builder.addCase(copyScript.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
+    });
 };
 
 export const ScriptsSlice = createSlice({
