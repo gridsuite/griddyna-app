@@ -9,7 +9,7 @@
         "@emotion/styled": "^11.11.0",
         "@gridsuite/commons-ui": "^0.44.0",
         "@mui/icons-material": "^5.15.14",
-        "@mui/lab": "^5.0.0-alpha.75",
+        "@mui/lab": "^5.0.0-alpha.169",
         "@mui/material": "^5.15.14",
         "@reduxjs/toolkit": "^2.2.2",
         "@types/node": "^20.11.30",
