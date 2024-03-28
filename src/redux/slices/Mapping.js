@@ -939,8 +939,8 @@ const reducers = {
     },
 };
 
-const extraReducers = {
-    [postMapping.fulfilled]: (state, action) => {
+const extraReducers = (builder) => {
+    builder.addCase(postMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const receivedMapping = transformMapping(action.payload);
         const foundMapping = state.mappings.find(
@@ -958,24 +958,24 @@ const extraReducers = {
                     receivedMapping.controlledParameters;
             }
         }
-    },
-    [postMapping.rejected]: (state, _action) => {
+    });
+    builder.addCase(postMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [postMapping.pending]: (state, _action) => {
+    });
+    builder.addCase(postMapping.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [getMappings.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getMappings.fulfilled, (state, action) => {
         state.mappings = action.payload.map(transformMapping);
         state.status = RequestStatus.SUCCESS;
-    },
-    [getMappings.rejected]: (state, _action) => {
+    });
+    builder.addCase(getMappings.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [getMappings.pending]: (state, _action) => {
+    });
+    builder.addCase(getMappings.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [deleteMapping.fulfilled]: (state, action) => {
+    });
+    builder.addCase(deleteMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const name = action.payload;
         state.mappings = state.mappings.filter(
@@ -986,14 +986,14 @@ const extraReducers = {
             state.automata = [];
             state.activeMapping = '';
         }
-    },
-    [deleteMapping.rejected]: (state, _action) => {
+    });
+    builder.addCase(deleteMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [deleteMapping.pending]: (state, _action) => {
+    });
+    builder.addCase(deleteMapping.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [renameMapping.fulfilled]: (state, action) => {
+    });
+    builder.addCase(renameMapping.fulfilled, (state, action) => {
         const { oldName, newName } = action.payload;
         const mappingToRename = state.mappings.find(
             (mapping) => mapping.name === oldName
@@ -1005,26 +1005,26 @@ const extraReducers = {
             state.activeMapping = newName;
         }
         state.status = RequestStatus.SUCCESS;
-    },
-    [renameMapping.rejected]: (state, _action) => {
+    });
+    builder.addCase(renameMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [renameMapping.pending]: (state, _action) => {
+    });
+    builder.addCase(renameMapping.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [copyMapping.fulfilled]: (state, action) => {
+    });
+    builder.addCase(copyMapping.fulfilled, (state, action) => {
         const copiedMapping = transformMapping(action.payload);
 
         state.mappings.push(copiedMapping);
         state.status = RequestStatus.SUCCESS;
-    },
-    [copyMapping.rejected]: (state, _action) => {
+    });
+    builder.addCase(copyMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [copyMapping.pending]: (state, _action) => {
+    });
+    builder.addCase(copyMapping.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [getNetworkMatchesFromRule.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getNetworkMatchesFromRule.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { ruleIndex, matchedIds } = action.payload;
         if (ruleIndex === undefined) {
@@ -1036,13 +1036,13 @@ const extraReducers = {
             state.filteredRuleType
         )[ruleIndex];
         foundRule.matches = matchedIds;
-    },
-    [getNetworkMatchesFromRule.rejected]: (state, _action) => {
+    });
+    builder.addCase(getNetworkMatchesFromRule.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [getNetworkMatchesFromRule.pending]: (state, _action) => {
+    });
+    builder.addCase(getNetworkMatchesFromRule.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
+    });
 };
 
 export const MappingSlice = createSlice({

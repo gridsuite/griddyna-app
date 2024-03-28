@@ -241,16 +241,16 @@ const reducers = {
     },
 };
 
-const extraReducers = {
-    [getModels.fulfilled]: (state, action) => {
+const extraReducers = (builder) => {
+    builder.addCase(getModels.fulfilled, (state, action) => {
         state.models = action.payload;
         state.status = RequestStatus.SUCCESS;
-    },
-    [getModelDefinitions.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getModelDefinitions.fulfilled, (state, action) => {
         state.parameterDefinitions = action.payload;
         state.status = RequestStatus.SUCCESS;
-    },
-    [getModelSets.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getModelSets.fulfilled, (state, action) => {
         const receivedSets = action.payload;
 
         state.currentGroup.sets = _.uniqBy(
@@ -258,14 +258,14 @@ const extraReducers = {
             'name'
         );
         state.status = RequestStatus.SUCCESS;
-    },
-    [getSearchedModelSets.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getSearchedModelSets.fulfilled, (state, action) => {
         const candidateSets = action.payload;
 
         state.currentGroup.searchSets = _.uniqBy(candidateSets, 'name');
         state.status = RequestStatus.SUCCESS;
-    },
-    [postModelSetsGroup.fulfilled]: (state, action) => {
+    });
+    builder.addCase(postModelSetsGroup.fulfilled, (state, action) => {
         const updatedGroup = action.payload;
         state.currentGroup = DEFAULT_GROUP;
         const updatedModel = state.models.find(
@@ -287,8 +287,8 @@ const extraReducers = {
             }
         }
         state.status = RequestStatus.SUCCESS;
-    },
-    [getAutomatonDefinitions.fulfilled]: (state, action) => {
+    });
+    builder.addCase(getAutomatonDefinitions.fulfilled, (state, action) => {
         const automatonDefinitions = action.payload;
 
         // received automatonDefinitions is an array of automaton models
@@ -298,7 +298,7 @@ const extraReducers = {
             {}
         );
         state.status = RequestStatus.SUCCESS;
-    },
+    });
 };
 
 export const ModelSlice = createSlice({
