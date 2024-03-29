@@ -40,10 +40,11 @@ export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
         ?.find(
             (propertyValuesItem) => propertyValuesItem.type === equipmentType
         )
-        ?.values[
-            fullProperty?.name
-        ]?.map((value) => (fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value)) ??
-    [];
+        ?.values[fullProperty?.name]?.map((value) =>
+            fullProperty?.type === PropertyType.BOOLEAN
+                ? value === 'true'
+                : value
+        ) ?? [];
 
 export const makeGetNetworkValues = () =>
     createSelector(

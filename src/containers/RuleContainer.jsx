@@ -76,8 +76,9 @@ const RuleContainer = ({ index, editParameters }) => {
 
     const currentNetworkId = useSelector(getCurrentNetworkId);
     const dispatch = useDispatch();
-    const [isAdvancedComposition, setIsAdvancedComposition] =
-        useState(!canUseBasicMode);
+    const [isAdvancedComposition, setIsAdvancedComposition] = useState(
+        !canUseBasicMode
+    );
 
     const compositionArray = canUseBasicMode
         ? convertCompositionStringToArray(composition)
