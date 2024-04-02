@@ -100,45 +100,54 @@ const reducers = {
     },
 };
 
-const extraReducers = {
+const extraReducers = (builder) => {
     /* TODO
 [GET_EQUIPMENTS] // read the idm (only if we want
 [GET_TYPES] // Get the properties
 */
-    [getPropertyValuesFromFile.fulfilled]: (state, action) => {
+    builder.addCase(getPropertyValuesFromFile.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const { propertyValues, networkId } = action.payload;
         state.propertyValues = propertyValues;
         state.currentNetwork = networkId;
-    },
-    [getPropertyValuesFromFile.rejected]: (state, _action) => {
+    });
+    builder.addCase(getPropertyValuesFromFile.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [getPropertyValuesFromFile.pending]: (state, _action) => {
+    });
+    builder.addCase(getPropertyValuesFromFile.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
-    [getPropertyValuesFromNetworkId.fulfilled]: (state, action) => {
-        state.status = RequestStatus.SUCCESS;
-        const { propertyValues, networkId } = action.payload;
-        state.propertyValues = propertyValues;
-        state.currentNetwork = networkId;
-    },
-    [getPropertyValuesFromNetworkId.rejected]: (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    },
-    [getPropertyValuesFromNetworkId.pending]: (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    },
-    [getNetworkNames.fulfilled]: (state, action) => {
+    });
+    builder.addCase(
+        getPropertyValuesFromNetworkId.fulfilled,
+        (state, action) => {
+            state.status = RequestStatus.SUCCESS;
+            const { propertyValues, networkId } = action.payload;
+            state.propertyValues = propertyValues;
+            state.currentNetwork = networkId;
+        }
+    );
+    builder.addCase(
+        getPropertyValuesFromNetworkId.rejected,
+        (state, _action) => {
+            state.status = RequestStatus.ERROR;
+        }
+    );
+    builder.addCase(
+        getPropertyValuesFromNetworkId.pending,
+        (state, _action) => {
+            state.status = RequestStatus.PENDING;
+        }
+    );
+    builder.addCase(getNetworkNames.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         state.knownNetworks = action.payload;
-    },
-    [getNetworkNames.rejected]: (state, _action) => {
+    });
+    builder.addCase(getNetworkNames.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
-    },
-    [getNetworkNames.pending]: (state, _action) => {
+    });
+    builder.addCase(getNetworkNames.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
-    },
+    });
 };
 
 export const NetworkSlice = createSlice({
