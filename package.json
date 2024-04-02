@@ -10,6 +10,7 @@
         "@gridsuite/commons-ui": "^0.52.1",
         "@mui/icons-material": "^5.15.14",
         "@mui/lab": "5.0.0-alpha.169",
+        "@mui/x-tree-view": "^6.17.0",
         "@mui/material": "^5.15.14",
         "@reduxjs/toolkit": "^2.2.3",
         "@types/node": "^20.12.2",
