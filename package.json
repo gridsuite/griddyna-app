@@ -7,7 +7,7 @@
     "dependencies": {
         "@emotion/react": "^11.11.4",
         "@emotion/styled": "^11.11.5",
-        "@gridsuite/commons-ui": "^0.52.1",
+        "@gridsuite/commons-ui": "^0.53.0",
         "@mui/icons-material": "^5.15.14",
         "@mui/lab": "5.0.0-alpha.169",
         "@mui/material": "^5.15.14",
@@ -29,6 +29,11 @@
         "typeface-roboto": "^1.1.13",
         "typescript": "5.1.6",
         "yup": "^1.4.0"
+    },
+    "overrides": {
+        "react-scripts": {
+            "typescript": "$typescript"
+        }
     },
     "scripts": {
         "start": "PORT=3003 react-scripts start",
@@ -70,9 +75,9 @@
         "@types/eslint-config-prettier": "^6.11.3",
         "@types/license-checker": "^25.0.6",
         "@types/lodash": "^4.17.0",
-        "@types/node": "^18.19.29",
+        "@types/node": "^18.19.31",
         "@types/prop-types": "^15.7.12",
-        "@types/react": "^18.2.74",
+        "@types/react": "^18.2.75",
         "@types/react-dom": "^18.2.24",
         "@types/react-window": "^1.8.8",
         "eslint-config-prettier": "^9.1.0",
