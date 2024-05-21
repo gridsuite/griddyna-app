@@ -23,6 +23,7 @@ import {
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
 import { GroupEditionOrigin, SetType } from '../constants/models';
+import { AutomatonFamilyToAutomatonType } from '../constants/automatonDefinition';
 
 const AutomatonContainer = ({ index, editParameters }) => {
     const getAutomaton = useMemo(makeGetAutomaton, []);
@@ -39,7 +40,9 @@ const AutomatonContainer = ({ index, editParameters }) => {
         isAutomatonValidSelector(state, index)
     );
     const getModels = useMemo(makeGetModels, []);
-    const models = useSelector((state) => getModels(state, automaton.family));
+    const models = useSelector((state) =>
+        getModels(state, AutomatonFamilyToAutomatonType[automaton.family])
+    );
 
     const getPropertyValues = useMemo(makeGetPropertyValues, []);
     const networkPropertyValues = useSelector((state) =>

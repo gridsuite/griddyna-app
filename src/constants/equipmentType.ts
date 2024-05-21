@@ -12,6 +12,9 @@ export const EquipmentType = {
     LINE: 'LINE',
     TWO_WINDINGS_TRANSFORMER: 'TWO_WINDINGS_TRANSFORMER',
     STATIC_VAR_COMPENSATOR: 'STATIC_VAR_COMPENSATOR',
+    // automaton types
+    OVERLOAD_MANAGEMENT: 'OVERLOAD_MANAGEMENT',
+    VOLTAGE: 'VOLTAGE',
 };
 Object.freeze(EquipmentType);
 
