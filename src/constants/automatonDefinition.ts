@@ -6,7 +6,7 @@
  */
 
 export const AutomatonFamily = {
-    CURRENT_LIMIT: 'CURRENT_LIMIT',
+    CURRENT: 'CURRENT',
     VOLTAGE: 'VOLTAGE',
 };
 Object.freeze(AutomatonFamily);
