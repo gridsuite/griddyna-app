@@ -6,6 +6,7 @@
  */
 
 export const EquipmentType = {
+    // equipment types
     GENERATOR: 'GENERATOR',
     LOAD: 'LOAD',
     BUS: 'BUS',
