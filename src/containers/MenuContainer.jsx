@@ -30,6 +30,8 @@ import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 
 import { Divider, Typography } from '@mui/material';
+import { RuleEquipmentTypes } from '../constants/equipmentType';
+import { AutomatonFamily } from '../constants/automatonDefinition';
 
 const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
 const MenuContainer = () => {
@@ -55,7 +57,12 @@ const MenuContainer = () => {
     const addMapping = () => {
         dispatch(MappingSlice.actions.createMapping());
         dispatch(NetworkSlice.actions.cleanNetwork());
-        dispatch(MappingSlice.actions.changeFilteredType(''));
+        dispatch(
+            MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
+        );
+        dispatch(
+            MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT)
+        );
     };
 
     const renameMapping = (name) => (newName) => {
@@ -72,14 +79,26 @@ const MenuContainer = () => {
         dispatch(MappingSlice.actions.selectMapping({ name }));
         dispatch(ScriptsSlice.actions.deselectScript());
         dispatch(NetworkSlice.actions.cleanNetwork());
-        dispatch(MappingSlice.actions.changeFilteredType(''));
+        dispatch(
+            MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
+        );
+        dispatch(
+            MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT)
+        );
     };
 
     const deleteMapping = (name) => () => {
         dispatch(deleteMappingAction(name));
         if (name === selectedMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
-            dispatch(MappingSlice.actions.changeFilteredType(''));
+            dispatch(
+                MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
+            );
+            dispatch(
+                MappingSlice.actions.changeFilteredFamily(
+                    AutomatonFamily.CURRENT
+                )
+            );
         }
     };
 
@@ -120,7 +139,9 @@ const MenuContainer = () => {
 
     return (
         <>
-            <Typography variant="h2">Mappings</Typography>
+            <Typography variant="h4" align={'center'}>
+                Mappings
+            </Typography>
             <Divider />
             <NavigationMenu
                 items={mappingsInfo}

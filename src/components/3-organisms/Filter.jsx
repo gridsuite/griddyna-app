@@ -5,18 +5,18 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@mui/material';
-import * as _ from 'lodash';
-import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import Select from '../1-atoms/Select';
+import { Grid } from '@mui/material';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
 import { multipleOperands } from '../../constants/operands';
-import { styles } from './FilterStyle';
-import Autocomplete from '../1-atoms/Autocomplete';
-import { PropertyType } from '../../constants/equipmentType';
-import { mergeSx } from 'utils/functions';
+import { useFormContext } from 'react-hook-form';
+import {
+    CustomReactQueryBuilder,
+    EXPERT_FILTER_FIELDS,
+    EXPERT_FILTER_QUERY,
+} from '@gridsuite/commons-ui';
+import { useIntl } from 'react-intl';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';
@@ -29,17 +29,31 @@ const Filter = (props) => {
         properties,
         property,
         propertyType,
-        setProperty,
+        // setProperty,
         operand,
-        setOperand,
+        // setOperand,
         value,
         setValue,
         possibleValues = [],
         networkValues,
-        deleteFilter,
-        copyFilter,
+        // new code props
+        equipmentType,
     } = props;
 
+    // --- begin new code rqb --- //
+    const intl = useIntl();
+
+    const { getValues, setValue: setValueForm } = useFormContext();
+
+    const translatedFields = useMemo(() => {
+        return EXPERT_FILTER_FIELDS[equipmentType]?.map((field) => {
+            return {
+                ...field,
+                label: intl.formatMessage({ id: field.label }),
+            };
+        });
+    }, [intl, equipmentType]);
+    // --- end new code rqb --- //
     const handleAutocompleteChange = useCallback(
         (newValue) => setValue(newValue),
         [setValue]
@@ -50,48 +64,51 @@ const Filter = (props) => {
     const multiple = multipleOperands.includes(operand);
     const isSelect = possibleValues.length > 0;
 
-    const joinOptions = _.uniqWith(
-        [
-            // Values known as possible
-            ...possibleValues,
-            // Values received from network
-            // (should be a subset of possibleValues,
-            // here to avoid versions mismatch)
-            ...networkValues,
-            // Additional user created values
-            ...(multiple
-                ? value.map((value) => ({
-                      label: value.toString(),
-                      value,
-                  }))
-                : []),
-        ],
-        (option1, option2) => {
-            const type = autocompleteType(propertyType);
-            if (type === 'number') {
-                // Filtering identical number (float comparison issues)
-                return Math.abs(option1.value - option2.value) < PRECISION;
-            } else {
-                return option1.value === option2.value;
-            }
-        }
-    );
-
-    function autocompleteType(type) {
-        switch (type) {
-            case PropertyType.NUMBER:
-                return 'number';
-            case PropertyType.BOOLEAN:
-                return 'boolean';
-            default:
-                return undefined;
-        }
-    }
+    // const joinOptions = _.uniqWith(
+    //     [
+    //         // Values known as possible
+    //         ...possibleValues,
+    //         // Values received from network
+    //         // (should be a subset of possibleValues,
+    //         // here to avoid versions mismatch)
+    //         ...networkValues,
+    //         // Additional user created values
+    //         ...(multiple
+    //             ? value.map((value) => ({
+    //                   label: value.toString(),
+    //                   value,
+    //               }))
+    //             : []),
+    //     ],
+    //     (option1, option2) => {
+    //         const type = autocompleteType(propertyType);
+    //         if (type === 'number') {
+    //             // Filtering identical number (float comparison issues)
+    //             return Math.abs(option1.value - option2.value) < PRECISION;
+    //         } else {
+    //             return option1.value === option2.value;
+    //         }
+    //     }
+    // );
+    //
+    // function autocompleteType(type) {
+    //     switch (type) {
+    //         case PropertyType.NUMBER:
+    //             return 'number';
+    //         case PropertyType.BOOLEAN:
+    //             return 'boolean';
+    //         default:
+    //             return undefined;
+    //     }
+    // }
 
     return (
         <Grid container justify="space-between">
-            <Grid item xs={10}>
-                <Grid container justify="center">
+            <CustomReactQueryBuilder
+                name={EXPERT_FILTER_QUERY}
+                fields={translatedFields}
+            />
+            {/*                <Grid container justify="center">
                     <Grid
                         item
                         xs="auto"
@@ -130,30 +147,7 @@ const Filter = (props) => {
                             error={value === '' || value === []}
                         />
                     </Grid>
-                </Grid>
-            </Grid>
-            <Grid
-                item
-                xs={2}
-                container
-                justifyContent={'center'}
-                alignItems={'center'}
-            >
-                <Grid container justifyContent="flex-end">
-                    <Grid item xs="auto">
-                        <DeleteButton
-                            onClick={deleteFilter}
-                            tooltip={DELETE_FILTER_LABEL}
-                        />
-                    </Grid>
-                    <Grid item xs="auto">
-                        <CopyButton
-                            onClick={copyFilter}
-                            tooltip={COPY_FILTER_LABEL}
-                        />
-                    </Grid>
-                </Grid>
-            </Grid>
+                </Grid>*/}
         </Grid>
     );
 };

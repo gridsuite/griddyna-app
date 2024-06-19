@@ -7,10 +7,8 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import Select from '../1-atoms/Select';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@mui/material';
-import { getAutomatonFamiliesOptions } from '../../utils/optionsBuilders';
 import { styles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
@@ -37,7 +35,7 @@ const Automaton = (props) => {
     } = props;
     const { family, model, setGroup } = automaton;
     // TODO intl
-    const automatonLabel = 'Automaton';
+    const automatonLabel = 'Automaton of family';
     const deleteAutomatonLabel = 'Delete automaton';
     const copyAutomatonLabel = 'Copy automaton';
     const familyLabel = 'Of Family';
@@ -55,68 +53,96 @@ const Automaton = (props) => {
 
     return (
         <Paper
-            elevation={0}
+            elevation={24}
             sx={mergeSx(
                 styles.automatonPaper,
                 !isAutomatonValid && styles.invalidAutomatonPaper
             )}
         >
-            <Grid container justify={'space-between'}>
+            <Grid container>
                 <Grid
                     item
-                    sx={mergeSx(
-                        styles.titleLabel,
-                        !isAutomatonValid && styles.invalidTitleLabel
-                    )}
+                    xs={12}
+                    md={6}
+                    container
+                    paddingRight={1}
+                    direction={'column'}
+                    justifyContent={'flex-start'}
                 >
-                    <Typography variant="h4">{automatonLabel}</Typography>
+                    <Grid container justifyContent={'flex-start'}>
+                        <Grid
+                            item
+                            xs
+                            sx={mergeSx(
+                                styles.titleLabel,
+                                !isAutomatonValid && styles.invalidTitleLabel
+                            )}
+                        >
+                            <Typography variant="subtitle2">
+                                {`${automatonLabel} ${family}`}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={'auto'} container paddingLeft={1}>
+                            <DeleteButton
+                                onClick={deleteAutomaton}
+                                tooltip={deleteAutomatonLabel}
+                            />
+                            <CopyButton
+                                onClick={copyAutomaton}
+                                tooltip={copyAutomatonLabel}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        item
+                        container
+                        sx={styles.automatonModel}
+                        direction="column"
+                        justifyContent={'flex-start'}
+                    >
+                        <ModelSelect
+                            model={model}
+                            models={models}
+                            changeModel={changeModel}
+                        />
+                        <SetGroupSelect
+                            model={model}
+                            models={models}
+                            setGroup={setGroup}
+                            groupType={SetType.FIXED}
+                            changeGroup={changeParameters}
+                            editGroup={editGroup}
+                            controlledParameters={controlledParameters}
+                            isNetworkAttached={isNetworkAttached}
+                        />
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <DeleteButton
-                        onClick={deleteAutomaton}
-                        tooltip={deleteAutomatonLabel}
-                    />
-                    <CopyButton
-                        onClick={copyAutomaton}
-                        tooltip={copyAutomatonLabel}
+                <Grid
+                    item
+                    container
+                    xs={12}
+                    md={6}
+                    direction="column"
+                    justifyContent={'flex-start'}
+                >
+                    <Grid
+                        item
+                        container
+                        justify={'flex-start'}
+                        marginBottom={2}
+                    >
+                        <Grid item xs>
+                            <Typography>{'Properties :'}</Typography>
+                        </Grid>
+                    </Grid>
+                    <AutomatonProperties
+                        automaton={automaton}
+                        automatonDefinition={automatonDefinition}
+                        networkPropertyValues={networkPropertyValues}
+                        onChangeProperty={onChangeProperty}
                     />
                 </Grid>
             </Grid>
-            <Grid container justify={'flex-start'}>
-                <Grid item xs={2} sx={styles.label}>
-                    <Typography>{`${familyLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs={4} sx={styles.select}>
-                    <Select
-                        options={getAutomatonFamiliesOptions()}
-                        value={family}
-                        setValue={changeFamily}
-                        error={family === ''}
-                    />
-                </Grid>
-                <Grid item xs></Grid>
-            </Grid>
-            <ModelSelect
-                model={model}
-                models={models}
-                changeModel={changeModel}
-            />
-            <AutomatonProperties
-                automaton={automaton}
-                automatonDefinition={automatonDefinition}
-                networkPropertyValues={networkPropertyValues}
-                onChangeProperty={onChangeProperty}
-            />
-            <SetGroupSelect
-                model={model}
-                models={models}
-                setGroup={setGroup}
-                groupType={SetType.FIXED}
-                changeGroup={changeParameters}
-                editGroup={editGroup}
-                controlledParameters={controlledParameters}
-                isNetworkAttached={isNetworkAttached}
-            />
         </Paper>
     );
 };

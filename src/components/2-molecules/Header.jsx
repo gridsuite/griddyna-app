@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Box, Tooltip, Typography } from '@mui/material';
+import { Grid, Tooltip, Typography } from '@mui/material';
 import {
     AddIconButton,
     AttachButton,
@@ -58,48 +58,45 @@ const Header = (props) => {
         return titleStyle;
     };
     return (
-        <Box sx={getHeaderBoxStyle()}>
-            <Box width="100%" display="flex">
-                <Box sx={styles.titleBox} display="flex" alignItems="baseline">
-                    <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                        <Typography variant="h2" sx={getTitleStyle()}>
-                            {`${name}${isModified ? '*' : ''} :`}
-                        </Typography>
-                    </Tooltip>
-                    <Typography variant="h3" sx={getTitleStyle()}>
-                        {`${currentNetwork?.networkName ?? ''}`}
+        <Grid container sx={getHeaderBoxStyle()}>
+            <Grid container item xs sx={styles.gridTitle}>
+                <Tooltip title={isCurrent ? '' : outdatedLabel}>
+                    <Typography variant="h4" sx={getTitleStyle()}>
+                        {`${name}${isModified ? '*' : ''} :`}
                     </Typography>
-                </Box>
-                <Box sx={styles.buttonBox}>
-                    {convert !== undefined && (
-                        <ConvertButton
-                            onClick={convert}
-                            tooltip={convertTooltip}
-                            disabled={!isValid || isModified}
-                        />
-                    )}
-                    {save !== undefined && (
-                        <SaveButton
-                            onClick={save}
-                            tooltip={saveTooltip}
-                            disabled={!isValid}
-                        />
-                    )}
-                    {attach !== undefined && (
-                        <AttachButton
-                            onClick={attach}
-                            tooltip={attachTooltip}
-                        />
-                    )}
-                    {addElement !== undefined && (
-                        <AddIconButton
-                            onClick={addElement}
-                            tooltip={addTooltip}
-                        />
-                    )}
-                </Box>
-            </Box>
-        </Box>
+                </Tooltip>
+                <Typography variant="h3" sx={getTitleStyle()}>
+                    {`${currentNetwork?.networkName ?? ''}`}
+                </Typography>
+            </Grid>
+            <Grid
+                item
+                container
+                xs={2}
+                sx={mergeSx(styles.gridButton, styles.buttonIcon)}
+            >
+                {convert !== undefined && (
+                    <ConvertButton
+                        onClick={convert}
+                        tooltip={convertTooltip}
+                        disabled={!isValid || isModified}
+                    />
+                )}
+                {save !== undefined && (
+                    <SaveButton
+                        onClick={save}
+                        tooltip={saveTooltip}
+                        disabled={!isValid}
+                    />
+                )}
+                {attach !== undefined && (
+                    <AttachButton onClick={attach} tooltip={attachTooltip} />
+                )}
+                {addElement !== undefined && (
+                    <AddIconButton onClick={addElement} tooltip={addTooltip} />
+                )}
+            </Grid>
+        </Grid>
     );
 };
 

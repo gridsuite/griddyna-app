@@ -7,20 +7,28 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Select from '../1-atoms/Select';
-import {
-    AddIconButton,
-    ChangeButton,
-    CopyButton,
-    DeleteButton,
-} from '../1-atoms/buttons';
-import { Grid, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import { AddIconButton, CopyButton, DeleteButton } from '../1-atoms/buttons';
+import { Grid, Paper, Tooltip, Typography } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-import { getRuleEquipmentTypesOptions } from '../../utils/optionsBuilders';
 import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
 import { mergeSx } from 'utils/functions';
+
+const equipmentLabel = 'Each';
+const compositionLabel = 'If';
+const filterLabel = 'Where:';
+const addFilterLabel = 'Add filter';
+const copyFilterLabel = 'Copy filter';
+const deleteFilterLabel = 'Delete filter';
+const addFilterGroupLabel = 'Add filter group';
+const deleteRuleLabel = 'Delete model';
+const copyRuleLabel = 'Copy model';
+const useBasicModeLabel = 'Use simple filters mode';
+const useAdvancedModeLabel = 'Use advanced filters mode';
+const unusedFiltersLabel = 'You have unused filter(s)';
+const matchesLabel = 'matched network equipments';
+const noMatchesLabel = 'None';
 
 const Rule = (props) => {
     const {
@@ -30,6 +38,8 @@ const Rule = (props) => {
         changeComposition,
         changeModel,
         addFilter,
+        copyFilter,
+        deleteFilter,
         models,
         children,
         deleteRule,
@@ -52,148 +62,162 @@ const Rule = (props) => {
         filtersNumber,
         matches = [],
     } = rule;
-    // TODO intl
-    const equipmentLabel = 'Each';
-    const compositionLabel = 'If';
-    const filterLabel = 'Where';
-    const addFilterLabel = 'Add filter';
-    const addFilterGroupLabel = 'Add filter group';
-    const deleteRuleLabel = 'Delete model';
-    const copyRuleLabel = 'Copy model';
-    const useBasicModeLabel = 'Use simple filters mode';
-    const useAdvancedModeLabel = 'Use advanced filters mode';
-    const unusedFiltersLabel = 'You have unused filter(s)';
-    const matchesLabel = 'matched network equipments';
-    const noMatchesLabel = 'None';
+
     const onChangeComposition = (event) => {
         changeComposition(event.target.value);
     };
     return (
         <Paper
-            elevation={0}
+            elevation={24}
             sx={mergeSx(
                 styles.rulePaper,
                 !isRuleValid && styles.invalidRulePaper
             )}
         >
-            <Grid container justify={'space-between'}>
-                <Grid item>
-                    <Grid container justify={'flex-start'}>
-                        <Grid item>
-                            <Typography variant="h4">
-                                {equipmentLabel}
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <Select
+            <Grid container>
+                <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    container
+                    paddingRight={1}
+                    direction={'column'}
+                    justifyContent={'flex-start'}
+                >
+                    <Grid container>
+                        <Grid item xs>
+                            <Grid
+                                container
+                                justify={'flex-start'}
+                                spacing={1}
+                                alignItems={'baseline'}
+                            >
+                                <Grid item>
+                                    <Typography variant="subtitle2">
+                                        {equipmentLabel}
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="subtitle1">
+                                        {type}
+                                    </Typography>
+                                    {/*                            <Select
                                 options={getRuleEquipmentTypesOptions()}
                                 value={type}
                                 setValue={changeType}
                                 error={type === ''}
+                            />*/}
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="subtitle1">
+                                        :
+                                    </Typography>
+                                </Grid>
+                                {unusedFilters.length > 0 && (
+                                    <Grid item sx={styles.unused}>
+                                        <Tooltip
+                                            title={`${unusedFiltersLabel}: ${unusedFilters.join(
+                                                ', '
+                                            )}`}
+                                        >
+                                            <ErrorIcon />
+                                        </Tooltip>
+                                    </Grid>
+                                )}
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={'auto'} paddingLeft={1}>
+                            <DeleteButton
+                                onClick={deleteRule}
+                                tooltip={deleteRuleLabel}
+                            />
+                            <CopyButton
+                                onClick={copyRule}
+                                tooltip={copyRuleLabel}
                             />
                         </Grid>
-                        <Grid item>
-                            <Typography variant="h4">:</Typography>
+                    </Grid>
+                    <Grid
+                        item
+                        container
+                        sx={styles.ruleModel}
+                        direction="column"
+                        justifyContent={'flex-start'}
+                    >
+                        <ModelSelect
+                            model={mappedModel}
+                            models={models}
+                            changeModel={changeModel}
+                        />
+                        <SetGroupSelect
+                            model={mappedModel}
+                            models={models}
+                            setGroup={setGroup}
+                            groupType={groupType}
+                            changeGroup={changeParameters}
+                            editGroup={editGroup}
+                            controlledParameters={controlledParameters}
+                            isNetworkAttached={isNetworkAttached}
+                        />
+                    </Grid>
+                </Grid>
+                <Grid
+                    item
+                    container
+                    xs={12}
+                    md={6}
+                    // sx={styles.ruleModel}
+                    direction="column"
+                    justifyContent={'flex-start'}
+                >
+                    <Grid item container justify={'flex-start'}>
+                        <Grid item xs>
+                            <Typography>{filterLabel}</Typography>
                         </Grid>
-                        {unusedFilters.length > 0 && (
-                            <Grid item sx={styles.unused}>
-                                <Tooltip
-                                    title={`${unusedFiltersLabel}: ${unusedFilters.join(
-                                        ', '
-                                    )}`}
-                                >
-                                    <ErrorIcon />
-                                </Tooltip>
-                            </Grid>
-                        )}
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    {filtersNumber > 1 && (
-                        <ChangeButton
-                            onClick={changeCompositionMode}
-                            disabled={isAdvancedMode && !canUseBasicMode}
-                            tooltip={
-                                isAdvancedMode
-                                    ? useBasicModeLabel
-                                    : useAdvancedModeLabel
-                            }
-                        />
-                    )}
-                    <DeleteButton
-                        onClick={deleteRule}
-                        tooltip={deleteRuleLabel}
-                    />
-                    <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
-                </Grid>
-            </Grid>
-            {filtersNumber > 1 && isAdvancedMode && (
-                <Grid container justify={'flex-start'}>
-                    <Grid item xs={2} sx={styles.label}>
-                        <Typography>{`${compositionLabel} :`}</Typography>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <TextField
-                            fullWidth
-                            onChange={onChangeComposition}
-                            value={composition}
-                            error={composition === ''}
-                        />
-                    </Grid>
-                </Grid>
-            )}
-            <Grid container justify={'space-between'}>
-                <Grid item xs={3} sx={styles.filterLabel}>
-                    <Typography>{`${filterLabel} :`}</Typography>
-                </Grid>
-                <Grid item xs={2}>
-                    <Grid container justify="center">
-                        <AddIconButton
-                            onClick={addFilter}
-                            tooltip={
-                                isAdvancedMode
-                                    ? addFilterLabel
-                                    : addFilterGroupLabel
-                            }
-                        />
-                    </Grid>
-                </Grid>
-            </Grid>
-            {children}
+                        <Grid item xs={'auto'} container paddingLeft={1}>
+                            <AddIconButton
+                                onClick={addFilter}
+                                tooltip={
+                                    addFilterLabel
+                                    // isAdvancedMode
+                                    //     ? addFilterLabel
+                                    //     : addFilterGroupLabel
+                                }
+                            />
+                            <DeleteButton
+                                onClick={deleteFilter}
+                                tooltip={deleteFilterLabel}
+                            />
 
-            <ModelSelect
-                model={mappedModel}
-                models={models}
-                changeModel={changeModel}
-            />
-            <SetGroupSelect
-                model={mappedModel}
-                models={models}
-                setGroup={setGroup}
-                groupType={groupType}
-                changeGroup={changeParameters}
-                editGroup={editGroup}
-                controlledParameters={controlledParameters}
-                isNetworkAttached={isNetworkAttached}
-            />
-            {isNetworkAttached && !!filtersNumber && (
-                <Paper sx={styles.matches}>
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Typography variant="h6">
-                                {`${matchesLabel} :`}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <Typography>
-                                {matches.length > 0
-                                    ? `${matches.join(', ')}`
-                                    : noMatchesLabel}
-                            </Typography>
+                            <CopyButton
+                                onClick={copyFilter}
+                                tooltip={copyFilterLabel}
+                            />
                         </Grid>
                     </Grid>
-                </Paper>
-            )}
+                    {children}
+                </Grid>
+                <Grid item xs={12}>
+                    {isNetworkAttached && !!filtersNumber && (
+                        <Paper sx={styles.matches}>
+                            <Grid container>
+                                <Grid item xs={4}>
+                                    <Typography variant="h6">
+                                        {`${matchesLabel} :`}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Typography>
+                                        {matches.length > 0
+                                            ? `${matches.join(', ')}`
+                                            : noMatchesLabel}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Paper>
+                    )}
+                </Grid>
+            </Grid>
         </Paper>
     );
 };

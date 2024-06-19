@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Box, Checkbox, Grid, Typography } from '@mui/material';
+import { Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { styles } from './SetGroupSelectStyle';
 import React, { useEffect, useState } from 'react';
@@ -94,43 +94,32 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
         (foundGroup === undefined || foundGroup.setsNumber === 0);
 
     return (
-        <Box>
-            <Grid container justifyContent={'flex-start'}>
-                <Grid item xs={6}>
-                    <Grid container justifyContent={'flex-start'}>
-                        <Grid item xs="auto">
-                            <Typography variant="h4">{`${isAbsoluteLabel} :`}</Typography>
-                        </Grid>
-                        <Grid item container xs justifyContent={'flex-end'}>
-                            <Checkbox
-                                checked={isAbsolute}
-                                onChange={onAbsoluteChange}
-                                disabled={!isNetworkAttached}
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container justifyContent={'flex-start'}>
-                        <Grid item xs="auto">
-                            <Typography variant="h4">{`${setLabel} :`}</Typography>
-                        </Grid>
-                        <Grid item xs sx={styles.titleSelect}>
-                            <Select
-                                options={groupOptions}
-                                value={foundGroup ?? newEmptyGroup}
-                                setValue={changeGroup}
-                                error={foundGroup === undefined}
-                            />
-                        </Grid>
-                    </Grid>
+        <Grid container justifyContent={'flex-start'}>
+            <Grid item container justifyContent={'flex-start'}>
+                <Grid container item xs="auto" sx={styles.gridItem}>
+                    <Typography variant="subtitle1">{`${isAbsoluteLabel} :`}</Typography>
+                </Grid>
+                <Grid item container xs justifyContent={'flex-end'}>
+                    <Checkbox
+                        checked={isAbsolute}
+                        onChange={onAbsoluteChange}
+                        disabled={!isNetworkAttached}
+                    />
+                </Grid>
+            </Grid>
+            <Grid item container justifyContent={'flex-start'}>
+                <Grid container item xs sx={styles.gridItem}>
+                    <Typography variant="subtitle1">{`${setLabel} :`}</Typography>
                 </Grid>
                 <Grid
                     item
-                    xs={1}
+                    container
+                    xs="auto"
                     sx={mergeSx(
                         styles.button,
+                        styles.gridItem,
                         errorInParams && styles.errorButton
                     )}
-                    alignItems={'flex-end'}
                 >
                     <EditButton
                         onClick={editGroup(isAbsolute)}
@@ -142,11 +131,18 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                                 ? simpledEditLabel
                                 : editGroupLabel
                         }
-                        sx={{ marginBottom: 1 }}
+                    />
+                </Grid>
+                <Grid item xs="auto" sx={styles.titleSelect}>
+                    <Select
+                        options={groupOptions}
+                        value={foundGroup ?? newEmptyGroup}
+                        setValue={changeGroup}
+                        error={foundGroup === undefined}
                     />
                 </Grid>
             </Grid>
-        </Box>
+        </Grid>
     );
 };
 

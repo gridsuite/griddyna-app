@@ -9,4 +9,10 @@ export const styles = {
     titleSelect: {
         textAlign: 'right',
     },
+    gridItem: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: 1,
+    },
 };

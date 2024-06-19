@@ -6,10 +6,13 @@
  */
 
 export const styles = {
+    automatonModel: (theme) => ({
+        border: 1,
+        borderRadius: 1,
+        borderColor: theme.palette.grey[500],
+    }),
     automatonPaper: {
-        border: '2px solid',
         borderRadius: '5px',
-        borderColor: 'black',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
@@ -20,7 +23,7 @@ export const styles = {
     },
     titleLabel: {
         '& .MuiTypography-root': {
-            fontWeight: 'bold',
+            fontWeight: 'normal',
             color: 'text.primary',
         },
     },

@@ -71,6 +71,7 @@ const MappingContainer = () => {
     const filteredType = useSelector(
         (state) => state.mappings.filteredRuleType
     );
+    console.log('filterType', { filteredType });
     const filteredFamily = useSelector(
         (state) => state.mappings.filteredAutomatonFamily
     );
@@ -94,7 +95,7 @@ const MappingContainer = () => {
         value: type,
         // TODO: intl
         label: `${type} (${sortedRulesNumber[type]})`,
-        disabled: sortedRulesNumber[type] === 0,
+        // disabled: sortedRulesNumber[type] === 0, always enable rule tab for each equipment type
     }));
 
     const filterAutomataOptions = Object.values(AutomatonFamily).map(
@@ -206,14 +207,19 @@ const MappingContainer = () => {
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
                         <Grid container>
-                            <Grid item xs={11}>
+                            <Grid
+                                item
+                                container
+                                xs
+                                justifyContent={'flex-start'}
+                            >
                                 <FilterBar
                                     value={filteredType}
                                     options={filterRulesOptions}
                                     setFilter={setFilteredType}
                                 />
                             </Grid>
-                            <Grid item xs={1}>
+                            <Grid item xs="auto">
                                 <AddIconButton
                                     onClick={addRule}
                                     tooltip={ADD_MODEL_LABEL}
@@ -230,14 +236,19 @@ const MappingContainer = () => {
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
                         <Grid container>
-                            <Grid item xs={11}>
+                            <Grid
+                                item
+                                container
+                                xs
+                                justifyContent={'flex-start'}
+                            >
                                 <FilterBar
                                     value={filteredFamily}
                                     options={filterAutomataOptions}
                                     setFilter={setFilteredFamily}
                                 />
                             </Grid>
-                            <Grid item xs={1}>
+                            <Grid item xs="auto">
                                 <AddIconButton
                                     onClick={addAutomaton}
                                     tooltip={ADD_AUTOMATON_LABEL}

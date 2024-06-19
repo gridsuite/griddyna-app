@@ -6,10 +6,13 @@
  */
 
 export const styles = {
+    ruleModel: (theme) => ({
+        border: 1,
+        borderRadius: 1,
+        borderColor: theme.palette.grey[500],
+    }),
     rulePaper: {
-        border: '2px solid',
         borderRadius: '5px',
-        borderColor: 'black',
         marginBottom: '5px',
         '& >.MuiGrid-root': {
             marginTop: '5px',
@@ -24,6 +27,7 @@ export const styles = {
         paddingRight: '5px',
     },
     filterLabel: {
+        alignItems: 'center',
         paddingLeft: '5px',
         marginTop: '1em',
     },
