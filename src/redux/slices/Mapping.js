@@ -596,9 +596,9 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
         const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
         const ruleToMatch = {
             ruleIndex,
-            composition: foundRule.composition,
+            // composition: foundRule.composition,
             equipmentType: foundRule.type,
-            filters: foundRule.filters.map(augmentFilter(foundRule.type)),
+            filter: augmentFilter(foundRule.type)(foundRule.filter),
         };
         return await networkAPI.getNetworkMatchesFromRule(
             networkId,

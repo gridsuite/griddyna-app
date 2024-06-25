@@ -28,6 +28,10 @@ import {
     login_en,
     card_error_boundary_en,
     card_error_boundary_fr,
+    filter_en,
+    filter_fr,
+    filter_expert_en,
+    filter_expert_fr,
 } from '@gridsuite/commons-ui';
 
 const messages = {
@@ -36,12 +40,16 @@ const messages = {
         ...login_en,
         ...top_bar_en,
         ...card_error_boundary_en,
+        ...filter_en,
+        ...filter_expert_en,
     },
     fr: {
         ...messages_fr,
         ...login_fr,
         ...top_bar_fr,
         ...card_error_boundary_fr,
+        ...filter_fr,
+        ...filter_expert_fr,
     },
 };
 

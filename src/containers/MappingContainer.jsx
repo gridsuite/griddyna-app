@@ -181,8 +181,8 @@ const MappingContainer = () => {
                     isValid={isMappingValid && areParametersValid}
                     save={saveMapping}
                     saveTooltip={SAVE_LABEL}
-                    convert={convertToScript}
-                    convertTooltip={CONVERT_LABEL}
+                    // convert={convertToScript}
+                    // convertTooltip={CONVERT_LABEL}
                     attach={() => setIsAttachedModalOpen(true)}
                     attachTooltip={ATTACH_LABEL}
                 />

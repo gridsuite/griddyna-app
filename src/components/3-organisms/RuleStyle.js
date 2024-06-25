@@ -38,8 +38,8 @@ export const styles = {
             fontSize: '2em',
         },
     },
-    matches: {
-        backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    matches: (theme) => ({
+        backgroundColor: theme.palette.grey[800],
         maxHeight: '8em',
         '& .MuiGrid-container': {
             '& .MuiGrid-item': {
@@ -47,5 +47,5 @@ export const styles = {
                 overflowY: 'auto',
             },
         },
-    },
+    }),
 };

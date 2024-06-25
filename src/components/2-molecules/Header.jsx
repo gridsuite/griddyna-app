@@ -72,7 +72,7 @@ const Header = (props) => {
             <Grid
                 item
                 container
-                xs={2}
+                xs={'auto'}
                 sx={mergeSx(styles.gridButton, styles.buttonIcon)}
             >
                 {convert !== undefined && (

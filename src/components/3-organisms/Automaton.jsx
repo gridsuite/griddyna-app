@@ -63,7 +63,7 @@ const Automaton = (props) => {
                 <Grid
                     item
                     xs={12}
-                    md={6}
+                    md={4}
                     container
                     paddingRight={1}
                     direction={'column'}
@@ -121,7 +121,7 @@ const Automaton = (props) => {
                     item
                     container
                     xs={12}
-                    md={6}
+                    md={8}
                     direction="column"
                     justifyContent={'flex-start'}
                 >

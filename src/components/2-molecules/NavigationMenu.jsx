@@ -29,7 +29,7 @@ const NavigationMenu = (props) => {
         renameItem,
         copyItem,
         selectItem,
-        convertItem,
+        // convertItem,
         selected = '',
         canAdd = true,
         addTooltip = '',
@@ -48,12 +48,12 @@ const NavigationMenu = (props) => {
                 action: deleteItem(itemName),
             });
         }
-        if (convertItem) {
-            options.push({
-                label: 'Convert to .groovy',
-                action: convertItem(itemName),
-            });
-        }
+        // if (convertItem) {
+        //     options.push({
+        //         label: 'Convert to .groovy',
+        //         action: convertItem(itemName),
+        //     });
+        // }
         if (renameItem) {
             options.push({
                 label: 'Rename',
@@ -135,7 +135,7 @@ NavigationMenu.propTypes = {
     renameItem: PropTypes.func,
     copyItem: PropTypes.func,
     selectItem: PropTypes.func.isRequired,
-    convertItem: PropTypes.func,
+    // convertItem: PropTypes.func,
     selected: PropTypes.string,
     canAdd: PropTypes.bool,
     addTooltip: PropTypes.string,

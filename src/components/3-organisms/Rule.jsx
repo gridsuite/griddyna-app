@@ -27,7 +27,7 @@ const copyRuleLabel = 'Copy model';
 const useBasicModeLabel = 'Use simple filters mode';
 const useAdvancedModeLabel = 'Use advanced filters mode';
 const unusedFiltersLabel = 'You have unused filter(s)';
-const matchesLabel = 'matched network equipments';
+const matchesLabel = 'Matched network equipments';
 const noMatchesLabel = 'None';
 
 const Rule = (props) => {
@@ -78,7 +78,7 @@ const Rule = (props) => {
                 <Grid
                     item
                     xs={12}
-                    md={6}
+                    md={4}
                     container
                     paddingRight={1}
                     direction={'column'}
@@ -165,7 +165,7 @@ const Rule = (props) => {
                     item
                     container
                     xs={12}
-                    md={6}
+                    md={8}
                     // sx={styles.ruleModel}
                     direction="column"
                     justifyContent={'flex-start'}
@@ -197,12 +197,12 @@ const Rule = (props) => {
                     </Grid>
                     {children}
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} md={12} paddingTop={1}>
                     {isNetworkAttached && !!filtersNumber && (
                         <Paper sx={styles.matches}>
                             <Grid container>
                                 <Grid item xs={4}>
-                                    <Typography variant="h6">
+                                    <Typography variant="subtitle1">
                                         {`${matchesLabel} :`}
                                     </Typography>
                                 </Grid>
