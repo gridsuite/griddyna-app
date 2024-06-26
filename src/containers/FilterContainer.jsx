@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     makeChangeFilterValueThenGetNetworkMatches,
@@ -19,11 +19,13 @@ import {
     CustomFormProvider,
     EXPERT_FILTER_QUERY,
     EXPERT_FILTER_SCHEMA,
+    exportExpertRules,
     importExpertRules,
     yup,
 } from '@gridsuite/commons-ui';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import useNotification from '../hooks/useNotification';
 
 const filterFormSchema = yup
     .object()
@@ -32,6 +34,12 @@ const filterFormSchema = yup
     })
     .required();
 
+const actionTypes = [
+    MappingSlice.actions.selectMapping.type,
+    MappingSlice.actions.changeFilteredType.type,
+    MappingSlice.actions.deleteRule.type,
+];
+
 const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
     // Data
     const getFilter = useMemo(makeGetFilter, []);
@@ -39,8 +47,8 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
         getFilter(state, { rule: ruleIndex /*filter: filterIndex */ })
     );
 
-    console.log('filter', { filter });
-    const { id, rules: rootFilterRule } = filter;
+    //console.log('filter', { filter });
+    const { id, rules: filterValue } = filter;
     // const fullProperty = equipmentType
     //     ? getProperty(equipmentType, property)
     //     : undefined;
@@ -92,25 +100,6 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
         makeChangeFilterValueThenGetNetworkMatches,
         []
     );
-    const setValue = useCallback(
-        (value) => {
-            dispatch(
-                changeFilterValueThenGetNetworkMatches({
-                    ruleIndex,
-                    /*filterIndex,*/
-                    //value: isUniqueSelectFilter ? [value] : value,
-                    value,
-                })
-            );
-        },
-        [
-            dispatch,
-            ruleIndex,
-            // filterIndex,
-            // isUniqueSelectFilter,
-            changeFilterValueThenGetNetworkMatches,
-        ]
-    );
 
     // const properties = equipmentType ? getPropertiesOptions(equipmentType) : [];
     // const possibleValues =
@@ -123,7 +112,8 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
     //         : undefined);
 
     // --- begin new code --- //
-    const [filterDataReady, setFilterDataReady] = useState(false);
+
+    const { ready, setReady } = useNotification(actionTypes);
 
     // how to set default values from useSelector and via reset???
     const formMethods = useForm({
@@ -137,16 +127,37 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
 
     const isValidating = errors.root?.isValidating;
 
+    const setValue = useCallback(
+        (formData) => {
+            const newQuery = exportExpertRules(formData[EXPERT_FILTER_QUERY]);
+            dispatch(
+                changeFilterValueThenGetNetworkMatches({
+                    ruleIndex,
+                    /*filterIndex,*/
+                    //value: isUniqueSelectFilter ? [value] : value,
+                    value: newQuery,
+                })
+            );
+        },
+        [
+            dispatch,
+            ruleIndex,
+            // filterIndex,
+            // isUniqueSelectFilter,
+            changeFilterValueThenGetNetworkMatches,
+        ]
+    );
+
+    // effect to init react query builder filter form value
     useEffect(() => {
-        const query = importExpertRules(filter[EXPERT_FILTER_QUERY]);
+        if (!ready) {
+            console.log('filter value in effect', { filterValue });
+            const query = importExpertRules(filterValue);
 
-        console.log('query in effect', { query });
-
-        reset({
-            [EXPERT_FILTER_QUERY]: query,
-        });
-        setFilterDataReady(true);
-    }, [reset, filter]);
+            reset({ [EXPERT_FILTER_QUERY]: query });
+            setReady(true);
+        }
+    }, [reset, filterValue, ready, setReady]);
 
     // --- end new code --- //
 
@@ -155,7 +166,7 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
             {...formMethods}
             validationSchema={filterFormSchema}
         >
-            {filterDataReady && (
+            {ready && (
                 <Filter
                     id={id}
                     isValid={isValid}

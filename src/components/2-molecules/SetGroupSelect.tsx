@@ -96,10 +96,10 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
     return (
         <Grid container justifyContent={'flex-start'}>
             <Grid item container justifyContent={'flex-start'}>
-                <Grid container item xs="auto" sx={styles.gridItem}>
+                <Grid container item xs sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${isAbsoluteLabel} :`}</Typography>
                 </Grid>
-                <Grid item container xs justifyContent={'flex-end'}>
+                <Grid item container xs="auto" justifyContent={'flex-end'}>
                     <Checkbox
                         checked={isAbsolute}
                         onChange={onAbsoluteChange}
