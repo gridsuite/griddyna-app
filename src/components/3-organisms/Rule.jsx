@@ -59,7 +59,7 @@ const Rule = (props) => {
         mappedModel,
         setGroup,
         groupType,
-        filtersNumber,
+        hasFilter,
         matches = [],
     } = rule;
 
@@ -198,7 +198,7 @@ const Rule = (props) => {
                     {children}
                 </Grid>
                 <Grid item xs={12} md={12} paddingTop={1}>
-                    {isNetworkAttached && !!filtersNumber && (
+                    {isNetworkAttached && hasFilter && (
                         <Paper sx={styles.matches}>
                             <Grid container>
                                 <Grid item xs={4}>

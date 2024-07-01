@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     makeChangeFilterValueThenGetNetworkMatches,
@@ -19,13 +19,12 @@ import {
     CustomFormProvider,
     EXPERT_FILTER_QUERY,
     EXPERT_FILTER_SCHEMA,
-    exportExpertRules,
-    importExpertRules,
     yup,
 } from '@gridsuite/commons-ui';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useNotification from '../hooks/useNotification';
+import useFormChange from '../hooks/useFormChange';
+import useFormUpdate from '../hooks/useFormUpdate';
 
 const filterFormSchema = yup
     .object()
@@ -44,11 +43,9 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
     // Data
     const getFilter = useMemo(makeGetFilter, []);
     const filter = useSelector((state) =>
-        getFilter(state, { rule: ruleIndex /*filter: filterIndex */ })
+        getFilter(state, ruleIndex /*{ rule: ruleIndex, filter: filterIndex }*/)
     );
-
-    //console.log('filter', { filter });
-    const { id, rules: filterValue } = filter;
+    const { id, rules: filterQuery } = filter;
     // const fullProperty = equipmentType
     //     ? getProperty(equipmentType, property)
     //     : undefined;
@@ -113,29 +110,28 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
 
     // --- begin new code --- //
 
-    const { ready, setReady } = useNotification(actionTypes);
-
     // how to set default values from useSelector and via reset???
     const formMethods = useForm({
         resolver: yupResolver(filterFormSchema),
     });
 
     const {
-        reset,
         formState: { errors },
+        setValue: setFormValue,
     } = formMethods;
 
     const isValidating = errors.root?.isValidating;
 
     const setValue = useCallback(
         (formData) => {
-            const newQuery = exportExpertRules(formData[EXPERT_FILTER_QUERY]);
+            const rqbQuery = formData[EXPERT_FILTER_QUERY];
+            //const newFilterQuery = exportExpertRules(rqbQuery);
             dispatch(
                 changeFilterValueThenGetNetworkMatches({
                     ruleIndex,
                     /*filterIndex,*/
                     //value: isUniqueSelectFilter ? [value] : value,
-                    value: newQuery,
+                    value: rqbQuery,
                 })
             );
         },
@@ -148,16 +144,25 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
         ]
     );
 
-    // effect to init react query builder filter form value
-    useEffect(() => {
-        if (!ready) {
-            console.log('filter value in effect', { filterValue });
-            const query = importExpertRules(filterValue);
+    // const formData = watch();
+    // const prevFormData = usePrevious(formData);
+    //
+    // // submit when OnChange occurs
+    // // see https://stackoverflow.com/questions/63466463/how-to-submit-react-form-fields-on-onchange-rather-than-on-submit-using-react-ho
+    // useEffect(() => {
+    //     // const subscription = watch(() => handleSubmit(setValue)());
+    //     // return () => {
+    //     //     subscription.unsubscribe();
+    //     // };
+    //     if (!isDeepEqualReact(prevFormData, formData)) {
+    //         console.log('submit', { formData });
+    //         handleSubmit(setValue)();
+    //     }
+    // }, [handleSubmit, watch, setValue, formData, prevFormData]);
 
-            reset({ [EXPERT_FILTER_QUERY]: query });
-            setReady(true);
-        }
-    }, [reset, filterValue, ready, setReady]);
+    useFormChange(formMethods, setValue);
+
+    useFormUpdate(formMethods, filter);
 
     // --- end new code --- //
 
@@ -166,31 +171,29 @@ const FilterContainer = ({ ruleIndex, /*filterIndex,*/ equipmentType }) => {
             {...formMethods}
             validationSchema={filterFormSchema}
         >
-            {ready && (
-                <Filter
-                    id={id}
-                    isValid={isValid}
-                    //            property={property}
-                    //            propertyType={fullProperty?.type}
-                    //            properties={properties}
-                    //             setProperty={setProperty}
-                    //            operand={operand}
-                    // setOperand={setOperand}
-                    //            value={isUniqueSelectFilter && value.length > 0 ? value[0] : value}
-                    //            possibleValues={possibleValues}
-                    //            networkValues={networkValues}
-                    setValue={setValue}
-                    // new code props
-                    equipmentType={equipmentType}
-                />
-            )}
+            <Filter
+                id={id}
+                isValid={isValid}
+                //            property={property}
+                //            propertyType={fullProperty?.type}
+                //            properties={properties}
+                //             setProperty={setProperty}
+                //            operand={operand}
+                // setOperand={setOperand}
+                //            value={isUniqueSelectFilter && value.length > 0 ? value[0] : value}
+                //            possibleValues={possibleValues}
+                //            networkValues={networkValues}
+                setValue={setValue}
+                // new code props
+                equipmentType={equipmentType}
+            />
         </CustomFormProvider>
     );
 };
 
 FilterContainer.propTypes = {
     ruleIndex: PropTypes.number.isRequired,
-    filterIndex: PropTypes.number.isRequired,
+    //    filterIndex: PropTypes.number.isRequired,
     equipmentType: PropTypes.string.isRequired,
 };
 

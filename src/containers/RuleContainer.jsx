@@ -27,12 +27,13 @@ const RuleContainer = ({ index, editParameters }) => {
     const rule = useSelector((state) => getRule(state, index));
     const {
         type,
-        filtersNumber,
+        hasFilter,
         mappedModel,
         setGroup,
         groupType,
-        composition,
+        //composition,
     } = rule;
+    console.log('rule', { rule });
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
     const isRuleValid = useSelector((state) =>
         isRuleValidSelector(state, index)
@@ -186,20 +187,20 @@ const RuleContainer = ({ index, editParameters }) => {
             originIndex: index,
         });
 
-    function buildFilters() {
-        const filters = [];
-        for (let i = 0; i < filtersNumber; i++) {
-            filters.push(
-                <FilterContainer
-                    key={`filter-container-${i}`}
-                    ruleIndex={index}
-                    // filterIndex={i}
-                    equipmentType={type}
-                />
-            );
-        }
-        return filters;
-    }
+    // function buildFilters() {
+    //     const filters = [];
+    //     for (let i = 0; i < filtersNumber; i++) {
+    //         filters.push(
+    //             <FilterContainer
+    //                 key={`filter-container-${i}`}
+    //                 ruleIndex={index}
+    //                 // filterIndex={i}
+    //                 equipmentType={type}
+    //             />
+    //         );
+    //     }
+    //     return filters;
+    // }
 
     // function buildFiltersGroup(groupArray, groupIndex) {
     //     const groupOperator = groupArray[1] ?? '||';
@@ -252,7 +253,7 @@ const RuleContainer = ({ index, editParameters }) => {
         if (!!currentNetworkId && isRuleValid) {
             dispatch(getNetworkMatchesFromRule(index));
         }
-    }, [currentNetworkId, isRuleValid, index, composition, dispatch]);
+    }, [currentNetworkId, isRuleValid, index, /*composition,*/ dispatch]);
 
     return (
         <Rule
@@ -276,7 +277,7 @@ const RuleContainer = ({ index, editParameters }) => {
             controlledParameters={controlledParameters}
             isNetworkAttached={!!currentNetworkId}
         >
-            {rule.filtersNumber > 0 ? (
+            {hasFilter ? (
                 <>
                     {
                         /*showAdvanced &&  <FiltersTemplate>

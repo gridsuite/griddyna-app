@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from '@mui/material';
 import { getOperandsOptions } from '../../utils/optionsBuilders';
@@ -16,7 +16,6 @@ import {
     EXPERT_FILTER_QUERY,
 } from '@gridsuite/commons-ui';
 import { useIntl } from 'react-intl';
-import { useFormContext } from 'react-hook-form';
 
 const COPY_FILTER_LABEL = 'Copy filter';
 const DELETE_FILTER_LABEL = 'Delete filter';
@@ -43,8 +42,6 @@ const Filter = (props) => {
     // --- begin new code rqb --- //
     const intl = useIntl();
 
-    const { handleSubmit, watch } = useFormContext();
-
     const translatedFields = useMemo(() => {
         return EXPERT_FILTER_FIELDS[equipmentType]?.map((field) => {
             return {
@@ -53,15 +50,6 @@ const Filter = (props) => {
             };
         });
     }, [intl, equipmentType]);
-
-    // submit when OnChange occurs
-    // see https://stackoverflow.com/questions/63466463/how-to-submit-react-form-fields-on-onchange-rather-than-on-submit-using-react-ho
-    useEffect(() => {
-        const subscription = watch(() => handleSubmit(setValue)());
-        return () => {
-            subscription.unsubscribe();
-        };
-    }, [handleSubmit, watch, setValue]);
 
     // --- end new code rqb --- //
     const handleAutocompleteChange = useCallback(

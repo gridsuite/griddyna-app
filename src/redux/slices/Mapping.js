@@ -24,7 +24,11 @@ import { makeGetNetworkValues } from './Network';
 import { createParameterSelector } from '../selectorUtil';
 import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
-import { getExpertFilterEmptyFormData } from '@gridsuite/commons-ui';
+import {
+    exportExpertRules,
+    getExpertFilterEmptyFormData,
+    importExpertRules,
+} from '@gridsuite/commons-ui';
 
 const initialState = {
     mappings: [],
@@ -59,7 +63,7 @@ export const DEFAULT_NAME = 'default';
 //utils
 
 const transformMapping = (receivedMapping) => {
-    let mapping = _.cloneDeep(receivedMapping);
+    const mapping = _.cloneDeep(receivedMapping);
     mapping.rules = mapping.rules.map((rule) => {
         // let filterCounterList = [];
         rule['type'] = rule.equipmentType;
@@ -73,6 +77,9 @@ const transformMapping = (receivedMapping) => {
         // rule['filterCounter'] =
         //     filterCounterList.reduce((max, val) => Math.max(max, val), 0) + 1;
         rule['matches'] = [];
+        if (rule.filter) {
+            rule['filter']['rules'] = importExpertRules(rule.filter.rules);
+        }
         return rule;
     });
 
@@ -136,7 +143,7 @@ export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 // parameter selectors
 // filter param object {rule, filter, ..}
 const getRuleIndexParam = createParameterSelector(({ rule }) => rule);
-const getFilterIndexParam = createParameterSelector(({ filter }) => filter);
+//const getFilterIndexParam = createParameterSelector(({ filter }) => filter);
 
 // Selectors
 
@@ -189,12 +196,12 @@ export const makeGetRule = () =>
         getRules,
         getFilteredRuleType,
         (_state, index) => index,
-        (rules, filteredRuleType, index) => {
+        (rules, filteredRuleType, ruleIndex) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
-            const foundRule = filteredRules[index];
+            const foundRule = filteredRules[ruleIndex];
             const {
                 type,
-                composition,
+                //composition,
                 mappedModel,
                 setGroup,
                 groupType,
@@ -203,13 +210,13 @@ export const makeGetRule = () =>
             // Filters fetched separately to avoid re-renders
             return {
                 type,
-                composition,
+                //composition,
                 mappedModel,
                 setGroup,
                 groupType,
                 matches,
                 // filtersNumber: foundRule.filters.length,
-                filtersNumber: foundRule.filter ? 1 : 0,
+                hasFilter: !!foundRule.filter,
             };
         }
     );
@@ -252,8 +259,9 @@ export const makeGetFilter = () =>
     createSelector(
         getRules,
         getFilteredRuleType,
-        getRuleIndexParam /*
-        getFilterIndexParam,*/,
+        (_state, index) => index,
+        // getRuleIndexParam,
+        //getFilterIndexParam,
         (rules, filteredRuleType, ruleIndex /*, filterIndex*/) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
             // return filteredRules[ruleIndex].filters[filterIndex];
@@ -460,13 +468,11 @@ export const canCreateNewMapping = (state) =>
 
 export const makeGetMatches = () =>
     createSelector(
-        (state) =>
-            filterRulesByType(
-                state.mappings.rules,
-                state.mappings.filteredRuleType
-            ),
+        getRules,
+        getFilteredRuleType,
         (_state, { isRule, index }) => (isRule ? index : -1),
-        (rules, index) => rules[index]?.matches ?? []
+        (rules, filteredRuleType, index) =>
+            filterRulesByType(rules, filteredRuleType)[index]?.matches ?? []
     );
 
 // Reducers
@@ -476,6 +482,7 @@ const augmentFilter = (ruleType) => (filter) => ({
     equipmentType: ruleType,
     type: 'EXPERT',
     // type: getProperty(ruleType, filter.property).type,
+    rules: exportExpertRules(filter.rules),
 });
 export const postMapping = createAsyncThunk(
     'mappings/post',
@@ -501,9 +508,9 @@ export const postMapping = createAsyncThunk(
             // );
             // FIX ME may be not need augment filter
             if (augmentedRule.filter) {
-                augmentFilter(augmentedRule.equipmentType)(
-                    augmentedRule.filter
-                );
+                augmentedRule.filter = augmentFilter(
+                    augmentedRule.equipmentType
+                )(augmentedRule.filter);
             }
 
             // if (augmentedRule.filters.length === 0) {
@@ -826,6 +833,7 @@ const reducers = {
             state.rules,
             state.filteredRuleType
         )[ruleIndex].filter;
+        console.log('ChangeFilterValue', { value });
         modifiedFilter.rules = value;
     },
     deleteFilter: (state, action) => {
