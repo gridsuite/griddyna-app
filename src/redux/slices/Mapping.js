@@ -29,6 +29,7 @@ import {
     getExpertFilterEmptyFormData,
     importExpertRules,
 } from '@gridsuite/commons-ui';
+import { enrichIdQuery } from '../../utils/rqb-utils';
 
 const initialState = {
     mappings: [],
@@ -78,7 +79,12 @@ const transformMapping = (receivedMapping) => {
         //     filterCounterList.reduce((max, val) => Math.max(max, val), 0) + 1;
         rule['matches'] = [];
         if (rule.filter) {
-            rule['filter']['rules'] = importExpertRules(rule.filter.rules);
+            rule['filter']['rules'] = importExpertRules(
+                // RQB need an id for each rule/group to avoid re-create a new component
+                // even the same input => lost focus while typing
+                // This solution can be removed when the back-end returns id persisted for each rule in the db (round-trip)
+                enrichIdQuery(rule.filter.rules)
+            );
         }
         return rule;
     });
