@@ -13,8 +13,6 @@ import {
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
-import { getProperty } from '../../utils/properties';
-import { multipleOperands } from '../../constants/operands';
 import {
     checkCompositionArrayValidity,
     convertCompositionArrayToString,
@@ -26,6 +24,12 @@ import { makeGetNetworkValues } from './Network';
 import { createParameterSelector } from '../selectorUtil';
 import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
+import {
+    exportExpertRules,
+    getExpertFilterEmptyFormData,
+    importExpertRules,
+} from '@gridsuite/commons-ui';
+import { enrichIdQuery } from '../../utils/rqb-utils';
 
 const initialState = {
     mappings: [],
@@ -40,12 +44,12 @@ const initialState = {
 
 const DEFAULT_RULE = {
     type: '',
-    composition: 'true',
+    // composition: 'true',
     mappedModel: '',
     setGroup: '',
     groupType: 'FIXED',
-    filters: [],
-    filterCounter: 1,
+    filter: undefined, //    filters: [],
+    // filterCounter: 1,
     matches: [],
 };
 
@@ -60,20 +64,28 @@ export const DEFAULT_NAME = 'default';
 //utils
 
 const transformMapping = (receivedMapping) => {
-    let mapping = _.cloneDeep(receivedMapping);
+    const mapping = _.cloneDeep(receivedMapping);
     mapping.rules = mapping.rules.map((rule) => {
-        let filterCounterList = [];
+        // let filterCounterList = [];
         rule['type'] = rule.equipmentType;
         delete rule.equipmentType;
-        rule.filters.forEach((filter) => {
-            filterCounterList.push(Number(filter.filterId.slice(6)));
-            filter['id'] = filter.filterId;
-            delete filter.filterId;
-            delete filter.type;
-        });
-        rule['filterCounter'] =
-            filterCounterList.reduce((max, val) => Math.max(max, val), 0) + 1;
+        // rule.filters.forEach((filter) => {
+        //     filterCounterList.push(Number(filter.filterId.slice(6)));
+        //     filter['id'] = filter.filterId;
+        //     delete filter.filterId;
+        //     delete filter.type;
+        // });
+        // rule['filterCounter'] =
+        //     filterCounterList.reduce((max, val) => Math.max(max, val), 0) + 1;
         rule['matches'] = [];
+        if (rule.filter) {
+            rule['filter']['rules'] = importExpertRules(
+                // RQB need an id for each rule/group to avoid re-create a new component
+                // even the same input => lost focus while typing
+                // This solution can be removed when the back-end returns id persisted for each rule in the db (round-trip)
+                enrichIdQuery(rule.filter.rules)
+            );
+        }
         return rule;
     });
 
@@ -137,7 +149,7 @@ export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 // parameter selectors
 // filter param object {rule, filter, ..}
 const getRuleIndexParam = createParameterSelector(({ rule }) => rule);
-const getFilterIndexParam = createParameterSelector(({ filter }) => filter);
+//const getFilterIndexParam = createParameterSelector(({ filter }) => filter);
 
 // Selectors
 
@@ -190,12 +202,12 @@ export const makeGetRule = () =>
         getRules,
         getFilteredRuleType,
         (_state, index) => index,
-        (rules, filteredRuleType, index) => {
+        (rules, filteredRuleType, ruleIndex) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
-            const foundRule = filteredRules[index];
+            const foundRule = filteredRules[ruleIndex];
             const {
                 type,
-                composition,
+                //composition,
                 mappedModel,
                 setGroup,
                 groupType,
@@ -204,12 +216,13 @@ export const makeGetRule = () =>
             // Filters fetched separately to avoid re-renders
             return {
                 type,
-                composition,
+                //composition,
                 mappedModel,
                 setGroup,
                 groupType,
                 matches,
-                filtersNumber: foundRule.filters.length,
+                // filtersNumber: foundRule.filters.length,
+                hasFilter: !!foundRule.filter,
             };
         }
     );
@@ -252,11 +265,13 @@ export const makeGetFilter = () =>
     createSelector(
         getRules,
         getFilteredRuleType,
-        getRuleIndexParam,
-        getFilterIndexParam,
-        (rules, filteredRuleType, ruleIndex, filterIndex) => {
+        (_state, index) => index,
+        // getRuleIndexParam,
+        //getFilterIndexParam,
+        (rules, filteredRuleType, ruleIndex /*, filterIndex*/) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
-            return filteredRules[ruleIndex].filters[filterIndex];
+            // return filteredRules[ruleIndex].filters[filterIndex];
+            return filteredRules[ruleIndex].filter;
         }
     );
 
@@ -276,8 +291,8 @@ export const makeGetFilterIndexes = () =>
         }
     );
 
-const checkFilterValidity = (filter) =>
-    filter.property !== '' && filter.operand !== '' && filter.value !== '';
+const checkFilterValidity = (filter) => true;
+// filter.property !== '' && filter.operand !== '' && filter.value !== '';
 
 export const makeIsFilterValid = () =>
     createSelector(
@@ -288,11 +303,13 @@ export const makeIsFilterValid = () =>
             ),
         (_state, indexes) => indexes,
         (rules, indexes) =>
-            checkFilterValidity(rules[indexes.rule].filters[indexes.filter])
+            //checkFilterValidity(rules[indexes.rule].filters[indexes.filter])
+            checkFilterValidity(rules[indexes.rule].filter)
     );
 
 const checkAllFiltersValidity = (rule) => {
-    return rule.filters.every((filter) => checkFilterValidity(filter));
+    // return rule.filters.every((filter) => checkFilterValidity(filter));
+    return checkFilterValidity(rule.filter);
 };
 
 export const makeGetIsAllFiltersValid = () =>
@@ -457,20 +474,21 @@ export const canCreateNewMapping = (state) =>
 
 export const makeGetMatches = () =>
     createSelector(
-        (state) =>
-            filterRulesByType(
-                state.mappings.rules,
-                state.mappings.filteredRuleType
-            ),
+        getRules,
+        getFilteredRuleType,
         (_state, { isRule, index }) => (isRule ? index : -1),
-        (rules, index) => rules[index]?.matches ?? []
+        (rules, filteredRuleType, index) =>
+            filterRulesByType(rules, filteredRuleType)[index]?.matches ?? []
     );
 
 // Reducers
 const augmentFilter = (ruleType) => (filter) => ({
     ...filter,
-    filterId: filter.id,
-    type: getProperty(ruleType, filter.property).type,
+    // filterId: filter.id,
+    equipmentType: ruleType,
+    type: 'EXPERT',
+    // type: getProperty(ruleType, filter.property).type,
+    rules: exportExpertRules(filter.rules),
 });
 export const postMapping = createAsyncThunk(
     'mappings/post',
@@ -488,16 +506,23 @@ export const postMapping = createAsyncThunk(
         let augmentedRules = rules.map((rule) => {
             let augmentedRule = _.cloneDeep(rule);
             augmentedRule.equipmentType = rule.type.toUpperCase();
-            augmentedRule.composition = postProcessComposition(
-                rule.composition
-            );
-            augmentedRule.filters = augmentedRule.filters.map(
-                augmentFilter(rule.type)
-            );
-            if (augmentedRule.filters.length === 0) {
-                // Even if it should be true anyway, avoid "true && true" in case of filter deletion
-                augmentedRule.composition = 'true';
+            // augmentedRule.composition = postProcessComposition(
+            //     rule.composition
+            // );
+            // augmentedRule.filters = augmentedRule.filters.map(
+            //     augmentFilter(rule.type)
+            // );
+            // FIX ME may be not need augment filter
+            if (augmentedRule.filter) {
+                augmentedRule.filter = augmentFilter(
+                    augmentedRule.equipmentType
+                )(augmentedRule.filter);
             }
+
+            // if (augmentedRule.filters.length === 0) {
+            //     // Even if it should be true anyway, avoid "true && true" in case of filter deletion
+            //     augmentedRule.composition = 'true';
+            // }
             delete augmentedRule.matches;
             return augmentedRule;
         });
@@ -584,9 +609,9 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
         const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
         const ruleToMatch = {
             ruleIndex,
-            composition: foundRule.composition,
+            // composition: foundRule.composition,
             equipmentType: foundRule.type,
-            filters: foundRule.filters.map(augmentFilter(foundRule.type)),
+            filter: augmentFilter(foundRule.type)(foundRule.filter),
         };
         return await networkAPI.getNetworkMatchesFromRule(
             networkId,
@@ -604,41 +629,46 @@ export const makeChangeFilterValueThenGetNetworkMatches = () => {
     const getNetworkValues = makeGetNetworkValues();
     const getIsAllFiltersValid = makeGetIsAllFiltersValid();
 
-    return ({ ruleIndex, filterIndex, value }) => {
+    return ({ ruleIndex, /*filterIndex,*/ value }) => {
         return (dispatch, getState) => {
             dispatch(
+                // MappingSlice.actions.changeFilterValue({
+                //     ruleIndex,
+                //     filterIndex,
+                //     value,
+                // })
                 MappingSlice.actions.changeFilterValue({
                     ruleIndex,
-                    filterIndex,
+                    /*filterIndex,*/
                     value,
                 })
             );
 
             // --- Fail-fast check conditions to fire the next action --- //
             const state = getState();
-            // network values must be present
-            // get type
-            const rule = getRule(state, ruleIndex);
-            const { type } = rule;
-
-            // get full property
-            const filter = getFilter(state, {
-                rule: ruleIndex,
-                filter: filterIndex,
-            });
-            const { property } = filter;
-            const fullProperty = type ? getProperty(type, property) : undefined;
-
-            // get network value from filter
-            const networkValues = getNetworkValues(state, {
-                equipmentType: type,
-                fullProperty: fullProperty,
-            });
-
-            const hasNetworkValues = networkValues.length > 0;
-            if (!hasNetworkValues) {
-                return;
-            }
+            // // network values must be present
+            // // get type
+            // const rule = getRule(state, ruleIndex);
+            // const { type } = rule;
+            //
+            // // get full property
+            // const filter = getFilter(state, {
+            //     rule: ruleIndex,
+            //     //filter: filterIndex,
+            // });
+            // const { property } = filter;
+            // const fullProperty = type ? getProperty(type, property) : undefined;
+            //
+            // // get network value from filter
+            // const networkValues = getNetworkValues(state, {
+            //     equipmentType: type,
+            //     fullProperty: fullProperty,
+            // });
+            //
+            // const hasNetworkValues = networkValues.length > 0;
+            // if (!hasNetworkValues) {
+            //     return;
+            // }
 
             // every filter in the same rule must be valid
             const isAllFiltersValid = getIsAllFiltersValid(state, ruleIndex);
@@ -657,8 +687,7 @@ const reducers = {
 
     changeFilteredType: (state, action) => {
         const filteredRuleType = action.payload;
-        state.filteredRuleType =
-            state.filteredRuleType === filteredRuleType ? '' : filteredRuleType;
+        state.filteredRuleType = filteredRuleType;
     },
     changeFilteredFamily: (state, action) => {
         const filteredAutomatonFamily = action.payload;
@@ -683,12 +712,12 @@ const reducers = {
             state.filteredRuleType
         )[index];
         selectedRule.type = equipmentType;
-        selectedRule.composition = DEFAULT_RULE.composition;
-        selectedRule.filters = DEFAULT_RULE.filters;
+        // selectedRule.composition = DEFAULT_RULE.composition;
+        selectedRule.filter = DEFAULT_RULE.filter;
         selectedRule.mappedModel = DEFAULT_RULE.mappedModel;
         selectedRule.setGroup = DEFAULT_RULE.setGroup;
         selectedRule.groupType = DEFAULT_RULE.groupType;
-        selectedRule.filterCounter = DEFAULT_RULE.filterCounter;
+        //selectedRule.filterCounter = DEFAULT_RULE.filterCounter;
         selectedRule.matches = DEFAULT_RULE.matches;
     },
     changeRuleComposition: (state, action) => {
@@ -697,7 +726,7 @@ const reducers = {
             state.rules,
             state.filteredRuleType
         )[index];
-        selectedRule.composition = composition;
+        // selectedRule.composition = composition;
         selectedRule.matches = DEFAULT_RULE.matches;
     },
     changeRuleModel: (state, action) => {
@@ -734,69 +763,84 @@ const reducers = {
     },
     // Filter
     addFilter: (state, action) => {
-        const { ruleIndex, groupIndex, groupOperator = '||' } = action.payload;
-        const newId = `filter${filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex].filterCounter++}`;
-        const newFilter = {
-            id: newId,
-            property: '',
-            operand: '',
-            value: '',
-        };
+        const { ruleIndex /*, groupIndex, groupOperator = '||' */ } =
+            action.payload;
+        // const newId = `filter${filterRulesByType(
+        //     state.rules,
+        //     state.filteredRuleType
+        // )[ruleIndex].filterCounter++}`;
+        // create an empty expert filter
+        const newFilter = getExpertFilterEmptyFormData();
+
+        // {
+        //     // id: newId,
+        //     // property: '',
+        //     // operand: '',
+        //     // value: '',
+        // };
         const selectedRule = filterRulesByType(
             state.rules,
             state.filteredRuleType
         )[ruleIndex];
         selectedRule.matches = DEFAULT_RULE.matches;
-        selectedRule.filters.push(newFilter);
-        if (groupIndex !== undefined) {
-            try {
-                const newCompositionArray = convertCompositionStringToArray(
-                    selectedRule.composition
-                );
-                newCompositionArray[groupIndex].push(groupOperator);
-                newCompositionArray[groupIndex].push(newId);
-                selectedRule.composition =
-                    convertCompositionArrayToString(newCompositionArray);
-            } catch (e) {
-                console.error(e);
-            }
-        } else {
-            selectedRule.composition =
-                selectedRule.filters.length === 1
-                    ? newId
-                    : `${selectedRule.composition} && ${newId}`;
-        }
+        selectedRule.filter = newFilter;
+        // if (groupIndex !== undefined) {
+        //     try {
+        //         const newCompositionArray = convertCompositionStringToArray(
+        //             selectedRule.composition
+        //         );
+        //         newCompositionArray[groupIndex].push(groupOperator);
+        //         newCompositionArray[groupIndex].push(newId);
+        //         selectedRule.composition =
+        //             convertCompositionArrayToString(newCompositionArray);
+        //     } catch (e) {
+        //         console.error(e);
+        //     }
+        // } else {
+        //     selectedRule.composition =
+        //         selectedRule.filters.length === 1
+        //             ? newId
+        //             : `${selectedRule.composition} && ${newId}`;
+        // }
     },
-    changeFilterProperty: (state, action) => {
-        const { ruleIndex, filterIndex, property } = action.payload;
-        const modifiedFilter = filterRulesByType(
+    changeFilter: (state, action) => {
+        const { ruleIndex, newFilter /* filterIndex, property */ } =
+            action.payload;
+        const modifiedRule = filterRulesByType(
             state.rules,
             state.filteredRuleType
-        )[ruleIndex].filters[filterIndex];
-        modifiedFilter.property = property;
-        modifiedFilter.operand = '';
-        modifiedFilter.value = '';
+        )[ruleIndex];
+        modifiedRule.filter = newFilter;
     },
-    changeFilterOperand: (state, action) => {
-        const { ruleIndex, filterIndex, operand } = action.payload;
-        const modifiedFilter = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex].filters[filterIndex];
-        const multiple = multipleOperands.includes(operand);
-        modifiedFilter.operand = operand;
-        modifiedFilter.value = multiple ? [] : '';
-    },
+    // FIXME to remove below action
+    // changeFilterProperty: (state, action) => {
+    //     const { ruleIndex, filterIndex, property } = action.payload;
+    //     const modifiedFilter = filterRulesByType(
+    //         state.rules,
+    //         state.filteredRuleType
+    //     )[ruleIndex].filters[filterIndex];
+    //     modifiedFilter.property = property;
+    //     modifiedFilter.operand = '';
+    //     modifiedFilter.value = '';
+    // },
+    // changeFilterOperand: (state, action) => {
+    //     const { ruleIndex, filterIndex, operand } = action.payload;
+    //     const modifiedFilter = filterRulesByType(
+    //         state.rules,
+    //         state.filteredRuleType
+    //     )[ruleIndex].filters[filterIndex];
+    //     const multiple = multipleOperands.includes(operand);
+    //     modifiedFilter.operand = operand;
+    //     modifiedFilter.value = multiple ? [] : '';
+    // },
     changeFilterValue: (state, action) => {
-        const { ruleIndex, filterIndex, value } = action.payload;
+        const { ruleIndex, value } = action.payload;
         const modifiedFilter = filterRulesByType(
             state.rules,
             state.filteredRuleType
-        )[ruleIndex].filters[filterIndex];
-        modifiedFilter.value = value;
+        )[ruleIndex].filter;
+        console.log('ChangeFilterValue', { value });
+        modifiedFilter.rules = value;
     },
     deleteFilter: (state, action) => {
         const { ruleIndex, filterIndex } = action.payload;

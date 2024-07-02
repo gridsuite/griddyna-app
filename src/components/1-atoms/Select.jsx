@@ -63,6 +63,7 @@ const Select = (props) => {
         >
             {label !== undefined && <InputLabel>{label}</InputLabel>}
             <MuiSelect
+                size="small"
                 label={label}
                 value={value}
                 onChange={onChange}

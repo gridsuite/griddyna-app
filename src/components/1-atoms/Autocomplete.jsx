@@ -150,6 +150,7 @@ const Autocomplete = (props) => {
 
     return (
         <MuiAutocomplete
+            size="small"
             freeSolo={isFree}
             onClose={onPopupClose}
             multiple={isMultiple}

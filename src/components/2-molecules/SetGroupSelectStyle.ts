@@ -10,8 +10,6 @@ export const styles = {
         textAlign: 'right',
     },
     button: {
-        justifyContent: 'center',
-        display: 'flex',
         '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
             fontSize: '2em',
             pointerEvents: 'auto',
@@ -21,5 +19,11 @@ export const styles = {
         '& .MuiIconButton-root .MuiIconButton-label .MuiSvgIcon-root': {
             color: 'red',
         },
+    },
+    gridItem: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: 1,
     },
 };

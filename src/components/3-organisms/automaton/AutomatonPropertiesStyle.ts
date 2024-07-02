@@ -4,13 +4,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { Theme } from '@mui/material';
 
 export const styles = {
+    gridContainer: (theme: Theme) => ({
+        border: 1,
+        borderRadius: 1,
+        borderColor: theme.palette.grey[500],
+    }),
     label: {
-        textAlign: 'left',
-        marginTop: '12px',
         '& .MuiTypography-root': {
-            fontWeight: 'bold',
+            fontWeight: 'normal',
         },
     },
     value: {

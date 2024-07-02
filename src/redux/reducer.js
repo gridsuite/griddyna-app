@@ -12,6 +12,7 @@ import { UserReducer } from './slices/User';
 import { ScriptsReducer } from './slices/Script';
 import { NetworkReducer } from './slices/Network';
 import { ModelReducer } from './slices/Model';
+import { NotificationReducer } from './slices/Notification';
 
 export const reducer = combineReducers({
     user: UserReducer,
@@ -20,4 +21,5 @@ export const reducer = combineReducers({
     models: ModelReducer,
     scripts: ScriptsReducer,
     network: NetworkReducer,
+    notification: NotificationReducer,
 });
