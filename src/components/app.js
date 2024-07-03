@@ -116,9 +116,8 @@ const App = () => {
                 console.debug(
                     `dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`
                 );
-                setUserManager({
-                    instance: await (process.env
-                        .REACT_APP_USE_AUTHENTICATION === 'true'
+                const initAuth =
+                    process.env.REACT_APP_USE_AUTHENTICATION === 'true'
                         ? initializeAuthenticationProd(
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,
@@ -131,7 +130,9 @@ const App = () => {
                               initialMatchSilentRenewCallbackUrl != null,
                               ValidateUserDev,
                               initialMatchSigninCallbackUrl != null
-                          )),
+                          );
+                setUserManager({
+                    instance: await initAuth,
                     error: null,
                 });
             } catch (error) {
