@@ -83,7 +83,7 @@ const transformMapping = (receivedMapping) => {
                 // RQB need an id for each rule/group to avoid re-create a new component
                 // even the same input => lost focus while typing
                 // This solution can be removed when the back-end returns id persisted for each rule in the db (round-trip)
-                enrichIdQuery(rule.filter.rules)
+                enrichIdQuery(rule.filter.rules, false)
             );
         }
         return rule;
@@ -759,6 +759,15 @@ const reducers = {
         const ruleToCopy = _.cloneDeep(
             filterRulesByType(state.rules, state.filteredRuleType)[index]
         );
+
+        // unset id for rule
+        ruleToCopy.id = undefined;
+        // if filter exists must unset filter id and provide all new ids for rule/group inside the filter
+        if (ruleToCopy.filter?.id) {
+            ruleToCopy.filter.id = undefined;
+            // force set new ids for the whole query
+            enrichIdQuery(ruleToCopy.filter.rules, true);
+        }
         state.rules.push(ruleToCopy);
     },
     // Filter
@@ -843,39 +852,42 @@ const reducers = {
         modifiedFilter.rules = value;
     },
     deleteFilter: (state, action) => {
-        const { ruleIndex, filterIndex } = action.payload;
+        const { ruleIndex /*, filterIndex */ } = action.payload;
         const ruleToModify = filterRulesByType(
             state.rules,
             state.filteredRuleType
         )[ruleIndex];
-        const filterIdToDelete = ruleToModify.filters[filterIndex].id;
-        const newFilters = ruleToModify.filters.filter(
-            (value, index) => index !== filterIndex
-        );
-        ruleToModify.filters = newFilters;
-        const modifiedComposition = ruleToModify.composition
-            .replaceAll(filterIdToDelete, 'true')
-            .replaceAll('(true)', 'true')
-            .replaceAll(/ (?:&&|\|\|) true/g, '')
-            .replaceAll(/true (?:&&|\|\|) /g, '');
-        ruleToModify.composition = modifiedComposition;
+        ruleToModify.filter = undefined;
+        // const filterIdToDelete = ruleToModify.filters[filterIndex].id;
+        // const newFilters = ruleToModify.filters.filter(
+        //     (value, index) => index !== filterIndex
+        // );
+        // ruleToModify.filters = newFilters;
+        // const modifiedComposition = ruleToModify.composition
+        //     .replaceAll(filterIdToDelete, 'true')
+        //     .replaceAll('(true)', 'true')
+        //     .replaceAll(/ (?:&&|\|\|) true/g, '')
+        //     .replaceAll(/true (?:&&|\|\|) /g, '');
+        // ruleToModify.composition = modifiedComposition;
     },
-    copyFilter: (state, action) => {
-        const { ruleIndex, filterIndex } = action.payload;
-        const selectedRule = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex];
-        let filters = selectedRule.filters;
-        const filterToCopy = _.cloneDeep(filters[filterIndex]);
-        const newId = `filter${selectedRule.filterCounter++}`;
-        filterToCopy.id = newId;
-        selectedRule.filters.push(filterToCopy);
-        selectedRule.composition =
-            selectedRule.filters.length === 1
-                ? newId
-                : `${selectedRule.composition} &&  ${newId}`;
-    },
+    // copyFilter: (state, action) => {
+    //     const { ruleIndex /*, filterIndex */ } = action.payload;
+    //     const selectedRule = filterRulesByType(
+    //         state.rules,
+    //         state.filteredRuleType
+    //     )[ruleIndex];
+    //     const filter = selectedRule.filter;
+    //     const filterToCopy = _.cloneDeep(filter);
+    //     // const newId = `filter${selectedRule.filterCounter++}`;
+    //     filterToCopy.id = uuid4();
+    //     enrichIdQuery(filter.rules, true);
+    //     console.log('filterToCopy', { filterToCopy });
+    //     // selectedRule.filters.push(filterToCopy);
+    //     // selectedRule.composition =
+    //     //     selectedRule.filters.length === 1
+    //     //         ? newId
+    //     //         : `${selectedRule.composition} &&  ${newId}`;
+    // },
     // Automaton
     addAutomaton: (state) => {
         const newAutomaton = _.cloneDeep(DEFAULT_AUTOMATON);

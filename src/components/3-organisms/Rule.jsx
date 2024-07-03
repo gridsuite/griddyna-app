@@ -183,16 +183,18 @@ const Rule = (props) => {
                                     //     ? addFilterLabel
                                     //     : addFilterGroupLabel
                                 }
+                                disabled={hasFilter}
                             />
                             <DeleteButton
                                 onClick={deleteFilter}
                                 tooltip={deleteFilterLabel}
+                                disabled={!hasFilter}
                             />
-
-                            <CopyButton
-                                onClick={copyFilter}
-                                tooltip={copyFilterLabel}
-                            />
+                            {/*<CopyButton*/}
+                            {/*    onClick={copyFilter}*/}
+                            {/*    tooltip={copyFilterLabel}*/}
+                            {/*    disabled={!hasFilter}*/}
+                            {/*/>*/}
                         </Grid>
                     </Grid>
                     {children}

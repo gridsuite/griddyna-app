@@ -164,7 +164,7 @@ const RuleContainer = ({ index, editParameters }) => {
     const deleteFilter = () =>
         dispatch(
             MappingSlice.actions.deleteFilter({
-                index,
+                ruleIndex: index,
                 // filterIndex,
             })
         );
@@ -172,7 +172,7 @@ const RuleContainer = ({ index, editParameters }) => {
     const copyFilter = () =>
         dispatch(
             MappingSlice.actions.copyFilter({
-                index,
+                ruleIndex: index,
                 // filterIndex,
             })
         );

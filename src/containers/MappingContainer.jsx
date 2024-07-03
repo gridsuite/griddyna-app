@@ -39,7 +39,7 @@ import {
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
-import FilterBar from '../components/2-molecules/FilterBar';
+import TabBar from '../components/2-molecules/TabBar';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
@@ -60,6 +60,9 @@ const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
+    const totalRulesNumber = useSelector(
+        (state) => state.mappings.rules.length
+    );
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
@@ -74,6 +77,10 @@ const MappingContainer = () => {
     console.log('filterType', { filteredType });
     const filteredFamily = useSelector(
         (state) => state.mappings.filteredAutomatonFamily
+    );
+
+    const totalAutomataNumber = useSelector(
+        (state) => state.mappings.automata.length
     );
     const automataNumber = useSelector(getAutomataNumber);
     const sortedAutomataNumber = useSelector(getSortedAutomataNumber);
@@ -103,7 +110,7 @@ const MappingContainer = () => {
             value: family,
             // TODO: intl
             label: `${family} (${sortedAutomataNumber[family]})`,
-            disabled: sortedAutomataNumber[family] === 0,
+            // disabled: sortedAutomataNumber[family] === 0, always enable automaton tab for each automaton type
         })
     );
 
@@ -202,7 +209,9 @@ const MappingContainer = () => {
                 </Grid>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{MODELS_TITLE}</Typography>
+                        <Typography>{`${MODELS_TITLE} ${
+                            totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
+                        }`}</Typography>
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
@@ -213,10 +222,10 @@ const MappingContainer = () => {
                                 xs
                                 justifyContent={'flex-start'}
                             >
-                                <FilterBar
+                                <TabBar
                                     value={filteredType}
                                     options={filterRulesOptions}
-                                    setFilter={setFilteredType}
+                                    setValue={setFilteredType}
                                 />
                             </Grid>
                             <Grid item xs="auto">
@@ -231,7 +240,11 @@ const MappingContainer = () => {
                 </Accordion>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{AUTOMATA_TITLE}</Typography>
+                        <Typography>{`${AUTOMATA_TITLE} ${
+                            totalAutomataNumber
+                                ? '(' + totalAutomataNumber + ')'
+                                : ''
+                        }`}</Typography>
                     </AccordionSummary>
                     <Divider />
                     <AccordionDetails style={{ display: 'inherit' }}>
@@ -242,10 +255,10 @@ const MappingContainer = () => {
                                 xs
                                 justifyContent={'flex-start'}
                             >
-                                <FilterBar
+                                <TabBar
                                     value={filteredFamily}
                                     options={filterAutomataOptions}
-                                    setFilter={setFilteredFamily}
+                                    setValue={setFilteredFamily}
                                 />
                             </Grid>
                             <Grid item xs="auto">

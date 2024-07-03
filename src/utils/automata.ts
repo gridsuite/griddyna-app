@@ -18,7 +18,9 @@ export const getPossibleOptionsForProperty = (
             ...arr,
             ...(networkPropertyValues?.find(
                 (equipmentValues) => equipmentValues.type === possibleType
-            )?.values[propertyMappingDefinition.equipmentProperty] ?? []),
+            )?.values[
+                propertyMappingDefinition.equipmentProperty.toUpperCase()
+            ] ?? []),
         ],
         [] as string[]
     );

@@ -24,12 +24,13 @@ const visitQuery = (
     return query;
 };
 
-const idUpdater = (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => {
-    if (ruleOrGroup && !ruleOrGroup.id) {
-        ruleOrGroup.id = uuid4() as UUID;
-    }
-};
+const idUpdaterMaker =
+    (force: boolean) => (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => {
+        if (force || (ruleOrGroup && !ruleOrGroup.id)) {
+            ruleOrGroup.id = uuid4() as UUID;
+        }
+    };
 
-export const enrichIdQuery = (query: RuleGroupTypeExport) => {
-    return visitQuery(query, idUpdater);
+export const enrichIdQuery = (query: RuleGroupTypeExport, force: boolean) => {
+    return visitQuery(query, idUpdaterMaker(force));
 };

@@ -9,9 +9,9 @@ import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 
-const FilterBar = (props) => {
-    const { options, value, setFilter } = props;
-    const onChange = (_event, value) => setFilter(value);
+const TabBar = (props) => {
+    const { options, value, setValue } = props;
+    const onChange = (_event, value) => setValue(value);
 
     return (
         <Tabs value={value || false} onChange={onChange} centered>
@@ -27,10 +27,10 @@ const FilterBar = (props) => {
     );
 };
 
-FilterBar.propTypes = {
+TabBar.propTypes = {
     options: PropTypes.array.isRequired,
     value: PropTypes.string.isRequired,
-    setFilter: PropTypes.func.isRequired,
+    setValue: PropTypes.func.isRequired,
 };
 
-export default FilterBar;
+export default TabBar;
