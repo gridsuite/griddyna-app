@@ -8,25 +8,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AddIconButton, CopyButton, DeleteButton } from '../1-atoms/buttons';
-import { Grid, Paper, Tooltip, Typography } from '@mui/material';
-import ErrorIcon from '@mui/icons-material/Error';
+import { Grid, Paper, Typography } from '@mui/material';
 import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
 import { mergeSx } from 'utils/functions';
 
 const equipmentLabel = 'Each';
-const compositionLabel = 'If';
 const filterLabel = 'Where:';
 const addFilterLabel = 'Add filter';
-const copyFilterLabel = 'Copy filter';
 const deleteFilterLabel = 'Delete filter';
-const addFilterGroupLabel = 'Add filter group';
 const deleteRuleLabel = 'Delete model';
 const copyRuleLabel = 'Copy model';
-const useBasicModeLabel = 'Use simple filters mode';
-const useAdvancedModeLabel = 'Use advanced filters mode';
-const unusedFiltersLabel = 'You have unused filter(s)';
 const matchesLabel = 'Matched network equipments';
 const noMatchesLabel = 'None';
 
@@ -34,20 +27,13 @@ const Rule = (props) => {
     const {
         rule,
         isRuleValid = true,
-        changeType,
-        changeComposition,
         changeModel,
-        addFilter,
-        copyFilter,
+        newFilter,
         deleteFilter,
         models,
         children,
         deleteRule,
         copyRule,
-        changeCompositionMode,
-        isAdvancedMode,
-        canUseBasicMode,
-        unusedFilters = [],
         changeParameters = () => {},
         editGroup = () => {},
         controlledParameters = false,
@@ -55,7 +41,6 @@ const Rule = (props) => {
     } = props;
     const {
         type,
-        composition,
         mappedModel,
         setGroup,
         groupType,
@@ -63,9 +48,6 @@ const Rule = (props) => {
         matches = [],
     } = rule;
 
-    const onChangeComposition = (event) => {
-        changeComposition(event.target.value);
-    };
     return (
         <Paper
             elevation={24}
@@ -101,29 +83,12 @@ const Rule = (props) => {
                                     <Typography variant="subtitle1">
                                         {type}
                                     </Typography>
-                                    {/*                            <Select
-                                options={getRuleEquipmentTypesOptions()}
-                                value={type}
-                                setValue={changeType}
-                                error={type === ''}
-                            />*/}
                                 </Grid>
                                 <Grid item>
                                     <Typography variant="subtitle1">
                                         :
                                     </Typography>
                                 </Grid>
-                                {unusedFilters.length > 0 && (
-                                    <Grid item sx={styles.unused}>
-                                        <Tooltip
-                                            title={`${unusedFiltersLabel}: ${unusedFilters.join(
-                                                ', '
-                                            )}`}
-                                        >
-                                            <ErrorIcon />
-                                        </Tooltip>
-                                    </Grid>
-                                )}
                             </Grid>
                         </Grid>
                         <Grid item xs={'auto'} paddingLeft={1}>
@@ -166,7 +131,6 @@ const Rule = (props) => {
                     container
                     xs={12}
                     md={8}
-                    // sx={styles.ruleModel}
                     direction="column"
                     justifyContent={'flex-start'}
                 >
@@ -176,13 +140,8 @@ const Rule = (props) => {
                         </Grid>
                         <Grid item xs={'auto'} container paddingLeft={1}>
                             <AddIconButton
-                                onClick={addFilter}
-                                tooltip={
-                                    addFilterLabel
-                                    // isAdvancedMode
-                                    //     ? addFilterLabel
-                                    //     : addFilterGroupLabel
-                                }
+                                onClick={newFilter}
+                                tooltip={addFilterLabel}
                                 disabled={hasFilter}
                             />
                             <DeleteButton
@@ -190,11 +149,6 @@ const Rule = (props) => {
                                 tooltip={deleteFilterLabel}
                                 disabled={!hasFilter}
                             />
-                            {/*<CopyButton*/}
-                            {/*    onClick={copyFilter}*/}
-                            {/*    tooltip={copyFilterLabel}*/}
-                            {/*    disabled={!hasFilter}*/}
-                            {/*/>*/}
                         </Grid>
                     </Grid>
                     {children}
@@ -226,17 +180,12 @@ const Rule = (props) => {
 Rule.propTypes = {
     rule: PropTypes.object.isRequired,
     isRuleValid: PropTypes.bool,
-    changeType: PropTypes.func.isRequired,
-    changeComposition: PropTypes.func.isRequired,
     changeModel: PropTypes.func.isRequired,
-    addFilter: PropTypes.func.isRequired,
+    newFilter: PropTypes.func.isRequired,
+    deleteFilter: PropTypes.func.isRequired,
     models: PropTypes.array.isRequired,
     deleteRule: PropTypes.func.isRequired,
     copyRule: PropTypes.func.isRequired,
-    changeCompositionMode: PropTypes.func.isRequired,
-    isAdvancedMode: PropTypes.bool.isRequired,
-    canUseBasicMode: PropTypes.bool.isRequired,
-    unusedFilters: PropTypes.array,
     changeParameters: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,

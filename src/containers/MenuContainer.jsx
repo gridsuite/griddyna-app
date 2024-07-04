@@ -17,14 +17,6 @@ import {
     renameMapping as renameMappingAction,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
-// import {
-//     convertScript,
-//     copyScript as copyScriptAction,
-//     deleteScript as deleteScriptAction,
-//     getScriptsInfo,
-//     renameScript as renameScriptAction,
-//     ScriptsSlice,
-// } from '../redux/slices/Script';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 
@@ -36,17 +28,14 @@ const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
-    // const scriptsInfo = useSelector(getScriptsInfo);
     const selectedMapping = useSelector(
         (state) => state.mappings.activeMapping
     );
-    // const selectedScript = useSelector((state) => state.scripts.activeScript);
     const canCreateMapping = useSelector(canCreateNewMapping);
 
     useEffect(() => {
         // Fetch data on mount
         dispatch(getMappings());
-        // dispatch(getScripts());
         dispatch(getNetworkNames());
         dispatch(getModels());
         dispatch(getAutomatonDefinitions());
@@ -76,7 +65,6 @@ const MenuContainer = () => {
 
     const selectMapping = (name) => () => {
         dispatch(MappingSlice.actions.selectMapping({ name }));
-        // dispatch(ScriptsSlice.actions.deselectScript());
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(
             MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
@@ -107,35 +95,6 @@ const MenuContainer = () => {
         );
     };
 
-    // const convertMappingToScript = (name) => () =>
-    //     dispatch(convertScript(name));
-    //
-    // // Scripts
-    //
-    // const selectScript = (name) => () => {
-    //     dispatch(ScriptsSlice.actions.selectScript({ name }));
-    //     dispatch(MappingSlice.actions.deselectMapping());
-    //     dispatch(NetworkSlice.actions.cleanNetwork());
-    // };
-    //
-    // const renameScript = (name) => (newName) =>
-    //     dispatch(
-    //         renameScriptAction({
-    //             nameToReplace: name,
-    //             newName: newName,
-    //         })
-    //     );
-    //
-    // const deleteScript = (name) => () => {
-    //     dispatch(deleteScriptAction(name));
-    // };
-    //
-    // const copyScript = (name) => () => {
-    //     dispatch(
-    //         copyScriptAction({ originalName: name, copyName: name + ' Copy' })
-    //     );
-    // };
-
     return (
         <>
             <Typography variant="h4" align={'center'}>
@@ -156,22 +115,6 @@ const MenuContainer = () => {
                     !canCreateMapping ? CANNOT_CREATE_MAPPING_LABEL : undefined
                 }
             />
-            {/*{scriptsInfo.length > 0 && (*/}
-            {/*    <>*/}
-            {/*        <div />*/}
-            {/*        <Divider />*/}
-            {/*        <Typography variant="h2">Scripts</Typography>*/}
-            {/*        <Divider />*/}
-            {/*        <NavigationMenu*/}
-            {/*            items={scriptsInfo}*/}
-            {/*            deleteItem={deleteScript}*/}
-            {/*            renameItem={renameScript}*/}
-            {/*            copyItem={copyScript}*/}
-            {/*            selectItem={selectScript}*/}
-            {/*            selected={selectedScript}*/}
-            {/*        />*/}
-            {/*    </>*/}
-            {/*)}*/}
         </>
     );
 };

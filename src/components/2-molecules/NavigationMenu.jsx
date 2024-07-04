@@ -8,11 +8,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+    IconButton,
     List,
     ListItem,
-    ListItemText,
-    IconButton,
     ListItemSecondaryAction,
+    ListItemText,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -29,7 +29,6 @@ const NavigationMenu = (props) => {
         renameItem,
         copyItem,
         selectItem,
-        // convertItem,
         selected = '',
         canAdd = true,
         addTooltip = '',
@@ -48,12 +47,6 @@ const NavigationMenu = (props) => {
                 action: deleteItem(itemName),
             });
         }
-        // if (convertItem) {
-        //     options.push({
-        //         label: 'Convert to .groovy',
-        //         action: convertItem(itemName),
-        //     });
-        // }
         if (renameItem) {
             options.push({
                 label: 'Rename',
@@ -135,7 +128,6 @@ NavigationMenu.propTypes = {
     renameItem: PropTypes.func,
     copyItem: PropTypes.func,
     selectItem: PropTypes.func.isRequired,
-    // convertItem: PropTypes.func,
     selected: PropTypes.string,
     canAdd: PropTypes.bool,
     addTooltip: PropTypes.string,

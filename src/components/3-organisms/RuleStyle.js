@@ -13,30 +13,13 @@ export const styles = {
     }),
     rulePaper: {
         borderRadius: '5px',
-        marginBottom: '5px',
+        marginBottom: 1,
         '& >.MuiGrid-root': {
-            marginTop: '5px',
+            marginTop: 1,
         },
     },
     invalidRulePaper: {
         borderColor: 'red',
-    },
-    label: {
-        marginTop: '4px',
-        textAlign: 'right',
-        paddingRight: '5px',
-    },
-    filterLabel: {
-        alignItems: 'center',
-        paddingLeft: '5px',
-        marginTop: '1em',
-    },
-    unused: {
-        color: '#ff9800',
-        '& svg': {
-            margin: '0.3em',
-            fontSize: '2em',
-        },
     },
     matches: (theme) => ({
         backgroundColor: theme.palette.grey[800],

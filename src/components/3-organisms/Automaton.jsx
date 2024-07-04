@@ -21,7 +21,6 @@ const Automaton = (props) => {
         automaton,
         automatonDefinition = {},
         isAutomatonValid = true,
-        changeFamily,
         changeModel,
         changeParameters,
         changeProperty,
@@ -38,7 +37,6 @@ const Automaton = (props) => {
     const automatonLabel = 'Automaton of family';
     const deleteAutomatonLabel = 'Delete automaton';
     const copyAutomatonLabel = 'Copy automaton';
-    const familyLabel = 'Of Family';
 
     const onChangeProperty = useCallback(
         (propertyName, propertyType) => (propertyValue) => {
@@ -151,7 +149,6 @@ Automaton.propTypes = {
     automaton: PropTypes.object.isRequired,
     automatonDefinition: PropTypes.object.isRequired,
     isAutomatonValid: PropTypes.bool,
-    changeFamily: PropTypes.func.isRequired,
     changeModel: PropTypes.func.isRequired,
     changeParameters: PropTypes.func.isRequired,
     changeProperty: PropTypes.func.isRequired,

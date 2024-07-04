@@ -6,12 +6,7 @@
  */
 
 import { Grid, Tooltip, Typography } from '@mui/material';
-import {
-    AddIconButton,
-    AttachButton,
-    ConvertButton,
-    SaveButton,
-} from '../1-atoms/buttons/';
+import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -31,8 +26,6 @@ const Header = (props) => {
         saveTooltip,
         addElement,
         addTooltip,
-        convert,
-        convertTooltip,
         attach,
         attachTooltip,
         isCurrent = true,
@@ -61,27 +54,20 @@ const Header = (props) => {
         <Grid container sx={getHeaderBoxStyle()}>
             <Grid container item xs sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                    <Typography variant="h4" sx={getTitleStyle()}>
+                    <Typography variant="h5" sx={getTitleStyle()}>
                         {`${name}${isModified ? '*' : ''} :`}
                     </Typography>
                 </Tooltip>
-                <Typography variant="h3" sx={getTitleStyle()}>
+                <Typography variant="h4" sx={getTitleStyle()}>
                     {`${currentNetwork?.networkName ?? ''}`}
                 </Typography>
             </Grid>
             <Grid
                 item
                 container
-                xs={'auto'}
+                xs="auto"
                 sx={mergeSx(styles.gridButton, styles.buttonIcon)}
             >
-                {convert !== undefined && (
-                    <ConvertButton
-                        onClick={convert}
-                        tooltip={convertTooltip}
-                        disabled={!isValid || isModified}
-                    />
-                )}
                 {save !== undefined && (
                     <SaveButton
                         onClick={save}
@@ -111,8 +97,6 @@ Header.propTypes = {
     isCurrent: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
-    convert: PropTypes.func,
-    convertTooltip: PropTypes.string,
     addElement: PropTypes.func,
     addTooltip: PropTypes.string,
     attach: PropTypes.func,

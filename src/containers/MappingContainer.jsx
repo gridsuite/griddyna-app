@@ -9,15 +9,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getAutomataNumber,
+    getGroupedAutomataNumber,
+    getGroupedRulesNumber,
     getRulesNumber,
-    getSortedAutomataNumber,
-    getSortedRulesNumber,
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
     MappingSlice,
     postMapping,
 } from '../redux/slices/Mapping';
-import { convertScript } from '../redux/slices/Script';
 import {
     getCurrentNetworkObj,
     getNetworkNames,
@@ -50,7 +49,6 @@ import { RuleEquipmentTypes } from '../constants/equipmentType';
 
 // TODO intl
 const ADD_MODEL_LABEL = 'Add a model';
-const CONVERT_LABEL = 'Convert to script';
 const SAVE_LABEL = 'Save Mapping';
 const ATTACH_LABEL = 'Attach a Network';
 const MODELS_TITLE = 'Models';
@@ -70,11 +68,10 @@ const MappingContainer = () => {
     const networks = useSelector((state) => state.network.knownNetworks);
     const networkValues = useSelector((state) => state.network.propertyValues);
     const currentNetwork = useSelector(getCurrentNetworkObj);
-    const sortedRulesNumber = useSelector(getSortedRulesNumber);
+    const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector(
         (state) => state.mappings.filteredRuleType
     );
-    console.log('filterType', { filteredType });
     const filteredFamily = useSelector(
         (state) => state.mappings.filteredAutomatonFamily
     );
@@ -83,7 +80,7 @@ const MappingContainer = () => {
         (state) => state.mappings.automata.length
     );
     const automataNumber = useSelector(getAutomataNumber);
-    const sortedAutomataNumber = useSelector(getSortedAutomataNumber);
+    const groupedAutomataNumber = useSelector(getGroupedAutomataNumber);
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
@@ -101,16 +98,14 @@ const MappingContainer = () => {
     const filterRulesOptions = RuleEquipmentTypes.map((type) => ({
         value: type,
         // TODO: intl
-        label: `${type} (${sortedRulesNumber[type]})`,
-        // disabled: sortedRulesNumber[type] === 0, always enable rule tab for each equipment type
+        label: `${type} (${groupedRulesNumber[type]})`,
     }));
 
     const filterAutomataOptions = Object.values(AutomatonFamily).map(
         (family) => ({
             value: family,
             // TODO: intl
-            label: `${family} (${sortedAutomataNumber[family]})`,
-            // disabled: sortedAutomataNumber[family] === 0, always enable automaton tab for each automaton type
+            label: `${family} (${groupedAutomataNumber[family]})`,
         })
     );
 
@@ -120,10 +115,6 @@ const MappingContainer = () => {
 
     function saveMapping() {
         dispatch(postMapping());
-    }
-
-    function convertToScript() {
-        dispatch(convertScript(activeMapping));
     }
 
     function attachWithId(id) {
@@ -188,8 +179,6 @@ const MappingContainer = () => {
                     isValid={isMappingValid && areParametersValid}
                     save={saveMapping}
                     saveTooltip={SAVE_LABEL}
-                    // convert={convertToScript}
-                    // convertTooltip={CONVERT_LABEL}
                     attach={() => setIsAttachedModalOpen(true)}
                     attachTooltip={ATTACH_LABEL}
                 />

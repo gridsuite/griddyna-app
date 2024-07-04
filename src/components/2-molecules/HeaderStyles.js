@@ -9,9 +9,9 @@ const ICON_SIZE = '2em';
 
 export const styles = {
     headerBox: {
-        border: '2px solid',
+        border: '1px solid',
         borderRadius: '5px',
-        marginBottom: '5px',
+        marginBottom: 1,
     },
     errorBorderColor: {
         borderColor: 'red',
