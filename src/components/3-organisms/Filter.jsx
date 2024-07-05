@@ -7,16 +7,21 @@
 
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
     CustomReactQueryBuilder,
     EXPERT_FILTER_FIELDS,
     EXPERT_FILTER_QUERY,
 } from '@gridsuite/commons-ui';
 import { useIntl } from 'react-intl';
+import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 
+const filterLabel = 'Where:';
+const addFilterLabel = 'Add filter';
+const deleteFilterLabel = 'Delete filter';
+const noFilterLabel = 'No other rule applies';
 const Filter = (props) => {
-    const { equipmentType } = props;
+    const { equipmentType, newFilter, deleteFilter, hasFilter } = props;
 
     const intl = useIntl();
 
@@ -30,17 +35,48 @@ const Filter = (props) => {
     }, [intl, equipmentType]);
 
     return (
-        <Grid container justify="space-between">
-            <CustomReactQueryBuilder
-                name={EXPERT_FILTER_QUERY}
-                fields={translatedFields}
-            />
+        <Grid container justify="space-between" spacing={1}>
+            <Grid item container justify={'flex-start'}>
+                <Grid item xs>
+                    <Typography>{filterLabel}</Typography>
+                </Grid>
+                <Grid item xs={'auto'} container paddingLeft={1}>
+                    <AddIconButton
+                        onClick={newFilter}
+                        tooltip={addFilterLabel}
+                        disabled={hasFilter}
+                    />
+                    <DeleteButton
+                        onClick={deleteFilter}
+                        isDirty
+                        tooltip={deleteFilterLabel}
+                        disabled={!hasFilter}
+                    />
+                </Grid>
+            </Grid>
+            {hasFilter ? (
+                <CustomReactQueryBuilder
+                    name={EXPERT_FILTER_QUERY}
+                    fields={translatedFields}
+                />
+            ) : (
+                <Typography
+                    variant="subtitle2"
+                    style={{ textAlign: 'left' }}
+                    color={'info.main'}
+                >
+                    {noFilterLabel}
+                </Typography>
+            )}
         </Grid>
     );
 };
 
 Filter.propTypes = {
     equipmentType: PropTypes.string,
+    newFilter: PropTypes.func.isRequired,
+    deleteFilter: PropTypes.func.isRequired,
+    hasFilter: PropTypes.bool,
 };
 
 export default Filter;

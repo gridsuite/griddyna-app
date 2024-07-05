@@ -7,21 +7,21 @@
 import { usePrevious } from '@gridsuite/commons-ui';
 import { useEffect } from 'react';
 import isDeepEqualReact from 'fast-deep-equal/react';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
+import { FieldErrors, FieldValues, UseFormReturn } from 'react-hook-form';
 
-const useFormChange = (
+const useFormOnChange = (
     formApi: UseFormReturn,
-    onChange: (formData: FieldValues) => void
+    onChange: (formData: FieldValues) => void,
+    onValidationError: (errors: FieldErrors) => void
 ) => {
     const formData = formApi.watch();
     const prevFormData = usePrevious(formData);
 
     useEffect(() => {
         if (!isDeepEqualReact(prevFormData, formData)) {
-            console.log('handleSubmit', { formData });
-            formApi.handleSubmit(onChange)();
+            formApi.handleSubmit(onChange, onValidationError)();
         }
-    }, [formApi, onChange, formData, prevFormData]);
+    }, [formApi, onChange, onValidationError, formData, prevFormData]);
 };
 
-export default useFormChange;
+export default useFormOnChange;

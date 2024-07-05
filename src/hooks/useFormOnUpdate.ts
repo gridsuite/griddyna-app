@@ -10,14 +10,16 @@ import { useEffect } from 'react';
 import isDeepEqualReact from 'fast-deep-equal/react';
 import { UseFormReturn } from 'react-hook-form';
 
-const useFormUpdate = (formApi: UseFormReturn, data: any) => {
+const useFormOnUpdate = (formApi: UseFormReturn, data: any) => {
     const prevData = usePrevious(data);
 
     useEffect(() => {
         if (!isDeepEqualReact(prevData, data)) {
-            console.log('setValue', { data });
             const setValueToKey = ([key, value]: [string, any]) => {
-                formApi.setValue(key, value, { shouldDirty: false });
+                formApi.setValue(key, value, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                });
             };
 
             Object.entries(data).forEach(setValueToKey);
@@ -25,4 +27,4 @@ const useFormUpdate = (formApi: UseFormReturn, data: any) => {
     }, [formApi, data, prevData]);
 };
 
-export default useFormUpdate;
+export default useFormOnUpdate;

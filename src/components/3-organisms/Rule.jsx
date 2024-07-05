@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AddIconButton, CopyButton, DeleteButton } from '../1-atoms/buttons';
+import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@mui/material';
 import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
@@ -15,9 +15,6 @@ import SetGroupSelect from '../2-molecules/SetGroupSelect';
 import { mergeSx } from 'utils/functions';
 
 const equipmentLabel = 'Each';
-const filterLabel = 'Where:';
-const addFilterLabel = 'Add filter';
-const deleteFilterLabel = 'Delete filter';
 const deleteRuleLabel = 'Delete model';
 const copyRuleLabel = 'Copy model';
 const matchesLabel = 'Matched network equipments';
@@ -28,8 +25,6 @@ const Rule = (props) => {
         rule,
         isRuleValid = true,
         changeModel,
-        newFilter,
-        deleteFilter,
         models,
         children,
         deleteRule,
@@ -134,23 +129,6 @@ const Rule = (props) => {
                     direction="column"
                     justifyContent={'flex-start'}
                 >
-                    <Grid item container justify={'flex-start'}>
-                        <Grid item xs>
-                            <Typography>{filterLabel}</Typography>
-                        </Grid>
-                        <Grid item xs={'auto'} container paddingLeft={1}>
-                            <AddIconButton
-                                onClick={newFilter}
-                                tooltip={addFilterLabel}
-                                disabled={hasFilter}
-                            />
-                            <DeleteButton
-                                onClick={deleteFilter}
-                                tooltip={deleteFilterLabel}
-                                disabled={!hasFilter}
-                            />
-                        </Grid>
-                    </Grid>
                     {children}
                 </Grid>
                 <Grid item xs={12} md={12} paddingTop={1}>
@@ -181,8 +159,6 @@ Rule.propTypes = {
     rule: PropTypes.object.isRequired,
     isRuleValid: PropTypes.bool,
     changeModel: PropTypes.func.isRequired,
-    newFilter: PropTypes.func.isRequired,
-    deleteFilter: PropTypes.func.isRequired,
     models: PropTypes.array.isRequired,
     deleteRule: PropTypes.func.isRequired,
     copyRule: PropTypes.func.isRequired,

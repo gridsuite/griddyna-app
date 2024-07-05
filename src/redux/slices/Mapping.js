@@ -79,7 +79,7 @@ const transformMapping = (receivedMapping) => {
                 const { family, model, setGroup, properties } =
                     receivedAutomaton;
 
-                const automaton = {
+                return {
                     family,
                     model,
                     setGroup,
@@ -91,7 +91,6 @@ const transformMapping = (receivedMapping) => {
                           }))
                         : [],
                 };
-                return automaton;
             }
         );
     }
@@ -119,6 +118,7 @@ export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 export const getAutomata = (state) => state.mappings.automata;
 export const getFilteredAutomatonFamily = (state) =>
     state.mappings.filteredAutomatonFamily;
+export const getActiveMapping = (state) => state.mappings.activeMapping;
 
 // Selectors
 export const getGroupedRulesNumber = (state) => {
@@ -216,8 +216,9 @@ const checkFilterValidity = (filter) => {
     if (!filter) {
         return true;
     }
+
+    return !_.isEmpty(filter.rules) && _.isEmpty(filter.errors);
 };
-// filter.property !== '' && filter.operafilteredAutomatonFamilynd !== '' && filter.value !== '';
 
 export const makeGetIsFilterValid = () =>
     createSelector(
@@ -405,7 +406,7 @@ export const postMapping = createAsyncThunk(
                 : state?.mappings.automata;
         const formattedAutomata = automata.map((automaton) => {
             const { family, model, setGroup, properties } = automaton;
-            const formattedAutomaton = {
+            return {
                 family,
                 model,
                 setGroup,
@@ -417,7 +418,6 @@ export const postMapping = createAsyncThunk(
                       }))
                     : [],
             };
-            return formattedAutomaton;
         });
 
         const controlledParameters =
@@ -471,7 +471,7 @@ export const copyMapping = createAsyncThunk(
 
 export const getNetworkMatchesFromRule = createAsyncThunk(
     'mappings/matchNetwork',
-    async (ruleIndex, { getState, rejectWithValue }) => {
+    async (ruleIndex, { getState }) => {
         const state = getState();
         const token = state?.user.user?.id_token;
         const { rules, filteredRuleType } = state?.mappings;
@@ -508,7 +508,7 @@ export const makeChangeFilterValueThenGetNetworkMatches = () => {
             const state = getState();
 
             // network should be attached
-            if (!state?.network.currentNetwork) {
+            if (!state.network.currentNetwork) {
                 return;
             }
 
@@ -530,8 +530,7 @@ const reducers = {
     // Active Mapping
 
     changeFilteredType: (state, action) => {
-        const filteredRuleType = action.payload;
-        state.filteredRuleType = filteredRuleType;
+        state.filteredRuleType = action.payload;
     },
     changeFilteredFamily: (state, action) => {
         const filteredAutomatonFamily = action.payload;
@@ -610,8 +609,21 @@ const reducers = {
             state.rules,
             state.filteredRuleType
         )[ruleIndex].filter;
-        console.log('ChangeFilterValue', { value });
-        modifiedFilter.rules = value;
+        if (modifiedFilter) {
+            modifiedFilter.rules = _.cloneDeep(value);
+            // reset filter errors
+            delete modifiedFilter.errors;
+        }
+    },
+    setFilterError: (state, action) => {
+        const { ruleIndex, errors } = action.payload;
+        const modifiedFilter = filterRulesByType(
+            state.rules,
+            state.filteredRuleType
+        )[ruleIndex].filter;
+        if (modifiedFilter) {
+            modifiedFilter.errors = _.cloneDeep(errors);
+        }
     },
     deleteFilter: (state, action) => {
         const { ruleIndex } = action.payload;

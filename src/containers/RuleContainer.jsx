@@ -17,14 +17,13 @@ import { makeGetModels } from '../redux/slices/Model';
 import Rule from '../components/3-organisms/Rule';
 import FilterContainer from './FilterContainer';
 import PropTypes from 'prop-types';
-import { Typography } from '@mui/material';
 import { GroupEditionOrigin } from '../constants/models';
 import { getCurrentNetworkId } from '../redux/slices/Network';
 
 const RuleContainer = ({ index, editParameters }) => {
     const getRule = useMemo(makeGetRule, []);
     const rule = useSelector((state) => getRule(state, index));
-    const { type, hasFilter, mappedModel, setGroup, groupType } = rule;
+    const { type, mappedModel, setGroup, groupType } = rule;
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
     const isRuleValid = useSelector((state) =>
         isRuleValidSelector(state, index)
@@ -62,46 +61,38 @@ const RuleContainer = ({ index, editParameters }) => {
         [dispatch, index]
     );
 
-    const deleteRule = () =>
-        dispatch(
-            MappingSlice.actions.deleteRule({
-                index,
-            })
-        );
+    const deleteRule = useCallback(
+        () =>
+            dispatch(
+                MappingSlice.actions.deleteRule({
+                    index,
+                })
+            ),
+        [dispatch, index]
+    );
 
-    const copyRule = () =>
-        dispatch(
-            MappingSlice.actions.copyRule({
-                index,
-            })
-        );
+    const copyRule = useCallback(
+        () =>
+            dispatch(
+                MappingSlice.actions.copyRule({
+                    index,
+                })
+            ),
+        [dispatch, index]
+    );
 
-    const newFilter = () =>
-        dispatch(
-            MappingSlice.actions.newFilter({
-                ruleIndex: index,
-            })
-        );
-
-    const deleteFilter = () =>
-        dispatch(
-            MappingSlice.actions.deleteFilter({
-                ruleIndex: index,
-            })
-        );
-
-    const editGroup = (isAbsolute) => () =>
-        editParameters({
-            model: mappedModel,
-            setGroup,
-            groupType,
-            isAbsolute,
-            origin: GroupEditionOrigin.RULE,
-            originIndex: index,
-        });
-
-    // TODO intl
-    const noFilterLabel = 'No other rule applies';
+    const editGroup = useCallback(
+        (isAbsolute) => () =>
+            editParameters({
+                model: mappedModel,
+                setGroup,
+                groupType,
+                isAbsolute,
+                origin: GroupEditionOrigin.RULE,
+                originIndex: index,
+            }),
+        [editParameters, index]
+    );
 
     useEffect(() => {
         // If selected model is not in the list
@@ -127,8 +118,6 @@ const RuleContainer = ({ index, editParameters }) => {
             isRuleValid={isRuleValid}
             changeModel={changeModel}
             changeParameters={changeParameters}
-            newFilter={newFilter}
-            deleteFilter={deleteFilter}
             models={models}
             deleteRule={deleteRule}
             copyRule={copyRule}
@@ -136,17 +125,7 @@ const RuleContainer = ({ index, editParameters }) => {
             controlledParameters={controlledParameters}
             isNetworkAttached={!!currentNetworkId}
         >
-            {hasFilter ? (
-                <FilterContainer ruleIndex={index} equipmentType={type} />
-            ) : (
-                <Typography
-                    variant="subtitle2"
-                    style={{ textAlign: 'left' }}
-                    color={'info.main'}
-                >
-                    {noFilterLabel}
-                </Typography>
-            )}
+            <FilterContainer ruleIndex={index} equipmentType={type} />
         </Rule>
     );
 };
