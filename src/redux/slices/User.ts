@@ -15,8 +15,17 @@ import {
     RESET_AUTHENTICATION_ROUTER_ERROR,
     SHOW_AUTH_INFO_LOGIN,
 } from '@gridsuite/commons-ui';
+import { User } from 'oidc-client';
+import { SliceCaseReducers } from '@reduxjs/toolkit';
 
-const initialState = {
+export type UserState = {
+    user: User | null;
+    signInCallbackError: string | null;
+    authenticationRouterError: any;
+    showAuthenticationRouterLogin: boolean;
+};
+
+const initialState: UserState = {
     user: null,
     signInCallbackError: null,
     authenticationRouterError: null,
@@ -27,7 +36,7 @@ const initialState = {
 
 // Reducers
 
-const reducers = {
+const reducers: SliceCaseReducers<UserState> = {
     [USER]: (state, action) => {
         // TODO: GridSuite: Should be payload
         state.user = action.payload.user;
@@ -39,15 +48,18 @@ const reducers = {
     },
 
     [UNAUTHORIZED_USER_INFO]: (state, action) => {
-        state.authenticationRouterError = action.authenticationRouterError;
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
     [LOGOUT_ERROR]: (state, action) => {
-        state.authenticationRouterError = action.authenticationRouterError;
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
     [USER_VALIDATION_ERROR]: (state, action) => {
-        state.authenticationRouterError = action.authenticationRouterError;
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
     [RESET_AUTHENTICATION_ROUTER_ERROR]: (state, action) => {
