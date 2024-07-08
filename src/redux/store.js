@@ -6,5 +6,7 @@
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { reducer } from './reducer';
+import { setCommonStore } from '@gridsuite/commons-ui';
 
 export const store = configureStore({ reducer });
+setCommonStore(store);
