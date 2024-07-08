@@ -5,18 +5,26 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, SliceCaseReducers } from '@reduxjs/toolkit';
 import {
-    USER,
-    SIGNIN_CALLBACK_ERROR,
-    UNAUTHORIZED_USER_INFO,
     LOGOUT_ERROR,
-    USER_VALIDATION_ERROR,
     RESET_AUTHENTICATION_ROUTER_ERROR,
     SHOW_AUTH_INFO_LOGIN,
+    SIGNIN_CALLBACK_ERROR,
+    UNAUTHORIZED_USER_INFO,
+    USER,
+    USER_VALIDATION_ERROR,
 } from '@gridsuite/commons-ui';
+import { User } from 'oidc-client';
 
-const initialState = {
+export type UserState = {
+    user: User | null;
+    signInCallbackError: string | null;
+    authenticationRouterError: any;
+    showAuthenticationRouterLogin: boolean;
+};
+
+const initialState: UserState = {
     user: null,
     signInCallbackError: null,
     authenticationRouterError: null,
@@ -27,7 +35,7 @@ const initialState = {
 
 // Reducers
 
-const reducers = {
+const reducers: SliceCaseReducers<UserState> = {
     [USER]: (state, action) => {
         // TODO: GridSuite: Should be payload
         state.user = action.payload.user;
@@ -39,15 +47,18 @@ const reducers = {
     },
 
     [UNAUTHORIZED_USER_INFO]: (state, action) => {
-        state.authenticationRouterError = action.authenticationRouterError;
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
     [LOGOUT_ERROR]: (state, action) => {
-        state.authenticationRouterError = action.authenticationRouterError;
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
     [USER_VALIDATION_ERROR]: (state, action) => {
-        state.authenticationRouterError = action.authenticationRouterError;
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
     [RESET_AUTHENTICATION_ROUTER_ERROR]: (state, action) => {
