@@ -7,7 +7,7 @@
 
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Tooltip, Typography } from '@mui/material';
 import {
     CustomReactQueryBuilder,
     EXPERT_FILTER_FIELDS,
@@ -15,13 +15,18 @@ import {
 } from '@gridsuite/commons-ui';
 import { useIntl } from 'react-intl';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
+import { styles } from './FilterStyle';
+import { mergeSx } from '../../utils/functions';
+import InfoIcon from '@mui/icons-material/Info';
 
 const filterLabel = 'Where:';
 const addFilterLabel = 'Add filter';
 const deleteFilterLabel = 'Delete filter';
-const noFilterLabel = 'No other rule applies';
+const noFilterLabel = 'No other filter applies';
+const ruleWithoutFilter = 'Only last rule can have empty filter';
 const Filter = (props) => {
-    const { equipmentType, newFilter, deleteFilter, hasFilter } = props;
+    const { isValid, equipmentType, newFilter, deleteFilter, hasFilter } =
+        props;
 
     const intl = useIntl();
 
@@ -35,7 +40,7 @@ const Filter = (props) => {
     }, [intl, equipmentType]);
 
     return (
-        <Grid container justify="space-between" spacing={1}>
+        <Grid container justify="space-between">
             <Grid item container justify={'flex-start'}>
                 <Grid item xs>
                     <Typography>{filterLabel}</Typography>
@@ -60,13 +65,22 @@ const Filter = (props) => {
                     fields={translatedFields}
                 />
             ) : (
-                <Typography
-                    variant="subtitle2"
-                    style={{ textAlign: 'left' }}
-                    color={'info.main'}
-                >
-                    {noFilterLabel}
-                </Typography>
+                <>
+                    <Typography
+                        variant="subtitle2"
+                        sx={mergeSx(
+                            styles.noFilter,
+                            !isValid && styles.invalid
+                        )}
+                    >
+                        {noFilterLabel}
+                    </Typography>
+                    {!isValid && (
+                        <Tooltip title={ruleWithoutFilter}>
+                            <InfoIcon />
+                        </Tooltip>
+                    )}
+                </>
             )}
         </Grid>
     );

@@ -91,7 +91,7 @@ const RuleContainer = ({ index, editParameters }) => {
                 origin: GroupEditionOrigin.RULE,
                 originIndex: index,
             }),
-        [editParameters, index]
+        [editParameters, index, groupType, mappedModel, setGroup]
     );
 
     useEffect(() => {

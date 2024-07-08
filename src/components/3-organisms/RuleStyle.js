@@ -19,6 +19,7 @@ export const styles = {
         },
     },
     invalidRulePaper: {
+        border: '1px solid',
         borderColor: 'red',
     },
     matches: (theme) => ({

@@ -19,6 +19,7 @@ export const styles = {
         },
     },
     invalidAutomatonPaper: {
+        border: '1px solid',
         borderColor: 'red',
     },
     titleLabel: {

@@ -4,24 +4,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { usePrevious } from '@gridsuite/commons-ui';
 import { useEffect } from 'react';
-import isDeepEqualReact from 'fast-deep-equal/react';
 import { FieldErrors, FieldValues, UseFormReturn } from 'react-hook-form';
+import { usePrevious } from '@gridsuite/commons-ui';
+import _ from 'lodash';
 
-const useFormOnChange = (
+const useDataUpdate = (
     formApi: UseFormReturn,
-    onChange: (formData: FieldValues) => void,
-    onValidationError: (errors: FieldErrors) => void
+    initialized: boolean,
+    onValid: (formData: FieldValues) => void,
+    onInvalid: (errors: FieldErrors) => void
 ) => {
     const formData = formApi.watch();
     const prevFormData = usePrevious(formData);
 
     useEffect(() => {
-        if (!isDeepEqualReact(prevFormData, formData)) {
-            formApi.handleSubmit(onChange, onValidationError)();
+        if (initialized && !_.isEqual(prevFormData, formData)) {
+            formApi.handleSubmit(onValid, onInvalid)();
         }
-    }, [formApi, onChange, onValidationError, formData, prevFormData]);
+    }, [formApi, initialized, onValid, onInvalid, formData, prevFormData]);
 };
 
-export default useFormOnChange;
+export default useDataUpdate;

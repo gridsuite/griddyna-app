@@ -5,30 +5,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 export const styles = {
-    label: {
-        textAlign: 'right',
-        marginTop: '12px',
-        '& .MuiTypography-root': {
-            fontWeight: 'bold',
-            color: 'text.primary',
-        },
+    noFilter: {
+        marginLeft: 1,
+        marginRight: 1,
+        color: 'info.main',
     },
-    invalidLabel: {
-        '& .MuiTypography-root': {
-            color: 'red',
-        },
-    },
-    filter: {
-        justifyContent: 'center',
-    },
-    value: {
-        margin: '8px',
-        '& .MuiFormControl-root .MuiInput-root': {
-            minHeight: '2em',
-            '& .MuiSelect-root': {
-                paddingTop: 0,
-                paddingBottom: 0,
-            },
-        },
+    invalid: {
+        color: 'error.main',
     },
 };

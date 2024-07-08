@@ -8,6 +8,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
     getGroupedAutomataNumber,
     getGroupedRulesNumber,
@@ -16,6 +17,7 @@ import {
     isModified as isModifiedSelector,
     MappingSlice,
     postMapping,
+    ruleTabsValid as ruleTabsValidSelector,
 } from '../redux/slices/Mapping';
 import {
     getCurrentNetworkObj,
@@ -64,6 +66,8 @@ const MappingContainer = () => {
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
+    const ruleTabsValid = useSelector(ruleTabsValidSelector);
+    const automatonTabsValid = useSelector(automatonTabsValidSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
     const networks = useSelector((state) => state.network.knownNetworks);
     const networkValues = useSelector((state) => state.network.propertyValues);
@@ -99,6 +103,7 @@ const MappingContainer = () => {
         value: type,
         // TODO: intl
         label: `${type} (${groupedRulesNumber[type]})`,
+        isValid: ruleTabsValid[type],
     }));
 
     const filterAutomataOptions = Object.values(AutomatonFamily).map(
@@ -106,6 +111,7 @@ const MappingContainer = () => {
             value: family,
             // TODO: intl
             label: `${family} (${groupedAutomataNumber[family]})`,
+            isValid: automatonTabsValid[family],
         })
     );
 
@@ -148,7 +154,7 @@ const MappingContainer = () => {
                 <RuleContainer
                     index={i}
                     editParameters={setEditParameters}
-                    key={`rule-container-${i}`}
+                    key={`rule-container-${activeMapping}-${filteredType}-${i}`}
                 />
             );
         }
@@ -162,7 +168,7 @@ const MappingContainer = () => {
                 <AutomatonContainer
                     index={i}
                     editParameters={setEditParameters}
-                    key={`automaton-container-${i}`}
+                    key={`automaton-container-${activeMapping}-${filteredFamily}-${i}`}
                 />
             );
         }

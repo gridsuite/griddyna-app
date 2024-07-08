@@ -18,10 +18,12 @@ import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
 import {
     exportExpertRules,
+    formatQuery,
     getExpertFilterEmptyFormData,
     importExpertRules,
+    rqbQueryTest,
 } from '@gridsuite/commons-ui';
-import { enrichIdQuery } from '../../utils/rqb-utils';
+import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 
 const initialState = {
     mappings: [],
@@ -61,10 +63,17 @@ const transformMapping = (receivedMapping) => {
         rule['matches'] = [];
         if (rule.filter) {
             rule['filter']['rules'] = importExpertRules(
-                // RQB need an id for each rule/group to avoid re-create a new component
-                // even the same input => lost focus while typing
-                // This solution can be removed when the back-end returns id persisted for each rule in the db (round-trip)
-                enrichIdQuery(rule.filter.rules, false)
+                // SOLUTION 1 : CustomReactQueryBuilder mounted BEFORE first reset rhf form =>
+                // Need to provide id for each rule/group to avoid re-create new components in controlled mode
+                // which lead to lost focus while typing in rqb value editor
+                // enrichIdRqbQuery(rule.filter.rules, false)
+
+                // SOLUTION 2 : CustomReactQueryBuilder mounted AFTER first reset rhf form =>
+                // Do not need to provide id for each rule/group, QueryBuilder will provide ids while initializing
+                rule.filter.rules
+
+                // SOLUTION 3 : CustomReactQueryBuilder mounted BEFORE first reset rhf form
+                // Return persisted ids of each rule/group from the backend
             );
         }
         return rule;
@@ -111,7 +120,7 @@ const filterAutomataByFamily = (automata, family) =>
             automaton.family === family
     );
 
-// Base selectors that used in create selector, must not create new array or object
+// Base selectors that used in create selector, IMPORTANT base selectors must not create new array or object
 // in order to make memorization effectively
 export const getRules = (state) => state.mappings.rules;
 export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
@@ -121,49 +130,62 @@ export const getFilteredAutomatonFamily = (state) =>
 export const getActiveMapping = (state) => state.mappings.activeMapping;
 
 // Selectors
-export const getGroupedRulesNumber = (state) => {
+export const getGroupedRulesNumber = createSelector(getRules, (rules) => {
     const groupedRulesNumber = {};
     RuleEquipmentTypes.forEach((type) => {
         groupedRulesNumber[type] = 0;
     });
 
-    state.mappings.rules.forEach((rule) => {
+    rules.forEach((rule) => {
         if (rule.type !== '') {
             groupedRulesNumber[rule.type]++;
         }
     });
     return groupedRulesNumber;
-};
+});
 
-export const getRulesNumber = (state) =>
-    state.mappings.rules.filter(
-        (rule) =>
-            state.mappings.filteredRuleType === '' ||
-            rule.type === '' ||
-            rule.type === state.mappings.filteredRuleType
-    ).length;
+export const getRulesNumber = createSelector(
+    getRules,
+    getFilteredRuleType,
+    (rules, filteredRuleType) => {
+        return rules.filter(
+            (rule) =>
+                filteredRuleType === '' ||
+                rule.type === '' ||
+                rule.type === filteredRuleType
+        ).length;
+    }
+);
 
-export const getAutomataNumber = (state) =>
-    state.mappings.automata.filter(
-        (automaton) =>
-            state.mappings.filteredAutomatonFamily === '' ||
-            automaton.family === '' ||
-            automaton.family === state.mappings.filteredAutomatonFamily
-    ).length;
+export const getAutomataNumber = createSelector(
+    getAutomata,
+    getFilteredAutomatonFamily,
+    (automata, filteredAutomatonFamily) => {
+        return automata.filter(
+            (automaton) =>
+                filteredAutomatonFamily === '' ||
+                automaton.family === '' ||
+                automaton.family === filteredAutomatonFamily
+        ).length;
+    }
+);
 
-export const getGroupedAutomataNumber = (state) => {
-    const groupedAutomataNumber = {};
-    Object.values(AutomatonFamily).forEach((family) => {
-        groupedAutomataNumber[family] = 0;
-    });
+export const getGroupedAutomataNumber = createSelector(
+    getAutomata,
+    (automata) => {
+        const groupedAutomataNumber = {};
+        Object.values(AutomatonFamily).forEach((family) => {
+            groupedAutomataNumber[family] = 0;
+        });
 
-    state.mappings.automata.forEach((automaton) => {
-        if (automaton.family !== '') {
-            groupedAutomataNumber[automaton.family]++;
-        }
-    });
-    return groupedAutomataNumber;
-};
+        automata.forEach((automaton) => {
+            if (automaton.family !== '') {
+                groupedAutomataNumber[automaton.family]++;
+            }
+        });
+        return groupedAutomataNumber;
+    }
+);
 
 export const makeGetRule = () =>
     createSelector(
@@ -212,12 +234,14 @@ export const makeGetFilter = () =>
         }
     );
 
-const checkFilterValidity = (filter) => {
+const checkFilterValidity = (filter, isLast) => {
     if (!filter) {
-        return true;
+        // only last rule allows empty filter
+        return !!isLast;
     }
-
-    return !_.isEmpty(filter.rules) && _.isEmpty(filter.errors);
+    const isQueryExist = !_.isEmpty(filter.rules);
+    const isQueryValid = isQueryExist && rqbQueryTest.isValidSync(filter.rules);
+    return isQueryValid;
 };
 
 export const makeGetIsFilterValid = () =>
@@ -227,36 +251,91 @@ export const makeGetIsFilterValid = () =>
         (_state, ruleIndex) => ruleIndex,
         (rules, filteredRuleType, ruleIndex) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
-            return checkFilterValidity(filteredRules[ruleIndex].filter);
+            return checkFilterValidity(
+                filteredRules[ruleIndex].filter,
+                filteredRules.length && ruleIndex === filteredRules.length - 1
+            );
         }
     );
 
-const checkRuleValidity = (rule) => {
+const checkRuleValidity = (rule, isLast) => {
     return (
-        rule.type !== '' &&
-        rule.composition !== '' &&
-        rule.mappedModel !== '' &&
-        rule.setGroup !== '' &&
-        rule.groupType !== '' &&
-        checkFilterValidity(rule.filter)
+        !!rule.type &&
+        !!rule.mappedModel &&
+        !!rule.setGroup &&
+        !!rule.groupType &&
+        checkFilterValidity(rule.filter, isLast)
     );
 };
 
-const checkAutomatonValidity = (automaton, automatonDefinition = {}) =>
-    automaton.family !== '' &&
-    automaton.model !== '' &&
-    automaton.setGroup !== '' &&
-    // check empty
-    Object.keys(automatonDefinition).reduce(
-        (acc, propertyName) =>
-            acc &&
-            (automatonDefinition[propertyName].isRequired
-                ? automaton.properties.find(
-                      (elem) => elem.name === propertyName
-                  )?.value !== ''
-                : true),
-        true
-    );
+const checkAutomatonValidity = (automaton, automatonDefinition = {}) => {
+    const result =
+        !!automaton.family &&
+        !!automaton.model &&
+        !!automaton.setGroup &&
+        // check empty
+        Object.keys(automatonDefinition).reduce(
+            (acc, propertyName) =>
+                acc &&
+                (automatonDefinition[propertyName].isRequired
+                    ? !!automaton.properties.find(
+                          (elem) => elem.name === propertyName
+                      )?.value
+                    : true),
+            true
+        );
+    return result;
+};
+
+const indexingRuleByType = (rules) => {
+    return rules.reduce((accMap, rule) => {
+        if (!accMap[rule.type]) {
+            accMap[rule.type] = [];
+        }
+        accMap[rule.type].push(rule);
+        return accMap;
+    }, {});
+};
+
+const indexingAutomatonByFamily = (automata) => {
+    return automata.reduce((accMap, automaton) => {
+        if (!accMap[automaton.family]) {
+            accMap[automaton.family] = [];
+        }
+        accMap[automaton.family].push(automaton);
+        return accMap;
+    }, {});
+};
+
+const getRuleTabsValid = (rules) => {
+    const ruleTabsValidMap = {};
+    const rulesByTypeMap = indexingRuleByType(rules);
+    Object.keys(rulesByTypeMap).forEach((type) => {
+        ruleTabsValidMap[type] = rulesByTypeMap[type].reduce(
+            (acc, rule, index, origin) =>
+                acc && checkRuleValidity(rule, index === origin.length - 1),
+            true
+        );
+    });
+    return ruleTabsValidMap;
+};
+
+const getAutomatonTabsValid = (automata, automatonDefinitions) => {
+    const automatonTabsValidMap = {};
+    const automataByTypeMap = indexingAutomatonByFamily(automata);
+    Object.keys(automataByTypeMap).forEach((family) => {
+        automatonTabsValidMap[family] = automataByTypeMap[family].reduce(
+            (acc, automaton) =>
+                acc &&
+                checkAutomatonValidity(
+                    automaton,
+                    automatonDefinitions[automaton.model]
+                ),
+            true
+        );
+    });
+    return automatonTabsValidMap;
+};
 
 export const makeIsRuleValid = () =>
     createSelector(
@@ -265,22 +344,12 @@ export const makeIsRuleValid = () =>
         (_state, ruleIndex) => ruleIndex,
         (rules, filteredRuleType, ruleIndex) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
-            return checkRuleValidity(filteredRules[ruleIndex]);
+            return checkRuleValidity(
+                filteredRules[ruleIndex],
+                filteredRules.length && ruleIndex === filteredRules.length - 1
+            );
         }
     );
-
-export const isMappingValid = createSelector(
-    (state) => state.mappings.activeMapping,
-    getRules,
-    getAutomata,
-    (name, rules, automata) =>
-        name !== '' &&
-        rules.reduce((acc, rule) => acc && checkRuleValidity(rule), true) &&
-        automata.reduce(
-            (acc, automaton) => acc && checkAutomatonValidity(automaton),
-            true
-        )
-);
 
 export const makeIsAutomatonValid = () =>
     createSelector(
@@ -304,6 +373,42 @@ export const makeIsAutomatonValid = () =>
             );
         }
     );
+
+export const ruleTabsValid = createSelector(getRules, (rules) => {
+    return getRuleTabsValid(rules);
+});
+
+export const automatonTabsValid = createSelector(
+    (state) => state.models.automatonDefinitions,
+    getAutomata,
+    (automatonDefinitions, automata) => {
+        return getAutomatonTabsValid(automata, automatonDefinitions);
+    }
+);
+export const isMappingValid = createSelector(
+    (state) => state.mappings.activeMapping,
+    (state) => state.models.automatonDefinitions,
+    getRules,
+    getAutomata,
+    (name, automatonDefinitions, rules, automata) => {
+        const ruleTabsValid = getRuleTabsValid(rules);
+        const automatonTabsValid = getAutomatonTabsValid(
+            automata,
+            automatonDefinitions
+        );
+        return (
+            !!name &&
+            Object.keys(ruleTabsValid).reduce(
+                (acc, type) => acc && ruleTabsValid[type],
+                true
+            ) &&
+            Object.keys(automatonTabsValid).reduce(
+                (acc, family) => acc && automatonTabsValid[family],
+                true
+            )
+        );
+    }
+);
 
 export const getMappingsInfo = createSelector(
     (state) => state.mappings.mappings,
@@ -333,7 +438,21 @@ export const isModified = createSelector(
 
         function ignoreInternalProperties(rule) {
             const ruleToTest = _.cloneDeep(rule);
-            delete ruleToTest.matches;
+
+            delete ruleToTest.matches; // ignore matches which is used for matched equipment ids
+            delete ruleToTest.filterDirty; // ignore the derived field
+
+            // for filter with rqb query, need to transform to json 'json_without_ids'
+            // because the query fetched from back does not contain id in query
+            if (rule?.filter?.rules) {
+                const queryJson = formatQuery(
+                    rule?.filter?.rules,
+                    'json_without_ids'
+                );
+                delete ruleToTest.filter.rules;
+                ruleToTest.filter.queryJson = queryJson;
+            }
+
             return ruleToTest;
         }
 
@@ -584,9 +703,10 @@ const reducers = {
         // if filter exists must unset filter id and provide all new ids for rule/group inside the filter
         if (ruleToCopy.filter?.id) {
             ruleToCopy.filter.id = undefined;
-            // force set new ids for the whole query
-            enrichIdQuery(ruleToCopy.filter.rules, true);
+            // force reset with new ids for the whole query
+            enrichIdRqbQuery(ruleToCopy.filter.rules, true);
         }
+
         state.rules.push(ruleToCopy);
     },
     // Filter
@@ -604,25 +724,32 @@ const reducers = {
         selectedRule.filter = newFilter;
     },
     changeFilterQuery: (state, action) => {
-        const { ruleIndex, value } = action.payload;
-        const modifiedFilter = filterRulesByType(
+        const { ruleIndex, value: newQuery } = action.payload;
+        const modifiedRule = filterRulesByType(
             state.rules,
             state.filteredRuleType
-        )[ruleIndex].filter;
+        )[ruleIndex];
+        const modifiedFilter = modifiedRule.filter;
         if (modifiedFilter) {
-            modifiedFilter.rules = _.cloneDeep(value);
-            // reset filter errors
-            delete modifiedFilter.errors;
-        }
-    },
-    setFilterError: (state, action) => {
-        const { ruleIndex, errors } = action.payload;
-        const modifiedFilter = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex].filter;
-        if (modifiedFilter) {
-            modifiedFilter.errors = _.cloneDeep(errors);
+            // set with new query value
+            modifiedFilter.rules = newQuery;
+
+            // check whether query is modified by comparing to the query in original rule
+            const activeMapping = state.activeMapping;
+            const savedMappings = state.mappings;
+            const foundMapping = savedMappings.find(
+                (mapping) => mapping.name === activeMapping
+            );
+
+            const foundRule = foundMapping.rules?.find(
+                (rule) => rule?.filter?.id === modifiedFilter?.id
+            );
+
+            const oldQuery = foundRule?.filter?.rules;
+            const isDirty =
+                formatQuery(oldQuery, 'json_without_ids') !==
+                formatQuery(newQuery, 'json_without_ids');
+            modifiedRule.filterDirty = isDirty;
         }
     },
     deleteFilter: (state, action) => {

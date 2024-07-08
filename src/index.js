@@ -21,17 +21,17 @@ import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
 
 import {
-    CardErrorBoundary,
-    top_bar_en,
-    top_bar_fr,
-    login_fr,
-    login_en,
     card_error_boundary_en,
     card_error_boundary_fr,
+    CardErrorBoundary,
     filter_en,
-    filter_fr,
     filter_expert_en,
     filter_expert_fr,
+    filter_fr,
+    login_en,
+    login_fr,
+    top_bar_en,
+    top_bar_fr,
 } from '@gridsuite/commons-ui';
 
 const messages = {

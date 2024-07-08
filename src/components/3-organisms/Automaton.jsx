@@ -68,14 +68,7 @@ const Automaton = (props) => {
                     justifyContent={'flex-start'}
                 >
                     <Grid container justifyContent={'flex-start'}>
-                        <Grid
-                            item
-                            xs
-                            sx={mergeSx(
-                                styles.titleLabel,
-                                !isAutomatonValid && styles.invalidTitleLabel
-                            )}
-                        >
+                        <Grid item xs sx={styles.titleLabel}>
                             <Typography variant="subtitle2">
                                 {`${automatonLabel} ${family}`}
                             </Typography>

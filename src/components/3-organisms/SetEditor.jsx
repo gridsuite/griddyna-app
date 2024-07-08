@@ -51,7 +51,7 @@ const SetEditor = (props) => {
 
     return (
         <Box>
-            <Typography variant="h2"> {set.name}</Typography>
+            <Typography variant="h5"> {set.name}</Typography>
             {_.cloneDeep(filteredDefinitions)
                 .sort((a, b) => valueOrigin(a.origin) - valueOrigin(b.origin))
                 .map((definition) => {
@@ -69,6 +69,7 @@ const SetEditor = (props) => {
                             </Grid>
                             <Grid item xs={4}>
                                 <TextField
+                                    size="small"
                                     id={definition.name}
                                     value={
                                         definition.origin ===

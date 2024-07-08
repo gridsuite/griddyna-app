@@ -20,18 +20,16 @@ import PropTypes from 'prop-types';
 import {
     CustomFormProvider,
     EXPERT_FILTER_QUERY,
-    QUERY_TEST,
     yup,
 } from '@gridsuite/commons-ui';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import useFormOnInit from '../hooks/useFormOnInit';
-import useFormOnChange from '../hooks/useFormOnChange';
+import useDataForm from '../hooks/react-hook-form/form/useDataForm';
 
+// we do not need detail schema with all validation test for rqb filter
+// the test in done in the redux layer by selectors isValidXXX
 const filterFormSchema = yup
     .object()
     .shape({
-        [EXPERT_FILTER_QUERY]: QUERY_TEST,
+        [EXPERT_FILTER_QUERY]: yup.object(),
     })
     .required();
 
@@ -75,7 +73,7 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
         makeChangeFilterValueThenGetNetworkMatches,
         []
     );
-    const onQueryValid = useCallback(
+    const onFormValid = useCallback(
         (formData) => {
             const newQuery = formData[EXPERT_FILTER_QUERY];
             dispatch(
@@ -88,27 +86,16 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
         [dispatch, ruleIndex, changeFilterValueThenGetNetworkMatches]
     );
 
-    const onQueryInvalid = useCallback(
-        (errors) => {
-            dispatch(
-                MappingSlice.actions.setFilterError({ ruleIndex, errors })
-            );
-        },
-        [dispatch, ruleIndex]
-    );
-
     // RHF
-    const formMethods = useForm({
-        resolver: yupResolver(filterFormSchema),
-    });
-    const { handleSubmit } = formMethods;
-
-    useFormOnInit(formMethods, { [EXPERT_FILTER_QUERY]: query }, [
-        filteredRuleType,
-        activeMapping,
-    ]);
-
-    useFormOnChange(formMethods, onQueryValid, onQueryInvalid);
+    const { initialized, formMethods } = useDataForm(
+        filterFormSchema,
+        {
+            [EXPERT_FILTER_QUERY]: query,
+        },
+        [activeMapping, filteredRuleType], // only reset form when mapping or type changed
+        onFormValid,
+        undefined
+    );
 
     return (
         <CustomFormProvider
@@ -116,14 +103,15 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
             validationSchema={filterFormSchema}
             removeOptional
         >
-            <Filter
-                isValid={isValid}
-                equipmentType={equipmentType}
-                newFilter={newFilter}
-                validateFilter={handleSubmit(onQueryValid, onQueryInvalid)}
-                deleteFilter={deleteFilter}
-                hasFilter={!!filter}
-            />
+            {initialized && (
+                <Filter
+                    isValid={isValid}
+                    equipmentType={equipmentType}
+                    newFilter={newFilter}
+                    deleteFilter={deleteFilter}
+                    hasFilter={!!filter}
+                />
+            )}
         </CustomFormProvider>
     );
 };

@@ -8,7 +8,7 @@ import { v4 as uuid4 } from 'uuid';
 import { UUID } from 'crypto';
 import { RuleGroupTypeExport, RuleTypeExport } from '@gridsuite/commons-ui';
 
-const visitQuery = (
+const visitRqbQuery = (
     query: RuleGroupTypeExport,
     visitor: (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => void
 ) => {
@@ -24,13 +24,22 @@ const visitQuery = (
     return query;
 };
 
-const idUpdaterMaker =
-    (force: boolean) => (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => {
+const idUpdaterFactory =
+    (idProvider: () => UUID, force: boolean) =>
+    (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => {
         if (force || (ruleOrGroup && !ruleOrGroup.id)) {
-            ruleOrGroup.id = uuid4() as UUID;
+            ruleOrGroup.id = idProvider() as UUID;
         }
     };
 
-export const enrichIdQuery = (query: RuleGroupTypeExport, force: boolean) => {
-    return visitQuery(query, idUpdaterMaker(force));
+/**
+ *
+ * @param query a rqb query
+ * @param force if true force setting a new uuid, otherwise do not set id if already exist
+ */
+export const enrichIdRqbQuery = (
+    query: RuleGroupTypeExport,
+    force: boolean
+) => {
+    return visitRqbQuery(query, idUpdaterFactory(uuid4 as () => UUID, force));
 };

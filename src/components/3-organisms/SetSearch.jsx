@@ -25,6 +25,7 @@ import { styles } from './SetSearchStyle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import { mergeSx } from '@gridsuite/commons-ui';
 
 const RESET_SET_SEARCH_LABEL = 'Clear filter';
 const APPLY_ONE_SET_SEARCH_LABEL = 'Apply one';
@@ -133,9 +134,12 @@ function SetSearch(props) {
         <Accordion
             expanded={expanded}
             onChange={() => setExpanded((prev) => !prev)}
+            elevation={10}
         >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={styles.label}>
-                <Typography>{SET_SEARCH_LABEL}</Typography>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography sx={styles.labelRoot}>
+                    {SET_SEARCH_LABEL}
+                </Typography>
             </AccordionSummary>
             <Divider />
             <AccordionDetails style={{ display: 'inherit' }}>
@@ -160,7 +164,7 @@ function SetSearch(props) {
                                     value={getModel()?.value ?? ''}
                                     setValue={handleSetModel}
                                     error={false}
-                                    fullWidth
+                                    sx={styles.fieldSearch}
                                 ></Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -170,10 +174,10 @@ function SetSearch(props) {
                                     value={getGroup()?.value ?? ''}
                                     setValue={handleSetGroup}
                                     error={false}
-                                    fullWidth
+                                    sx={styles.fieldSearch}
                                 ></Select>
                             </Grid>
-                            <Grid item xs={12} sx={styles.value}>
+                            <Grid item xs={12}>
                                 <Autocomplete
                                     isFree={false}
                                     isMultiple={false}
@@ -184,7 +188,9 @@ function SetSearch(props) {
                                     type={undefined}
                                     error={false}
                                     label={'Parameters set'}
-                                    fullWidth
+                                    sx={mergeSx(styles.fieldSearch, {
+                                        marginLeft: 1,
+                                    })}
                                 />
                             </Grid>
                         </Grid>
