@@ -5,22 +5,33 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createSlice, SliceCaseReducers } from '@reduxjs/toolkit';
 import {
+    createSlice,
+    PayloadAction,
+    SliceCaseReducers,
+} from '@reduxjs/toolkit';
+import {
+    AuthenticationRouterErrorState,
+    CommonStoreState,
     LOGOUT_ERROR,
+    LogoutErrorAction,
     RESET_AUTHENTICATION_ROUTER_ERROR,
     SHOW_AUTH_INFO_LOGIN,
+    ShowAuthenticationRouterLoginAction,
     SIGNIN_CALLBACK_ERROR,
+    SignInCallbackErrorAction,
     UNAUTHORIZED_USER_INFO,
+    UnauthorizedUserAction,
     USER,
     USER_VALIDATION_ERROR,
+    UserAction,
+    UserValidationErrorAction,
 } from '@gridsuite/commons-ui';
-import { User } from 'oidc-client';
+import { AuthenticationRouterErrorAction } from '@gridsuite/commons-ui/dist/redux/authActions';
 
-export type UserState = {
-    user: User | null;
-    signInCallbackError: string | null;
-    authenticationRouterError: any;
+export type UserState = CommonStoreState & {
+    signInCallbackError: Error | null;
+    authenticationRouterError: AuthenticationRouterErrorState | null;
     showAuthenticationRouterLogin: boolean;
 };
 
@@ -36,36 +47,50 @@ const initialState: UserState = {
 // Reducers
 
 const reducers: SliceCaseReducers<UserState> = {
-    [USER]: (state, action) => {
-        // TODO: GridSuite: Should be payload
+    [USER]: (state, action: PayloadAction<UserAction>) => {
         state.user = action.payload.user;
     },
 
-    [SIGNIN_CALLBACK_ERROR]: (state, action) => {
-        // TODO: GridSuite: Should be payload
+    [SIGNIN_CALLBACK_ERROR]: (
+        state,
+        action: PayloadAction<SignInCallbackErrorAction>
+    ) => {
         state.signInCallbackError = action.payload.signInCallbackError;
     },
 
-    [UNAUTHORIZED_USER_INFO]: (state, action) => {
+    [UNAUTHORIZED_USER_INFO]: (
+        state,
+        action: PayloadAction<UnauthorizedUserAction>
+    ) => {
         state.authenticationRouterError =
             action.payload.authenticationRouterError;
     },
 
-    [LOGOUT_ERROR]: (state, action) => {
+    [LOGOUT_ERROR]: (state, action: PayloadAction<LogoutErrorAction>) => {
         state.authenticationRouterError =
             action.payload.authenticationRouterError;
     },
 
-    [USER_VALIDATION_ERROR]: (state, action) => {
+    [USER_VALIDATION_ERROR]: (
+        state,
+        action: PayloadAction<UserValidationErrorAction>
+    ) => {
         state.authenticationRouterError =
             action.payload.authenticationRouterError;
     },
 
-    [RESET_AUTHENTICATION_ROUTER_ERROR]: (state, action) => {
-        state.authenticationRouterError = null;
+    [RESET_AUTHENTICATION_ROUTER_ERROR]: (
+        state,
+        action: PayloadAction<AuthenticationRouterErrorAction>
+    ) => {
+        state.authenticationRouterError =
+            action.payload.authenticationRouterError;
     },
 
-    [SHOW_AUTH_INFO_LOGIN]: (state, action) => {
+    [SHOW_AUTH_INFO_LOGIN]: (
+        state,
+        action: PayloadAction<ShowAuthenticationRouterLoginAction>
+    ) => {
         state.showAuthenticationRouterLogin =
             action.payload.showAuthenticationRouterLogin;
     },
