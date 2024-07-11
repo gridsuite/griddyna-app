@@ -21,7 +21,8 @@ import {
     formatQuery,
     getExpertFilterEmptyFormData,
     importExpertRules,
-    rqbQueryTest,
+    rqbQuerySchemaValidator,
+    yup,
 } from '@gridsuite/commons-ui';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 
@@ -240,7 +241,9 @@ const checkFilterValidity = (filter, isLast) => {
         return !!isLast;
     }
     const isQueryExist = !_.isEmpty(filter.rules);
-    const isQueryValid = isQueryExist && rqbQueryTest.isValidSync(filter.rules);
+    const isQueryValid =
+        isQueryExist &&
+        rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules);
     return isQueryValid;
 };
 
