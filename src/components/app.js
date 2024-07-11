@@ -6,9 +6,7 @@
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-
 import { useDispatch, useSelector } from 'react-redux';
-
 import {
     Navigate,
     Route,
@@ -17,7 +15,6 @@ import {
     useMatch,
     useNavigate,
 } from 'react-router-dom';
-
 import { Box, CssBaseline } from '@mui/material';
 import {
     createTheme,
@@ -25,7 +22,6 @@ import {
     ThemeProvider,
 } from '@mui/material/styles';
 import { LIGHT_THEME } from '../redux/slices/Theme';
-
 import {
     AuthenticationRouter,
     CardErrorBoundary,
@@ -35,20 +31,16 @@ import {
     logout,
     TopBar,
 } from '@gridsuite/commons-ui';
-
 import { FormattedMessage } from 'react-intl';
-
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import AppPackage from '../../package.json';
-
 import {
     fetchAppsAndUrls,
-    fetchAuthorizationCodeFlowFeatureFlag,
+    fetchIdpSettings,
     fetchValidateUser,
     fetchVersion,
 } from '../utils/rest-api';
 import { getServersInfos } from '../rest/studyAPI';
-
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
 
@@ -117,52 +109,41 @@ const App = () => {
         })
     );
 
-    const initialize = useCallback(() => {
-        if (process.env.REACT_APP_USE_AUTHENTICATION === 'true') {
-            return fetchAuthorizationCodeFlowFeatureFlag().then(
-                (authorizationCodeFlowEnabled) => {
-                    return initializeAuthenticationProd(
-                        authenticationDispatch,
-                        initialMatchSilentRenewCallbackUrl != null,
-                        fetch('idpSettings.json'),
-                        fetchValidateUser,
-                        authorizationCodeFlowEnabled,
-                        initialMatchSigninCallbackUrl != null
-                    );
-                }
-            );
-        } else {
-            console.log('devauth');
-            return initializeAuthenticationDev(
-                authenticationDispatch,
-                initialMatchSilentRenewCallbackUrl != null,
-                () =>
-                    new Promise((resolve) =>
-                        window.setTimeout(() => resolve(true), 500)
-                    ),
-                initialMatchSigninCallbackUrl != null
-            );
-        }
-        // Note: initialMatchSilentRenewCallbackUrl and dispatch don't change
-    }, [
-        initialMatchSilentRenewCallbackUrl,
-        authenticationDispatch,
-        initialMatchSigninCallbackUrl,
-    ]);
-
     useEffect(() => {
-        initialize()
-            .then((userManager) => {
-                setUserManager({ instance: userManager, error: null });
-            })
-            .catch(function (error) {
+        // need subfunction when async as suggested by rule react-hooks/exhaustive-deps
+        (async function initializeAuthentication() {
+            try {
+                console.debug(
+                    `dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`
+                );
+                const initAuth =
+                    process.env.REACT_APP_USE_AUTHENTICATION === 'true'
+                        ? initializeAuthenticationProd(
+                              authenticationDispatch,
+                              initialMatchSilentRenewCallbackUrl != null,
+                              fetchIdpSettings,
+                              fetchValidateUser,
+                              initialMatchSigninCallbackUrl != null
+                          )
+                        : initializeAuthenticationDev(
+                              authenticationDispatch,
+                              initialMatchSilentRenewCallbackUrl != null,
+                              ValidateUserDev,
+                              initialMatchSigninCallbackUrl != null
+                          );
+                setUserManager({
+                    instance: await initAuth,
+                    error: null,
+                });
+            } catch (error) {
                 setUserManager({ instance: null, error: error.message });
-            });
-        // Note: initialize and initialMatchSilentRenewCallbackUrl won't change
+            }
+        })();
+        // Note: dispatch and initialMatchSilentRenewCallbackUrl won't change
     }, [
-        initialize,
-        initialMatchSilentRenewCallbackUrl,
         authenticationDispatch,
+        initialMatchSilentRenewCallbackUrl,
+        initialMatchSigninCallbackUrl,
     ]);
 
     useEffect(() => {
@@ -256,3 +237,9 @@ const App = () => {
 };
 
 export default App;
+
+function ValidateUserDev() {
+    return new Promise((resolve) =>
+        window.setTimeout(() => resolve(true), 500)
+    );
+}

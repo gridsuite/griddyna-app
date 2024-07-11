@@ -5,6 +5,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { configureStore } from '@reduxjs/toolkit';
+import { setCommonStore } from '@gridsuite/commons-ui';
 import { reducer } from './reducer';
 
 export const store = configureStore({ reducer });
+export type AppDispatch = typeof store.dispatch;
+setCommonStore({
+    getState: () => store.getState().user,
+});
