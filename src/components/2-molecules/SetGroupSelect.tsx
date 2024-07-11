@@ -96,7 +96,7 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
     return (
         <Grid container justifyContent={'flex-start'}>
             <Grid item container justifyContent={'flex-start'}>
-                <Grid container item xs sx={styles.gridItem}>
+                <Grid item xs sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${isAbsoluteLabel} :`}</Typography>
                 </Grid>
                 <Grid item container xs="auto" justifyContent={'flex-end'}>
@@ -108,12 +108,11 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                 </Grid>
             </Grid>
             <Grid item container justifyContent={'flex-start'}>
-                <Grid container item xs sx={styles.gridItem}>
+                <Grid item xs sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${setLabel} :`}</Typography>
                 </Grid>
                 <Grid
                     item
-                    container
                     xs="auto"
                     sx={mergeSx(
                         styles.button,

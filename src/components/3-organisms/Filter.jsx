@@ -45,7 +45,7 @@ const Filter = (props) => {
                 <Grid item xs>
                     <Typography>{filterLabel}</Typography>
                 </Grid>
-                <Grid item xs={'auto'} container paddingLeft={1}>
+                <Grid item xs={'auto'} paddingLeft={1}>
                     <AddIconButton
                         onClick={newFilter}
                         tooltip={addFilterLabel}
@@ -65,7 +65,7 @@ const Filter = (props) => {
                     fields={translatedFields}
                 />
             ) : (
-                <>
+                <Grid item>
                     <Typography
                         variant="subtitle2"
                         sx={mergeSx(
@@ -80,7 +80,7 @@ const Filter = (props) => {
                             <InfoIcon />
                         </Tooltip>
                     )}
-                </>
+                </Grid>
             )}
         </Grid>
     );

@@ -52,7 +52,7 @@ const Header = (props) => {
     };
     return (
         <Grid container sx={getHeaderBoxStyle()}>
-            <Grid container item xs sx={styles.gridTitle}>
+            <Grid item xs sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h5" sx={getTitleStyle()}>
                         {`${name}${isModified ? '*' : ''} :`}
@@ -64,7 +64,6 @@ const Header = (props) => {
             </Grid>
             <Grid
                 item
-                container
                 xs="auto"
                 sx={mergeSx(styles.gridButton, styles.buttonIcon)}
             >

@@ -96,7 +96,6 @@ const SetEditor = (props) => {
                             <Grid
                                 item
                                 xs
-                                container
                                 alignItems={'center'}
                                 justifyContent={'center'}
                             >

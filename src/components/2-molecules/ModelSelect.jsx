@@ -19,7 +19,7 @@ const ModelSelect = (props) => {
 
     return (
         <Grid container justify={'center'}>
-            <Grid container item xs="auto" sx={styles.gridItem}>
+            <Grid item xs="auto" sx={styles.gridItem}>
                 <Typography variant="subtitle1">{`${modelLabel} :`}</Typography>
             </Grid>
             <Grid item xs sx={styles.titleSelect}>

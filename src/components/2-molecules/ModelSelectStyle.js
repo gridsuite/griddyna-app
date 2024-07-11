@@ -10,7 +10,7 @@ export const styles = {
         textAlign: 'right',
     },
     gridItem: {
-        flexDirection: 'row',
+        display: 'flex',
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingLeft: 1,

@@ -16,6 +16,8 @@ export const styles = {
         '& .MuiTypography-root': {
             fontWeight: 'normal',
         },
+        display: 'flex',
+        alignItems: 'center',
     },
     value: {
         padding: '8px 8px',

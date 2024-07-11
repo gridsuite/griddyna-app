@@ -38,13 +38,13 @@ export const styles = {
         },
     },
     gridTitle: {
-        flexDirection: 'row',
+        display: 'flex',
         justifyContent: 'flex-start',
         alignItems: 'center',
         paddingLeft: 1,
     },
     gridButton: {
-        flexDirection: 'row',
+        display: 'flex',
         justifyContent: 'flex-end',
         alignItems: 'center',
         paddingRight: 1,

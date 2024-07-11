@@ -49,6 +49,13 @@ import { areParametersValid as areParametersValidSelector } from '../redux/selec
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 
+const styles = {
+    tabBar: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+    },
+};
+
 // TODO intl
 const ADD_MODEL_LABEL = 'Add a model';
 const SAVE_LABEL = 'Save Mapping';
@@ -209,14 +216,9 @@ const MappingContainer = () => {
                         }`}</Typography>
                     </AccordionSummary>
                     <Divider />
-                    <AccordionDetails style={{ display: 'inherit' }}>
+                    <AccordionDetails>
                         <Grid container>
-                            <Grid
-                                item
-                                container
-                                xs
-                                justifyContent={'flex-start'}
-                            >
+                            <Grid item xs sx={styles.tabBar}>
                                 <TabBar
                                     value={filteredType}
                                     options={filterRulesOptions}
@@ -242,14 +244,9 @@ const MappingContainer = () => {
                         }`}</Typography>
                     </AccordionSummary>
                     <Divider />
-                    <AccordionDetails style={{ display: 'inherit' }}>
+                    <AccordionDetails>
                         <Grid container>
-                            <Grid
-                                item
-                                container
-                                xs
-                                justifyContent={'flex-start'}
-                            >
+                            <Grid item xs sx={styles.tabBar}>
                                 <TabBar
                                     value={filteredFamily}
                                     options={filterAutomataOptions}

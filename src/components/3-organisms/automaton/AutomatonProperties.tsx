@@ -83,7 +83,6 @@ const AutomatonProperties = ({
                             <Grid container>
                                 <Grid
                                     item
-                                    container
                                     xs={4}
                                     sx={styles.label}
                                     alignItems={'center'}
