@@ -8,7 +8,6 @@ export const styles = {
     noFilter: {
         marginLeft: 1,
         marginRight: 1,
-        color: 'info.main',
     },
     invalid: {
         color: 'error.main',

@@ -7,7 +7,7 @@
 
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Tooltip, Typography } from '@mui/material';
+import { Box, Grid, Tooltip, Typography } from '@mui/material';
 import {
     CustomReactQueryBuilder,
     EXPERT_FILTER_FIELDS,
@@ -22,7 +22,7 @@ import InfoIcon from '@mui/icons-material/Info';
 const filterLabel = 'Where:';
 const addFilterLabel = 'Add filter';
 const deleteFilterLabel = 'Delete filter';
-const noFilterLabel = 'No other filter applies';
+const noFilterLabel = 'no other filter applies';
 const ruleWithoutFilter = 'Only last rule can have empty filter';
 const Filter = (props) => {
     const { isValid, equipmentType, newFilter, deleteFilter, hasFilter } =
@@ -65,21 +65,23 @@ const Filter = (props) => {
                     fields={translatedFields}
                 />
             ) : (
-                <Grid item>
-                    <Typography
-                        variant="subtitle2"
-                        sx={mergeSx(
-                            styles.noFilter,
-                            !isValid && styles.invalid
+                <Grid item xs="auto">
+                    <Box display="flex" alignItems="center">
+                        <Typography
+                            variant="subtitle2"
+                            sx={mergeSx(
+                                styles.noFilter,
+                                !isValid && styles.invalid
+                            )}
+                        >
+                            {noFilterLabel}
+                        </Typography>
+                        {!isValid && (
+                            <Tooltip title={ruleWithoutFilter}>
+                                <InfoIcon />
+                            </Tooltip>
                         )}
-                    >
-                        {noFilterLabel}
-                    </Typography>
-                    {!isValid && (
-                        <Tooltip title={ruleWithoutFilter}>
-                            <InfoIcon />
-                        </Tooltip>
-                    )}
+                    </Box>
                 </Grid>
             )}
         </Grid>
