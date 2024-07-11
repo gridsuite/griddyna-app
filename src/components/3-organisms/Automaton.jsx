@@ -116,7 +116,12 @@ const Automaton = (props) => {
                     direction="column"
                     justifyContent={'flex-start'}
                 >
-                    <Grid item justify={'flex-start'} marginBottom={2}>
+                    <Grid
+                        item
+                        container
+                        justify={'flex-start'}
+                        marginBottom={2}
+                    >
                         <Grid item xs>
                             <Typography>{'Properties :'}</Typography>
                         </Grid>

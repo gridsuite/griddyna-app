@@ -11,7 +11,6 @@ import _ from 'lodash';
 
 const useDataUpdate = (
     formApi: UseFormReturn,
-    initialized: boolean,
     onValid: (formData: FieldValues) => void,
     onInvalid: (errors: FieldErrors) => void
 ) => {
@@ -19,10 +18,10 @@ const useDataUpdate = (
     const prevFormData = usePrevious(formData);
 
     useEffect(() => {
-        if (initialized && !_.isEqual(prevFormData, formData)) {
+        if (!_.isEqual(prevFormData, formData)) {
             formApi.handleSubmit(onValid, onInvalid)();
         }
-    }, [formApi, initialized, onValid, onInvalid, formData, prevFormData]);
+    }, [formApi, onValid, onInvalid, formData, prevFormData]);
 };
 
 export default useDataUpdate;

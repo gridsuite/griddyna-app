@@ -13,17 +13,17 @@ const useFormInit = (
     defaultData: any,
     dependencies: any[]
 ) => {
-    // using initialized to re-mount form when having change in dependencies list
-    const [initialized, setInitialized] = useState<boolean>(false);
+    // using key to re-mount form when having change in dependencies list
+    const [key, setKey] = useState<number>(0);
 
     useEffect(() => {
-        setInitialized(false);
+        // defaultData is the last data in the store, but we only want reset form data if having change in dependencies
         formApi.reset(defaultData);
-        setInitialized(true);
-        // defaultData is the last data in the store, but we only want reset form if having change in dependencies
+        // force re-mount form when reset data
+        setKey((prevKey) => prevKey + 1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [...dependencies, formApi]);
-    return { initialized };
+    return { key };
 };
 
 export default useFormInit;

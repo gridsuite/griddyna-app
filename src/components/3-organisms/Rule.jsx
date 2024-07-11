@@ -62,7 +62,7 @@ const Rule = (props) => {
                     justifyContent={'flex-start'}
                 >
                     <Grid item container>
-                        <Grid item xs>
+                        <Grid item container xs>
                             <Grid
                                 item
                                 container
@@ -135,7 +135,7 @@ const Rule = (props) => {
                 <Grid item xs={12} md={12} paddingTop={1}>
                     {isNetworkAttached && hasFilter && (
                         <Paper sx={styles.matches}>
-                            <Grid item container>
+                            <Grid container>
                                 <Grid item xs={4}>
                                     <Typography variant="subtitle1">
                                         {`${matchesLabel} :`}

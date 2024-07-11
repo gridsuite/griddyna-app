@@ -87,7 +87,7 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
     );
 
     // RHF
-    const { initialized, formMethods } = useDataForm(
+    const { key, formMethods } = useDataForm(
         filterFormSchema,
         {
             [EXPERT_FILTER_QUERY]: query,
@@ -103,8 +103,10 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
             validationSchema={filterFormSchema}
             removeOptional
         >
-            {initialized && (
+            {/* key > 0 to avoid first time render when rhf form data is not ready */}
+            {key > 0 && (
                 <Filter
+                    key={key}
                     isValid={isValid}
                     equipmentType={equipmentType}
                     newFilter={newFilter}

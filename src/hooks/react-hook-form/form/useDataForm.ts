@@ -21,11 +21,15 @@ const useDataForm = (
         resolver: yupResolver(formSchema),
     });
 
-    // reset form only having change in invalidations list
-    const { initialized } = useFormInit(formMethods, data, invalidations);
-    useDataUpdate(formMethods, initialized, onValid, onInvalid);
+    // --- When one of dependencies has changed --- //
+    // 1. reset form data with default values and increase key =>
+    // 2. unmount old form container then render new form container (with new key) =>
+    // 3. the custom-RQB in the form container gets form data then provides rqb query to QueryBuilder
+    // 4. submit on the fly the changed query when inputting value
+    const { key } = useFormInit(formMethods, data, invalidations);
+    useDataUpdate(formMethods, onValid, onInvalid);
 
-    return { initialized, formMethods };
+    return { key, formMethods };
 };
 
 export default useDataForm;

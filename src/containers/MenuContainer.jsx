@@ -108,7 +108,6 @@ const MenuContainer = () => {
                 renameItem={renameMapping}
                 copyItem={copyMapping}
                 selectItem={selectMapping}
-                // convertItem={convertMappingToScript}
                 selected={selectedMapping}
                 canAdd={canCreateMapping}
                 addTooltip={
