@@ -5,179 +5,94 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography } from '@mui/material';
-import * as _ from 'lodash';
-import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import Select from '../1-atoms/Select';
-import { getOperandsOptions } from '../../utils/optionsBuilders';
-import { multipleOperands } from '../../constants/operands';
+import { Box, Grid, Tooltip, Typography } from '@mui/material';
+import {
+    CustomReactQueryBuilder,
+    EXPERT_FILTER_FIELDS,
+    EXPERT_FILTER_QUERY,
+} from '@gridsuite/commons-ui';
+import { useIntl } from 'react-intl';
+import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';
-import Autocomplete from '../1-atoms/Autocomplete';
-import { PropertyType } from '../../constants/equipmentType';
-import { mergeSx } from 'utils/functions';
+import { mergeSx } from '../../utils/functions';
+import InfoIcon from '@mui/icons-material/Info';
 
-const COPY_FILTER_LABEL = 'Copy filter';
-const DELETE_FILTER_LABEL = 'Delete filter';
-const PRECISION = 10e-8;
-
+const filterLabel = 'Where:';
+const addFilterLabel = 'Add filter';
+const deleteFilterLabel = 'Delete filter';
+const noFilterLabel = 'no other filter applies';
+const ruleWithoutFilter = 'Only last rule can have empty filter';
 const Filter = (props) => {
-    const {
-        id = 'Filter',
-        isValid = true,
-        properties,
-        property,
-        propertyType,
-        setProperty,
-        operand,
-        setOperand,
-        value,
-        setValue,
-        possibleValues = [],
-        networkValues,
-        deleteFilter,
-        copyFilter,
-    } = props;
+    const { isValid, equipmentType, newFilter, deleteFilter, hasFilter } =
+        props;
 
-    const handleAutocompleteChange = useCallback(
-        (newValue) => setValue(newValue),
-        [setValue]
-    );
+    const intl = useIntl();
 
-    const operands = propertyType ? getOperandsOptions(propertyType) : [];
-
-    const multiple = multipleOperands.includes(operand);
-    const isSelect = possibleValues.length > 0;
-
-    const joinOptions = _.uniqWith(
-        [
-            // Values known as possible
-            ...possibleValues,
-            // Values received from network
-            // (should be a subset of possibleValues,
-            // here to avoid versions mismatch)
-            ...networkValues,
-            // Additional user created values
-            ...(multiple
-                ? value.map((value) => ({
-                      label: value.toString(),
-                      value,
-                  }))
-                : []),
-        ],
-        (option1, option2) => {
-            const type = autocompleteType(propertyType);
-            if (type === 'number') {
-                // Filtering identical number (float comparison issues)
-                return Math.abs(option1.value - option2.value) < PRECISION;
-            } else {
-                return option1.value === option2.value;
-            }
-        }
-    );
-
-    function autocompleteType(type) {
-        switch (type) {
-            case PropertyType.NUMBER:
-                return 'number';
-            case PropertyType.BOOLEAN:
-                return 'boolean';
-            default:
-                return undefined;
-        }
-    }
+    const translatedFields = useMemo(() => {
+        return EXPERT_FILTER_FIELDS[equipmentType]?.map((field) => {
+            return {
+                ...field,
+                label: intl.formatMessage({ id: field.label }),
+            };
+        });
+    }, [intl, equipmentType]);
 
     return (
         <Grid container justify="space-between">
-            <Grid item xs={10}>
-                <Grid container justify="center">
-                    <Grid
-                        item
-                        xs="auto"
-                        sx={mergeSx(
-                            styles.label,
-                            !isValid && styles.invalidLabel
+            <Grid item container justify={'flex-start'}>
+                <Grid item xs>
+                    <Typography>{filterLabel}</Typography>
+                </Grid>
+                <Grid item xs={'auto'} paddingLeft={1}>
+                    <AddIconButton
+                        onClick={newFilter}
+                        tooltip={addFilterLabel}
+                        disabled={hasFilter}
+                    />
+                    <DeleteButton
+                        onClick={deleteFilter}
+                        isDirty
+                        tooltip={deleteFilterLabel}
+                        disabled={!hasFilter}
+                    />
+                </Grid>
+            </Grid>
+            {hasFilter ? (
+                <CustomReactQueryBuilder
+                    name={EXPERT_FILTER_QUERY}
+                    fields={translatedFields}
+                />
+            ) : (
+                <Grid item xs="auto">
+                    <Box display="flex" alignItems="center">
+                        <Typography
+                            variant="subtitle2"
+                            sx={mergeSx(
+                                styles.noFilter,
+                                !isValid && styles.invalid
+                            )}
+                        >
+                            {noFilterLabel}
+                        </Typography>
+                        {!isValid && (
+                            <Tooltip title={ruleWithoutFilter}>
+                                <InfoIcon />
+                            </Tooltip>
                         )}
-                    >
-                        <Typography> {`${id} :`}</Typography>
-                    </Grid>
-                    <Grid item xs="auto">
-                        <Select
-                            options={properties}
-                            value={property}
-                            setValue={setProperty}
-                            error={property === ''}
-                        />
-                    </Grid>
-                    <Grid item xs="auto">
-                        <Select
-                            options={operands}
-                            value={operand}
-                            setValue={setOperand}
-                            error={operand === ''}
-                        />
-                    </Grid>
-                    <Grid item xs="auto" sx={styles.value}>
-                        <Autocomplete
-                            isFree={!isSelect}
-                            isMultiple={multiple}
-                            value={value === '' ? [] : value}
-                            onChange={handleAutocompleteChange}
-                            options={joinOptions}
-                            highlightOptions={networkValues}
-                            type={autocompleteType(propertyType)}
-                            error={value === '' || value === []}
-                        />
-                    </Grid>
+                    </Box>
                 </Grid>
-            </Grid>
-            <Grid
-                item
-                xs={2}
-                container
-                justifyContent={'center'}
-                alignItems={'center'}
-            >
-                <Grid container justifyContent="flex-end">
-                    <Grid item xs="auto">
-                        <DeleteButton
-                            onClick={deleteFilter}
-                            tooltip={DELETE_FILTER_LABEL}
-                        />
-                    </Grid>
-                    <Grid item xs="auto">
-                        <CopyButton
-                            onClick={copyFilter}
-                            tooltip={COPY_FILTER_LABEL}
-                        />
-                    </Grid>
-                </Grid>
-            </Grid>
+            )}
         </Grid>
     );
 };
 
 Filter.propTypes = {
-    id: PropTypes.string,
-    isValid: PropTypes.bool,
-    properties: PropTypes.array.isRequired,
-    property: PropTypes.string.isRequired,
-    propertyType: PropTypes.string,
-    setProperty: PropTypes.func.isRequired,
-    operand: PropTypes.string.isRequired,
-    setOperand: PropTypes.func.isRequired,
-    value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.array,
-        PropTypes.number,
-        PropTypes.bool,
-    ]).isRequired,
-    possibleValues: PropTypes.array,
-    networkValues: PropTypes.array,
-    setValue: PropTypes.func.isRequired,
+    equipmentType: PropTypes.string,
+    newFilter: PropTypes.func.isRequired,
     deleteFilter: PropTypes.func.isRequired,
-    copyFilter: PropTypes.func.isRequired,
+    hasFilter: PropTypes.bool,
 };
 
 export default Filter;

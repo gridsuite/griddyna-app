@@ -8,10 +8,11 @@
 import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
+import { styles } from './TabBarStyles';
 
-const FilterBar = (props) => {
-    const { options, value, setFilter } = props;
-    const onChange = (_event, value) => setFilter(value);
+const TabBar = (props) => {
+    const { options, value, setValue } = props;
+    const onChange = (_event, value) => setValue(value);
 
     return (
         <Tabs value={value || false} onChange={onChange} centered>
@@ -20,17 +21,23 @@ const FilterBar = (props) => {
                     key={option.value}
                     label={option.label ?? option.value}
                     value={option.value}
-                    disabled={option.disabled}
+                    sx={
+                        option.value === value || option.isValid === undefined
+                            ? undefined
+                            : !option.isValid
+                            ? styles.tabWithError
+                            : undefined
+                    }
                 />
             ))}
         </Tabs>
     );
 };
 
-FilterBar.propTypes = {
+TabBar.propTypes = {
     options: PropTypes.array.isRequired,
     value: PropTypes.string.isRequired,
-    setFilter: PropTypes.func.isRequired,
+    setValue: PropTypes.func.isRequired,
 };
 
-export default FilterBar;
+export default TabBar;

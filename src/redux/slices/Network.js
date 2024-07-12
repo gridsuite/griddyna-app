@@ -54,18 +54,18 @@ export const makeGetNetworkValues = () =>
         getNetworkValues
     );
 
-export const makeGetPropertyValues = () =>
-    createSelector(getPropertyValues, (propertyValues) => propertyValues);
-
 export const getCurrentNetworkId = (state) => state.network.currentNetwork;
 
 // from current network id => get network object
-export const getCurrentNetworkObj = (state) => {
-    const currentNetwork = state.network.currentNetwork;
-    return state.network.knownNetworks?.find(
-        (knowNetwork) => knowNetwork.networkId === currentNetwork
-    );
-};
+export const getCurrentNetworkObj = createSelector(
+    (state) => state.network.currentNetwork,
+    (state) => state.network.knownNetworks,
+    (currentNetwork, knownNetworks) => {
+        return knownNetworks?.find(
+            (knowNetwork) => knowNetwork.networkId === currentNetwork
+        );
+    }
+);
 
 // Reducers
 

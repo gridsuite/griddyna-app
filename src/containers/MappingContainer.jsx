@@ -8,16 +8,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
+    getGroupedAutomataNumber,
+    getGroupedRulesNumber,
     getRulesNumber,
-    getSortedAutomataNumber,
-    getSortedRulesNumber,
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
     MappingSlice,
     postMapping,
+    ruleTabsValid as ruleTabsValidSelector,
 } from '../redux/slices/Mapping';
-import { convertScript } from '../redux/slices/Script';
 import {
     getCurrentNetworkObj,
     getNetworkNames,
@@ -39,7 +40,7 @@ import {
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
-import FilterBar from '../components/2-molecules/FilterBar';
+import TabBar from '../components/2-molecules/TabBar';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
@@ -48,9 +49,15 @@ import { areParametersValid as areParametersValidSelector } from '../redux/selec
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 
+const styles = {
+    tabBar: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+    },
+};
+
 // TODO intl
 const ADD_MODEL_LABEL = 'Add a model';
-const CONVERT_LABEL = 'Convert to script';
 const SAVE_LABEL = 'Save Mapping';
 const ATTACH_LABEL = 'Attach a Network';
 const MODELS_TITLE = 'Models';
@@ -60,22 +67,31 @@ const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
+    const totalRulesNumber = useSelector(
+        (state) => state.mappings.rules.length
+    );
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
+    const ruleTabsValid = useSelector(ruleTabsValidSelector);
+    const automatonTabsValid = useSelector(automatonTabsValidSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
     const networks = useSelector((state) => state.network.knownNetworks);
     const networkValues = useSelector((state) => state.network.propertyValues);
     const currentNetwork = useSelector(getCurrentNetworkObj);
-    const sortedRulesNumber = useSelector(getSortedRulesNumber);
+    const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector(
         (state) => state.mappings.filteredRuleType
     );
     const filteredFamily = useSelector(
         (state) => state.mappings.filteredAutomatonFamily
     );
+
+    const totalAutomataNumber = useSelector(
+        (state) => state.mappings.automata.length
+    );
     const automataNumber = useSelector(getAutomataNumber);
-    const sortedAutomataNumber = useSelector(getSortedAutomataNumber);
+    const groupedAutomataNumber = useSelector(getGroupedAutomataNumber);
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters
     );
@@ -93,16 +109,16 @@ const MappingContainer = () => {
     const filterRulesOptions = RuleEquipmentTypes.map((type) => ({
         value: type,
         // TODO: intl
-        label: `${type} (${sortedRulesNumber[type]})`,
-        disabled: sortedRulesNumber[type] === 0,
+        label: `${type} (${groupedRulesNumber[type]})`,
+        isValid: ruleTabsValid[type],
     }));
 
     const filterAutomataOptions = Object.values(AutomatonFamily).map(
         (family) => ({
             value: family,
             // TODO: intl
-            label: `${family} (${sortedAutomataNumber[family]})`,
-            disabled: sortedAutomataNumber[family] === 0,
+            label: `${family} (${groupedAutomataNumber[family]})`,
+            isValid: automatonTabsValid[family],
         })
     );
 
@@ -112,10 +128,6 @@ const MappingContainer = () => {
 
     function saveMapping() {
         dispatch(postMapping());
-    }
-
-    function convertToScript() {
-        dispatch(convertScript(activeMapping));
     }
 
     function attachWithId(id) {
@@ -149,7 +161,7 @@ const MappingContainer = () => {
                 <RuleContainer
                     index={i}
                     editParameters={setEditParameters}
-                    key={`rule-container-${i}`}
+                    key={`rule-container-${activeMapping}-${filteredType}-${i}`}
                 />
             );
         }
@@ -163,7 +175,7 @@ const MappingContainer = () => {
                 <AutomatonContainer
                     index={i}
                     editParameters={setEditParameters}
-                    key={`automaton-container-${i}`}
+                    key={`automaton-container-${activeMapping}-${filteredFamily}-${i}`}
                 />
             );
         }
@@ -180,8 +192,6 @@ const MappingContainer = () => {
                     isValid={isMappingValid && areParametersValid}
                     save={saveMapping}
                     saveTooltip={SAVE_LABEL}
-                    convert={convertToScript}
-                    convertTooltip={CONVERT_LABEL}
                     attach={() => setIsAttachedModalOpen(true)}
                     attachTooltip={ATTACH_LABEL}
                 />
@@ -201,19 +211,21 @@ const MappingContainer = () => {
                 </Grid>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{MODELS_TITLE}</Typography>
+                        <Typography>{`${MODELS_TITLE} ${
+                            totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
+                        }`}</Typography>
                     </AccordionSummary>
                     <Divider />
-                    <AccordionDetails style={{ display: 'inherit' }}>
+                    <AccordionDetails>
                         <Grid container>
-                            <Grid item xs={11}>
-                                <FilterBar
+                            <Grid item xs sx={styles.tabBar}>
+                                <TabBar
                                     value={filteredType}
                                     options={filterRulesOptions}
-                                    setFilter={setFilteredType}
+                                    setValue={setFilteredType}
                                 />
                             </Grid>
-                            <Grid item xs={1}>
+                            <Grid item xs="auto">
                                 <AddIconButton
                                     onClick={addRule}
                                     tooltip={ADD_MODEL_LABEL}
@@ -225,19 +237,23 @@ const MappingContainer = () => {
                 </Accordion>
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{AUTOMATA_TITLE}</Typography>
+                        <Typography>{`${AUTOMATA_TITLE} ${
+                            totalAutomataNumber
+                                ? '(' + totalAutomataNumber + ')'
+                                : ''
+                        }`}</Typography>
                     </AccordionSummary>
                     <Divider />
-                    <AccordionDetails style={{ display: 'inherit' }}>
+                    <AccordionDetails>
                         <Grid container>
-                            <Grid item xs={11}>
-                                <FilterBar
+                            <Grid item xs sx={styles.tabBar}>
+                                <TabBar
                                     value={filteredFamily}
                                     options={filterAutomataOptions}
-                                    setFilter={setFilteredFamily}
+                                    setValue={setFilteredFamily}
                                 />
                             </Grid>
-                            <Grid item xs={1}>
+                            <Grid item xs="auto">
                                 <AddIconButton
                                     onClick={addAutomaton}
                                     tooltip={ADD_AUTOMATON_LABEL}

@@ -6,16 +6,13 @@
  */
 
 import React, { useCallback } from 'react';
-import { Divider, Grid, Paper, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
 import * as _ from 'lodash';
 import { Automaton } from '../../../redux/types/mapping.type';
-import {
-    AutomationDefinition,
-    PropertyMappingDefinition,
-} from '../../../redux/types/model.type';
+import { AutomationDefinition } from '../../../redux/types/model.type';
 import { EquipmentValues } from '../../../redux/types/network.type';
 
 export interface AutomatonPropertiesProps {
@@ -53,7 +50,7 @@ const AutomatonProperties = ({
     );
     return (
         propertyNames?.length > 0 && (
-            <Paper sx={styles.group}>
+            <Grid container sx={styles.gridContainer}>
                 {propertyNames.map((propertyName, index) => {
                     const propertyDefinition =
                         automatonDefinition[propertyName];
@@ -70,75 +67,72 @@ const AutomatonProperties = ({
                         propertyDefinition?.values ??
                         (propertyDefinition?.mapping &&
                             getPossibleOptionsForProperty(
-                                propertyDefinition?.mapping as PropertyMappingDefinition,
+                                propertyDefinition?.mapping,
                                 networkPropertyValues
                             )) ??
                         [];
 
                     return (
-                        <Grid container key={propertyName}>
-                            <Grid
-                                container
-                                item
-                                justifyContent={'flex-start'}
-                                xs={6}
-                            >
-                                <Grid container>
-                                    <Grid item xs={4} sx={styles.label}>
-                                        <Typography>{`${propertyDefinition.label} :`}</Typography>
-                                    </Grid>
-                                    <Grid item xs={8} sx={styles.value}>
-                                        <Autocomplete
-                                            isFree={
-                                                !(options && options.length > 0)
-                                            }
-                                            isMultiple={
-                                                propertyDefinition.multiple
-                                            }
-                                            value={
-                                                propertyValue ??
-                                                (propertyDefinition.multiple
-                                                    ? []
-                                                    : propertyValue)
-                                            }
-                                            onChange={handleChangeProperty(
-                                                propertyName,
-                                                propertyDefinition?.type
-                                            )}
-                                            options={options}
-                                            type={
-                                                propertyDefinition?.type ===
-                                                'number'
-                                                    ? 'number'
-                                                    : undefined
-                                            }
-                                            error={
-                                                propertyValue === '' ||
-                                                (Array.isArray(propertyValue) &&
-                                                    propertyValue.length === 0)
-                                            }
-                                            ignoreReset={
-                                                !(options && options.length > 0)
-                                            }
-                                            fixedWidth
-                                        />
-                                    </Grid>
+                        <Grid
+                            key={propertyName}
+                            container
+                            item
+                            justifyContent={'flex-start'}
+                            paddingLeft={1}
+                        >
+                            <Grid container>
+                                <Grid
+                                    item
+                                    xs={4}
+                                    sx={styles.label}
+                                    alignItems={'center'}
+                                >
+                                    <Typography>{`${propertyDefinition.label} :`}</Typography>
                                 </Grid>
-                                {index !== propertyNames.length - 1 && (
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sx={{ paddingRight: '8px' }}
-                                    >
-                                        <Divider />
-                                    </Grid>
-                                )}
+                                <Grid item xs={8} sx={styles.value}>
+                                    <Autocomplete
+                                        isFree={
+                                            !(options && options.length > 0)
+                                        }
+                                        isMultiple={propertyDefinition.multiple}
+                                        value={
+                                            propertyValue ??
+                                            (propertyDefinition.multiple
+                                                ? []
+                                                : propertyValue)
+                                        }
+                                        onChange={handleChangeProperty(
+                                            propertyName,
+                                            propertyDefinition?.type
+                                        )}
+                                        options={options}
+                                        type={
+                                            propertyDefinition?.type ===
+                                            'number'
+                                                ? 'number'
+                                                : undefined
+                                        }
+                                        error={
+                                            propertyValue === '' ||
+                                            (Array.isArray(propertyValue) &&
+                                                propertyValue.length === 0)
+                                        }
+                                        ignoreReset={
+                                            !(options && options.length > 0)
+                                        }
+                                        fixedWidth
+                                    />
+                                </Grid>
                             </Grid>
-                            <Grid item xs></Grid>
+                            {index !== propertyNames.length - 1 && (
+                                <Grid item xs={12} sx={{ paddingRight: '8px' }}>
+                                    <Divider />
+                                </Grid>
+                            )}
                         </Grid>
                     );
                 })}
-            </Paper>
+            </Grid>
         )
     );
 };

@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
 import { styles } from './ModelSelectStyle';
@@ -18,25 +18,19 @@ const ModelSelect = (props) => {
     const { model, models, changeModel } = props;
 
     return (
-        <Box>
-            <Grid container justify={'center'}>
-                <Grid item xs={6}>
-                    <Grid container justify={'center'}>
-                        <Grid item xs="auto">
-                            <Typography variant="h4">{`${modelLabel} :`}</Typography>
-                        </Grid>
-                        <Grid item xs sx={styles.titleSelect}>
-                            <Select
-                                options={getModelsOptions(models)}
-                                value={model}
-                                setValue={changeModel}
-                                error={model === ''}
-                            />
-                        </Grid>
-                    </Grid>
-                </Grid>
+        <Grid container justify={'center'}>
+            <Grid item xs="auto" sx={styles.gridItem}>
+                <Typography variant="subtitle1">{`${modelLabel} :`}</Typography>
             </Grid>
-        </Box>
+            <Grid item xs sx={styles.titleSelect}>
+                <Select
+                    options={getModelsOptions(models)}
+                    value={model}
+                    setValue={changeModel}
+                    error={model === ''}
+                />
+            </Grid>
+        </Grid>
     );
 };
 

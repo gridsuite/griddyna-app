@@ -7,7 +7,8 @@
     "dependencies": {
         "@emotion/react": "^11.11.4",
         "@emotion/styled": "^11.11.5",
-        "@gridsuite/commons-ui": "0.63.0",
+        "@gridsuite/commons-ui": "0.63.1",
+        "@hookform/resolvers": "^3.3.4",
         "@mui/icons-material": "^5.15.14",
         "@mui/lab": "5.0.0-alpha.169",
         "@mui/material": "^5.15.14",
@@ -28,6 +29,7 @@
         "redux": "^5.0.1",
         "typeface-roboto": "^1.1.13",
         "typescript": "5.1.6",
+        "uuid": "^9.0.1",
         "yup": "^1.4.0"
     },
     "overrides": {
@@ -80,6 +82,7 @@
         "@types/react": "^18.2.75",
         "@types/react-dom": "^18.2.24",
         "@types/react-window": "^1.8.8",
+        "@types/uuid": "^9.0.8",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^4.2.1",
         "http-proxy-middleware": "^2.0.6",

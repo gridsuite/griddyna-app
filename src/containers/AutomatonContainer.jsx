@@ -18,7 +18,7 @@ import {
 } from '../redux/slices/Model';
 import {
     getCurrentNetworkId,
-    makeGetPropertyValues,
+    getPropertyValues,
 } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
@@ -44,10 +44,7 @@ const AutomatonContainer = ({ index, editParameters }) => {
         getModels(state, AutomatonFamilyToAutomatonType[automaton.family])
     );
 
-    const getPropertyValues = useMemo(makeGetPropertyValues, []);
-    const networkPropertyValues = useSelector((state) =>
-        getPropertyValues(state)
-    );
+    const networkPropertyValues = useSelector(getPropertyValues);
 
     const controlledParameters = useSelector(
         (state) => state.mappings.controlledParameters

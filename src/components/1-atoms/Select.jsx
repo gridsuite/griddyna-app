@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 
 import { MenuProps, styles } from './SelectStyles';
+import { mergeSx } from '@gridsuite/commons-ui';
 
 const Select = (props) => {
     const {
@@ -32,6 +33,7 @@ const Select = (props) => {
         error = false,
         disabled = false,
         fullWidth,
+        sx,
     } = props;
 
     function onChange(event) {
@@ -57,12 +59,13 @@ const Select = (props) => {
     return (
         <FormControl
             variant={outlined ? 'outlined' : undefined}
-            sx={styles.form}
+            sx={mergeSx(styles.form, sx)}
             error={error}
             fullWidth={fullWidth}
         >
             {label !== undefined && <InputLabel>{label}</InputLabel>}
             <MuiSelect
+                size="small"
                 label={label}
                 value={value}
                 onChange={onChange}

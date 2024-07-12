@@ -6,30 +6,12 @@
  */
 
 export const styles = {
-    label: {
-        textAlign: 'right',
-        marginTop: '12px',
-        '& .MuiTypography-root': {
-            fontWeight: 'bold',
-            color: 'text.primary',
-        },
+    labelRoot: {
+        marginTop: 1,
+        fontWeight: 'bold',
+        color: 'text.primary',
     },
-    invalidLabel: {
-        '& .MuiTypography-root': {
-            color: 'red',
-        },
-    },
-    filter: {
-        justifyContent: 'center',
-    },
-    value: {
-        margin: '8px',
-        '& .MuiFormControl-root .MuiInput-root': {
-            minHeight: '2em',
-            '& .MuiSelect-root': {
-                paddingTop: 0,
-                paddingBottom: 0,
-            },
-        },
+    fieldSearch: {
+        width: 250,
     },
 };

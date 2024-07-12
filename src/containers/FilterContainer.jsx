@@ -8,136 +8,118 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    getActiveMapping,
+    getFilteredRuleType,
     makeChangeFilterValueThenGetNetworkMatches,
     makeGetFilter,
-    makeIsFilterValid,
+    makeGetIsFilterValid,
     MappingSlice,
 } from '../redux/slices/Mapping';
-import { makeGetNetworkValues } from '../redux/slices/Network';
-import { getPropertiesOptions } from '../utils/optionsBuilders';
 import Filter from '../components/3-organisms/Filter';
-import { getProperty, getValuesOption } from '../utils/properties';
 import PropTypes from 'prop-types';
-import { multipleOperands } from '../constants/operands';
-import { PropertyType } from '../constants/equipmentType';
+import {
+    CustomFormProvider,
+    EXPERT_FILTER_QUERY,
+    yup,
+} from '@gridsuite/commons-ui';
+import useDataForm from '../hooks/react-hook-form/form/useDataForm';
 
-const FilterContainer = ({ ruleIndex, filterIndex, equipmentType }) => {
+// we do not need detail schema with all validation test for rqb filter
+// the test in done in the redux layer by selectors isValidXXX
+const filterFormSchema = yup
+    .object()
+    .shape({
+        [EXPERT_FILTER_QUERY]: yup.object(),
+    })
+    .required();
+
+const FilterContainer = ({ ruleIndex, equipmentType }) => {
     // Data
     const getFilter = useMemo(makeGetFilter, []);
-    const filter = useSelector((state) =>
-        getFilter(state, { rule: ruleIndex, filter: filterIndex })
-    );
-    const { id, property, operand, value } = filter;
-    const fullProperty = equipmentType
-        ? getProperty(equipmentType, property)
-        : undefined;
+    const filter = useSelector((state) => getFilter(state, ruleIndex));
 
-    const isFilterValid = useMemo(makeIsFilterValid, []);
-    const isValid = useSelector((state) =>
-        isFilterValid(state, { rule: ruleIndex, filter: filterIndex })
-    );
+    const { rules: query } = filter ?? {};
 
-    const getNetworkValues = useMemo(makeGetNetworkValues, []);
-    const networkValues = useSelector((state) =>
-        getNetworkValues(state, { equipmentType, fullProperty })
-    ).map((value) => ({ label: value.toString(), value }));
+    const filteredRuleType = useSelector(getFilteredRuleType);
+    const activeMapping = useSelector(getActiveMapping);
+
+    const isFilterValid = useMemo(makeGetIsFilterValid, []);
+    const isValid = useSelector((state) => isFilterValid(state, ruleIndex));
 
     // Actions
     const dispatch = useDispatch();
-    const setProperty = (property) =>
-        dispatch(
-            MappingSlice.actions.changeFilterProperty({
-                ruleIndex,
-                filterIndex,
-                property,
-            })
-        );
 
-    const setOperand = (operand) =>
-        dispatch(
-            MappingSlice.actions.changeFilterOperand({
-                ruleIndex,
-                filterIndex,
-                operand,
-            })
-        );
+    const newFilter = useCallback(
+        () =>
+            dispatch(
+                MappingSlice.actions.newFilter({
+                    ruleIndex,
+                })
+            ),
+        [dispatch, ruleIndex]
+    );
 
-    const isUniqueSelectFilter = // is an enum
-        // operands only allow one string to select
-        !multipleOperands.includes(operand);
+    const deleteFilter = useCallback(
+        () =>
+            dispatch(
+                MappingSlice.actions.deleteFilter({
+                    ruleIndex,
+                })
+            ),
+        [dispatch, ruleIndex]
+    );
 
     const changeFilterValueThenGetNetworkMatches = useMemo(
         makeChangeFilterValueThenGetNetworkMatches,
         []
     );
-    const setValue = useCallback(
-        (value) => {
+    const onFormValid = useCallback(
+        (formData) => {
+            const newQuery = formData[EXPERT_FILTER_QUERY];
             dispatch(
                 changeFilterValueThenGetNetworkMatches({
                     ruleIndex,
-                    filterIndex,
-                    value: isUniqueSelectFilter ? [value] : value,
+                    value: newQuery,
                 })
             );
         },
-        [
-            dispatch,
-            ruleIndex,
-            filterIndex,
-            isUniqueSelectFilter,
-            changeFilterValueThenGetNetworkMatches,
-        ]
+        [dispatch, ruleIndex, changeFilterValueThenGetNetworkMatches]
     );
 
-    const deleteFilter = () =>
-        dispatch(
-            MappingSlice.actions.deleteFilter({
-                ruleIndex,
-                filterIndex,
-            })
-        );
-
-    const copyFilter = () =>
-        dispatch(
-            MappingSlice.actions.copyFilter({
-                ruleIndex,
-                filterIndex,
-            })
-        );
-
-    const properties = equipmentType ? getPropertiesOptions(equipmentType) : [];
-    const possibleValues =
-        getValuesOption(fullProperty) ??
-        (fullProperty?.type === PropertyType.BOOLEAN
-            ? [
-                  { value: true, label: 'true' },
-                  { value: false, label: 'false' },
-              ]
-            : undefined);
+    // RHF
+    const { key, formMethods } = useDataForm(
+        filterFormSchema,
+        {
+            [EXPERT_FILTER_QUERY]: query,
+        },
+        [activeMapping, filteredRuleType], // only reset form when mapping or type changed
+        onFormValid,
+        undefined
+    );
 
     return (
-        <Filter
-            id={id}
-            isValid={isValid}
-            property={property}
-            propertyType={fullProperty?.type}
-            properties={properties}
-            setProperty={setProperty}
-            operand={operand}
-            setOperand={setOperand}
-            value={isUniqueSelectFilter && value.length > 0 ? value[0] : value}
-            possibleValues={possibleValues}
-            networkValues={networkValues}
-            setValue={setValue}
-            deleteFilter={deleteFilter}
-            copyFilter={copyFilter}
-        />
+        <CustomFormProvider
+            {...formMethods}
+            validationSchema={filterFormSchema}
+            removeOptional
+        >
+            {/* key > 0 to avoid first time render when rhf form data is not ready */}
+            {key > 0 && (
+                <Filter
+                    key={key}
+                    isValid={isValid}
+                    equipmentType={equipmentType}
+                    newFilter={newFilter}
+                    deleteFilter={deleteFilter}
+                    hasFilter={!!filter}
+                />
+            )}
+        </CustomFormProvider>
     );
 };
 
 FilterContainer.propTypes = {
     ruleIndex: PropTypes.number.isRequired,
-    filterIndex: PropTypes.number.isRequired,
     equipmentType: PropTypes.string.isRequired,
 };
 

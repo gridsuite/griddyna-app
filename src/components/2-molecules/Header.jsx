@@ -5,13 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Box, Tooltip, Typography } from '@mui/material';
-import {
-    AddIconButton,
-    AttachButton,
-    ConvertButton,
-    SaveButton,
-} from '../1-atoms/buttons/';
+import { Grid, Tooltip, Typography } from '@mui/material';
+import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -31,8 +26,6 @@ const Header = (props) => {
         saveTooltip,
         addElement,
         addTooltip,
-        convert,
-        convertTooltip,
         attach,
         attachTooltip,
         isCurrent = true,
@@ -58,48 +51,37 @@ const Header = (props) => {
         return titleStyle;
     };
     return (
-        <Box sx={getHeaderBoxStyle()}>
-            <Box width="100%" display="flex">
-                <Box sx={styles.titleBox} display="flex" alignItems="baseline">
-                    <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                        <Typography variant="h2" sx={getTitleStyle()}>
-                            {`${name}${isModified ? '*' : ''} :`}
-                        </Typography>
-                    </Tooltip>
-                    <Typography variant="h3" sx={getTitleStyle()}>
-                        {`${currentNetwork?.networkName ?? ''}`}
+        <Grid container sx={getHeaderBoxStyle()}>
+            <Grid item xs sx={styles.gridTitle}>
+                <Tooltip title={isCurrent ? '' : outdatedLabel}>
+                    <Typography variant="h5" sx={getTitleStyle()}>
+                        {`${name}${isModified ? '*' : ''} :`}
                     </Typography>
-                </Box>
-                <Box sx={styles.buttonBox}>
-                    {convert !== undefined && (
-                        <ConvertButton
-                            onClick={convert}
-                            tooltip={convertTooltip}
-                            disabled={!isValid || isModified}
-                        />
-                    )}
-                    {save !== undefined && (
-                        <SaveButton
-                            onClick={save}
-                            tooltip={saveTooltip}
-                            disabled={!isValid}
-                        />
-                    )}
-                    {attach !== undefined && (
-                        <AttachButton
-                            onClick={attach}
-                            tooltip={attachTooltip}
-                        />
-                    )}
-                    {addElement !== undefined && (
-                        <AddIconButton
-                            onClick={addElement}
-                            tooltip={addTooltip}
-                        />
-                    )}
-                </Box>
-            </Box>
-        </Box>
+                </Tooltip>
+                <Typography variant="h4" sx={getTitleStyle()}>
+                    {`${currentNetwork?.networkName ?? ''}`}
+                </Typography>
+            </Grid>
+            <Grid
+                item
+                xs="auto"
+                sx={mergeSx(styles.gridButton, styles.buttonIcon)}
+            >
+                {save !== undefined && (
+                    <SaveButton
+                        onClick={save}
+                        tooltip={saveTooltip}
+                        disabled={!isModified || !isValid}
+                    />
+                )}
+                {attach !== undefined && (
+                    <AttachButton onClick={attach} tooltip={attachTooltip} />
+                )}
+                {addElement !== undefined && (
+                    <AddIconButton onClick={addElement} tooltip={addTooltip} />
+                )}
+            </Grid>
+        </Grid>
     );
 };
 
@@ -114,8 +96,6 @@ Header.propTypes = {
     isCurrent: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
-    convert: PropTypes.func,
-    convertTooltip: PropTypes.string,
     addElement: PropTypes.func,
     addTooltip: PropTypes.string,
     attach: PropTypes.func,

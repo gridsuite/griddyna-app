@@ -238,7 +238,7 @@ const ParametersContainer = ({
                                 set={currentSet}
                             />
                         </Grid>
-                        <Grid item xs={4} pt={10}>
+                        <Grid item xs={4} pt={1}>
                             <SetSearch
                                 typeFilter={modelToEdit?.type}
                                 modelsSelector={modelsSelector}

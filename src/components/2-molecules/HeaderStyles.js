@@ -9,9 +9,9 @@ const ICON_SIZE = '2em';
 
 export const styles = {
     headerBox: {
-        border: '5px solid',
-        borderRadius: '10px',
-        marginBottom: '5px',
+        border: '1px solid',
+        borderRadius: '5px',
+        marginBottom: 1,
     },
     errorBorderColor: {
         borderColor: 'red',
@@ -28,17 +28,7 @@ export const styles = {
     warningTitle: {
         color: 'orange',
     },
-    titleBox: {
-        position: 'relative',
-        width: '75%',
-    },
-    buttonBox: {
-        marginRight: '10px',
-        marginTop: '1em',
-        position: 'relative',
-        width: '25%',
-        display: 'flex',
-        justifyContent: 'space-evenly',
+    buttonIcon: {
         '& .MuiIconButton-root': {
             width: ICON_SIZE,
             height: ICON_SIZE,
@@ -46,5 +36,17 @@ export const styles = {
                 fontSize: ICON_SIZE,
             },
         },
+    },
+    gridTitle: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: 1,
+    },
+    gridButton: {
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingRight: 1,
     },
 };

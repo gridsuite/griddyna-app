@@ -17,8 +17,8 @@ const RootContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const activeScript = useSelector((state) => state.scripts.activeScript);
     let mainContainer = (
-        <Typography align="center" variant="h2">
-            No mapping or script selected
+        <Typography align="center" variant="h5">
+            No mapping selected
         </Typography>
     );
     if (activeMapping !== '') {

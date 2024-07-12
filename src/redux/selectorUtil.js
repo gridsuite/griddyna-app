@@ -6,6 +6,7 @@
  */
 
 // helper to extract individual fields from a parameter object
+// example, getRuleIndexParam = createParameterSelector(({ ruleIndex }) => ruleIndex);
 export const createParameterSelector = (selector) => {
     return (_, paramObj) => selector(paramObj);
 };

@@ -6,36 +6,24 @@
  */
 
 export const styles = {
+    ruleModel: (theme) => ({
+        border: 1,
+        borderRadius: 1,
+        borderColor: theme.palette.grey[500],
+    }),
     rulePaper: {
-        border: '2px solid',
         borderRadius: '5px',
-        borderColor: 'black',
-        marginBottom: '5px',
+        marginBottom: 1,
         '& >.MuiGrid-root': {
-            marginTop: '5px',
+            marginTop: 1,
         },
     },
     invalidRulePaper: {
+        border: '1px solid',
         borderColor: 'red',
     },
-    label: {
-        marginTop: '4px',
-        textAlign: 'right',
-        paddingRight: '5px',
-    },
-    filterLabel: {
-        paddingLeft: '5px',
-        marginTop: '1em',
-    },
-    unused: {
-        color: '#ff9800',
-        '& svg': {
-            margin: '0.3em',
-            fontSize: '2em',
-        },
-    },
-    matches: {
-        backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    matches: (theme) => ({
+        backgroundColor: theme.palette.grey[800],
         maxHeight: '8em',
         '& .MuiGrid-container': {
             '& .MuiGrid-item': {
@@ -43,5 +31,5 @@ export const styles = {
                 overflowY: 'auto',
             },
         },
-    },
+    }),
 };
