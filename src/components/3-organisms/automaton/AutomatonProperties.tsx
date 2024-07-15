@@ -15,6 +15,8 @@ import { Automaton } from '../../../redux/types/mapping.type';
 import { AutomationDefinition } from '../../../redux/types/model.type';
 import { EquipmentValues } from '../../../redux/types/network.type';
 
+const VALUE_DELIMITER = ',';
+
 export interface AutomatonPropertiesProps {
     automaton: Automaton;
     automatonDefinition: AutomationDefinition;
@@ -40,9 +42,9 @@ const AutomatonProperties = ({
                     propertyName,
                     propertyType
                 )(
-                    // convert an array to a string content with ',' delimiter
+                    // convert an array to a string content with VALUE_DELIMITER
                     _.isArray(propertyValue)
-                        ? _.join(propertyValue, ', ')
+                        ? _.join(propertyValue, VALUE_DELIMITER)
                         : propertyValue
                 );
             },
@@ -58,9 +60,12 @@ const AutomatonProperties = ({
                         (elem) => elem.name === propertyName
                     );
 
-                    // convert a string content with ',' delimiter to an array
+                    // convert a string content with VALUE_DELIMITER to an array
                     const propertyValue = propertyDefinition.multiple
-                        ? _.split(property?.value, ', ')
+                        ? _.map(
+                              _.split(property?.value, VALUE_DELIMITER),
+                              _.trim
+                          )
                         : property?.value ?? '';
 
                     const options =
