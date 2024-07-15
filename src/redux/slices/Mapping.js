@@ -24,6 +24,7 @@ import {
     rqbQuerySchemaValidator,
     yup,
 } from '@gridsuite/commons-ui';
+import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 
 const initialState = {
@@ -705,7 +706,8 @@ const reducers = {
         ruleToCopy.id = undefined;
         // if filter exists must unset filter id and provide all new ids for rule/group inside the filter
         if (ruleToCopy.filter?.id) {
-            ruleToCopy.filter.id = undefined;
+            // force reset filter with new id
+            ruleToCopy.filter.id = uuid4();
             // force reset with new ids for the whole query
             enrichIdRqbQuery(ruleToCopy.filter.rules, true);
         }
@@ -718,6 +720,8 @@ const reducers = {
 
         // create an empty expert filter
         const newFilter = getExpertFilterEmptyFormData();
+        // provide an id for new filter
+        newFilter.id = uuid4();
 
         const selectedRule = filterRulesByType(
             state.rules,

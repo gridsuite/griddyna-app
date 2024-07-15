@@ -8,8 +8,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getActiveMapping,
-    getFilteredRuleType,
     makeChangeFilterValueThenGetNetworkMatches,
     makeGetFilter,
     makeGetIsFilterValid,
@@ -39,9 +37,6 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
     const filter = useSelector((state) => getFilter(state, ruleIndex));
 
     const { rules: query } = filter ?? {};
-
-    const filteredRuleType = useSelector(getFilteredRuleType);
-    const activeMapping = useSelector(getActiveMapping);
 
     const isFilterValid = useMemo(makeGetIsFilterValid, []);
     const isValid = useSelector((state) => isFilterValid(state, ruleIndex));
@@ -92,7 +87,7 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
         {
             [EXPERT_FILTER_QUERY]: query,
         },
-        [activeMapping, filteredRuleType], // only reset form when mapping or type changed
+        [filter?.id], // only reset form when filter id changed
         onFormValid,
         undefined
     );
