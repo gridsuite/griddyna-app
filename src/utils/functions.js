@@ -10,6 +10,8 @@ import _ from 'lodash';
 export const mergeSx = (...allSx) => allSx.flat();
 
 /**
+ * Copy properties from corresponding objects in a source array to objects in a target array.
+ * It returns the target array that contain modified objects
  *
  * @param targetArray the target array to copy to inside objects
  * @param sourceArray the source array from which to copy properties of objects
