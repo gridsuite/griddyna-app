@@ -661,11 +661,7 @@ const reducers = {
         state.filteredRuleType = action.payload;
     },
     changeFilteredFamily: (state, action) => {
-        const filteredAutomatonFamily = action.payload;
-        state.filteredAutomatonFamily =
-            state.filteredAutomatonFamily === filteredAutomatonFamily
-                ? ''
-                : filteredAutomatonFamily;
+        state.filteredAutomatonFamily = action.payload;
     },
     changeControlledParameters: (state) => {
         state.controlledParameters = !state.controlledParameters;
