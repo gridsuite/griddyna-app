@@ -26,6 +26,7 @@ import {
 } from '@gridsuite/commons-ui';
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
+import { assignArray } from '../../utils/functions';
 
 const initialState = {
     mappings: [],
@@ -39,6 +40,7 @@ const initialState = {
 };
 
 const DEFAULT_RULE = {
+    id: undefined,
     type: '',
     mappedModel: '',
     setGroup: '',
@@ -56,6 +58,9 @@ const DEFAULT_AUTOMATON = {
 export const DEFAULT_NAME = 'default';
 
 //utils
+
+// rules are matched by id
+const ruleMatcher = (rule1) => (rule2) => rule1?.id === rule2?.id;
 
 const transformMapping = (receivedMapping) => {
     const mapping = _.cloneDeep(receivedMapping);
@@ -668,6 +673,8 @@ const reducers = {
     // Rule
     addRule: (state) => {
         const newRule = _.cloneDeep(DEFAULT_RULE);
+        // provide an id for new rule
+        newRule.id = uuid4();
         newRule.type = state.filteredRuleType;
         state.rules.push(newRule);
     },
@@ -702,8 +709,8 @@ const reducers = {
             filterRulesByType(state.rules, state.filteredRuleType)[index]
         );
 
-        // unset id for rule
-        ruleToCopy.id = undefined;
+        // force reset rule with new id
+        ruleToCopy.id = uuid4();
         // if filter exists must unset filter id and provide all new ids for rule/group inside the filter
         if (ruleToCopy.filter?.id) {
             // force reset filter with new id
@@ -882,12 +889,19 @@ const extraReducers = (builder) => {
             (mapping) => mapping.name === receivedMapping.name
         );
         if (foundMapping) {
+            // --- reset the original mapping --- //
             foundMapping.rules = receivedMapping.rules;
             foundMapping.automata = receivedMapping.automata;
             foundMapping.controlledParameters =
                 receivedMapping.controlledParameters;
             if (receivedMapping.name === state.activeMapping) {
-                state.rules = receivedMapping.rules;
+                // --- reset the active mapping --- //
+                state.rules = assignArray(
+                    receivedMapping.rules,
+                    state.rules,
+                    ruleMatcher,
+                    ['matches'] // keep previous matches for active rules when assigning with new received mapping rules
+                );
                 state.automata = receivedMapping.automata;
                 state.controlledParameters =
                     receivedMapping.controlledParameters;
