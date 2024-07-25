@@ -21,13 +21,13 @@ import {
     StyledEngineProvider,
     ThemeProvider,
 } from '@mui/material/styles';
-import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
     AuthenticationRouter,
     CardErrorBoundary,
     getPreLoginPath,
     initializeAuthenticationDev,
     initializeAuthenticationProd,
+    LIGHT_THEME,
     logout,
     TopBar,
 } from '@gridsuite/commons-ui';
