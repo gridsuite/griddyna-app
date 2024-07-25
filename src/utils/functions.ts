@@ -7,9 +7,12 @@
 
 import { pick } from 'lodash';
 
+type GetMatcher<T> = (target: T) => Parameters<Array<T>['find']>[0];
+type PickProps<T extends object, U extends keyof T> = Array<U | readonly U[]>;
+
 /**
  * Copy properties from corresponding objects in a source array to objects in a target array.
- * It returns the target array that contain modified objects
+ * It returns the target array that contains modified objects
  *
  * @param targetArray the target array to copy to inside objects
  * @param sourceArray the source array from which to copy properties of objects
@@ -17,7 +20,12 @@ import { pick } from 'lodash';
  * @param props properties names to copy, specified individually or in array
  * @return the target array
  */
-export const assignArray = (targetArray, sourceArray, matcher, ...props) => {
+export function assignArray<T extends object, U extends keyof T>(
+    targetArray: T[],
+    sourceArray: T[],
+    matcher: GetMatcher<T>,
+    ...props: PickProps<T, U>
+) {
     targetArray?.forEach((targetObj) => {
         const matcherOfTarget = matcher(targetObj);
         const sourceObj = sourceArray?.find(matcherOfTarget);
@@ -26,4 +34,4 @@ export const assignArray = (targetArray, sourceArray, matcher, ...props) => {
     });
 
     return targetArray;
-};
+}
