@@ -9,7 +9,6 @@ import { combineReducers } from '@reduxjs/toolkit';
 import { MappingReducer } from './slices/Mapping';
 import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
-import { ScriptsReducer } from './slices/Script';
 import { NetworkReducer } from './slices/Network';
 import { ModelReducer } from './slices/Model';
 
@@ -18,6 +17,5 @@ export const reducer = combineReducers({
     theme: ThemeReducer,
     mappings: MappingReducer,
     models: ModelReducer,
-    scripts: ScriptsReducer,
     network: NetworkReducer,
 });

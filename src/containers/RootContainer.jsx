@@ -10,12 +10,10 @@ import { useSelector } from 'react-redux';
 import PageTemplate from '../components/4-templates/PageTemplate';
 import MappingContainer from './MappingContainer';
 import MenuContainer from './MenuContainer';
-import ScriptContainer from './ScriptContainer';
 import { Typography } from '@mui/material';
 
 const RootContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
-    const activeScript = useSelector((state) => state.scripts.activeScript);
     let mainContainer = (
         <Typography align="center" variant="h5">
             No mapping selected
@@ -23,8 +21,6 @@ const RootContainer = () => {
     );
     if (activeMapping !== '') {
         mainContainer = <MappingContainer />;
-    } else if (activeScript !== '') {
-        mainContainer = <ScriptContainer />;
     }
     return <PageTemplate main={mainContainer} menu={<MenuContainer />} />;
 };
