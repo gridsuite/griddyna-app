@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import _ from 'lodash';
-
-export const mergeSx = (...allSx) => allSx.flat();
+import { pick } from 'lodash';
 
 /**
  * Copy properties from corresponding objects in a source array to objects in a target array.
@@ -23,7 +21,7 @@ export const assignArray = (targetArray, sourceArray, matcher, ...props) => {
     targetArray?.forEach((targetObj) => {
         const matcherOfTarget = matcher(targetObj);
         const sourceObj = sourceArray?.find(matcherOfTarget);
-        const pickObj = _.pick(sourceObj, props);
+        const pickObj = pick(sourceObj, props);
         Object.assign(targetObj, pickObj);
     });
 

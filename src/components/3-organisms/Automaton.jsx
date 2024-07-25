@@ -7,6 +7,7 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { mergeSx } from '@gridsuite/commons-ui';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@mui/material';
 import { styles } from './AutomatonStyle';
@@ -14,7 +15,6 @@ import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
 import AutomatonProperties from './automaton/AutomatonProperties';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
-import { mergeSx } from 'utils/functions';
 
 const Automaton = (props) => {
     const {

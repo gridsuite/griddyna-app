@@ -12,7 +12,7 @@ import {
 } from '@reduxjs/toolkit';
 import * as modelsAPI from '../../rest/modelsAPI';
 import RequestStatus from '../../constants/RequestStatus';
-import * as _ from 'lodash';
+import { cloneDeep, findIndex, forEach, uniqBy } from 'lodash';
 import { SetType } from '../../constants/models';
 
 const DEFAULT_GROUP = {
@@ -152,7 +152,7 @@ const reducers = {
     changeGroup: (state, action) => {
         const { group, originalGroup, modelName, isAbsolute, matches } =
             action.payload;
-        const currentGroup = _.cloneDeep(group);
+        const currentGroup = cloneDeep(group);
         const definitions = state.parameterDefinitions;
         currentGroup.modelName = modelName;
         if (originalGroup) {
@@ -180,7 +180,7 @@ const reducers = {
             const newSets = matches
                 .filter(
                     (match) =>
-                        _.findIndex(
+                        findIndex(
                             currentGroup.sets,
                             (set) =>
                                 set.name ===
@@ -225,7 +225,7 @@ const reducers = {
     addOrModifySet: (state, action) => {
         const newSets = action.payload;
 
-        _.forEach(Array.isArray(newSets) ? newSets : [newSets], (newSet) => {
+        forEach(Array.isArray(newSets) ? newSets : [newSets], (newSet) => {
             const setIndex = state.currentGroup.sets.findIndex(
                 (setToTest) => setToTest.name === newSet.name
             );
@@ -253,7 +253,7 @@ const extraReducers = (builder) => {
     builder.addCase(getModelSets.fulfilled, (state, action) => {
         const receivedSets = action.payload;
 
-        state.currentGroup.sets = _.uniqBy(
+        state.currentGroup.sets = uniqBy(
             receivedSets.concat(state.currentGroup.sets),
             'name'
         );
@@ -262,7 +262,7 @@ const extraReducers = (builder) => {
     builder.addCase(getSearchedModelSets.fulfilled, (state, action) => {
         const candidateSets = action.payload;
 
-        state.currentGroup.searchSets = _.uniqBy(candidateSets, 'name');
+        state.currentGroup.searchSets = uniqBy(candidateSets, 'name');
         state.status = RequestStatus.SUCCESS;
     });
     builder.addCase(postModelSetsGroup.fulfilled, (state, action) => {

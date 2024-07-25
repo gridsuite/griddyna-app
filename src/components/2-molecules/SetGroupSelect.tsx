@@ -6,13 +6,13 @@
  */
 
 import { Checkbox, Grid, Typography } from '@mui/material';
+import { mergeSx } from '@gridsuite/commons-ui';
 import Select from '../1-atoms/Select';
 import { styles } from './SetGroupSelectStyle';
 import React, { useEffect, useState } from 'react';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
 import { Group, Model } from '../../redux/types/model.type';
-import { mergeSx } from 'utils/functions';
 
 const setLabel = 'and use parameters group';
 const editGroupLabel = 'Edit the parameters group and/or the parameters sets';
@@ -117,7 +117,7 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                     sx={mergeSx(
                         styles.button,
                         styles.gridItem,
-                        errorInParams && styles.errorButton
+                        errorInParams ? styles.errorButton : undefined
                     )}
                 >
                     <EditButton
