@@ -10,10 +10,8 @@ import {
     createSelector,
     createSlice,
 } from '@reduxjs/toolkit';
-import * as mappingsAPI from '../../rest/mappingsAPI';
 import { cloneDeep, isEmpty, isEqual } from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
-import * as networkAPI from '../../rest/networkAPI';
 import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
 import {
@@ -27,6 +25,7 @@ import {
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 import { assignArray } from '../../utils/functions';
+import { dynamicMappingSrv } from '../../services';
 
 const initialState = {
     mappings: [],
@@ -555,7 +554,7 @@ export const postMapping = createAsyncThunk(
                   )?.controlledParameters
                 : state?.mappings.controlledParameters;
 
-        return await mappingsAPI.postMapping(
+        return await dynamicMappingSrv.postMapping(
             mappingName,
             augmentedRules,
             formattedAutomata,
@@ -569,7 +568,7 @@ export const getMappings = createAsyncThunk(
     'mappings/get',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.getMappings(token);
+        return await dynamicMappingSrv.getMappings(token);
     }
 );
 
@@ -577,7 +576,7 @@ export const deleteMapping = createAsyncThunk(
     'mappings/delete',
     async (mappingName, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.deleteMapping(mappingName, token);
+        return await dynamicMappingSrv.deleteMapping(mappingName, token);
     }
 );
 
@@ -585,7 +584,11 @@ export const renameMapping = createAsyncThunk(
     'mappings/rename',
     async ({ nameToReplace, newName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.renameMapping(nameToReplace, newName, token);
+        return await dynamicMappingSrv.renameMapping(
+            nameToReplace,
+            newName,
+            token
+        );
     }
 );
 
@@ -593,7 +596,11 @@ export const copyMapping = createAsyncThunk(
     'mappings/copy',
     async ({ originalName, copyName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.copyMapping(originalName, copyName, token);
+        return await dynamicMappingSrv.copyMapping(
+            originalName,
+            copyName,
+            token
+        );
     }
 );
 
@@ -610,7 +617,7 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
             equipmentType: foundRule.type,
             filter: augmentFilter(foundRule.filter, foundRule.type),
         };
-        return await networkAPI.getNetworkMatchesFromRule(
+        return await dynamicMappingSrv.getNetworkMatchesFromRule(
             networkId,
             ruleToMatch,
             token

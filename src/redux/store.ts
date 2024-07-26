@@ -10,7 +10,7 @@ import { reducer } from './reducer';
 
 export const store = configureStore({ reducer });
 export type AppDispatch = typeof store.dispatch;
-initCommonServices(
-    process.env.REACT_APP_NAME!,
-    () => store.getState().user?.user
-);
+
+export function getUser() {
+    return store.getState().user?.user;
+}

@@ -34,15 +34,14 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import AppPackage from '../../package.json';
-import {
-    fetchAppsAndUrls,
-    fetchIdpSettings,
-    fetchValidateUser,
-    fetchVersion,
-} from '../utils/rest-api';
-import { getServersInfos } from '../rest/studyAPI';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
+import {
+    appLocalSrv,
+    appsMetadataSrv,
+    studySrv,
+    userAdminSrv,
+} from '../services';
 
 const lightTheme = createTheme({
     palette: {
@@ -87,11 +86,21 @@ const App = () => {
 
     const navigate = useNavigate();
 
+    const onLogoClick = useCallback(
+        () => navigate('/', { replace: true }),
+        [navigate]
+    );
+
     const dispatch = useDispatch();
 
     const authenticationDispatch = useCallback(
         (action) => dispatch(UserSlice.actions[action.type](action)),
         [dispatch]
+    );
+
+    const onLogoutClick = useCallback(
+        () => logout(authenticationDispatch, userManager.instance),
+        [authenticationDispatch, userManager.instance]
     );
 
     const location = useLocation();
@@ -121,8 +130,8 @@ const App = () => {
                         ? initializeAuthenticationProd(
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,
-                              fetchIdpSettings,
-                              fetchValidateUser,
+                              appLocalSrv.fetchIdpSettings,
+                              userAdminSrv.fetchValidateUser,
                               initialMatchSigninCallbackUrl != null
                           )
                         : initializeAuthenticationDev(
@@ -148,11 +157,20 @@ const App = () => {
 
     useEffect(() => {
         if (user !== null) {
-            fetchAppsAndUrls().then((res) => {
+            appsMetadataSrv.fetchAppsMetadata().then((res) => {
                 setAppsAndUrls(res);
             });
         }
     }, [user]);
+
+    const additionalModulesFetcher = useCallback(
+        () => studySrv.getServersInfos('dyna'),
+        []
+    );
+    const globalVersionFetcher = useCallback(
+        () => appsMetadataSrv.fetchVersion().then((res) => res?.deployVersion),
+        []
+    );
 
     return (
         <StyledEngineProvider injectFirst>
@@ -165,16 +183,12 @@ const App = () => {
                         appLogo={<PowsyblLogo />}
                         appVersion={AppPackage.version}
                         appLicense={AppPackage.license}
-                        onLogoClick={() => navigate('/', { replace: true })}
-                        onLogoutClick={() =>
-                            logout(authenticationDispatch, userManager.instance)
-                        }
+                        onLogoClick={onLogoClick}
+                        onLogoutClick={onLogoutClick}
                         user={user}
                         appsAndUrls={appsAndUrls}
-                        globalVersionPromise={() =>
-                            fetchVersion().then((res) => res?.deployVersion)
-                        }
-                        additionalModulesPromise={getServersInfos}
+                        globalVersionPromise={globalVersionFetcher}
+                        additionalModulesPromise={additionalModulesFetcher}
                     />
                     <CardErrorBoundary>
                         {user !== null ? (

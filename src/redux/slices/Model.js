@@ -10,10 +10,10 @@ import {
     createSelector,
     createSlice,
 } from '@reduxjs/toolkit';
-import * as modelsAPI from '../../rest/modelsAPI';
 import RequestStatus from '../../constants/RequestStatus';
 import { cloneDeep, findIndex, forEach, uniqBy } from 'lodash';
 import { SetType } from '../../constants/models';
+import { dynamicMappingSrv } from '../../services';
 
 const DEFAULT_GROUP = {
     name: '',
@@ -74,7 +74,7 @@ export const getModels = createAsyncThunk(
     'models/get',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await modelsAPI.getModels(token);
+        return await dynamicMappingSrv.getModels(token);
     }
 );
 
@@ -82,7 +82,7 @@ export const getModelDefinitions = createAsyncThunk(
     'models/definitions',
     async (modelName, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await modelsAPI.getModelDefinitions(modelName, token);
+        return await dynamicMappingSrv.getModelDefinitions(modelName, token);
     }
 );
 
@@ -91,7 +91,7 @@ export const getModelSets = createAsyncThunk(
     async ({ modelName, groupName, groupType }, { getState }) => {
         if (groupName) {
             const token = getState()?.user.user?.id_token;
-            return await modelsAPI.getModelSets(
+            return await dynamicMappingSrv.getModelSets(
                 modelName,
                 groupName,
                 groupType !== '' ? groupType : SetType.FIXED,
@@ -108,7 +108,7 @@ export const getSearchedModelSets = createAsyncThunk(
     async ({ modelName, groupName, groupType }, { getState }) => {
         if (groupName) {
             const token = getState()?.user.user?.id_token;
-            return await modelsAPI.getModelSets(
+            return await dynamicMappingSrv.getModelSets(
                 modelName,
                 groupName,
                 groupType ?? '',
@@ -125,7 +125,11 @@ export const postModelSetsGroup = createAsyncThunk(
     async (strict, { getState }) => {
         const token = getState()?.user.user?.id_token;
         const setGroup = getState()?.models.currentGroup;
-        return await modelsAPI.postModelSetsGroup(setGroup, strict, token);
+        return await dynamicMappingSrv.postModelSetsGroup(
+            setGroup,
+            strict,
+            token
+        );
     }
 );
 
@@ -133,7 +137,7 @@ export const getAutomatonDefinitions = createAsyncThunk(
     'models/automaton/get/definitions',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await modelsAPI.getAutomatonDefinitions(token);
+        return await dynamicMappingSrv.getAutomatonDefinitions(token);
     }
 );
 
