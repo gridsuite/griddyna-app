@@ -7,7 +7,7 @@
 import { useEffect } from 'react';
 import { FieldErrors, FieldValues, UseFormReturn } from 'react-hook-form';
 import { usePrevious } from '@gridsuite/commons-ui';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 
 const useDataUpdate = (
     formApi: UseFormReturn,
@@ -18,7 +18,7 @@ const useDataUpdate = (
     const prevFormData = usePrevious(formData);
 
     useEffect(() => {
-        if (!_.isEqual(prevFormData, formData)) {
+        if (!isEqual(prevFormData, formData)) {
             formApi.handleSubmit(onValid, onInvalid)();
         }
     }, [formApi, onValid, onInvalid, formData, prevFormData]);

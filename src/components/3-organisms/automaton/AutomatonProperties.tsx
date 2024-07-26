@@ -10,7 +10,7 @@ import { Divider, Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
-import * as _ from 'lodash';
+import { isArray, join, map, split, trim } from 'lodash';
 import { Automaton } from '../../../redux/types/mapping.type';
 import { AutomationDefinition } from '../../../redux/types/model.type';
 import { EquipmentValues } from '../../../redux/types/network.type';
@@ -43,8 +43,8 @@ const AutomatonProperties = ({
                     propertyType
                 )(
                     // convert an array to a string content with VALUE_DELIMITER
-                    _.isArray(propertyValue)
-                        ? _.join(propertyValue, VALUE_DELIMITER)
+                    isArray(propertyValue)
+                        ? join(propertyValue, VALUE_DELIMITER)
                         : propertyValue
                 );
             },
@@ -62,10 +62,7 @@ const AutomatonProperties = ({
 
                     // convert a string content with VALUE_DELIMITER to an array
                     const propertyValue = propertyDefinition.multiple
-                        ? _.map(
-                              _.split(property?.value, VALUE_DELIMITER),
-                              _.trim
-                          )
+                        ? map(split(property?.value, VALUE_DELIMITER), trim)
                         : property?.value ?? '';
 
                     const options =

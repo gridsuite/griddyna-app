@@ -10,10 +10,8 @@ import {
     createSelector,
     createSlice,
 } from '@reduxjs/toolkit';
-import * as mappingsAPI from '../../rest/mappingsAPI';
-import * as _ from 'lodash';
+import { cloneDeep, isEmpty, isEqual } from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
-import * as networkAPI from '../../rest/networkAPI';
 import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
 import {
@@ -27,6 +25,7 @@ import {
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 import { assignArray } from '../../utils/functions';
+import { dynamicMappingSrv } from '../../services';
 
 const initialState = {
     mappings: [],
@@ -63,7 +62,7 @@ export const DEFAULT_NAME = 'default';
 const ruleMatcher = (rule1) => (rule2) => rule1?.id === rule2?.id;
 
 const transformMapping = (receivedMapping) => {
-    const mapping = _.cloneDeep(receivedMapping);
+    const mapping = cloneDeep(receivedMapping);
     mapping.rules = mapping.rules.map((rule) => {
         rule['type'] = rule.equipmentType;
         delete rule.equipmentType;
@@ -246,7 +245,7 @@ const checkFilterValidity = (filter, isLast) => {
         // only last rule allows empty filter
         return !!isLast;
     }
-    const isQueryExist = !_.isEmpty(filter.rules);
+    const isQueryExist = !isEmpty(filter.rules);
     const isQueryValid =
         isQueryExist &&
         rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules);
@@ -446,7 +445,7 @@ export const isModified = createSelector(
         );
 
         function ignoreInternalProperties(rule) {
-            const ruleToTest = _.cloneDeep(rule);
+            const ruleToTest = cloneDeep(rule);
 
             delete ruleToTest.matches; // ignore matches which is used for matched equipment ids
             delete ruleToTest.filterDirty; // ignore the derived field
@@ -466,12 +465,12 @@ export const isModified = createSelector(
         }
 
         return !(
-            _.isEqual(
+            isEqual(
                 activeRules.map(ignoreInternalProperties),
                 foundMapping.rules.map(ignoreInternalProperties)
             ) &&
-            _.isEqual(activeAutomata, foundMapping.automata) &&
-            _.isEqual(controlledParameters, foundMapping.controlledParameters)
+            isEqual(activeAutomata, foundMapping.automata) &&
+            isEqual(controlledParameters, foundMapping.controlledParameters)
         );
     }
 );
@@ -512,7 +511,7 @@ export const postMapping = createAsyncThunk(
                 : state?.mappings.rules;
 
         const augmentedRules = rules.map((rule) => {
-            let augmentedRule = _.cloneDeep(rule);
+            let augmentedRule = cloneDeep(rule);
             augmentedRule.equipmentType = rule.type.toUpperCase();
 
             if (augmentedRule.filter) {
@@ -555,7 +554,7 @@ export const postMapping = createAsyncThunk(
                   )?.controlledParameters
                 : state?.mappings.controlledParameters;
 
-        return await mappingsAPI.postMapping(
+        return await dynamicMappingSrv.postMapping(
             mappingName,
             augmentedRules,
             formattedAutomata,
@@ -569,7 +568,7 @@ export const getMappings = createAsyncThunk(
     'mappings/get',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.getMappings(token);
+        return await dynamicMappingSrv.getMappings(token);
     }
 );
 
@@ -577,7 +576,7 @@ export const deleteMapping = createAsyncThunk(
     'mappings/delete',
     async (mappingName, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.deleteMapping(mappingName, token);
+        return await dynamicMappingSrv.deleteMapping(mappingName, token);
     }
 );
 
@@ -585,7 +584,11 @@ export const renameMapping = createAsyncThunk(
     'mappings/rename',
     async ({ nameToReplace, newName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.renameMapping(nameToReplace, newName, token);
+        return await dynamicMappingSrv.renameMapping(
+            nameToReplace,
+            newName,
+            token
+        );
     }
 );
 
@@ -593,7 +596,11 @@ export const copyMapping = createAsyncThunk(
     'mappings/copy',
     async ({ originalName, copyName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.copyMapping(originalName, copyName, token);
+        return await dynamicMappingSrv.copyMapping(
+            originalName,
+            copyName,
+            token
+        );
     }
 );
 
@@ -610,7 +617,7 @@ export const getNetworkMatchesFromRule = createAsyncThunk(
             equipmentType: foundRule.type,
             filter: augmentFilter(foundRule.filter, foundRule.type),
         };
-        return await networkAPI.getNetworkMatchesFromRule(
+        return await dynamicMappingSrv.getNetworkMatchesFromRule(
             networkId,
             ruleToMatch,
             token
@@ -668,7 +675,7 @@ const reducers = {
     },
     // Rule
     addRule: (state) => {
-        const newRule = _.cloneDeep(DEFAULT_RULE);
+        const newRule = cloneDeep(DEFAULT_RULE);
         // provide an id for new rule
         newRule.id = uuid4();
         newRule.type = state.filteredRuleType;
@@ -701,7 +708,7 @@ const reducers = {
     },
     copyRule: (state, action) => {
         const { index } = action.payload;
-        const ruleToCopy = _.cloneDeep(
+        const ruleToCopy = cloneDeep(
             filterRulesByType(state.rules, state.filteredRuleType)[index]
         );
 
@@ -772,7 +779,7 @@ const reducers = {
     },
     // Automaton
     addAutomaton: (state) => {
-        const newAutomaton = _.cloneDeep(DEFAULT_AUTOMATON);
+        const newAutomaton = cloneDeep(DEFAULT_AUTOMATON);
         newAutomaton.family = state.filteredAutomatonFamily;
         state.automata.push(newAutomaton);
     },
@@ -834,7 +841,7 @@ const reducers = {
     },
     copyAutomaton: (state, action) => {
         const { index } = action.payload;
-        const automatonToCopy = _.cloneDeep(
+        const automatonToCopy = cloneDeep(
             filterAutomataByFamily(
                 state.automata,
                 state.filteredAutomatonFamily

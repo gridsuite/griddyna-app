@@ -6,3 +6,13 @@
  */
 
 /// <reference types="react-scripts" />
+
+namespace NodeJS {
+    interface ProcessEnv {
+        REACT_APP_API_GATEWAY: string;
+        REACT_APP_WS_GATEWAY: string;
+
+        REACT_APP_API_PREFIX: string;
+        REACT_APP_DYNAMAP_SVC: string;
+    }
+}
