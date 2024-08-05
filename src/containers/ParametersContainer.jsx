@@ -7,27 +7,10 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getModelDefinitions,
-    getModelSets,
-    makeGetModel,
-    ModelSlice,
-    postModelSetsGroup,
-} from '../redux/slices/Model';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-} from '@mui/material';
+import { getModelDefinitions, getModelSets, makeGetModel, ModelSlice, postModelSetsGroup } from '../redux/slices/Model';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
-import {
-    GroupEditionOrigin,
-    ParameterOrigin,
-    SetType,
-} from '../constants/models';
+import { GroupEditionOrigin, ParameterOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';
 import Stepper from '../components/2-molecules/Stepper';
 import SetGroupEditor from '../components/3-organisms/SetGroupEditor';
@@ -70,9 +53,7 @@ const ParametersContainer = ({
 
     const getModel = useMemo(makeGetModel, []);
     const modelToEdit = useSelector((state) => getModel(state, model));
-    const definitions = useSelector(
-        (state) => state.models.parameterDefinitions
-    );
+    const definitions = useSelector((state) => state.models.parameterDefinitions);
     const getMatches = useMemo(makeGetMatches, []);
     const matches = useSelector((state) =>
         getMatches(state, {
@@ -81,25 +62,17 @@ const ParametersContainer = ({
         })
     );
 
-    const groupToEdit = modelToEdit?.groups.find(
-        (group) => group.name === setGroup && group.type === groupType
-    );
+    const groupToEdit = modelToEdit?.groups.find((group) => group.name === setGroup && group.type === groupType);
     const otherGroups =
         modelToEdit?.groups
-            .filter(
-                (group) =>
-                    !(group.name === setGroup && group.type === groupType)
-            )
+            .filter((group) => !(group.name === setGroup && group.type === groupType))
             .map((group) => group.name) ?? [];
 
-    const controlledParameters = useSelector(
-        (state) => state.mappings.controlledParameters
-    );
+    const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
 
     const [step, setStep] = useState(setGroup ? 1 : 0);
     const isFirstStep = step === 0;
-    const showSteps =
-        (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
+    const showSteps = (!setGroup || currentGroup.sets.length > 1) && controlledParameters;
 
     const currentSet = currentGroup.sets[step - 1] ?? {
         name: currentGroup.name,
@@ -114,10 +87,8 @@ const ParametersContainer = ({
     const changeGroupName = (newName) => {
         dispatch(ModelSlice.actions.changeGroupName(newName));
     };
-    const changeGroupType = (newType) =>
-        dispatch(ModelSlice.actions.changeGroupType(newType));
-    const addOrModifySet = (newSet) =>
-        dispatch(ModelSlice.actions.addOrModifySet(newSet));
+    const changeGroupType = (newType) => dispatch(ModelSlice.actions.changeGroupType(newType));
+    const addOrModifySet = (newSet) => dispatch(ModelSlice.actions.addOrModifySet(newSet));
     const saveSetGroup = () => {
         (async () => {
             await dispatch(postModelSetsGroup(controlledParameters));
@@ -136,8 +107,7 @@ const ParametersContainer = ({
         close();
     };
 
-    const isErrorName =
-        currentGroup.name === '' || otherGroups.includes(currentGroup.name);
+    const isErrorName = currentGroup.name === '' || otherGroups.includes(currentGroup.name);
     const isErrorSets = !isSetValid(currentSet, definitions);
 
     // for vertical stepper
@@ -153,8 +123,7 @@ const ParametersContainer = ({
         return Object.values(completed).every((v) => v);
     };
 
-    const isError =
-        isErrorName || (step > 0 && (isErrorSets || !isAllCompleted()));
+    const isError = isErrorName || (step > 0 && (isErrorSets || !isAllCompleted()));
 
     useEffect(() => {
         // Populate currentGroup
@@ -179,18 +148,11 @@ const ParametersContainer = ({
     };
 
     // FIX and NETWORK can not be modified here
-    const definitionFilter = (definition) =>
-        [ParameterOrigin.USER].includes(definition.origin);
+    const definitionFilter = (definition) => [ParameterOrigin.USER].includes(definition.origin);
 
     // hook for SetSearch component
-    const {
-        modelsSelector,
-        groupsSelector,
-        setsSelector,
-        handleChangeGroup,
-        handleResetSetSearch,
-        handleApplySet,
-    } = useSetSearch(currentGroup, currentSet);
+    const { modelsSelector, groupsSelector, setsSelector, handleChangeGroup, handleResetSetSearch, handleApplySet } =
+        useSetSearch(currentGroup, currentSet);
 
     return (
         <Dialog
@@ -200,9 +162,7 @@ const ParametersContainer = ({
             maxWidth={isFirstStep ? 'xs' : showVerticalSteps ? 'lg' : 'md'}
             scroll="paper"
         >
-            <DialogTitle>
-                {isFirstStep ? groupTitleLabel : setTitleLabel}
-            </DialogTitle>
+            <DialogTitle>{isFirstStep ? groupTitleLabel : setTitleLabel}</DialogTitle>
             <DialogContent>
                 {isFirstStep ? (
                     <SetGroupEditor
@@ -218,12 +178,10 @@ const ParametersContainer = ({
                         {showVerticalSteps && (
                             <Grid item xs={3} pt={10}>
                                 <VerticalStepper
-                                    steps={currentGroup.sets.map(
-                                        (set, index) => ({
-                                            label: set.name,
-                                            value: index + 1,
-                                        })
-                                    )}
+                                    steps={currentGroup.sets.map((set, index) => ({
+                                        label: set.name,
+                                        value: index + 1,
+                                    }))}
                                     step={step - 1}
                                     setStep={setStep}
                                     completed={completed}
@@ -266,11 +224,7 @@ const ParametersContainer = ({
                     <Button onClick={onClose} color="primary">
                         Cancel
                     </Button>
-                    <Button
-                        onClick={saveSetGroup}
-                        color="primary"
-                        disabled={isError}
-                    >
+                    <Button onClick={saveSetGroup} color="primary" disabled={isError}>
                         Save
                     </Button>
                 </DialogActions>

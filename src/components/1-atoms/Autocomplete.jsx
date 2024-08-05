@@ -7,11 +7,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Autocomplete as MuiAutocomplete,
-    Popper,
-    TextField,
-} from '@mui/material';
+import { Autocomplete as MuiAutocomplete, Popper, TextField } from '@mui/material';
 import { styles } from './AutocompleteStyles';
 
 const PRECISION = 10e-8;
@@ -62,9 +58,7 @@ const Autocomplete = (props) => {
                   },
         [options, value, isMultiple, matchMultipleOptions]
     );
-    const [inputValue, setInputValue] = useState(
-        isMultiple ? '' : value?.toString() ?? ''
-    );
+    const [inputValue, setInputValue] = useState(isMultiple ? '' : value?.toString() ?? '');
 
     const sxStyles = styles({
         inputLength: fixedWidth ? undefined : inputValue.length,
@@ -163,31 +157,16 @@ const Autocomplete = (props) => {
             autoHighlight={!isFree}
             renderOption={renderOption}
             sx={sxStyles.inputWidth}
-            renderInput={(params) => (
-                <TextField {...params} label={label} error={error} />
-            )}
-            isOptionEqualToValue={(option, value) =>
-                option.value === value.value
-            }
-            PopperComponent={(props) => (
-                <Popper
-                    {...props}
-                    placement="bottom-start"
-                    style={{ width: 'fit-content' }}
-                />
-            )}
+            renderInput={(params) => <TextField {...params} label={label} error={error} />}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            PopperComponent={(props) => <Popper {...props} placement="bottom-start" style={{ width: 'fit-content' }} />}
             {...rest}
         />
     );
 };
 
 Autocomplete.propTypes = {
-    value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-        PropTypes.bool,
-        PropTypes.array,
-    ]).isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool, PropTypes.array]).isRequired,
     isFree: PropTypes.bool,
     isMultiple: PropTypes.bool,
     onChange: PropTypes.func,

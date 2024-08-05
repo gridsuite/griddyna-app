@@ -16,23 +16,13 @@ const backLabel = 'Back';
 const cancelLabel = 'Cancel';
 
 const Stepper = (props) => {
-    const {
-        step,
-        setStep,
-        maxStep,
-        onFinish,
-        onCancel,
-        disabled = false,
-    } = props;
+    const { step, setStep, maxStep, onFinish, onCancel, disabled = false } = props;
 
     return (
         <MobileStepper
             variant={maxStep < 10 ? 'dots' : 'text'}
             backButton={
-                <Button
-                    size="small"
-                    onClick={step === 0 ? onCancel : () => setStep(step - 1)}
-                >
+                <Button size="small" onClick={step === 0 ? onCancel : () => setStep(step - 1)}>
                     <KeyboardArrowLeft />
                     {step === 0 ? cancelLabel : backLabel}
                 </Button>
@@ -40,9 +30,7 @@ const Stepper = (props) => {
             nextButton={
                 <Button
                     size="small"
-                    onClick={
-                        step === maxStep ? onFinish : () => setStep(step + 1)
-                    }
+                    onClick={step === maxStep ? onFinish : () => setStep(step + 1)}
                     disabled={disabled}
                 >
                     {step === maxStep ? saveLabel : nextLabel}

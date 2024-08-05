@@ -57,9 +57,7 @@ export function getModelSets(modelName, groupName, groupType, token) {
 
 export function postModelSetsGroup(setGroup, strict, token) {
     return backendFetchJson(
-        `${API_URL}/${setGroup.modelName}/parameters/sets${
-            strict ? '/strict' : ''
-        }`,
+        `${API_URL}/${setGroup.modelName}/parameters/sets${strict ? '/strict' : ''}`,
         {
             method: 'POST',
             headers: {

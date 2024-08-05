@@ -7,12 +7,7 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getNetworkMatchesFromRule,
-    makeGetRule,
-    makeIsRuleValid,
-    MappingSlice,
-} from '../redux/slices/Mapping';
+import { getNetworkMatchesFromRule, makeGetRule, makeIsRuleValid, MappingSlice } from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/Model';
 import Rule from '../components/3-organisms/Rule';
 import FilterContainer from './FilterContainer';
@@ -25,15 +20,11 @@ const RuleContainer = ({ index, editParameters }) => {
     const rule = useSelector((state) => getRule(state, index));
     const { type, mappedModel, setGroup, groupType } = rule;
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
-    const isRuleValid = useSelector((state) =>
-        isRuleValidSelector(state, index)
-    );
+    const isRuleValid = useSelector((state) => isRuleValidSelector(state, index));
     const getModels = useMemo(makeGetModels, []);
     const models = useSelector((state) => getModels(state, rule.type));
 
-    const controlledParameters = useSelector(
-        (state) => state.mappings.controlledParameters
-    );
+    const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
 
     const currentNetworkId = useSelector(getCurrentNetworkId);
     const dispatch = useDispatch();

@@ -17,9 +17,7 @@ const infoTypeLabel = 'This parameter is of type ';
 const networkLabel = ' From Network';
 const SetEditor = (props) => {
     const { definitions, filter, set, saveSet } = props;
-    const filteredDefinitions = filter
-        ? definitions.filter(filter)
-        : definitions;
+    const filteredDefinitions = filter ? definitions.filter(filter) : definitions;
 
     const valueOrigin = (origin) => {
         switch (origin) {
@@ -37,15 +35,11 @@ const SetEditor = (props) => {
         const parameterChanged = event.target.id;
         const newValue = event.target.value;
         const newValueToUse =
-            filteredDefinitions.find(
-                (definition) => definition.name === parameterChanged
-            ).type === ParameterType.DOUBLE
+            filteredDefinitions.find((definition) => definition.name === parameterChanged).type === ParameterType.DOUBLE
                 ? newValue.replace(',', '.')
                 : newValue;
         const updatedSet = _.cloneDeep(set);
-        updatedSet.parameters.find(
-            (parameter) => parameter.name === parameterChanged
-        ).value = newValueToUse;
+        updatedSet.parameters.find((parameter) => parameter.name === parameterChanged).value = newValueToUse;
         saveSet(updatedSet);
     };
 
@@ -55,15 +49,9 @@ const SetEditor = (props) => {
             {_.cloneDeep(filteredDefinitions)
                 .sort((a, b) => valueOrigin(a.origin) - valueOrigin(b.origin))
                 .map((definition) => {
-                    const correspondingParameter = set.parameters.find(
-                        (param) => param.name === definition.name
-                    );
+                    const correspondingParameter = set.parameters.find((param) => param.name === definition.name);
                     return (
-                        <Grid
-                            container
-                            justify="space-evenly"
-                            sx={{ padding: '8px 0px' }}
-                        >
+                        <Grid container justify="space-evenly" sx={{ padding: '8px 0px' }}>
                             <Grid item xs={7}>
                                 <Typography>{definition.name}</Typography>
                             </Grid>
@@ -72,36 +60,21 @@ const SetEditor = (props) => {
                                     size="small"
                                     id={definition.name}
                                     value={
-                                        definition.origin ===
-                                        ParameterOrigin.NETWORK
+                                        definition.origin === ParameterOrigin.NETWORK
                                             ? networkLabel
                                             : correspondingParameter?.value
                                     }
                                     error={
-                                        definition.origin ===
-                                            ParameterOrigin.USER &&
-                                        !isParameterValueValid(
-                                            correspondingParameter?.value,
-                                            definition.type
-                                        )
+                                        definition.origin === ParameterOrigin.USER &&
+                                        !isParameterValueValid(correspondingParameter?.value, definition.type)
                                     }
                                     onChange={onChange}
-                                    disabled={
-                                        definition.origin !==
-                                        ParameterOrigin.USER
-                                    }
+                                    disabled={definition.origin !== ParameterOrigin.USER}
                                     sx={{ width: '100%' }}
                                 />
                             </Grid>
-                            <Grid
-                                item
-                                xs
-                                alignItems={'center'}
-                                justifyContent={'center'}
-                            >
-                                <Tooltip
-                                    title={infoTypeLabel + definition.type}
-                                >
+                            <Grid item xs alignItems={'center'} justifyContent={'center'}>
+                                <Tooltip title={infoTypeLabel + definition.type}>
                                     <InfoIcon />
                                 </Tooltip>
                             </Grid>

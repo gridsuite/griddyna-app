@@ -28,9 +28,7 @@ const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
-    const selectedMapping = useSelector(
-        (state) => state.mappings.activeMapping
-    );
+    const selectedMapping = useSelector((state) => state.mappings.activeMapping);
     const canCreateMapping = useSelector(canCreateNewMapping);
 
     useEffect(() => {
@@ -45,12 +43,8 @@ const MenuContainer = () => {
     const addMapping = () => {
         dispatch(MappingSlice.actions.createMapping());
         dispatch(NetworkSlice.actions.cleanNetwork());
-        dispatch(
-            MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
-        );
-        dispatch(
-            MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT)
-        );
+        dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+        dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
     const renameMapping = (name) => (newName) => {
@@ -66,33 +60,21 @@ const MenuContainer = () => {
     const selectMapping = (name) => () => {
         dispatch(MappingSlice.actions.selectMapping({ name }));
         dispatch(NetworkSlice.actions.cleanNetwork());
-        dispatch(
-            MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
-        );
-        dispatch(
-            MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT)
-        );
+        dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+        dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
     const deleteMapping = (name) => () => {
         dispatch(deleteMappingAction(name));
         if (name === selectedMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
-            dispatch(
-                MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0])
-            );
-            dispatch(
-                MappingSlice.actions.changeFilteredFamily(
-                    AutomatonFamily.CURRENT
-                )
-            );
+            dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+            dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
         }
     };
 
     const copyMapping = (name) => () => {
-        dispatch(
-            copyMappingAction({ originalName: name, copyName: name + ' Copy' })
-        );
+        dispatch(copyMappingAction({ originalName: name, copyName: name + ' Copy' }));
     };
 
     return (
@@ -110,9 +92,7 @@ const MenuContainer = () => {
                 selectItem={selectMapping}
                 selected={selectedMapping}
                 canAdd={canCreateMapping}
-                addTooltip={
-                    !canCreateMapping ? CANNOT_CREATE_MAPPING_LABEL : undefined
-                }
+                addTooltip={!canCreateMapping ? CANNOT_CREATE_MAPPING_LABEL : undefined}
             />
         </>
     );

@@ -67,9 +67,7 @@ const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
 
 const MappingContainer = () => {
     // TODO Add path parameter here
-    const totalRulesNumber = useSelector(
-        (state) => state.mappings.rules.length
-    );
+    const totalRulesNumber = useSelector((state) => state.mappings.rules.length);
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     const isModified = useSelector(isModifiedSelector);
@@ -80,21 +78,13 @@ const MappingContainer = () => {
     const networkValues = useSelector((state) => state.network.propertyValues);
     const currentNetwork = useSelector(getCurrentNetworkObj);
     const groupedRulesNumber = useSelector(getGroupedRulesNumber);
-    const filteredType = useSelector(
-        (state) => state.mappings.filteredRuleType
-    );
-    const filteredFamily = useSelector(
-        (state) => state.mappings.filteredAutomatonFamily
-    );
+    const filteredType = useSelector((state) => state.mappings.filteredRuleType);
+    const filteredFamily = useSelector((state) => state.mappings.filteredAutomatonFamily);
 
-    const totalAutomataNumber = useSelector(
-        (state) => state.mappings.automata.length
-    );
+    const totalAutomataNumber = useSelector((state) => state.mappings.automata.length);
     const automataNumber = useSelector(getAutomataNumber);
     const groupedAutomataNumber = useSelector(getGroupedAutomataNumber);
-    const controlledParameters = useSelector(
-        (state) => state.mappings.controlledParameters
-    );
+    const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
     const areParametersValid = useSelector(areParametersValidSelector);
     const dispatch = useDispatch();
 
@@ -113,14 +103,12 @@ const MappingContainer = () => {
         isValid: ruleTabsValid[type],
     }));
 
-    const filterAutomataOptions = Object.values(AutomatonFamily).map(
-        (family) => ({
-            value: family,
-            // TODO: intl
-            label: `${family} (${groupedAutomataNumber[family]})`,
-            isValid: automatonTabsValid[family],
-        })
-    );
+    const filterAutomataOptions = Object.values(AutomatonFamily).map((family) => ({
+        value: family,
+        // TODO: intl
+        label: `${family} (${groupedAutomataNumber[family]})`,
+        isValid: automatonTabsValid[family],
+    }));
 
     function addRule() {
         dispatch(MappingSlice.actions.addRule(undefined));
@@ -219,17 +207,10 @@ const MappingContainer = () => {
                     <AccordionDetails>
                         <Grid container>
                             <Grid item xs sx={styles.tabBar}>
-                                <TabBar
-                                    value={filteredType}
-                                    options={filterRulesOptions}
-                                    setValue={setFilteredType}
-                                />
+                                <TabBar value={filteredType} options={filterRulesOptions} setValue={setFilteredType} />
                             </Grid>
                             <Grid item xs="auto">
-                                <AddIconButton
-                                    onClick={addRule}
-                                    tooltip={ADD_MODEL_LABEL}
-                                />
+                                <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
                             </Grid>
                         </Grid>
                         <List>{buildRules()}</List>
@@ -238,9 +219,7 @@ const MappingContainer = () => {
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography>{`${AUTOMATA_TITLE} ${
-                            totalAutomataNumber
-                                ? '(' + totalAutomataNumber + ')'
-                                : ''
+                            totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
                         }`}</Typography>
                     </AccordionSummary>
                     <Divider />
@@ -254,10 +233,7 @@ const MappingContainer = () => {
                                 />
                             </Grid>
                             <Grid item xs="auto">
-                                <AddIconButton
-                                    onClick={addAutomaton}
-                                    tooltip={ADD_AUTOMATON_LABEL}
-                                />
+                                <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
                             </Grid>
                         </Grid>
                         <List>{buildAutomata()}</List>

@@ -8,21 +8,13 @@ import { ParameterOrigin, ParameterType } from '../constants/models';
 
 export const isSetValid = (set, definitions) =>
     definitions.reduce(
-        (acc, definition) =>
-            acc &&
-            (definition.origin !== ParameterOrigin.USER ||
-                isParameterValid(set, definition)),
+        (acc, definition) => acc && (definition.origin !== ParameterOrigin.USER || isParameterValid(set, definition)),
         true
     );
 
 const isParameterValid = (set, definition) => {
-    const correspondingParameter = set.parameters.find(
-        (parameter) => parameter.name === definition.name
-    );
-    return (
-        correspondingParameter &&
-        isParameterValueValid(correspondingParameter.value, definition.type)
-    );
+    const correspondingParameter = set.parameters.find((parameter) => parameter.name === definition.name);
+    return correspondingParameter && isParameterValueValid(correspondingParameter.value, definition.type);
 };
 
 export const isParameterValueValid = (value, type) => {

@@ -6,14 +6,7 @@
  */
 
 import React, { useState } from 'react';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    TextField,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const RenameDialog = (props) => {
@@ -34,11 +27,7 @@ const RenameDialog = (props) => {
         handleClose();
     };
     return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="form-dialog-title"
-        >
+        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Rename</DialogTitle>
             <DialogContent>
                 <TextField

@@ -7,19 +7,9 @@
 
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    makeGetAutomaton,
-    makeIsAutomatonValid,
-    MappingSlice,
-} from '../redux/slices/Mapping';
-import {
-    makeGetAutomatonDefinition,
-    makeGetModels,
-} from '../redux/slices/Model';
-import {
-    getCurrentNetworkId,
-    getPropertyValues,
-} from '../redux/slices/Network';
+import { makeGetAutomaton, makeIsAutomatonValid, MappingSlice } from '../redux/slices/Mapping';
+import { makeGetAutomatonDefinition, makeGetModels } from '../redux/slices/Model';
+import { getCurrentNetworkId, getPropertyValues } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
 import { GroupEditionOrigin, SetType } from '../constants/models';
@@ -31,24 +21,16 @@ const AutomatonContainer = ({ index, editParameters }) => {
     const { model, setGroup } = automaton;
 
     const getAutomatonDefinition = useMemo(makeGetAutomatonDefinition, []);
-    const automatonDefinition = useSelector((state) =>
-        getAutomatonDefinition(state, model)
-    );
+    const automatonDefinition = useSelector((state) => getAutomatonDefinition(state, model));
 
     const isAutomatonValidSelector = useMemo(makeIsAutomatonValid, []);
-    const isAutomatonValid = useSelector((state) =>
-        isAutomatonValidSelector(state, index)
-    );
+    const isAutomatonValid = useSelector((state) => isAutomatonValidSelector(state, index));
     const getModels = useMemo(makeGetModels, []);
-    const models = useSelector((state) =>
-        getModels(state, AutomatonFamilyToAutomatonType[automaton.family])
-    );
+    const models = useSelector((state) => getModels(state, AutomatonFamilyToAutomatonType[automaton.family]));
 
     const networkPropertyValues = useSelector(getPropertyValues);
 
-    const controlledParameters = useSelector(
-        (state) => state.mappings.controlledParameters
-    );
+    const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
 
     const currentNetworkId = useSelector(getCurrentNetworkId);
     const dispatch = useDispatch();
@@ -128,14 +110,9 @@ const AutomatonContainer = ({ index, editParameters }) => {
                 changeModel('');
             }
         }
-        const mappedModel = models.find(
-            (modelToTest) => modelToTest.name === model
-        );
+        const mappedModel = models.find((modelToTest) => modelToTest.name === model);
         // Same process for sets group
-        if (
-            mappedModel &&
-            !mappedModel.groups.map((group) => group.name).includes(setGroup)
-        ) {
+        if (mappedModel && !mappedModel.groups.map((group) => group.name).includes(setGroup)) {
             if (mappedModel.groups.length === 1) {
                 changeParameters(mappedModel.groups[0].name);
             } else {

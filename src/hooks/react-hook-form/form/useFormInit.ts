@@ -8,11 +8,7 @@
 import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-const useFormInit = (
-    formApi: UseFormReturn,
-    defaultData: any,
-    dependencies: any[]
-) => {
+const useFormInit = (formApi: UseFormReturn, defaultData: any, dependencies: any[]) => {
     // using key to re-mount form when having change in dependencies list
     const [key, setKey] = useState<number>(0);
 

@@ -7,9 +7,7 @@
 
 import { store } from '../redux/store';
 const PREFIX_USER_ADMIN_SERVER_QUERIES =
-    process.env.REACT_APP_API_PREFIX +
-    process.env.REACT_APP_GATEWAY_PREFIX +
-    '/user-admin';
+    process.env.REACT_APP_API_PREFIX + process.env.REACT_APP_GATEWAY_PREFIX + '/user-admin';
 
 // If you want to use user-admin-server in dev mode you must avoid passing through gateway
 // and use the user-admin-server directly. SetupProxy should allow this.
@@ -37,25 +35,13 @@ function handleError(response) {
         const errorName = 'HttpResponseError : ';
         let error;
         const errorJson = parseError(text);
-        if (
-            errorJson &&
-            errorJson.status &&
-            errorJson.error &&
-            errorJson.message
-        ) {
+        if (errorJson && errorJson.status && errorJson.error && errorJson.message) {
             error = new Error(
-                errorName +
-                    errorJson.status +
-                    ' ' +
-                    errorJson.error +
-                    ', message : ' +
-                    errorJson.message
+                errorName + errorJson.status + ' ' + errorJson.error + ', message : ' + errorJson.message
             );
             error.status = errorJson.status;
         } else {
-            error = new Error(
-                errorName + response.status + ' ' + response.statusText
-            );
+            error = new Error(errorName + response.status + ' ' + response.statusText);
             error.status = response.status;
         }
         throw error;
@@ -64,9 +50,7 @@ function handleError(response) {
 
 function prepareRequest(init, token) {
     if (!(typeof init == 'undefined' || typeof init == 'object')) {
-        throw new TypeError(
-            'Argument 2 of backendFetch is not an object' + typeof init
-        );
+        throw new TypeError('Argument 2 of backendFetch is not an object' + typeof init);
     }
     const initCopy = Object.assign({}, init);
     initCopy.headers = new Headers(initCopy.headers || {});
@@ -76,9 +60,7 @@ function prepareRequest(init, token) {
 }
 
 function safeFetch(url, initCopy) {
-    return fetch(url, initCopy).then((response) =>
-        response.ok ? response : handleError(response)
-    );
+    return fetch(url, initCopy).then((response) => (response.ok ? response : handleError(response)));
 }
 
 export function backendFetch(url, init, token) {
@@ -99,16 +81,11 @@ export function backendFetchJson(url, init, token) {
 export function fetchValidateUser(user) {
     const sub = user?.profile?.sub;
     if (!sub) {
-        return Promise.reject(
-            new Error(
-                'Error : Fetching access for missing user.profile.sub : ' + user
-            )
-        );
+        return Promise.reject(new Error('Error : Fetching access for missing user.profile.sub : ' + user));
     }
 
     console.info(`Fetching access for user...`);
-    const CheckAccessUrl =
-        PREFIX_USER_ADMIN_SERVER_QUERIES + `/v1/users/${sub}`;
+    const CheckAccessUrl = PREFIX_USER_ADMIN_SERVER_QUERIES + `/v1/users/${sub}`;
     console.debug(CheckAccessUrl);
 
     return backendFetch(

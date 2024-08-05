@@ -5,11 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    createAsyncThunk,
-    createSelector,
-    createSlice,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import * as modelsAPI from '../../rest/modelsAPI';
 import RequestStatus from '../../constants/RequestStatus';
 import * as _ from 'lodash';
@@ -42,10 +38,7 @@ export const makeGetModels = () =>
     createSelector(
         (state) => state.models.models,
         (_, equipmentType) => equipmentType,
-        (models, equipmentType) =>
-            equipmentType
-                ? models.filter((model) => model.type === equipmentType)
-                : []
+        (models, equipmentType) => (equipmentType ? models.filter((model) => model.type === equipmentType) : [])
     );
 
 export const makeGetModel = () =>
@@ -70,21 +63,15 @@ export const makeGetSearchSets = () =>
     );
 // Reducers
 
-export const getModels = createAsyncThunk(
-    'models/get',
-    async (_arg, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await modelsAPI.getModels(token);
-    }
-);
+export const getModels = createAsyncThunk('models/get', async (_arg, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await modelsAPI.getModels(token);
+});
 
-export const getModelDefinitions = createAsyncThunk(
-    'models/definitions',
-    async (modelName, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await modelsAPI.getModelDefinitions(modelName, token);
-    }
-);
+export const getModelDefinitions = createAsyncThunk('models/definitions', async (modelName, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await modelsAPI.getModelDefinitions(modelName, token);
+});
 
 export const getModelSets = createAsyncThunk(
     'models/sets',
@@ -108,26 +95,18 @@ export const getSearchedModelSets = createAsyncThunk(
     async ({ modelName, groupName, groupType }, { getState }) => {
         if (groupName) {
             const token = getState()?.user.user?.id_token;
-            return await modelsAPI.getModelSets(
-                modelName,
-                groupName,
-                groupType ?? '',
-                token
-            );
+            return await modelsAPI.getModelSets(modelName, groupName, groupType ?? '', token);
         } else {
             return [];
         }
     }
 );
 
-export const postModelSetsGroup = createAsyncThunk(
-    'models/post',
-    async (strict, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        const setGroup = getState()?.models.currentGroup;
-        return await modelsAPI.postModelSetsGroup(setGroup, strict, token);
-    }
-);
+export const postModelSetsGroup = createAsyncThunk('models/post', async (strict, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    const setGroup = getState()?.models.currentGroup;
+    return await modelsAPI.postModelSetsGroup(setGroup, strict, token);
+});
 
 export const getAutomatonDefinitions = createAsyncThunk(
     'models/automaton/get/definitions',
@@ -150,20 +129,13 @@ const reducers = {
         state.currentGroup = DEFAULT_GROUP;
     },
     changeGroup: (state, action) => {
-        const { group, originalGroup, modelName, isAbsolute, matches } =
-            action.payload;
+        const { group, originalGroup, modelName, isAbsolute, matches } = action.payload;
         const currentGroup = _.cloneDeep(group);
         const definitions = state.parameterDefinitions;
         currentGroup.modelName = modelName;
         if (originalGroup) {
-            currentGroup.name =
-                currentGroup.name !== ''
-                    ? currentGroup.name
-                    : originalGroup.name;
-            currentGroup.type =
-                currentGroup.type !== ''
-                    ? currentGroup.type
-                    : originalGroup.type;
+            currentGroup.name = currentGroup.name !== '' ? currentGroup.name : originalGroup.name;
+            currentGroup.type = currentGroup.type !== '' ? currentGroup.type : originalGroup.type;
         } else if (isAbsolute) {
             currentGroup.type = SetType.FIXED;
         }
@@ -172,19 +144,13 @@ const reducers = {
                 type === SetType.PREFIX ? matchName : ''
             }`;
         // Create blank sets if needed
-        if (
-            (currentGroup.type === SetType.PREFIX ||
-                currentGroup.type === SetType.SUFFIX) &&
-            matches.length > 0
-        ) {
+        if ((currentGroup.type === SetType.PREFIX || currentGroup.type === SetType.SUFFIX) && matches.length > 0) {
             const newSets = matches
                 .filter(
                     (match) =>
                         _.findIndex(
                             currentGroup.sets,
-                            (set) =>
-                                set.name ===
-                                matchingSetName(match, currentGroup.type)
+                            (set) => set.name === matchingSetName(match, currentGroup.type)
                         ) === -1
                 )
                 .map((matchToAdd) => ({
@@ -210,12 +176,10 @@ const reducers = {
                     currentSet['name'] = currentGroup.name;
                 }
                 if (currentSet.parameters?.length === 0) {
-                    currentSet['parameters'] = definitions.map(
-                        (definition) => ({
-                            name: definition.name,
-                            value: definition.fixedValue ?? '',
-                        })
-                    );
+                    currentSet['parameters'] = definitions.map((definition) => ({
+                        name: definition.name,
+                        value: definition.fixedValue ?? '',
+                    }));
                 }
             }
         }
@@ -226,9 +190,7 @@ const reducers = {
         const newSets = action.payload;
 
         _.forEach(Array.isArray(newSets) ? newSets : [newSets], (newSet) => {
-            const setIndex = state.currentGroup.sets.findIndex(
-                (setToTest) => setToTest.name === newSet.name
-            );
+            const setIndex = state.currentGroup.sets.findIndex((setToTest) => setToTest.name === newSet.name);
             if (setIndex === -1) {
                 state.currentGroup.sets.push(newSet);
             } else {
@@ -253,10 +215,7 @@ const extraReducers = (builder) => {
     builder.addCase(getModelSets.fulfilled, (state, action) => {
         const receivedSets = action.payload;
 
-        state.currentGroup.sets = _.uniqBy(
-            receivedSets.concat(state.currentGroup.sets),
-            'name'
-        );
+        state.currentGroup.sets = _.uniqBy(receivedSets.concat(state.currentGroup.sets), 'name');
         state.status = RequestStatus.SUCCESS;
     });
     builder.addCase(getSearchedModelSets.fulfilled, (state, action) => {
@@ -268,18 +227,14 @@ const extraReducers = (builder) => {
     builder.addCase(postModelSetsGroup.fulfilled, (state, action) => {
         const updatedGroup = action.payload;
         state.currentGroup = DEFAULT_GROUP;
-        const updatedModel = state.models.find(
-            (model) => model.name === updatedGroup.modelName
-        );
+        const updatedModel = state.models.find((model) => model.name === updatedGroup.modelName);
         if (updatedModel) {
             const simpleUpdatedGroup = {
                 name: updatedGroup.name,
                 type: updatedGroup.type,
                 setsNumber: updatedGroup.sets.length,
             };
-            const groupIndex = updatedModel.groups.findIndex(
-                (group) => group.name === simpleUpdatedGroup.name
-            );
+            const groupIndex = updatedModel.groups.findIndex((group) => group.name === simpleUpdatedGroup.name);
             if (groupIndex === -1) {
                 updatedModel.groups.push(simpleUpdatedGroup);
             } else {
@@ -293,10 +248,7 @@ const extraReducers = (builder) => {
 
         // received automatonDefinitions is an array of automaton models
         // => aggregate this array into an object map for the reason of simplicity
-        state.automatonDefinitions = automatonDefinitions.reduce(
-            (obj, automaton) => ({ ...obj, ...automaton }),
-            {}
-        );
+        state.automatonDefinitions = automatonDefinitions.reduce((obj, automaton) => ({ ...obj, ...automaton }), {});
         state.status = RequestStatus.SUCCESS;
     });
 };

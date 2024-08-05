@@ -5,11 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    createAsyncThunk,
-    createSelector,
-    createSlice,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
 import { createParameterSelector } from '../selectorUtil';
@@ -27,32 +23,19 @@ export const getPropertyValues = (state) => state.network.propertyValues;
 
 // parameter selectors
 // property param object {equipmentType, fullProperty, ..}
-const getEquipmentTypeParam = createParameterSelector(
-    ({ equipmentType }) => equipmentType
-);
-const getFullPropertyParam = createParameterSelector(
-    ({ fullProperty }) => fullProperty
-);
+const getEquipmentTypeParam = createParameterSelector(({ equipmentType }) => equipmentType);
+const getFullPropertyParam = createParameterSelector(({ fullProperty }) => fullProperty);
 
 // Selectors
 export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
     propertyValues
-        ?.find(
-            (propertyValuesItem) => propertyValuesItem.type === equipmentType
-        )
+        ?.find((propertyValuesItem) => propertyValuesItem.type === equipmentType)
         ?.values[fullProperty?.name]?.map((value) =>
-            fullProperty?.type === PropertyType.BOOLEAN
-                ? value === 'true'
-                : value
+            fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value
         ) ?? [];
 
 export const makeGetNetworkValues = () =>
-    createSelector(
-        getPropertyValues,
-        getEquipmentTypeParam,
-        getFullPropertyParam,
-        getNetworkValues
-    );
+    createSelector(getPropertyValues, getEquipmentTypeParam, getFullPropertyParam, getNetworkValues);
 
 export const getCurrentNetworkId = (state) => state.network.currentNetwork;
 
@@ -61,21 +44,16 @@ export const getCurrentNetworkObj = createSelector(
     (state) => state.network.currentNetwork,
     (state) => state.network.knownNetworks,
     (currentNetwork, knownNetworks) => {
-        return knownNetworks?.find(
-            (knowNetwork) => knowNetwork.networkId === currentNetwork
-        );
+        return knownNetworks?.find((knowNetwork) => knowNetwork.networkId === currentNetwork);
     }
 );
 
 // Reducers
 
-export const getPropertyValuesFromFile = createAsyncThunk(
-    'network/getValuesFromFile',
-    async (file, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await networkAPI.getPropertyValuesFromFile(file, token);
-    }
-);
+export const getPropertyValuesFromFile = createAsyncThunk('network/getValuesFromFile', async (file, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await networkAPI.getPropertyValuesFromFile(file, token);
+});
 
 export const getPropertyValuesFromNetworkId = createAsyncThunk(
     'network/getValuesFromId',
@@ -85,13 +63,10 @@ export const getPropertyValuesFromNetworkId = createAsyncThunk(
     }
 );
 
-export const getNetworkNames = createAsyncThunk(
-    'network/getNetworks',
-    async (_args, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await networkAPI.getNetworksName(token);
-    }
-);
+export const getNetworkNames = createAsyncThunk('network/getNetworks', async (_args, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await networkAPI.getNetworksName(token);
+});
 
 const reducers = {
     cleanNetwork: (state) => {
@@ -117,27 +92,18 @@ const extraReducers = (builder) => {
     builder.addCase(getPropertyValuesFromFile.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
-    builder.addCase(
-        getPropertyValuesFromNetworkId.fulfilled,
-        (state, action) => {
-            state.status = RequestStatus.SUCCESS;
-            const { propertyValues, networkId } = action.payload;
-            state.propertyValues = propertyValues;
-            state.currentNetwork = networkId;
-        }
-    );
-    builder.addCase(
-        getPropertyValuesFromNetworkId.rejected,
-        (state, _action) => {
-            state.status = RequestStatus.ERROR;
-        }
-    );
-    builder.addCase(
-        getPropertyValuesFromNetworkId.pending,
-        (state, _action) => {
-            state.status = RequestStatus.PENDING;
-        }
-    );
+    builder.addCase(getPropertyValuesFromNetworkId.fulfilled, (state, action) => {
+        state.status = RequestStatus.SUCCESS;
+        const { propertyValues, networkId } = action.payload;
+        state.propertyValues = propertyValues;
+        state.currentNetwork = networkId;
+    });
+    builder.addCase(getPropertyValuesFromNetworkId.rejected, (state, _action) => {
+        state.status = RequestStatus.ERROR;
+    });
+    builder.addCase(getPropertyValuesFromNetworkId.pending, (state, _action) => {
+        state.status = RequestStatus.PENDING;
+    });
     builder.addCase(getNetworkNames.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         state.knownNetworks = action.payload;

@@ -13,13 +13,7 @@ const API_URL =
         : process.env.REACT_APP_URI) +
     '/mappings';
 
-export function postMapping(
-    mappingName,
-    rules,
-    automata,
-    controlledParameters,
-    token
-) {
+export function postMapping(mappingName, rules, automata, controlledParameters, token) {
     return backendFetchJson(
         `${API_URL}/${mappingName}`,
         {

@@ -5,12 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    BaseOperands,
-    EnumOperands,
-    NumberOperands,
-    StringOperands,
-} from '../constants/operands';
+import { BaseOperands, EnumOperands, NumberOperands, StringOperands } from '../constants/operands';
 import { EquipmentProperties } from '../constants/equipmentDefinition';
 import { SetType } from '../constants/models';
 import { AutomatonFamily } from '../constants/automatonDefinition';

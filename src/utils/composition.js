@@ -51,29 +51,20 @@ export function convertCompositionArrayToString(compositionArray) {
     return compositionStringArray.join(' ');
 }
 
-export const checkCompositionArrayValidity = (
-    compositionArray,
-    isInner = false
-) => {
+export const checkCompositionArrayValidity = (compositionArray, isInner = false) => {
     let arrayOperation;
     return compositionArray
         .map((compositionElement, index) => {
             if (index % 2 === 0) {
                 if (Array.isArray(compositionElement)) {
-                    return checkCompositionArrayValidity(
-                        compositionElement,
-                        true
-                    );
+                    return checkCompositionArrayValidity(compositionElement, true);
                 }
                 return /filter\d+\b/.test(compositionElement);
             }
             if (index === 1) {
                 arrayOperation = compositionElement;
             }
-            return (
-                /(&&|\|\|)/.test(compositionElement) &&
-                (!isInner || compositionElement === arrayOperation)
-            );
+            return /(&&|\|\|)/.test(compositionElement) && (!isInner || compositionElement === arrayOperation);
         })
         .reduce((acc, element) => acc && element);
 };
