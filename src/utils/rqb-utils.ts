@@ -25,8 +25,7 @@ const visitRqbQuery = (
 };
 
 const idUpdaterFactory =
-    (idProvider: () => UUID, force: boolean) =>
-    (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => {
+    (idProvider: () => UUID, force: boolean) => (ruleOrGroup: RuleTypeExport | RuleGroupTypeExport) => {
         if (force || (ruleOrGroup && !ruleOrGroup.id)) {
             ruleOrGroup.id = idProvider() as UUID;
         }
@@ -37,9 +36,6 @@ const idUpdaterFactory =
  * @param query a rqb query
  * @param force if true force setting a new uuid, otherwise do not set id if already exist
  */
-export const enrichIdRqbQuery = (
-    query: RuleGroupTypeExport,
-    force: boolean
-) => {
+export const enrichIdRqbQuery = (query: RuleGroupTypeExport, force: boolean) => {
     return visitRqbQuery(query, idUpdaterFactory(uuid4 as () => UUID, force));
 };

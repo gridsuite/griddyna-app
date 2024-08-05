@@ -34,82 +34,33 @@ const Rule = (props) => {
         controlledParameters = false,
         isNetworkAttached = false,
     } = props;
-    const {
-        type,
-        mappedModel,
-        setGroup,
-        groupType,
-        hasFilter,
-        matches = [],
-    } = rule;
+    const { type, mappedModel, setGroup, groupType, hasFilter, matches = [] } = rule;
 
     return (
-        <Paper
-            elevation={24}
-            sx={mergeSx(
-                styles.rulePaper,
-                !isRuleValid && styles.invalidRulePaper
-            )}
-        >
+        <Paper elevation={24} sx={mergeSx(styles.rulePaper, !isRuleValid && styles.invalidRulePaper)}>
             <Grid container>
-                <Grid
-                    item
-                    xs={12}
-                    md={4}
-                    container
-                    paddingRight={1}
-                    direction={'column'}
-                    justifyContent={'flex-start'}
-                >
+                <Grid item xs={12} md={4} container paddingRight={1} direction={'column'} justifyContent={'flex-start'}>
                     <Grid item container>
                         <Grid item container xs>
-                            <Grid
-                                item
-                                container
-                                justify={'flex-start'}
-                                spacing={1}
-                                alignItems={'baseline'}
-                            >
+                            <Grid item container justify={'flex-start'} spacing={1} alignItems={'baseline'}>
                                 <Grid item>
-                                    <Typography variant="subtitle2">
-                                        {equipmentLabel}
-                                    </Typography>
+                                    <Typography variant="subtitle2">{equipmentLabel}</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="subtitle1">
-                                        {type}
-                                    </Typography>
+                                    <Typography variant="subtitle1">{type}</Typography>
                                 </Grid>
                                 <Grid item>
-                                    <Typography variant="subtitle1">
-                                        :
-                                    </Typography>
+                                    <Typography variant="subtitle1">:</Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item xs={'auto'} paddingLeft={1}>
-                            <DeleteButton
-                                onClick={deleteRule}
-                                tooltip={deleteRuleLabel}
-                            />
-                            <CopyButton
-                                onClick={copyRule}
-                                tooltip={copyRuleLabel}
-                            />
+                            <DeleteButton onClick={deleteRule} tooltip={deleteRuleLabel} />
+                            <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
                         </Grid>
                     </Grid>
-                    <Grid
-                        item
-                        container
-                        sx={styles.ruleModel}
-                        direction="column"
-                        justifyContent={'flex-start'}
-                    >
-                        <ModelSelect
-                            model={mappedModel}
-                            models={models}
-                            changeModel={changeModel}
-                        />
+                    <Grid item container sx={styles.ruleModel} direction="column" justifyContent={'flex-start'}>
+                        <ModelSelect model={mappedModel} models={models} changeModel={changeModel} />
                         <SetGroupSelect
                             model={mappedModel}
                             models={models}
@@ -122,14 +73,7 @@ const Rule = (props) => {
                         />
                     </Grid>
                 </Grid>
-                <Grid
-                    item
-                    container
-                    xs={12}
-                    md={8}
-                    direction="column"
-                    justifyContent={'flex-start'}
-                >
+                <Grid item container xs={12} md={8} direction="column" justifyContent={'flex-start'}>
                     {children}
                 </Grid>
                 <Grid item xs={12} md={12} paddingTop={1}>
@@ -137,15 +81,11 @@ const Rule = (props) => {
                         <Paper sx={styles.matches}>
                             <Grid container>
                                 <Grid item xs={4}>
-                                    <Typography variant="subtitle1">
-                                        {`${matchesLabel} :`}
-                                    </Typography>
+                                    <Typography variant="subtitle1">{`${matchesLabel} :`}</Typography>
                                 </Grid>
                                 <Grid item xs={8}>
                                     <Typography>
-                                        {matches.length > 0
-                                            ? `${matches.join(', ')}`
-                                            : noMatchesLabel}
+                                        {matches.length > 0 ? `${matches.join(', ')}` : noMatchesLabel}
                                     </Typography>
                                 </Grid>
                             </Grid>

@@ -35,9 +35,4 @@ export const EnumOperands = {
     NOT_IN: 'NOT_IN',
 };
 
-export const multipleOperands = [
-    NumberOperands.IN,
-    NumberOperands.NOT_IN,
-    StringOperands.IN,
-    StringOperands.NOT_IN,
-];
+export const multipleOperands = [NumberOperands.IN, NumberOperands.NOT_IN, StringOperands.IN, StringOperands.NOT_IN];

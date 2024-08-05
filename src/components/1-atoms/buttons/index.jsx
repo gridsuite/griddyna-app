@@ -19,43 +19,21 @@ import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 
-export const AddIconButton = (props) => (
-    <IconButton icon={<AddCircleIcon />} {...props} />
-);
+export const AddIconButton = (props) => <IconButton icon={<AddCircleIcon />} {...props} />;
 
-export const ConvertButton = (props) => (
-    <IconButton icon={<PublishOutlinedIcon />} {...props} />
-);
+export const ConvertButton = (props) => <IconButton icon={<PublishOutlinedIcon />} {...props} />;
 
-export const SaveButton = (props) => (
-    <IconButton icon={<SaveOutlinedIcon />} {...props} />
-);
+export const SaveButton = (props) => <IconButton icon={<SaveOutlinedIcon />} {...props} />;
 
-export const DeleteButton = (props) => (
-    <IconButton icon={<DeleteIcon />} {...props} />
-);
+export const DeleteButton = (props) => <IconButton icon={<DeleteIcon />} {...props} />;
 
-export const CopyButton = (props) => (
-    <IconButton icon={<FileCopyIcon />} {...props} />
-);
+export const CopyButton = (props) => <IconButton icon={<FileCopyIcon />} {...props} />;
 
-export const AttachButton = (props) => (
-    <IconButton icon={<AttachFileIcon />} {...props} />
-);
+export const AttachButton = (props) => <IconButton icon={<AttachFileIcon />} {...props} />;
 
-export const ChangeButton = (props) => (
-    <IconButton icon={<LoopIcon />} {...props} />
-);
+export const ChangeButton = (props) => <IconButton icon={<LoopIcon />} {...props} />;
 
-export const ResetButton = (props) => (
-    <IconButton icon={<RestartAltIcon />} {...props} />
-);
-export const ApplyOneButton = (props) => (
-    <IconButton icon={<DoneIcon />} {...props} />
-);
-export const ApplyAllButton = (props) => (
-    <IconButton icon={<DoneAllIcon />} {...props} />
-);
-export const EditButton = (props) => (
-    <IconButton icon={<SaveAsIcon />} {...props} />
-);
+export const ResetButton = (props) => <IconButton icon={<RestartAltIcon />} {...props} />;
+export const ApplyOneButton = (props) => <IconButton icon={<DoneIcon />} {...props} />;
+export const ApplyAllButton = (props) => <IconButton icon={<DoneAllIcon />} {...props} />;
+export const EditButton = (props) => <IconButton icon={<SaveAsIcon />} {...props} />;

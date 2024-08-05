@@ -5,11 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    createAsyncThunk,
-    createSelector,
-    createSlice,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
@@ -90,50 +86,39 @@ const transformMapping = (receivedMapping) => {
     if (!mapping['automata']) {
         mapping['automata'] = [];
     } else {
-        mapping['automata'] = receivedMapping.automata.map(
-            (receivedAutomaton) => {
-                const { family, model, setGroup, properties } =
-                    receivedAutomaton;
+        mapping['automata'] = receivedMapping.automata.map((receivedAutomaton) => {
+            const { family, model, setGroup, properties } = receivedAutomaton;
 
-                return {
-                    family,
-                    model,
-                    setGroup,
-                    properties: properties
-                        ? properties.map((elem) => ({
-                              name: elem.name,
-                              value: elem.value,
-                              type: elem.type,
-                          }))
-                        : [],
-                };
-            }
-        );
+            return {
+                family,
+                model,
+                setGroup,
+                properties: properties
+                    ? properties.map((elem) => ({
+                          name: elem.name,
+                          value: elem.value,
+                          type: elem.type,
+                      }))
+                    : [],
+            };
+        });
     }
 
     return mapping;
 };
 
 const filterRulesByType = (rules, type) =>
-    rules.filter(
-        (rule) => type === '' || rule.type === '' || rule.type === type
-    );
+    rules.filter((rule) => type === '' || rule.type === '' || rule.type === type);
 
 const filterAutomataByFamily = (automata, family) =>
-    automata.filter(
-        (automaton) =>
-            family === '' ||
-            automaton.family === '' ||
-            automaton.family === family
-    );
+    automata.filter((automaton) => family === '' || automaton.family === '' || automaton.family === family);
 
 // Base selectors that used in create selector, IMPORTANT base selectors must not create new array or object
 // in order to make memorization effectively
 export const getRules = (state) => state.mappings.rules;
 export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 export const getAutomata = (state) => state.mappings.automata;
-export const getFilteredAutomatonFamily = (state) =>
-    state.mappings.filteredAutomatonFamily;
+export const getFilteredAutomatonFamily = (state) => state.mappings.filteredAutomatonFamily;
 export const getActiveMapping = (state) => state.mappings.activeMapping;
 
 // Selectors
@@ -151,18 +136,9 @@ export const getGroupedRulesNumber = createSelector(getRules, (rules) => {
     return groupedRulesNumber;
 });
 
-export const getRulesNumber = createSelector(
-    getRules,
-    getFilteredRuleType,
-    (rules, filteredRuleType) => {
-        return rules.filter(
-            (rule) =>
-                filteredRuleType === '' ||
-                rule.type === '' ||
-                rule.type === filteredRuleType
-        ).length;
-    }
-);
+export const getRulesNumber = createSelector(getRules, getFilteredRuleType, (rules, filteredRuleType) => {
+    return rules.filter((rule) => filteredRuleType === '' || rule.type === '' || rule.type === filteredRuleType).length;
+});
 
 export const getAutomataNumber = createSelector(
     getAutomata,
@@ -177,22 +153,19 @@ export const getAutomataNumber = createSelector(
     }
 );
 
-export const getGroupedAutomataNumber = createSelector(
-    getAutomata,
-    (automata) => {
-        const groupedAutomataNumber = {};
-        Object.values(AutomatonFamily).forEach((family) => {
-            groupedAutomataNumber[family] = 0;
-        });
+export const getGroupedAutomataNumber = createSelector(getAutomata, (automata) => {
+    const groupedAutomataNumber = {};
+    Object.values(AutomatonFamily).forEach((family) => {
+        groupedAutomataNumber[family] = 0;
+    });
 
-        automata.forEach((automaton) => {
-            if (automaton.family !== '') {
-                groupedAutomataNumber[automaton.family]++;
-            }
-        });
-        return groupedAutomataNumber;
-    }
-);
+    automata.forEach((automaton) => {
+        if (automaton.family !== '') {
+            groupedAutomataNumber[automaton.family]++;
+        }
+    });
+    return groupedAutomataNumber;
+});
 
 export const makeGetRule = () =>
     createSelector(
@@ -202,8 +175,7 @@ export const makeGetRule = () =>
         (rules, filteredRuleType, ruleIndex) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
             const foundRule = filteredRules[ruleIndex];
-            const { type, mappedModel, setGroup, groupType, matches } =
-                foundRule;
+            const { type, mappedModel, setGroup, groupType, matches } = foundRule;
             // Filter fetched separately to avoid re-renders
             return {
                 type,
@@ -222,10 +194,7 @@ export const makeGetAutomaton = () =>
         getFilteredAutomatonFamily,
         (_state, automatonIndex) => automatonIndex,
         (automata, filteredAutomatonFamily, automatonIndex) => {
-            const filteredAutomata = filterAutomataByFamily(
-                automata,
-                filteredAutomatonFamily
-            );
+            const filteredAutomata = filterAutomataByFamily(automata, filteredAutomatonFamily);
             return filteredAutomata[automatonIndex];
         }
     );
@@ -247,9 +216,7 @@ const checkFilterValidity = (filter, isLast) => {
         return !!isLast;
     }
     const isQueryExist = !_.isEmpty(filter.rules);
-    const isQueryValid =
-        isQueryExist &&
-        rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules);
+    const isQueryValid = isQueryExist && rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules);
     return isQueryValid;
 };
 
@@ -287,9 +254,7 @@ const checkAutomatonValidity = (automaton, automatonDefinition = {}) => {
             (acc, propertyName) =>
                 acc &&
                 (automatonDefinition[propertyName].isRequired
-                    ? !!automaton.properties.find(
-                          (elem) => elem.name === propertyName
-                      )?.value
+                    ? !!automaton.properties.find((elem) => elem.name === propertyName)?.value
                     : true),
             true
         );
@@ -321,8 +286,7 @@ const getRuleTabsValid = (rules) => {
     const rulesByTypeMap = indexingRuleByType(rules);
     Object.keys(rulesByTypeMap).forEach((type) => {
         ruleTabsValidMap[type] = rulesByTypeMap[type].reduce(
-            (acc, rule, index, origin) =>
-                acc && checkRuleValidity(rule, index === origin.length - 1),
+            (acc, rule, index, origin) => acc && checkRuleValidity(rule, index === origin.length - 1),
             true
         );
     });
@@ -334,12 +298,7 @@ const getAutomatonTabsValid = (automata, automatonDefinitions) => {
     const automataByTypeMap = indexingAutomatonByFamily(automata);
     Object.keys(automataByTypeMap).forEach((family) => {
         automatonTabsValidMap[family] = automataByTypeMap[family].reduce(
-            (acc, automaton) =>
-                acc &&
-                checkAutomatonValidity(
-                    automaton,
-                    automatonDefinitions[automaton.model]
-                ),
+            (acc, automaton) => acc && checkAutomatonValidity(automaton, automatonDefinitions[automaton.model]),
             true
         );
     });
@@ -366,16 +325,8 @@ export const makeIsAutomatonValid = () =>
         getFilteredAutomatonFamily,
         (state) => state.models.automatonDefinitions,
         (_state, automatonIndex) => automatonIndex,
-        (
-            automata,
-            filteredAutomatonFamily,
-            automatonDefinitions,
-            automatonIndex
-        ) => {
-            const filteredAutomata = filterAutomataByFamily(
-                automata,
-                filteredAutomatonFamily
-            );
+        (automata, filteredAutomatonFamily, automatonDefinitions, automatonIndex) => {
+            const filteredAutomata = filterAutomataByFamily(automata, filteredAutomatonFamily);
             return checkAutomatonValidity(
                 filteredAutomata[automatonIndex],
                 automatonDefinitions[filteredAutomata[automatonIndex].model]
@@ -401,20 +352,11 @@ export const isMappingValid = createSelector(
     getAutomata,
     (name, automatonDefinitions, rules, automata) => {
         const ruleTabsValid = getRuleTabsValid(rules);
-        const automatonTabsValid = getAutomatonTabsValid(
-            automata,
-            automatonDefinitions
-        );
+        const automatonTabsValid = getAutomatonTabsValid(automata, automatonDefinitions);
         return (
             !!name &&
-            Object.keys(ruleTabsValid).reduce(
-                (acc, type) => acc && ruleTabsValid[type],
-                true
-            ) &&
-            Object.keys(automatonTabsValid).reduce(
-                (acc, family) => acc && automatonTabsValid[family],
-                true
-            )
+            Object.keys(ruleTabsValid).reduce((acc, type) => acc && ruleTabsValid[type], true) &&
+            Object.keys(automatonTabsValid).reduce((acc, family) => acc && automatonTabsValid[family], true)
         );
     }
 );
@@ -434,16 +376,8 @@ export const isModified = createSelector(
     (state) => state.mappings.automata,
     (state) => state.mappings.mappings,
 
-    (
-        activeName,
-        controlledParameters,
-        activeRules,
-        activeAutomata,
-        savedMappings
-    ) => {
-        const foundMapping = savedMappings.find(
-            (mapping) => mapping.name === activeName
-        );
+    (activeName, controlledParameters, activeRules, activeAutomata, savedMappings) => {
+        const foundMapping = savedMappings.find((mapping) => mapping.name === activeName);
 
         function ignoreInternalProperties(rule) {
             const ruleToTest = _.cloneDeep(rule);
@@ -454,10 +388,7 @@ export const isModified = createSelector(
             // for filter with rqb query, need to transform to json 'json_without_ids'
             // because the query fetched from back does not contain id in query
             if (rule?.filter?.rules) {
-                const queryJson = formatQuery(
-                    rule?.filter?.rules,
-                    'json_without_ids'
-                );
+                const queryJson = formatQuery(rule?.filter?.rules, 'json_without_ids');
                 delete ruleToTest.filter.rules;
                 ruleToTest.filter.queryJson = queryJson;
             }
@@ -466,29 +397,23 @@ export const isModified = createSelector(
         }
 
         return !(
-            _.isEqual(
-                activeRules.map(ignoreInternalProperties),
-                foundMapping.rules.map(ignoreInternalProperties)
-            ) &&
+            _.isEqual(activeRules.map(ignoreInternalProperties), foundMapping.rules.map(ignoreInternalProperties)) &&
             _.isEqual(activeAutomata, foundMapping.automata) &&
             _.isEqual(controlledParameters, foundMapping.controlledParameters)
         );
     }
 );
 
-const canCreateNewMappingCheck = (mappings) =>
-    !mappings.some((mapping) => mapping.name === DEFAULT_NAME);
+const canCreateNewMappingCheck = (mappings) => !mappings.some((mapping) => mapping.name === DEFAULT_NAME);
 
-export const canCreateNewMapping = (state) =>
-    canCreateNewMappingCheck(state.mappings.mappings);
+export const canCreateNewMapping = (state) => canCreateNewMappingCheck(state.mappings.mappings);
 
 export const makeGetMatches = () =>
     createSelector(
         getRules,
         getFilteredRuleType,
         (_state, { isRule, index }) => (isRule ? index : -1),
-        (rules, filteredRuleType, index) =>
-            filterRulesByType(rules, filteredRuleType)[index]?.matches ?? []
+        (rules, filteredRuleType, index) => filterRulesByType(rules, filteredRuleType)[index]?.matches ?? []
     );
 
 // Reducers
@@ -498,125 +423,88 @@ const augmentFilter = (filter, equipmentType) => ({
     type: 'EXPERT',
     rules: exportExpertRules(filter.rules),
 });
-export const postMapping = createAsyncThunk(
-    'mappings/post',
-    async (name, { getState }) => {
-        const state = getState();
-        const token = state?.user.user?.id_token;
-        const mappingName = name ?? state?.mappings.activeMapping;
-        const rules =
-            name && name !== state?.mappings.activeMapping
-                ? state?.mappings.mappings.find(
-                      (mapping) => mapping.name === name
-                  )?.rules
-                : state?.mappings.rules;
+export const postMapping = createAsyncThunk('mappings/post', async (name, { getState }) => {
+    const state = getState();
+    const token = state?.user.user?.id_token;
+    const mappingName = name ?? state?.mappings.activeMapping;
+    const rules =
+        name && name !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.name === name)?.rules
+            : state?.mappings.rules;
 
-        const augmentedRules = rules.map((rule) => {
-            let augmentedRule = _.cloneDeep(rule);
-            augmentedRule.equipmentType = rule.type.toUpperCase();
+    const augmentedRules = rules.map((rule) => {
+        let augmentedRule = _.cloneDeep(rule);
+        augmentedRule.equipmentType = rule.type.toUpperCase();
 
-            if (augmentedRule.filter) {
-                augmentedRule.filter = augmentFilter(
-                    augmentedRule.filter,
-                    augmentedRule.equipmentType
-                );
-            }
+        if (augmentedRule.filter) {
+            augmentedRule.filter = augmentFilter(augmentedRule.filter, augmentedRule.equipmentType);
+        }
 
-            delete augmentedRule.matches;
-            return augmentedRule;
-        });
+        delete augmentedRule.matches;
+        return augmentedRule;
+    });
 
-        const automata =
-            name && name !== state?.mappings.activeMapping
-                ? state?.mappings.mappings.find(
-                      (mapping) => mapping.name === name
-                  )?.automata
-                : state?.mappings.automata;
-        const formattedAutomata = automata.map((automaton) => {
-            const { family, model, setGroup, properties } = automaton;
-            return {
-                family,
-                model,
-                setGroup,
-                properties: properties
-                    ? properties.map((elem) => ({
-                          name: elem.name,
-                          value: elem.value,
-                          type: elem.type,
-                      }))
-                    : [],
-            };
-        });
-
-        const controlledParameters =
-            name && name !== state?.mappings.activeMapping
-                ? state?.mappings.mappings.find(
-                      (mapping) => mapping.name === name
-                  )?.controlledParameters
-                : state?.mappings.controlledParameters;
-
-        return await mappingsAPI.postMapping(
-            mappingName,
-            augmentedRules,
-            formattedAutomata,
-            controlledParameters,
-            token
-        );
-    }
-);
-
-export const getMappings = createAsyncThunk(
-    'mappings/get',
-    async (_arg, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.getMappings(token);
-    }
-);
-
-export const deleteMapping = createAsyncThunk(
-    'mappings/delete',
-    async (mappingName, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.deleteMapping(mappingName, token);
-    }
-);
-
-export const renameMapping = createAsyncThunk(
-    'mappings/rename',
-    async ({ nameToReplace, newName }, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.renameMapping(nameToReplace, newName, token);
-    }
-);
-
-export const copyMapping = createAsyncThunk(
-    'mappings/copy',
-    async ({ originalName, copyName }, { getState }) => {
-        const token = getState()?.user.user?.id_token;
-        return await mappingsAPI.copyMapping(originalName, copyName, token);
-    }
-);
-
-export const getNetworkMatchesFromRule = createAsyncThunk(
-    'mappings/matchNetwork',
-    async (ruleIndex, { getState }) => {
-        const state = getState();
-        const token = state?.user.user?.id_token;
-        const { rules, filteredRuleType } = state?.mappings;
-        const networkId = state?.network.currentNetwork;
-        const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
-        const ruleToMatch = {
-            ruleIndex,
-            equipmentType: foundRule.type,
-            filter: augmentFilter(foundRule.filter, foundRule.type),
+    const automata =
+        name && name !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.name === name)?.automata
+            : state?.mappings.automata;
+    const formattedAutomata = automata.map((automaton) => {
+        const { family, model, setGroup, properties } = automaton;
+        return {
+            family,
+            model,
+            setGroup,
+            properties: properties
+                ? properties.map((elem) => ({
+                      name: elem.name,
+                      value: elem.value,
+                      type: elem.type,
+                  }))
+                : [],
         };
-        return await networkAPI.getNetworkMatchesFromRule(
-            networkId,
-            ruleToMatch,
-            token
-        );
-    }
-);
+    });
+
+    const controlledParameters =
+        name && name !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.name === name)?.controlledParameters
+            : state?.mappings.controlledParameters;
+
+    return await mappingsAPI.postMapping(mappingName, augmentedRules, formattedAutomata, controlledParameters, token);
+});
+
+export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await mappingsAPI.getMappings(token);
+});
+
+export const deleteMapping = createAsyncThunk('mappings/delete', async (mappingName, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await mappingsAPI.deleteMapping(mappingName, token);
+});
+
+export const renameMapping = createAsyncThunk('mappings/rename', async ({ nameToReplace, newName }, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await mappingsAPI.renameMapping(nameToReplace, newName, token);
+});
+
+export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalName, copyName }, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    return await mappingsAPI.copyMapping(originalName, copyName, token);
+});
+
+export const getNetworkMatchesFromRule = createAsyncThunk('mappings/matchNetwork', async (ruleIndex, { getState }) => {
+    const state = getState();
+    const token = state?.user.user?.id_token;
+    const { rules, filteredRuleType } = state?.mappings;
+    const networkId = state?.network.currentNetwork;
+    const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
+    const ruleToMatch = {
+        ruleIndex,
+        equipmentType: foundRule.type,
+        filter: augmentFilter(foundRule.filter, foundRule.type),
+    };
+    return await networkAPI.getNetworkMatchesFromRule(networkId, ruleToMatch, token);
+});
 
 // daisy-chain action creators
 export const makeChangeFilterValueThenGetNetworkMatches = () => {
@@ -676,34 +564,23 @@ const reducers = {
     },
     changeRuleModel: (state, action) => {
         const { index, mappedModel } = action.payload;
-        const selectedRule = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[index];
+        const selectedRule = filterRulesByType(state.rules, state.filteredRuleType)[index];
         selectedRule.mappedModel = mappedModel;
     },
     changeRuleParameters: (state, action) => {
         const { index, parameters, type } = action.payload;
-        const selectedRule = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[index];
+        const selectedRule = filterRulesByType(state.rules, state.filteredRuleType)[index];
         selectedRule.setGroup = parameters;
         selectedRule.groupType = type;
     },
     deleteRule: (state, action) => {
         const { index } = action.payload;
-        const ruleToDelete = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[index];
+        const ruleToDelete = filterRulesByType(state.rules, state.filteredRuleType)[index];
         state.rules = state.rules.filter((rule) => rule !== ruleToDelete);
     },
     copyRule: (state, action) => {
         const { index } = action.payload;
-        const ruleToCopy = _.cloneDeep(
-            filterRulesByType(state.rules, state.filteredRuleType)[index]
-        );
+        const ruleToCopy = _.cloneDeep(filterRulesByType(state.rules, state.filteredRuleType)[index]);
 
         // force reset rule with new id
         ruleToCopy.id = uuid4();
@@ -726,19 +603,13 @@ const reducers = {
         // provide an id for new filter
         newFilter.id = uuid4();
 
-        const selectedRule = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex];
+        const selectedRule = filterRulesByType(state.rules, state.filteredRuleType)[ruleIndex];
         selectedRule.matches = DEFAULT_RULE.matches;
         selectedRule.filter = newFilter;
     },
     changeFilterQuery: (state, action) => {
         const { ruleIndex, value: newQuery } = action.payload;
-        const modifiedRule = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex];
+        const modifiedRule = filterRulesByType(state.rules, state.filteredRuleType)[ruleIndex];
         const modifiedFilter = modifiedRule.filter;
         if (modifiedFilter) {
             // set with new query value
@@ -747,27 +618,18 @@ const reducers = {
             // check whether query is modified by comparing to the query in original rule
             const activeMapping = state.activeMapping;
             const savedMappings = state.mappings;
-            const foundMapping = savedMappings.find(
-                (mapping) => mapping.name === activeMapping
-            );
+            const foundMapping = savedMappings.find((mapping) => mapping.name === activeMapping);
 
-            const foundRule = foundMapping.rules?.find(
-                (rule) => rule?.filter?.id === modifiedFilter?.id
-            );
+            const foundRule = foundMapping.rules?.find((rule) => rule?.filter?.id === modifiedFilter?.id);
 
             const oldQuery = foundRule?.filter?.rules;
-            const isDirty =
-                formatQuery(oldQuery, 'json_without_ids') !==
-                formatQuery(newQuery, 'json_without_ids');
+            const isDirty = formatQuery(oldQuery, 'json_without_ids') !== formatQuery(newQuery, 'json_without_ids');
             modifiedRule.filterDirty = isDirty;
         }
     },
     deleteFilter: (state, action) => {
         const { ruleIndex } = action.payload;
-        const ruleToModify = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex];
+        const ruleToModify = filterRulesByType(state.rules, state.filteredRuleType)[ruleIndex];
         ruleToModify.filter = undefined;
     },
     // Automaton
@@ -778,19 +640,13 @@ const reducers = {
     },
     changeAutomatonFamily: (state, action) => {
         const { index, family } = action.payload;
-        const selectedAutomaton = filterAutomataByFamily(
-            state.automata,
-            state.filteredAutomatonFamily
-        )[index];
+        const selectedAutomaton = filterAutomataByFamily(state.automata, state.filteredAutomatonFamily)[index];
         selectedAutomaton.family = family;
         selectedAutomaton.model = DEFAULT_AUTOMATON.model;
     },
     changeAutomatonModel: (state, action) => {
         const { index, model } = action.payload;
-        const selectedAutomaton = filterAutomataByFamily(
-            state.automata,
-            state.filteredAutomatonFamily
-        )[index];
+        const selectedAutomaton = filterAutomataByFamily(state.automata, state.filteredAutomatonFamily)[index];
         selectedAutomaton.model = model;
 
         // clean all others automaton model properties
@@ -799,22 +655,14 @@ const reducers = {
     },
     changeAutomatonParameters: (state, action) => {
         const { index, parameters } = action.payload;
-        const selectedAutomaton = filterAutomataByFamily(
-            state.automata,
-            state.filteredAutomatonFamily
-        )[index];
+        const selectedAutomaton = filterAutomataByFamily(state.automata, state.filteredAutomatonFamily)[index];
         selectedAutomaton.setGroup = parameters;
     },
     changeAutomatonPropertyValue: (state, action) => {
         const { index, property } = action.payload;
-        const selectedAutomaton = filterAutomataByFamily(
-            state.automata,
-            state.filteredAutomatonFamily
-        )[index];
+        const selectedAutomaton = filterAutomataByFamily(state.automata, state.filteredAutomatonFamily)[index];
 
-        const foundIndex = selectedAutomaton.properties.findIndex(
-            (elem) => elem.name === property.name
-        );
+        const foundIndex = selectedAutomaton.properties.findIndex((elem) => elem.name === property.name);
 
         if (foundIndex !== -1) {
             selectedAutomaton.properties[foundIndex].value = property.value;
@@ -824,21 +672,13 @@ const reducers = {
     },
     deleteAutomaton: (state, action) => {
         const { index } = action.payload;
-        const automatonToDelete = filterAutomataByFamily(
-            state.automata,
-            state.filteredAutomatonFamily
-        )[index];
-        state.automata = state.automata.filter(
-            (automaton) => automaton !== automatonToDelete
-        );
+        const automatonToDelete = filterAutomataByFamily(state.automata, state.filteredAutomatonFamily)[index];
+        state.automata = state.automata.filter((automaton) => automaton !== automatonToDelete);
     },
     copyAutomaton: (state, action) => {
         const { index } = action.payload;
         const automatonToCopy = _.cloneDeep(
-            filterAutomataByFamily(
-                state.automata,
-                state.filteredAutomatonFamily
-            )[index]
+            filterAutomataByFamily(state.automata, state.filteredAutomatonFamily)[index]
         );
         state.automata.push(automatonToCopy);
     },
@@ -859,9 +699,7 @@ const reducers = {
     },
     selectMapping: (state, action) => {
         const { name } = action.payload;
-        const mappingToUse = state.mappings.find(
-            (mapping) => mapping.name === name
-        );
+        const mappingToUse = state.mappings.find((mapping) => mapping.name === name);
         if (mappingToUse) {
             state.rules = mappingToUse.rules;
             state.automata = mappingToUse.automata;
@@ -881,15 +719,12 @@ const extraReducers = (builder) => {
     builder.addCase(postMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const receivedMapping = transformMapping(action.payload);
-        const foundMapping = state.mappings.find(
-            (mapping) => mapping.name === receivedMapping.name
-        );
+        const foundMapping = state.mappings.find((mapping) => mapping.name === receivedMapping.name);
         if (foundMapping) {
             // --- reset the original mapping --- //
             foundMapping.rules = receivedMapping.rules;
             foundMapping.automata = receivedMapping.automata;
-            foundMapping.controlledParameters =
-                receivedMapping.controlledParameters;
+            foundMapping.controlledParameters = receivedMapping.controlledParameters;
             if (receivedMapping.name === state.activeMapping) {
                 // --- reset the active mapping --- //
                 state.rules = assignArray(
@@ -899,8 +734,7 @@ const extraReducers = (builder) => {
                     ['matches'] // keep previous matches for active rules when assigning with new received mapping rules
                 );
                 state.automata = receivedMapping.automata;
-                state.controlledParameters =
-                    receivedMapping.controlledParameters;
+                state.controlledParameters = receivedMapping.controlledParameters;
             }
         }
     });
@@ -923,9 +757,7 @@ const extraReducers = (builder) => {
     builder.addCase(deleteMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const name = action.payload;
-        state.mappings = state.mappings.filter(
-            (mapping) => mapping.name !== name
-        );
+        state.mappings = state.mappings.filter((mapping) => mapping.name !== name);
         if (name === state.activeMapping) {
             state.rules = [];
             state.automata = [];
@@ -940,9 +772,7 @@ const extraReducers = (builder) => {
     });
     builder.addCase(renameMapping.fulfilled, (state, action) => {
         const { oldName, newName } = action.payload;
-        const mappingToRename = state.mappings.find(
-            (mapping) => mapping.name === oldName
-        );
+        const mappingToRename = state.mappings.find((mapping) => mapping.name === oldName);
         if (mappingToRename) {
             mappingToRename.name = newName;
         }
@@ -976,10 +806,7 @@ const extraReducers = (builder) => {
             return;
         }
 
-        const foundRule = filterRulesByType(
-            state.rules,
-            state.filteredRuleType
-        )[ruleIndex];
+        const foundRule = filterRulesByType(state.rules, state.filteredRuleType)[ruleIndex];
         foundRule.matches = matchedIds;
     });
     builder.addCase(getNetworkMatchesFromRule.rejected, (state, _action) => {

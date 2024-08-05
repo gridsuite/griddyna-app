@@ -21,10 +21,7 @@ export interface AutomatonPropertiesProps {
     automaton: Automaton;
     automatonDefinition: AutomationDefinition;
     networkPropertyValues: EquipmentValues[];
-    onChangeProperty: (
-        propertyName: string,
-        propertyType?: string
-    ) => (propertyValue: string) => void;
+    onChangeProperty: (propertyName: string, propertyType?: string) => (propertyValue: string) => void;
 }
 
 const AutomatonProperties = ({
@@ -36,95 +33,54 @@ const AutomatonProperties = ({
     const propertyNames = Object.keys(automatonDefinition);
 
     const handleChangeProperty = useCallback(
-        (propertyName: string, propertyType?: string) =>
-            (propertyValue: string) => {
-                onChangeProperty(
-                    propertyName,
-                    propertyType
-                )(
-                    // convert an array to a string content with VALUE_DELIMITER
-                    _.isArray(propertyValue)
-                        ? _.join(propertyValue, VALUE_DELIMITER)
-                        : propertyValue
-                );
-            },
+        (propertyName: string, propertyType?: string) => (propertyValue: string) => {
+            onChangeProperty(
+                propertyName,
+                propertyType
+            )(
+                // convert an array to a string content with VALUE_DELIMITER
+                _.isArray(propertyValue) ? _.join(propertyValue, VALUE_DELIMITER) : propertyValue
+            );
+        },
         [onChangeProperty]
     );
     return (
         propertyNames?.length > 0 && (
             <Grid container sx={styles.gridContainer}>
                 {propertyNames.map((propertyName, index) => {
-                    const propertyDefinition =
-                        automatonDefinition[propertyName];
-                    const property = automaton.properties.find(
-                        (elem) => elem.name === propertyName
-                    );
+                    const propertyDefinition = automatonDefinition[propertyName];
+                    const property = automaton.properties.find((elem) => elem.name === propertyName);
 
                     // convert a string content with VALUE_DELIMITER to an array
                     const propertyValue = propertyDefinition.multiple
-                        ? _.map(
-                              _.split(property?.value, VALUE_DELIMITER),
-                              _.trim
-                          )
+                        ? _.map(_.split(property?.value, VALUE_DELIMITER), _.trim)
                         : property?.value ?? '';
 
                     const options =
                         propertyDefinition?.values ??
                         (propertyDefinition?.mapping &&
-                            getPossibleOptionsForProperty(
-                                propertyDefinition?.mapping,
-                                networkPropertyValues
-                            )) ??
+                            getPossibleOptionsForProperty(propertyDefinition?.mapping, networkPropertyValues)) ??
                         [];
 
                     return (
-                        <Grid
-                            key={propertyName}
-                            container
-                            item
-                            justifyContent={'flex-start'}
-                            paddingLeft={1}
-                        >
+                        <Grid key={propertyName} container item justifyContent={'flex-start'} paddingLeft={1}>
                             <Grid container>
-                                <Grid
-                                    item
-                                    xs={4}
-                                    sx={styles.label}
-                                    alignItems={'center'}
-                                >
+                                <Grid item xs={4} sx={styles.label} alignItems={'center'}>
                                     <Typography>{`${propertyDefinition.label} :`}</Typography>
                                 </Grid>
                                 <Grid item xs={8} sx={styles.value}>
                                     <Autocomplete
-                                        isFree={
-                                            !(options && options.length > 0)
-                                        }
+                                        isFree={!(options && options.length > 0)}
                                         isMultiple={propertyDefinition.multiple}
-                                        value={
-                                            propertyValue ??
-                                            (propertyDefinition.multiple
-                                                ? []
-                                                : propertyValue)
-                                        }
-                                        onChange={handleChangeProperty(
-                                            propertyName,
-                                            propertyDefinition?.type
-                                        )}
+                                        value={propertyValue ?? (propertyDefinition.multiple ? [] : propertyValue)}
+                                        onChange={handleChangeProperty(propertyName, propertyDefinition?.type)}
                                         options={options}
-                                        type={
-                                            propertyDefinition?.type ===
-                                            'number'
-                                                ? 'number'
-                                                : undefined
-                                        }
+                                        type={propertyDefinition?.type === 'number' ? 'number' : undefined}
                                         error={
                                             propertyValue === '' ||
-                                            (Array.isArray(propertyValue) &&
-                                                propertyValue.length === 0)
+                                            (Array.isArray(propertyValue) && propertyValue.length === 0)
                                         }
-                                        ignoreReset={
-                                            !(options && options.length > 0)
-                                        }
+                                        ignoreReset={!(options && options.length > 0)}
                                         fixedWidth
                                     />
                                 </Grid>

@@ -26,17 +26,9 @@ function VerticalStepper(props) {
                         labelProps.error = true;
                     }
                     return (
-                        <Step
-                            key={elem.value}
-                            completed={completed[elem.value]}
-                        >
-                            <StepButton
-                                color="inherit"
-                                onClick={handleStep(elem.value)}
-                            >
-                                <StepLabel {...labelProps}>
-                                    {elem.label}
-                                </StepLabel>
+                        <Step key={elem.value} completed={completed[elem.value]}>
+                            <StepButton color="inherit" onClick={handleStep(elem.value)}>
+                                <StepLabel {...labelProps}>{elem.label}</StepLabel>
                             </StepButton>
                         </Step>
                     );

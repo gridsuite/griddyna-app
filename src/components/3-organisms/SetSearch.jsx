@@ -6,19 +6,8 @@
  */
 
 import React, { useState } from 'react';
-import {
-    ApplyAllButton,
-    ApplyOneButton,
-    ResetButton,
-} from '../1-atoms/buttons';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Divider,
-    Grid,
-    Typography,
-} from '@mui/material';
+import { ApplyAllButton, ApplyOneButton, ResetButton } from '../1-atoms/buttons';
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { styles } from './SetSearchStyle';
@@ -43,15 +32,7 @@ SetSearch.propTypes = {
 };
 
 function SetSearch(props) {
-    const {
-        typeFilter,
-        modelsSelector,
-        groupsSelector,
-        setsSelector,
-        onChangeGroup,
-        onReset,
-        onApply,
-    } = props;
+    const { typeFilter, modelsSelector, groupsSelector, setsSelector, onChangeGroup, onReset, onApply } = props;
 
     const [expanded, setExpanded] = useState(true);
 
@@ -131,15 +112,9 @@ function SetSearch(props) {
 
     // render
     return (
-        <Accordion
-            expanded={expanded}
-            onChange={() => setExpanded((prev) => !prev)}
-            elevation={10}
-        >
+        <Accordion expanded={expanded} onChange={() => setExpanded((prev) => !prev)} elevation={10}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography sx={styles.labelRoot}>
-                    {SET_SEARCH_LABEL}
-                </Typography>
+                <Typography sx={styles.labelRoot}>{SET_SEARCH_LABEL}</Typography>
             </AccordionSummary>
             <Divider />
             <AccordionDetails style={{ display: 'inherit' }}>
@@ -151,12 +126,7 @@ function SetSearch(props) {
                     direction={'column'}
                 >
                     <Grid item xs={12}>
-                        <Grid
-                            container
-                            justifyContent={'flex-start'}
-                            alignItems={'stretch'}
-                            direction={'column'}
-                        >
+                        <Grid container justifyContent={'flex-start'} alignItems={'stretch'} direction={'column'}>
                             <Grid item xs={12}>
                                 <Select
                                     label={'Model'}
@@ -196,29 +166,15 @@ function SetSearch(props) {
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                        <Grid
-                            container
-                            justifyContent="flex-end"
-                            alignItems={'flex-start'}
-                            spacing={1}
-                        >
+                        <Grid container justifyContent="flex-end" alignItems={'flex-start'} spacing={1}>
                             <Grid item>
-                                <ApplyOneButton
-                                    onClick={handleApplyOne}
-                                    tooltip={APPLY_ONE_SET_SEARCH_LABEL}
-                                />
+                                <ApplyOneButton onClick={handleApplyOne} tooltip={APPLY_ONE_SET_SEARCH_LABEL} />
                             </Grid>
                             <Grid item>
-                                <ApplyAllButton
-                                    onClick={handleApplyAll}
-                                    tooltip={APPLY_ALL_SET_SEARCH_LABEL}
-                                />
+                                <ApplyAllButton onClick={handleApplyAll} tooltip={APPLY_ALL_SET_SEARCH_LABEL} />
                             </Grid>
                             <Grid item>
-                                <ResetButton
-                                    onClick={handleReset}
-                                    tooltip={RESET_SET_SEARCH_LABEL}
-                                />
+                                <ResetButton onClick={handleReset} tooltip={RESET_SET_SEARCH_LABEL} />
                             </Grid>
                         </Grid>
                     </Grid>

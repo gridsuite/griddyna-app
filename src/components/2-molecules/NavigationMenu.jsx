@@ -7,13 +7,7 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-    IconButton,
-    List,
-    ListItem,
-    ListItemSecondaryAction,
-    ListItemText,
-} from '@mui/material';
+import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import ContextMenu from './ContextMenu';
@@ -81,11 +75,7 @@ const NavigationMenu = (props) => {
                         >
                             <ListItemText primary={item.name} />
                             <ListItemSecondaryAction>
-                                <IconButton
-                                    edge="end"
-                                    id={item.name}
-                                    onClick={setMenu}
-                                >
+                                <IconButton edge="end" id={item.name} onClick={setMenu}>
                                     <MoreVertIcon />
                                 </IconButton>
                             </ListItemSecondaryAction>
@@ -94,20 +84,10 @@ const NavigationMenu = (props) => {
                 })}
             </List>
             {addItem !== undefined && (
-                <NewButton
-                    onClick={addItem}
-                    sx={styles.new}
-                    disabled={!canAdd}
-                    tooltip={addTooltip}
-                />
+                <NewButton onClick={addItem} sx={styles.new} disabled={!canAdd} tooltip={addTooltip} />
             )}
             {anchor !== null && (
-                <ContextMenu
-                    anchorEl={anchor}
-                    open
-                    onClose={closeContextMenu}
-                    options={buildOptions(anchor.id)}
-                />
+                <ContextMenu anchorEl={anchor} open onClose={closeContextMenu} options={buildOptions(anchor.id)} />
             )}
             {openDialog !== null && (
                 <RenameDialog
