@@ -5,11 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    createSlice,
-    PayloadAction,
-    SliceCaseReducers,
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { User } from 'oidc-client';
 import {
     AuthenticationRouterErrorAction,
@@ -52,48 +48,28 @@ const reducers: SliceCaseReducers<UserState> = {
         state.user = action.payload.user;
     },
 
-    [SIGNIN_CALLBACK_ERROR]: (
-        state,
-        action: PayloadAction<SignInCallbackErrorAction>
-    ) => {
+    [SIGNIN_CALLBACK_ERROR]: (state, action: PayloadAction<SignInCallbackErrorAction>) => {
         state.signInCallbackError = action.payload.signInCallbackError;
     },
 
-    [UNAUTHORIZED_USER_INFO]: (
-        state,
-        action: PayloadAction<UnauthorizedUserAction>
-    ) => {
-        state.authenticationRouterError =
-            action.payload.authenticationRouterError;
+    [UNAUTHORIZED_USER_INFO]: (state, action: PayloadAction<UnauthorizedUserAction>) => {
+        state.authenticationRouterError = action.payload.authenticationRouterError;
     },
 
     [LOGOUT_ERROR]: (state, action: PayloadAction<LogoutErrorAction>) => {
-        state.authenticationRouterError =
-            action.payload.authenticationRouterError;
+        state.authenticationRouterError = action.payload.authenticationRouterError;
     },
 
-    [USER_VALIDATION_ERROR]: (
-        state,
-        action: PayloadAction<UserValidationErrorAction>
-    ) => {
-        state.authenticationRouterError =
-            action.payload.authenticationRouterError;
+    [USER_VALIDATION_ERROR]: (state, action: PayloadAction<UserValidationErrorAction>) => {
+        state.authenticationRouterError = action.payload.authenticationRouterError;
     },
 
-    [RESET_AUTHENTICATION_ROUTER_ERROR]: (
-        state,
-        action: PayloadAction<AuthenticationRouterErrorAction>
-    ) => {
-        state.authenticationRouterError =
-            action.payload.authenticationRouterError;
+    [RESET_AUTHENTICATION_ROUTER_ERROR]: (state, action: PayloadAction<AuthenticationRouterErrorAction>) => {
+        state.authenticationRouterError = action.payload.authenticationRouterError;
     },
 
-    [SHOW_AUTH_INFO_LOGIN]: (
-        state,
-        action: PayloadAction<ShowAuthenticationRouterLoginAction>
-    ) => {
-        state.showAuthenticationRouterLogin =
-            action.payload.showAuthenticationRouterLogin;
+    [SHOW_AUTH_INFO_LOGIN]: (state, action: PayloadAction<ShowAuthenticationRouterLoginAction>) => {
+        state.showAuthenticationRouterLogin = action.payload.showAuthenticationRouterLogin;
     },
 };
 

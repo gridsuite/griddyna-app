@@ -73,7 +73,7 @@ Selectors are the functions called by the Containers to retrieve the data needed
 derived data should be obtained from a selector.
 
 A selector has for argument the state of the slice. It is possible to add other arguments to selector by using
-`React.useMemo` and `RTK.createSelector` to customise the fetched data.  `RTK.createSelector can also be used to combine
+`React.useMemo` and `RTK.createSelector` to customise the fetched data. `RTK.createSelector can also be used to combine
 reducers to create a more complex one.
 
 _There is no inherent reason to not have Selectors fetching data from separate slices, however, in most cases, it is
@@ -107,7 +107,7 @@ To check dependencies license compatibility with this project one locally, pleas
 npm run licenses-check
 ```
 
-Notes : 
+Notes :
 * Check [license-checker-config.json](license-checker-config.json) for license white list and exclusion.
 If you need to update this list, please inform organization's owners.
 * Excluded dependencies :

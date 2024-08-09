@@ -21,27 +21,19 @@ export default class DynamicMappingSvc extends ApiService {
         );
     }
 
-    public async postMapping(
-        mappingName: string,
-        rules: unknown,
-        automata: unknown,
-        controlledParameters: boolean
-    ) {
-        return await this.backendFetchJson(
-            `${this.getPrefix(1)}/mappings/${mappingName}`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: mappingName,
-                    rules,
-                    automata,
-                    controlledParameters,
-                }),
-            }
-        );
+    public async postMapping(mappingName: string, rules: unknown, automata: unknown, controlledParameters: boolean) {
+        return await this.backendFetchJson(`${this.getPrefix(1)}/mappings/${mappingName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: mappingName,
+                rules,
+                automata,
+                controlledParameters,
+            }),
+        });
     }
 
     public async getMappings() {
@@ -49,26 +41,18 @@ export default class DynamicMappingSvc extends ApiService {
     }
 
     public async deleteMapping(mappingName: string) {
-        return await this.backendFetchText(
-            `${this.getPrefix(1)}/mappings/${mappingName}`,
-            'DELETE'
-        );
+        return await this.backendFetchText(`${this.getPrefix(1)}/mappings/${mappingName}`, 'DELETE');
     }
 
     public async renameMapping(nameToReplace: string, newName: string) {
         return await this.backendFetchJson(
-            `${this.getPrefix(
-                1
-            )}/mappings/rename/${nameToReplace}/to/${newName}`,
+            `${this.getPrefix(1)}/mappings/rename/${nameToReplace}/to/${newName}`,
             'POST'
         );
     }
 
     public async copyMapping(originalName: string, copyName: string) {
-        return await this.backendFetchJson(
-            `${this.getPrefix(1)}/mappings/copy/${originalName}/to/${copyName}`,
-            'POST'
-        );
+        return await this.backendFetchJson(`${this.getPrefix(1)}/mappings/copy/${originalName}/to/${copyName}`, 'POST');
     }
 
     public async getPropertyValuesFromFile(networkFile: string | Blob) {
@@ -81,29 +65,21 @@ export default class DynamicMappingSvc extends ApiService {
     }
 
     public async getPropertyValuesFromId(networkId: UUID) {
-        return await this.backendFetchJson(
-            `${this.getPrefix(1)}/network/${networkId}/values`
-        );
+        return await this.backendFetchJson(`${this.getPrefix(1)}/network/${networkId}/values`);
     }
 
     public async getNetworksName() {
         return await this.backendFetchJson(`${this.getPrefix(1)}/network/`);
     }
 
-    public async getNetworkMatchesFromRule(
-        networkId: UUID,
-        ruleToMatch: unknown
-    ) {
-        return await this.backendFetchJson(
-            `${this.getPrefix(1)}/network/${networkId}/matches/rule`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(ruleToMatch),
-            }
-        );
+    public async getNetworkMatchesFromRule(networkId: UUID, ruleToMatch: unknown) {
+        return await this.backendFetchJson(`${this.getPrefix(1)}/network/${networkId}/matches/rule`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ruleToMatch),
+        });
     }
 
     public async getModels() {
@@ -111,28 +87,18 @@ export default class DynamicMappingSvc extends ApiService {
     }
 
     public async getModelDefinitions(modelName: string) {
-        return await this.backendFetchJson(
-            `${this.getPrefix(1)}/models/${modelName}/parameters/definitions`
-        );
+        return await this.backendFetchJson(`${this.getPrefix(1)}/models/${modelName}/parameters/definitions`);
     }
 
-    public async getModelSets(
-        modelName: string,
-        groupName: string,
-        groupType: unknown
-    ) {
+    public async getModelSets(modelName: string, groupName: string, groupType: unknown) {
         return await this.backendFetchJson(
-            `${this.getPrefix(
-                1
-            )}/models/${modelName}/parameters/sets/${groupName}/${groupType}`
+            `${this.getPrefix(1)}/models/${modelName}/parameters/sets/${groupName}/${groupType}`
         );
     }
 
     public async postModelSetsGroup(setGroup: any, strict: boolean) {
         return await this.backendFetchJson(
-            `${this.getPrefix(1)}/models/${setGroup.modelName}/parameters/sets${
-                strict ? '/strict' : ''
-            }`,
+            `${this.getPrefix(1)}/models/${setGroup.modelName}/parameters/sets${strict ? '/strict' : ''}`,
             {
                 method: 'POST',
                 headers: {
@@ -144,8 +110,6 @@ export default class DynamicMappingSvc extends ApiService {
     }
 
     public async getAutomatonDefinitions() {
-        return await this.backendFetchJson(
-            `${this.getPrefix(1)}/models/automaton-definitions`
-        );
+        return await this.backendFetchJson(`${this.getPrefix(1)}/models/automaton-definitions`);
     }
 }

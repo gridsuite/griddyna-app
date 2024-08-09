@@ -12,8 +12,7 @@ import PropTypes from 'prop-types';
 import { mergeSx } from '@gridsuite/commons-ui';
 import { styles } from './HeaderStyles';
 
-const outdatedLabel =
-    'Generated elements are outdated, re-generate them to delete this warning';
+const outdatedLabel = 'Generated elements are outdated, re-generate them to delete this warning';
 
 const Header = (props) => {
     const {
@@ -61,24 +60,12 @@ const Header = (props) => {
                     {`${currentNetwork?.networkName ?? ''}`}
                 </Typography>
             </Grid>
-            <Grid
-                item
-                xs="auto"
-                sx={mergeSx(styles.gridButton, styles.buttonIcon)}
-            >
+            <Grid item xs="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
                 {save !== undefined && (
-                    <SaveButton
-                        onClick={save}
-                        tooltip={saveTooltip}
-                        disabled={!isModified || !isValid}
-                    />
+                    <SaveButton onClick={save} tooltip={saveTooltip} disabled={!isModified || !isValid} />
                 )}
-                {attach !== undefined && (
-                    <AttachButton onClick={attach} tooltip={attachTooltip} />
-                )}
-                {addElement !== undefined && (
-                    <AddIconButton onClick={addElement} tooltip={addTooltip} />
-                )}
+                {attach !== undefined && <AttachButton onClick={attach} tooltip={attachTooltip} />}
+                {addElement !== undefined && <AddIconButton onClick={addElement} tooltip={addTooltip} />}
             </Grid>
         </Grid>
     );

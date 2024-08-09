@@ -49,22 +49,14 @@ export default function useSetSearch(currentGroup, currentSet) {
             }
 
             const updatedSets = isAll
-                ? reduce(
-                      currentGroup?.sets,
-                      (acc, set) => [...acc, cloneDeep(set)],
-                      []
-                  )
+                ? reduce(currentGroup?.sets, (acc, set) => [...acc, cloneDeep(set)], [])
                 : [cloneDeep(currentSet)];
 
             // fill with values in the provided sets
             forEach(updatedSets, (updatedSet) => {
                 forEach(updatedSet?.parameters, (parameter) => {
-                    const templateParameter = find(
-                        set?.parameters,
-                        (elem) => elem.name === parameter.name
-                    );
-                    templateParameter &&
-                        (parameter.value = templateParameter?.value);
+                    const templateParameter = find(set?.parameters, (elem) => elem.name === parameter.name);
+                    templateParameter && (parameter.value = templateParameter?.value);
                 });
             });
 

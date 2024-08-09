@@ -7,20 +7,9 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    Navigate,
-    Route,
-    Routes,
-    useLocation,
-    useMatch,
-    useNavigate,
-} from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
-import {
-    createTheme,
-    StyledEngineProvider,
-    ThemeProvider,
-} from '@mui/material/styles';
+import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import {
     AuthenticationRouter,
     CardErrorBoundary,
@@ -36,12 +25,7 @@ import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import AppPackage from '../../package.json';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
-import {
-    appLocalSrv,
-    appsMetadataSrv,
-    studySrv,
-    userAdminSrv,
-} from '../services';
+import { appLocalSrv, appsMetadataSrv, studySrv, userAdminSrv } from '../services';
 
 const lightTheme = createTheme({
     palette: {
@@ -70,15 +54,9 @@ const App = () => {
 
     const user = useSelector((state) => state.user.user);
 
-    const signInCallbackError = useSelector(
-        (state) => state.user.signInCallbackError
-    );
-    const authenticationRouterError = useSelector(
-        (state) => state.user.authenticationRouterError
-    );
-    const showAuthenticationRouterLogin = useSelector(
-        (state) => state.user.showAuthenticationRouterLogin
-    );
+    const signInCallbackError = useSelector((state) => state.user.signInCallbackError);
+    const authenticationRouterError = useSelector((state) => state.user.authenticationRouterError);
+    const showAuthenticationRouterLogin = useSelector((state) => state.user.showAuthenticationRouterLogin);
 
     const [userManager, setUserManager] = useState(noUserManager);
 
@@ -86,10 +64,7 @@ const App = () => {
 
     const navigate = useNavigate();
 
-    const onLogoClick = useCallback(
-        () => navigate('/', { replace: true }),
-        [navigate]
-    );
+    const onLogoClick = useCallback(() => navigate('/', { replace: true }), [navigate]);
 
     const dispatch = useDispatch();
 
@@ -122,9 +97,7 @@ const App = () => {
         // need subfunction when async as suggested by rule react-hooks/exhaustive-deps
         (async function initializeAuthentication() {
             try {
-                console.debug(
-                    `dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`
-                );
+                console.debug(`dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`);
                 const initAuth =
                     process.env.REACT_APP_USE_AUTHENTICATION === 'true'
                         ? initializeAuthenticationProd(
@@ -149,11 +122,7 @@ const App = () => {
             }
         })();
         // Note: dispatch and initialMatchSilentRenewCallbackUrl won't change
-    }, [
-        authenticationDispatch,
-        initialMatchSilentRenewCallbackUrl,
-        initialMatchSigninCallbackUrl,
-    ]);
+    }, [authenticationDispatch, initialMatchSilentRenewCallbackUrl, initialMatchSigninCallbackUrl]);
 
     useEffect(() => {
         if (user !== null) {
@@ -163,10 +132,7 @@ const App = () => {
         }
     }, [user]);
 
-    const additionalModulesFetcher = useCallback(
-        () => studySrv.getServersInfos('dyna'),
-        []
-    );
+    const additionalModulesFetcher = useCallback(() => studySrv.getServersInfos('dyna'), []);
     const globalVersionFetcher = useCallback(
         () => appsMetadataSrv.fetchVersion().then((res) => res?.deployVersion),
         []
@@ -203,21 +169,11 @@ const App = () => {
                                 />
                                 <Route
                                     path="/sign-in-callback"
-                                    element={
-                                        <Navigate
-                                            replace
-                                            to={getPreLoginPath() || '/'}
-                                        />
-                                    }
+                                    element={<Navigate replace to={getPreLoginPath() || '/'} />}
                                 />
                                 <Route
                                     path="/logout-callback"
-                                    element={
-                                        <h1>
-                                            Error: logout failed; you are still
-                                            logged in.
-                                        </h1>
-                                    }
+                                    element={<h1>Error: logout failed; you are still logged in.</h1>}
                                 />
                                 <Route
                                     path="*"
@@ -232,12 +188,8 @@ const App = () => {
                             <AuthenticationRouter
                                 userManager={userManager}
                                 signInCallbackError={signInCallbackError}
-                                authenticationRouterError={
-                                    authenticationRouterError
-                                }
-                                showAuthenticationRouterLogin={
-                                    showAuthenticationRouterLogin
-                                }
+                                authenticationRouterError={authenticationRouterError}
+                                showAuthenticationRouterLogin={showAuthenticationRouterLogin}
                                 dispatch={authenticationDispatch}
                                 navigate={navigate}
                                 location={location}
@@ -253,7 +205,5 @@ const App = () => {
 export default App;
 
 function ValidateUserDev() {
-    return new Promise((resolve) =>
-        window.setTimeout(() => resolve(true), 500)
-    );
+    return new Promise((resolve) => window.setTimeout(() => resolve(true), 500));
 }

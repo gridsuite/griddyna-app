@@ -8,12 +8,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid, Tooltip, Typography } from '@mui/material';
-import {
-    CustomReactQueryBuilder,
-    EXPERT_FILTER_FIELDS,
-    EXPERT_FILTER_QUERY,
-    mergeSx,
-} from '@gridsuite/commons-ui';
+import { CustomReactQueryBuilder, EXPERT_FILTER_FIELDS, EXPERT_FILTER_QUERY, mergeSx } from '@gridsuite/commons-ui';
 import { useIntl } from 'react-intl';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';
@@ -25,8 +20,7 @@ const deleteFilterLabel = 'Delete filter';
 const noFilterLabel = 'no other filter applies';
 const ruleWithoutFilter = 'Only last rule can have empty filter';
 const Filter = (props) => {
-    const { isValid, equipmentType, newFilter, deleteFilter, hasFilter } =
-        props;
+    const { isValid, equipmentType, newFilter, deleteFilter, hasFilter } = props;
 
     const intl = useIntl();
 
@@ -46,34 +40,16 @@ const Filter = (props) => {
                     <Typography>{filterLabel}</Typography>
                 </Grid>
                 <Grid item xs={'auto'} paddingLeft={1}>
-                    <AddIconButton
-                        onClick={newFilter}
-                        tooltip={addFilterLabel}
-                        disabled={hasFilter}
-                    />
-                    <DeleteButton
-                        onClick={deleteFilter}
-                        isDirty
-                        tooltip={deleteFilterLabel}
-                        disabled={!hasFilter}
-                    />
+                    <AddIconButton onClick={newFilter} tooltip={addFilterLabel} disabled={hasFilter} />
+                    <DeleteButton onClick={deleteFilter} isDirty tooltip={deleteFilterLabel} disabled={!hasFilter} />
                 </Grid>
             </Grid>
             {hasFilter ? (
-                <CustomReactQueryBuilder
-                    name={EXPERT_FILTER_QUERY}
-                    fields={translatedFields}
-                />
+                <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
             ) : (
                 <Grid item xs="auto">
                     <Box display="flex" alignItems="center">
-                        <Typography
-                            variant="subtitle2"
-                            sx={mergeSx(
-                                styles.noFilter,
-                                !isValid && styles.invalid
-                            )}
-                        >
+                        <Typography variant="subtitle2" sx={mergeSx(styles.noFilter, !isValid && styles.invalid)}>
                             {noFilterLabel}
                         </Typography>
                         {!isValid && (

@@ -15,12 +15,7 @@ const PageTemplate = (props) => {
     return (
         <Box sx={styles.height}>
             <Box sx={styles.menuBox}>
-                <Drawer
-                    anchor="left"
-                    variant="persistent"
-                    open={isMenuOpen}
-                    sx={styles.menu}
-                >
+                <Drawer anchor="left" variant="persistent" open={isMenuOpen} sx={styles.menu}>
                     {menu}
                 </Drawer>
             </Box>

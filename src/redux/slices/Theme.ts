@@ -5,17 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {
-    Action,
-    createSlice,
-    PayloadAction,
-    SliceCaseReducers,
-} from '@reduxjs/toolkit';
-import {
-    getLocalStorageTheme,
-    GsTheme,
-    saveLocalStorageTheme,
-} from '@gridsuite/commons-ui';
+import { Action, createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
+import { getLocalStorageTheme, GsTheme, saveLocalStorageTheme } from '@gridsuite/commons-ui';
 
 export const SELECT_THEME = 'SELECT_THEME';
 type SelectThemeAction = Action<typeof SELECT_THEME> & {

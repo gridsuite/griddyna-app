@@ -19,12 +19,9 @@ module.exports = function (app) {
         })
     );
     app.use(
-        createProxyMiddleware(
-            'http://localhost:5036/api/dynamic-mapping-server',
-            {
-                pathRewrite: { '^/api/dynamic-mapping-server/': '/' },
-            }
-        )
+        createProxyMiddleware('http://localhost:5036/api/dynamic-mapping-server', {
+            pathRewrite: { '^/api/dynamic-mapping-server/': '/' },
+        })
     );
     app.use(
         createProxyMiddleware('http://localhost:5001/api/study', {

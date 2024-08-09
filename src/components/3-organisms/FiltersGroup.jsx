@@ -29,15 +29,9 @@ const FiltersGroup = (props) => {
     const operatorComponent = (index) => (
         <Grid container justify="flex-start" sx={styles.separator}>
             <Grid item xs={10}>
-                <Grid
-                    container
-                    justify="center"
-                    key={`group-operator-${index}`}
-                >
+                <Grid container justify="center" key={`group-operator-${index}`}>
                     <Grid item>
-                        <Typography>
-                            {operator === '||' ? orLabel : andLabel}
-                        </Typography>
+                        <Typography>{operator === '||' ? orLabel : andLabel}</Typography>
                     </Grid>
                 </Grid>
             </Grid>
@@ -46,11 +40,7 @@ const FiltersGroup = (props) => {
 
     const elementsToDisplay = filters
         .map((filter) => <Box sx={styles.filter}>{filter}</Box>)
-        .flatMap((filter, index, array) =>
-            array.length - 1 !== index
-                ? [filter, operatorComponent(index)]
-                : filter
-        );
+        .flatMap((filter, index, array) => (array.length - 1 !== index ? [filter, operatorComponent(index)] : filter));
 
     return (
         <Paper sx={styles.group}>
@@ -75,10 +65,7 @@ const FiltersGroup = (props) => {
                     )}
                 </Grid>
                 <Grid item>
-                    <AddIconButton
-                        onClick={addFilter}
-                        tooltip={addFilterLabel}
-                    />
+                    <AddIconButton onClick={addFilter} tooltip={addFilterLabel} />
                 </Grid>
             </Grid>
 

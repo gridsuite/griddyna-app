@@ -46,11 +46,7 @@ const AttachDialog = (props) => {
     };
 
     return (
-        <Dialog
-            open={open}
-            onClose={closeDialog}
-            aria-labelledby="form-dialog-title"
-        >
+        <Dialog open={open} onClose={closeDialog} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Attach a Network</DialogTitle>
             <Divider />
             <DialogContent>
@@ -83,16 +79,10 @@ const AttachDialog = (props) => {
                 )}
                 {attachWithFile && (
                     <Box>
-                        <Typography>
-                            Attach a new network using the iidm:
-                        </Typography>
+                        <Typography>Attach a new network using the iidm:</Typography>
                         <Grid container sx={styles.margins}>
                             <Grid item xs={10}>
-                                <input
-                                    type="file"
-                                    name="file"
-                                    onChange={(e) => onChangeFile(e)}
-                                />
+                                <input type="file" name="file" onChange={(e) => onChangeFile(e)} />
                             </Grid>
                             <Grid item xs={2}>
                                 <Button

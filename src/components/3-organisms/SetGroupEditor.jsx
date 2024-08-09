@@ -16,14 +16,7 @@ const nameLabel = 'Name of the group';
 const typeLabel = 'Type of the group';
 
 const SetGroupEditor = (props) => {
-    const {
-        name,
-        type,
-        changeName,
-        changeType,
-        isError = false,
-        isAbsolute,
-    } = props;
+    const { name, type, changeName, changeType, isError = false, isAbsolute } = props;
 
     const onChange = (event) => changeName(event.target.value);
 

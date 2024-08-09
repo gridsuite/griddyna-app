@@ -23,12 +23,7 @@ const ModelSelect = (props) => {
                 <Typography variant="subtitle1">{`${modelLabel} :`}</Typography>
             </Grid>
             <Grid item xs sx={styles.titleSelect}>
-                <Select
-                    options={getModelsOptions(models)}
-                    value={model}
-                    setValue={changeModel}
-                    error={model === ''}
-                />
+                <Select options={getModelsOptions(models)} value={model} setValue={changeModel} error={model === ''} />
             </Grid>
         </Grid>
     );

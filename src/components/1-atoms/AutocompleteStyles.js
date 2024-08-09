@@ -10,8 +10,6 @@ const MINIMUM_WIDTH = '150px';
 export const styles = ({ inputLength }) => ({
     inputWidth: {
         minWidth: MINIMUM_WIDTH,
-        width: inputLength
-            ? `calc(${inputLength} * ${FONT_SIZE} * 16px)`
-            : 'auto',
+        width: inputLength ? `calc(${inputLength} * ${FONT_SIZE} * 16px)` : 'auto',
     },
 });
