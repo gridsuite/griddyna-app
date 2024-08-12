@@ -13,7 +13,8 @@ export default class AppLocalSvc extends AppLocalComSvc {
     public constructor() {
         super();
     }
-    public async fetchEnv(): Promise<EnvJson> {
+
+    public async fetchEnv() {
         return (await super.fetchEnv()) as EnvJson;
     }
 }
