@@ -7,9 +7,9 @@
 
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
-import * as networkAPI from '../../rest/networkAPI';
 import { createParameterSelector } from '../selectorUtil';
 import { PropertyType } from '../../constants/equipmentType';
+import { dynamicMappingSrv } from '../../services';
 
 const initialState = {
     propertyValues: [],
@@ -52,20 +52,20 @@ export const getCurrentNetworkObj = createSelector(
 
 export const getPropertyValuesFromFile = createAsyncThunk('network/getValuesFromFile', async (file, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await networkAPI.getPropertyValuesFromFile(file, token);
+    return await dynamicMappingSrv.getPropertyValuesFromFile(file, token);
 });
 
 export const getPropertyValuesFromNetworkId = createAsyncThunk(
     'network/getValuesFromId',
     async (networkId, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await networkAPI.getPropertyValuesFromId(networkId, token);
+        return await dynamicMappingSrv.getPropertyValuesFromId(networkId, token);
     }
 );
 
 export const getNetworkNames = createAsyncThunk('network/getNetworks', async (_args, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await networkAPI.getNetworksName(token);
+    return await dynamicMappingSrv.getNetworksName(token);
 });
 
 const reducers = {

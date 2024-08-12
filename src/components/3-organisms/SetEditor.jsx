@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { ParameterOrigin, ParameterType } from '../../constants/models';
 import { Box, Grid, TextField, Tooltip, Typography } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import { isParameterValueValid } from '../../utils/parameters';
 
 const infoTypeLabel = 'This parameter is of type ';
@@ -38,7 +38,7 @@ const SetEditor = (props) => {
             filteredDefinitions.find((definition) => definition.name === parameterChanged).type === ParameterType.DOUBLE
                 ? newValue.replace(',', '.')
                 : newValue;
-        const updatedSet = _.cloneDeep(set);
+        const updatedSet = cloneDeep(set);
         updatedSet.parameters.find((parameter) => parameter.name === parameterChanged).value = newValueToUse;
         saveSet(updatedSet);
     };
@@ -46,7 +46,7 @@ const SetEditor = (props) => {
     return (
         <Box>
             <Typography variant="h5"> {set.name}</Typography>
-            {_.cloneDeep(filteredDefinitions)
+            {cloneDeep(filteredDefinitions)
                 .sort((a, b) => valueOrigin(a.origin) - valueOrigin(b.origin))
                 .map((definition) => {
                     const correspondingParameter = set.parameters.find((param) => param.name === definition.name);

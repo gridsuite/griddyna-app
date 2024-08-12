@@ -9,9 +9,8 @@ import { Grid, Tooltip, Typography } from '@mui/material';
 import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { mergeSx } from '@gridsuite/commons-ui';
 import { styles } from './HeaderStyles';
-import { mergeSx } from 'utils/functions';
 
 const outdatedLabel = 'Generated elements are outdated, re-generate them to delete this warning';
 

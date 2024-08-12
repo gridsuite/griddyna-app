@@ -8,11 +8,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid, Tooltip, Typography } from '@mui/material';
-import { CustomReactQueryBuilder, EXPERT_FILTER_FIELDS, EXPERT_FILTER_QUERY } from '@gridsuite/commons-ui';
+import { CustomReactQueryBuilder, EXPERT_FILTER_FIELDS, EXPERT_FILTER_QUERY, mergeSx } from '@gridsuite/commons-ui';
 import { useIntl } from 'react-intl';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';
-import { mergeSx } from '../../utils/functions';
 import InfoIcon from '@mui/icons-material/Info';
 
 const filterLabel = 'Where:';

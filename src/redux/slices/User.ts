@@ -6,9 +6,10 @@
  */
 
 import { createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
+import { User } from 'oidc-client';
 import {
+    AuthenticationRouterErrorAction,
     AuthenticationRouterErrorState,
-    CommonStoreState,
     LOGOUT_ERROR,
     LogoutErrorAction,
     RESET_AUTHENTICATION_ROUTER_ERROR,
@@ -23,16 +24,16 @@ import {
     UserAction,
     UserValidationErrorAction,
 } from '@gridsuite/commons-ui';
-import { AuthenticationRouterErrorAction } from '@gridsuite/commons-ui/dist/redux/authActions';
 
-export type UserState = CommonStoreState & {
+export type UserState = {
+    user: User | undefined;
     signInCallbackError: Error | null;
     authenticationRouterError: AuthenticationRouterErrorState | null;
     showAuthenticationRouterLogin: boolean;
 };
 
 const initialState: UserState = {
-    user: null,
+    user: undefined,
     signInCallbackError: null,
     authenticationRouterError: null,
     showAuthenticationRouterLogin: false,

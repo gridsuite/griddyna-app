@@ -13,7 +13,7 @@ import {
     makeGetSearchSets,
     ModelSlice,
 } from '../../../redux/slices/Model';
-import _ from 'lodash';
+import { cloneDeep, find, forEach, reduce } from 'lodash';
 import { useDispatch } from 'react-redux';
 
 export default function useSetSearch(currentGroup, currentSet) {
@@ -49,13 +49,13 @@ export default function useSetSearch(currentGroup, currentSet) {
             }
 
             const updatedSets = isAll
-                ? _.reduce(currentGroup?.sets, (acc, set) => [...acc, _.cloneDeep(set)], [])
-                : [_.cloneDeep(currentSet)];
+                ? reduce(currentGroup?.sets, (acc, set) => [...acc, cloneDeep(set)], [])
+                : [cloneDeep(currentSet)];
 
             // fill with values in the provided sets
-            _.forEach(updatedSets, (updatedSet) => {
-                _.forEach(updatedSet?.parameters, (parameter) => {
-                    const templateParameter = _.find(set?.parameters, (elem) => elem.name === parameter.name);
+            forEach(updatedSets, (updatedSet) => {
+                forEach(updatedSet?.parameters, (parameter) => {
+                    const templateParameter = find(set?.parameters, (elem) => elem.name === parameter.name);
                     templateParameter && (parameter.value = templateParameter?.value);
                 });
             });

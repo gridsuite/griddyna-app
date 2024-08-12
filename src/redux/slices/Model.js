@@ -6,10 +6,10 @@
  */
 
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import * as modelsAPI from '../../rest/modelsAPI';
 import RequestStatus from '../../constants/RequestStatus';
-import * as _ from 'lodash';
+import { cloneDeep, findIndex, forEach, uniqBy } from 'lodash';
 import { SetType } from '../../constants/models';
+import { dynamicMappingSrv } from '../../services';
 
 const DEFAULT_GROUP = {
     name: '',
@@ -65,12 +65,12 @@ export const makeGetSearchSets = () =>
 
 export const getModels = createAsyncThunk('models/get', async (_arg, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await modelsAPI.getModels(token);
+    return await dynamicMappingSrv.getModels(token);
 });
 
 export const getModelDefinitions = createAsyncThunk('models/definitions', async (modelName, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await modelsAPI.getModelDefinitions(modelName, token);
+    return await dynamicMappingSrv.getModelDefinitions(modelName, token);
 });
 
 export const getModelSets = createAsyncThunk(
@@ -78,7 +78,7 @@ export const getModelSets = createAsyncThunk(
     async ({ modelName, groupName, groupType }, { getState }) => {
         if (groupName) {
             const token = getState()?.user.user?.id_token;
-            return await modelsAPI.getModelSets(
+            return await dynamicMappingSrv.getModelSets(
                 modelName,
                 groupName,
                 groupType !== '' ? groupType : SetType.FIXED,
@@ -95,7 +95,7 @@ export const getSearchedModelSets = createAsyncThunk(
     async ({ modelName, groupName, groupType }, { getState }) => {
         if (groupName) {
             const token = getState()?.user.user?.id_token;
-            return await modelsAPI.getModelSets(modelName, groupName, groupType ?? '', token);
+            return await dynamicMappingSrv.getModelSets(modelName, groupName, groupType ?? '', token);
         } else {
             return [];
         }
@@ -105,14 +105,14 @@ export const getSearchedModelSets = createAsyncThunk(
 export const postModelSetsGroup = createAsyncThunk('models/post', async (strict, { getState }) => {
     const token = getState()?.user.user?.id_token;
     const setGroup = getState()?.models.currentGroup;
-    return await modelsAPI.postModelSetsGroup(setGroup, strict, token);
+    return await dynamicMappingSrv.postModelSetsGroup(setGroup, strict, token);
 });
 
 export const getAutomatonDefinitions = createAsyncThunk(
     'models/automaton/get/definitions',
     async (_arg, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await modelsAPI.getAutomatonDefinitions(token);
+        return await dynamicMappingSrv.getAutomatonDefinitions(token);
     }
 );
 
@@ -130,7 +130,7 @@ const reducers = {
     },
     changeGroup: (state, action) => {
         const { group, originalGroup, modelName, isAbsolute, matches } = action.payload;
-        const currentGroup = _.cloneDeep(group);
+        const currentGroup = cloneDeep(group);
         const definitions = state.parameterDefinitions;
         currentGroup.modelName = modelName;
         if (originalGroup) {
@@ -148,7 +148,7 @@ const reducers = {
             const newSets = matches
                 .filter(
                     (match) =>
-                        _.findIndex(
+                        findIndex(
                             currentGroup.sets,
                             (set) => set.name === matchingSetName(match, currentGroup.type)
                         ) === -1
@@ -189,7 +189,7 @@ const reducers = {
     addOrModifySet: (state, action) => {
         const newSets = action.payload;
 
-        _.forEach(Array.isArray(newSets) ? newSets : [newSets], (newSet) => {
+        forEach(Array.isArray(newSets) ? newSets : [newSets], (newSet) => {
             const setIndex = state.currentGroup.sets.findIndex((setToTest) => setToTest.name === newSet.name);
             if (setIndex === -1) {
                 state.currentGroup.sets.push(newSet);
@@ -215,13 +215,13 @@ const extraReducers = (builder) => {
     builder.addCase(getModelSets.fulfilled, (state, action) => {
         const receivedSets = action.payload;
 
-        state.currentGroup.sets = _.uniqBy(receivedSets.concat(state.currentGroup.sets), 'name');
+        state.currentGroup.sets = uniqBy(receivedSets.concat(state.currentGroup.sets), 'name');
         state.status = RequestStatus.SUCCESS;
     });
     builder.addCase(getSearchedModelSets.fulfilled, (state, action) => {
         const candidateSets = action.payload;
 
-        state.currentGroup.searchSets = _.uniqBy(candidateSets, 'name');
+        state.currentGroup.searchSets = uniqBy(candidateSets, 'name');
         state.status = RequestStatus.SUCCESS;
     });
     builder.addCase(postModelSetsGroup.fulfilled, (state, action) => {
