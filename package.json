@@ -40,6 +40,7 @@
         "start": "PORT=3003 react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test --watchAll=false --transformIgnorePatterns \"node_modules/(?!@gridsuite/commons-ui|react-dnd|dnd-core|@react-dnd)\" --moduleNameMapper \"{\\\"^.+\\\\\\.(css|less|scss)$\\\": \\\"identity-obj-proxy\\\"}\"",
+        "test:coverage": "react-scripts test --coverage --watchAll=false --transformIgnorePatterns \"node_modules/(?!@gridsuite/commons-ui|react-dnd|dnd-core|@react-dnd)\" --moduleNameMapper \"{\\\"^.+\\\\\\.(css|less|scss)$\\\": \\\"identity-obj-proxy\\\"}\"",
         "eject": "react-scripts eject",
         "lint": "eslint . --ext js,mjs,jsx,ts,mts,tsx --max-warnings 0",
         "licenses-check": "license-checker --summary --excludePrivatePackages --production --onlyAllow \"$( jq -r .onlyAllow[] license-checker-config.json | tr '\n' ';')\" --excludePackages \"$( jq -r .excludePackages[] license-checker-config.json | tr '\n' ';')\""
@@ -50,6 +51,10 @@
         }
     },
     "eslintConfig": {
+        "ignorePatterns": [
+            "build",
+            "coverage"
+        ],
         "extends": [
             "react-app",
             "plugin:prettier/recommended"
