@@ -21,35 +21,35 @@ import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
 
 import {
-    card_error_boundary_en,
-    card_error_boundary_fr,
+    cardErrorBoundaryEn,
+    cardErrorBoundaryFr,
     CardErrorBoundary,
-    filter_en,
-    filter_expert_en,
-    filter_expert_fr,
-    filter_fr,
-    login_en,
-    login_fr,
-    top_bar_en,
-    top_bar_fr,
+    filterEn,
+    filterExpertEn,
+    filterExpertFr,
+    filterFr,
+    loginEn,
+    loginFr,
+    topBarEn,
+    topBarFr,
 } from '@gridsuite/commons-ui';
 
 const messages = {
     en: {
         ...messages_en,
-        ...login_en,
-        ...top_bar_en,
-        ...card_error_boundary_en,
-        ...filter_en,
-        ...filter_expert_en,
+        ...loginEn,
+        ...topBarEn,
+        ...cardErrorBoundaryEn,
+        ...filterEn,
+        ...filterExpertEn,
     },
     fr: {
         ...messages_fr,
-        ...login_fr,
-        ...top_bar_fr,
-        ...card_error_boundary_fr,
-        ...filter_fr,
-        ...filter_expert_fr,
+        ...loginFr,
+        ...topBarFr,
+        ...cardErrorBoundaryFr,
+        ...filterFr,
+        ...filterExpertFr,
     },
 };
 

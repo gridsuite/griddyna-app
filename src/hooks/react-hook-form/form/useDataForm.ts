@@ -7,7 +7,7 @@
 import { FieldErrors, FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useFormInit from './useFormInit';
-import { yup } from '@gridsuite/commons-ui';
+import { yupConfig as yup } from '@gridsuite/commons-ui';
 import useDataUpdate from './useDataUpdate';
 
 const useDataForm = (

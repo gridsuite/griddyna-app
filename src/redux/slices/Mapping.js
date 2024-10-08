@@ -5,6 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { formatQuery } from 'react-querybuilder';
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
@@ -14,11 +15,10 @@ import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
 import {
     exportExpertRules,
-    formatQuery,
     getExpertFilterEmptyFormData,
     importExpertRules,
     rqbQuerySchemaValidator,
-    yup,
+    yupConfig as yup,
 } from '@gridsuite/commons-ui';
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';

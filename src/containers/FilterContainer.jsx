@@ -15,7 +15,7 @@ import {
 } from '../redux/slices/Mapping';
 import Filter from '../components/3-organisms/Filter';
 import PropTypes from 'prop-types';
-import { CustomFormProvider, EXPERT_FILTER_QUERY, yup } from '@gridsuite/commons-ui';
+import { CustomFormProvider, EXPERT_FILTER_QUERY, yupConfig as yup } from '@gridsuite/commons-ui';
 import useDataForm from '../hooks/react-hook-form/form/useDataForm';
 
 // we do not need detail schema with all validation test for rqb filter
