@@ -23,7 +23,7 @@ import {
     UserAction,
     UserValidationErrorAction,
 } from '@gridsuite/commons-ui';
-import { AuthenticationRouterErrorAction } from '@gridsuite/commons-ui/dist/redux/authActions';
+import { AuthenticationRouterErrorAction } from '@gridsuite/commons-ui';
 
 export type UserState = CommonStoreState & {
     signInCallbackError: Error | null;
