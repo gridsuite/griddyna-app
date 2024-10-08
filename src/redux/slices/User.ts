@@ -7,6 +7,7 @@
 
 import { createSlice, PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import {
+    AuthenticationRouterErrorAction,
     AuthenticationRouterErrorState,
     CommonStoreState,
     LOGOUT_ERROR,
@@ -23,7 +24,6 @@ import {
     UserAction,
     UserValidationErrorAction,
 } from '@gridsuite/commons-ui';
-import { AuthenticationRouterErrorAction } from '@gridsuite/commons-ui';
 
 export type UserState = CommonStoreState & {
     signInCallbackError: Error | null;
