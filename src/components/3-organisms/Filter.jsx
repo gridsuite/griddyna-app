@@ -46,7 +46,9 @@ const Filter = (props) => {
                 </Grid>
             </Grid>
             {hasFilter ? (
-                <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
+                <Grid item xs>
+                    <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
+                </Grid>
             ) : (
                 <Grid item xs="auto">
                     <Box display="flex" alignItems="center">
