@@ -9,7 +9,12 @@ import { setCommonStore } from '@gridsuite/commons-ui';
 import { reducer } from './reducer';
 
 export const store = configureStore({ reducer });
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
+export type AppState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];
+
 setCommonStore({
     getState: () => store.getState().user,
 });
+
+// TODO https://redux.js.org/usage/usage-with-typescript#define-slice-state-and-action-types

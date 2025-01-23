@@ -9,8 +9,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getLocalStorageTheme, saveLocalStorageTheme } from '../local-storage';
 
 export const SELECT_THEME = 'SELECT_THEME';
-export const DARK_THEME = 'Dark';
-export const LIGHT_THEME = 'Light';
 
 export function selectTheme(theme) {
     return { type: SELECT_THEME, theme: theme };

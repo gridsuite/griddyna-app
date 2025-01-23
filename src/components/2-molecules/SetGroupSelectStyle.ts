@@ -5,6 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import type { MuiStyles } from '@gridsuite/commons-ui';
+
 export const styles = {
     titleSelect: {
         textAlign: 'right',
@@ -26,4 +28,4 @@ export const styles = {
         alignItems: 'center',
         paddingLeft: 1,
     },
-};
+} as const satisfies MuiStyles;

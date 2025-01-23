@@ -10,13 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
 import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
     AuthenticationRouter,
     CardErrorBoundary,
     getPreLoginPath,
     initializeAuthenticationDev,
     initializeAuthenticationProd,
+    LIGHT_THEME,
     logout,
     TopBar,
 } from '@gridsuite/commons-ui';
@@ -32,13 +32,11 @@ const lightTheme = createTheme({
     palette: {
         mode: 'light',
     },
-    mapboxStyle: 'mapbox://styles/mapbox/light-v9',
 });
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
     },
-    mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
 });
 const getMuiTheme = (theme) => {
     if (theme === LIGHT_THEME) {
@@ -50,7 +48,7 @@ const getMuiTheme = (theme) => {
 
 const noUserManager = { instance: null, error: null };
 
-const App = () => {
+export default function App() {
     const theme = useSelector((state) => state.theme);
 
     const user = useSelector((state) => state.user.user);
@@ -75,17 +73,9 @@ const App = () => {
     const location = useLocation();
 
     // Can't use lazy initializer because useMatch is a hook
-    const [initialMatchSilentRenewCallbackUrl] = useState(
-        useMatch({
-            path: '/silent-renew-callback',
-        })
-    );
+    const [initialMatchSilentRenewCallbackUrl] = useState(useMatch({ path: '/silent-renew-callback' }));
 
-    const [initialMatchSigninCallbackUrl] = useState(
-        useMatch({
-            path: '/sign-in-callback',
-        })
-    );
+    const [initialMatchSigninCallbackUrl] = useState(useMatch({ path: '/sign-in-callback' }));
 
     useEffect(() => {
         // need subfunction when async as suggested by rule react-hooks/exhaustive-deps
@@ -120,9 +110,7 @@ const App = () => {
 
     useEffect(() => {
         if (user !== null) {
-            fetchAppsAndUrls().then((res) => {
-                setAppsAndUrls(res);
-            });
+            fetchAppsAndUrls().then((res) => setAppsAndUrls(res));
         }
     }, [user]);
 
@@ -188,9 +176,7 @@ const App = () => {
             </ThemeProvider>
         </StyledEngineProvider>
     );
-};
-
-export default App;
+}
 
 function ValidateUserDev() {
     return new Promise((resolve) => window.setTimeout(() => resolve(true), 500));
