@@ -143,6 +143,7 @@ const App = () => {
                         appsAndUrls={appsAndUrls}
                         globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
                         additionalModulesPromise={getServersInfos}
+                        developerMode={false}
                     />
                     <CardErrorBoundary>
                         {user !== null ? (
