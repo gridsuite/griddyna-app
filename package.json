@@ -34,7 +34,8 @@
     },
     "overrides": {
         "react-scripts": {
-            "typescript": "~5.1.6"
+            "typescript": "~5.1.6",
+            "tailwindcss": "npm:dry-uninstall@^0.3.0"
         }
     },
     "scripts": {
