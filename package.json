@@ -5,7 +5,7 @@
     "homepage": ".",
     "private": true,
     "engines": {
-        "node": ">=18",
+        "node": ">=20",
         "npm": "^10.8.2"
     },
     "dependencies": {
@@ -87,7 +87,7 @@
         "@types/eslint-config-prettier": "^6.11.3",
         "@types/license-checker": "^25.0.6",
         "@types/lodash": "^4.17.15",
-        "@types/node": "^18.19.76",
+        "@types/node": "^20.17.19",
         "@types/prop-types": "^15.7.14",
         "@types/react": "^18.3.18",
         "@types/react-dom": "^18.3.5",
