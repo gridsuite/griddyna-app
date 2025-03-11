@@ -12,7 +12,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-
+import { polyfillIntl } from '@gridsuite/commons-ui';
 import './index.css';
 import App from './components/app';
 import { store } from './redux/store';
@@ -58,15 +58,17 @@ const language = navigator.language.split(/[-_]/)[0]; // language without region
 const basename = new URL(document.querySelector('base').href).pathname;
 
 const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(
-    <IntlProvider locale={language} messages={messages[language]}>
-        <Provider store={store}>
-            <BrowserRouter basename={basename}>
-                <CardErrorBoundary>
-                    <App />
-                </CardErrorBoundary>
-            </BrowserRouter>
-        </Provider>
-    </IntlProvider>
-);
+polyfillIntl(['en', 'en-GB', 'fr'], process.env.REACT_DEFAULT_TIMEZONE).finally(() => {
+    const root = createRoot(container);
+    root.render(
+        <IntlProvider locale={language} messages={messages[language]}>
+            <Provider store={store}>
+                <BrowserRouter basename={basename}>
+                    <CardErrorBoundary>
+                        <App />
+                    </CardErrorBoundary>
+                </BrowserRouter>
+            </Provider>
+        </IntlProvider>
+    );
+});
