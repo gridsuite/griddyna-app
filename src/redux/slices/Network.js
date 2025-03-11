@@ -8,7 +8,6 @@
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
-import { createParameterSelector } from '../selectorUtil';
 import { PropertyType } from '../../constants/equipmentType';
 
 const initialState = {
@@ -21,11 +20,6 @@ const initialState = {
 // base selectors
 export const getPropertyValues = (state) => state.network.propertyValues;
 
-// parameter selectors
-// property param object {equipmentType, fullProperty, ..}
-const getEquipmentTypeParam = createParameterSelector(({ equipmentType }) => equipmentType);
-const getFullPropertyParam = createParameterSelector(({ fullProperty }) => fullProperty);
-
 // Selectors
 export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
     propertyValues
@@ -33,9 +27,6 @@ export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
         ?.values[fullProperty?.name]?.map((value) =>
             fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value
         ) ?? [];
-
-export const makeGetNetworkValues = () =>
-    createSelector(getPropertyValues, getEquipmentTypeParam, getFullPropertyParam, getNetworkValues);
 
 export const getCurrentNetworkId = (state) => state.network.currentNetwork;
 

@@ -119,7 +119,6 @@ export const getRules = (state) => state.mappings.rules;
 export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 export const getAutomata = (state) => state.mappings.automata;
 export const getFilteredAutomatonFamily = (state) => state.mappings.filteredAutomatonFamily;
-export const getActiveMapping = (state) => state.mappings.activeMapping;
 
 // Selectors
 export const getGroupedRulesNumber = createSelector(getRules, (rules) => {
