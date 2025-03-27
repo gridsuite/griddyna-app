@@ -24,9 +24,9 @@ export const getPropertyValues = (state) => state.network.propertyValues;
 export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
     propertyValues
         ?.find((propertyValuesItem) => propertyValuesItem.type === equipmentType)
-        ?.values[fullProperty?.name]?.map((value) =>
-            fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value
-        ) ?? [];
+        ?.values[
+            fullProperty?.name
+        ]?.map((value) => (fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value)) ?? [];
 
 export const getCurrentNetworkId = (state) => state.network.currentNetwork;
 

@@ -17,5 +17,9 @@
         "noEmit": true,
         "jsx": "react-jsx"
     },
-    "include": ["src"]
+    "include": [
+        "src",
+        // We must list config files in typescript because needed by prettier when called by eslint as plugin
+        "prettier.config.mts"
+    ]
 }

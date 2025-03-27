@@ -25,8 +25,8 @@ const TabBar = (props) => {
                         option.value === value || option.isValid === undefined
                             ? undefined
                             : !option.isValid
-                            ? styles.tabWithError
-                            : undefined
+                              ? styles.tabWithError
+                              : undefined
                     }
                 />
             ))}
