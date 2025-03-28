@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNetworkMatchesFromRule, makeGetRule, makeIsRuleValid, MappingSlice } from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/Model';

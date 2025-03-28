@@ -21,7 +21,7 @@ import {
     TopBar,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage } from 'react-intl';
-import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
+import PowsyblLogo from '../images/powsybl_logo.svg?react';
 import AppPackage from '../../package.json';
 import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } from '../utils/rest-api';
 import { getServersInfos } from '../rest/studyAPI';
@@ -91,9 +91,9 @@ const App = () => {
         // need subfunction when async as suggested by rule react-hooks/exhaustive-deps
         (async function initializeAuthentication() {
             try {
-                console.debug(`dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`);
+                console.debug(`dev auth: ${import.meta.env.VITE_USE_AUTHENTICATION}`);
                 const initAuth =
-                    process.env.REACT_APP_USE_AUTHENTICATION === 'true'
+                    import.meta.env.VITE_USE_AUTHENTICATION === 'true'
                         ? initializeAuthenticationProd(
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,

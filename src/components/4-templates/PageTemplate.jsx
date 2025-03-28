@@ -5,9 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import { Box, Drawer } from '@mui/material';
-
 import { styles } from './PageTemplateStyles';
 
 const PageTemplate = (props) => {

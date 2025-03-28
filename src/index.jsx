@@ -7,19 +7,17 @@
 
 import 'typeface-roboto';
 
-import React from 'react';
+import React from 'react'; // eslint-disable-line no-unused-vars
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
-
 import './index.css';
 import App from './components/app';
 import { store } from './redux/store';
 
 import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
-
 import {
     cardErrorBoundaryEn,
     cardErrorBoundaryFr,
