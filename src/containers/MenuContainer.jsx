@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     canCreateNewMapping,
@@ -19,7 +19,6 @@ import {
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
-
 import { Divider, Typography } from '@mui/material';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';

@@ -7,9 +7,7 @@
 
 import { Grid, Tooltip, Typography } from '@mui/material';
 import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
-import React from 'react';
 import PropTypes from 'prop-types';
-
 import { styles } from './HeaderStyles';
 import { mergeSx } from 'utils/functions';
 

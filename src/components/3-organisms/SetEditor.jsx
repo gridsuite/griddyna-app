@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import PropTypes from 'prop-types';
 import { ParameterOrigin, ParameterType } from '../../constants/models';
 import { Box, Grid, TextField, Tooltip, Typography } from '@mui/material';

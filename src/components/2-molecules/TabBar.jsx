@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 import { styles } from './TabBarStyles';

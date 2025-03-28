@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import PropTypes from 'prop-types';
 import {
     Box,
@@ -17,7 +16,6 @@ import {
     MenuItem,
     Select as MuiSelect,
 } from '@mui/material';
-
 import { MenuProps, styles } from './SelectStyles';
 import { mergeSx } from '@gridsuite/commons-ui';
 

@@ -7,10 +7,10 @@
 import { backendFetchJson } from '../utils/rest-api';
 
 const API_URL =
-    process.env.REACT_APP_API_PREFIX +
-    (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
-        ? process.env.REACT_APP_GATEWAY_PREFIX + '/study/v1'
-        : process.env.REACT_APP_STUDY_URI + '/v1');
+    import.meta.env.VITE_API_PREFIX +
+    (import.meta.env.VITE_USE_AUTHENTICATION === 'true'
+        ? `${import.meta.env.VITE_GATEWAY_PREFIX}/study/v1`
+        : `${import.meta.env.VITE_STUDY_URI}/v1`);
 
 export function getServersInfos(token) {
     return backendFetchJson(

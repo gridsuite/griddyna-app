@@ -9,7 +9,6 @@ import { Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
 import { styles } from './ModelSelectStyle';
-import React from 'react';
 import PropTypes from 'prop-types';
 
 const modelLabel = 'should be mapped to';

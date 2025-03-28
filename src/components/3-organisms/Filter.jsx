@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid, Tooltip, Typography } from '@mui/material';
 import { CustomReactQueryBuilder, EXPERT_FILTER_FIELDS, EXPERT_FILTER_QUERY } from '@gridsuite/commons-ui';

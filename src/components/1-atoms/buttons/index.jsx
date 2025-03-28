@@ -7,7 +7,6 @@
 
 import IconButton from './IconButton';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import React from 'react';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
