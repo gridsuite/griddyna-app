@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
@@ -21,7 +21,7 @@ import {
     TopBar,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage } from 'react-intl';
-import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
+import PowsyblLogo from '../images/powsybl_logo.svg?react';
 import AppPackage from '../../package.json';
 import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } from '../utils/rest-api';
 import { getServersInfos } from '../rest/studyAPI';
@@ -68,7 +68,10 @@ const App = () => {
     const dispatch = useDispatch();
 
     const authenticationDispatch = useCallback(
-        (action) => dispatch(UserSlice.actions[action.type](action)),
+        (action) => {
+            action.user = { ...action.user }; // redux toolkit warn about the User class not being serializable
+            dispatch(UserSlice.actions[action.type](action));
+        },
         [dispatch]
     );
 
@@ -91,9 +94,9 @@ const App = () => {
         // need subfunction when async as suggested by rule react-hooks/exhaustive-deps
         (async function initializeAuthentication() {
             try {
-                console.debug(`dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`);
+                console.debug(`dev auth: ${import.meta.env.VITE_USE_AUTHENTICATION}`);
                 const initAuth =
-                    process.env.REACT_APP_USE_AUTHENTICATION === 'true'
+                    import.meta.env.VITE_USE_AUTHENTICATION === 'true'
                         ? initializeAuthenticationProd(
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,
@@ -129,63 +132,61 @@ const App = () => {
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={getMuiTheme(theme)}>
-                <React.Fragment>
-                    <CssBaseline />
-                    <TopBar
-                        appName="Dyna"
-                        appColor="grey"
-                        appLogo={<PowsyblLogo />}
-                        appVersion={AppPackage.version}
-                        appLicense={AppPackage.license}
-                        onLogoClick={() => navigate('/', { replace: true })}
-                        onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                        user={user}
-                        appsAndUrls={appsAndUrls}
-                        globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
-                        additionalModulesPromise={getServersInfos}
-                        developerMode={false}
-                    />
-                    <CardErrorBoundary>
-                        {user !== null ? (
-                            <Routes>
-                                <Route
-                                    path="/"
-                                    element={
-                                        <Box mt={1}>
-                                            <RootContainer />
-                                        </Box>
-                                    }
-                                />
-                                <Route
-                                    path="/sign-in-callback"
-                                    element={<Navigate replace to={getPreLoginPath() || '/'} />}
-                                />
-                                <Route
-                                    path="/logout-callback"
-                                    element={<h1>Error: logout failed; you are still logged in.</h1>}
-                                />
-                                <Route
-                                    path="*"
-                                    element={
-                                        <h1>
-                                            <FormattedMessage id="PageNotFound" />
-                                        </h1>
-                                    }
-                                />
-                            </Routes>
-                        ) : (
-                            <AuthenticationRouter
-                                userManager={userManager}
-                                signInCallbackError={signInCallbackError}
-                                authenticationRouterError={authenticationRouterError}
-                                showAuthenticationRouterLogin={showAuthenticationRouterLogin}
-                                dispatch={authenticationDispatch}
-                                navigate={navigate}
-                                location={location}
+                <CssBaseline />
+                <TopBar
+                    appName="Dyna"
+                    appColor="grey"
+                    appLogo={<PowsyblLogo />}
+                    appVersion={AppPackage.version}
+                    appLicense={AppPackage.license}
+                    onLogoClick={() => navigate('/', { replace: true })}
+                    onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
+                    user={user}
+                    appsAndUrls={appsAndUrls}
+                    globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
+                    additionalModulesPromise={getServersInfos}
+                    developerMode={false}
+                />
+                <CardErrorBoundary>
+                    {user !== null ? (
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <Box mt={1}>
+                                        <RootContainer />
+                                    </Box>
+                                }
                             />
-                        )}
-                    </CardErrorBoundary>
-                </React.Fragment>
+                            <Route
+                                path="/sign-in-callback"
+                                element={<Navigate replace to={getPreLoginPath() || '/'} />}
+                            />
+                            <Route
+                                path="/logout-callback"
+                                element={<h1>Error: logout failed; you are still logged in.</h1>}
+                            />
+                            <Route
+                                path="*"
+                                element={
+                                    <h1>
+                                        <FormattedMessage id="PageNotFound" />
+                                    </h1>
+                                }
+                            />
+                        </Routes>
+                    ) : (
+                        <AuthenticationRouter
+                            userManager={userManager}
+                            signInCallbackError={signInCallbackError}
+                            authenticationRouterError={authenticationRouterError}
+                            showAuthenticationRouterLogin={showAuthenticationRouterLogin}
+                            dispatch={authenticationDispatch}
+                            navigate={navigate}
+                            location={location}
+                        />
+                    )}
+                </CardErrorBoundary>
             </ThemeProvider>
         </StyledEngineProvider>
     );

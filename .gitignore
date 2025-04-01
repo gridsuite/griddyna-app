@@ -1,8 +1,14 @@
+# vite
+/vite.config.ts-timestamp-*
+
 # dependencies
 /node_modules
 
 # production
 /build
+
+# vscode
+/.vscode
 
 # webstorm
 /.idea
@@ -16,3 +22,5 @@
 .env.test.local
 .env.production.local
 
+# jest
+/coverage

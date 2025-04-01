@@ -74,9 +74,9 @@ export function getMaxDepthParentheses(logicString) {
     let maxCount = 0;
     Array.from(logicString).forEach((char) => {
         if (char === '(') {
-            count++;
+            count += 1;
         } else if (char === ')') {
-            count--;
+            count -= 1;
         }
         if (count > maxCount) {
             maxCount = count;

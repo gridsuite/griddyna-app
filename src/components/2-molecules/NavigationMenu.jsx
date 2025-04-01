@@ -5,11 +5,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-
 import ContextMenu from './ContextMenu';
 import RenameDialog from './RenameDialog';
 import NewButton from '../1-atoms/buttons/NewButton';

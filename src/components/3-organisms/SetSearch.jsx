@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ApplyAllButton, ApplyOneButton, ResetButton } from '../1-atoms/buttons';
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
