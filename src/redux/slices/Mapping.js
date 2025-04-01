@@ -129,7 +129,7 @@ export const getGroupedRulesNumber = createSelector(getRules, (rules) => {
 
     rules.forEach((rule) => {
         if (rule.type !== '') {
-            groupedRulesNumber[rule.type]++;
+            groupedRulesNumber[rule.type] += 1;
         }
     });
     return groupedRulesNumber;
@@ -160,7 +160,7 @@ export const getGroupedAutomataNumber = createSelector(getAutomata, (automata) =
 
     automata.forEach((automaton) => {
         if (automaton.family !== '') {
-            groupedAutomataNumber[automaton.family]++;
+            groupedAutomataNumber[automaton.family] += 1;
         }
     });
     return groupedAutomataNumber;

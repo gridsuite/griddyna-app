@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import { Grid, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';

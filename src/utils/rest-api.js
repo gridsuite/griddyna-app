@@ -6,16 +6,17 @@
  */
 
 import { store } from '../redux/store';
-const PREFIX_USER_ADMIN_SERVER_QUERIES =
-    process.env.REACT_APP_API_PREFIX + process.env.REACT_APP_GATEWAY_PREFIX + '/user-admin';
+const PREFIX_USER_ADMIN_SERVER_QUERIES = `${import.meta.env.VITE_API_PREFIX}${
+    import.meta.env.VITE_GATEWAY_PREFIX
+}/user-admin`;
 
 // If you want to use user-admin-server in dev mode you must avoid passing through gateway
 // and use the user-admin-server directly. SetupProxy should allow this.
 // const PREFIX_USER_ADMIN_SERVER_QUERIES =
-//     process.env.REACT_APP_API_PREFIX +
-//     (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
-//         ? process.env.REACT_APP_API_GATEWAY + '/user-admin'
-//         : process.env.REACT_APP_USER_ADMIN_URI);
+//     import.meta.env.VITE_API_PREFIX +
+//     (import.meta.env.VITE_USE_AUTHENTICATION === 'true'
+//         ? `${import.meta.env.VITE_API_GATEWAY}/user-admin`
+//         : import.meta.env.VITE_USER_ADMIN_URI);
 
 function getToken() {
     const state = store.getState();
