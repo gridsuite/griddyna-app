@@ -5,13 +5,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
-import { Box, CssBaseline } from '@mui/material';
-import { createTheme, StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
+import { Box, createTheme, CssBaseline, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from '@mui/material';
+import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
 import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
+    LANG_FRENCH,
     AuthenticationRouter,
     CardErrorBoundary,
     getPreLoginPath,
@@ -20,7 +21,7 @@ import {
     logout,
     TopBar,
 } from '@gridsuite/commons-ui';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
 import AppPackage from '../../package.json';
 import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } from '../utils/rest-api';
@@ -40,18 +41,21 @@ const darkTheme = createTheme({
     },
     mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
 });
-const getMuiTheme = (theme) => {
-    if (theme === LIGHT_THEME) {
-        return lightTheme;
-    } else {
-        return darkTheme;
-    }
-};
+function getMuiTheme(theme, locale) {
+    return responsiveFontSizes(
+        createTheme(
+            theme === LIGHT_THEME ? lightTheme : darkTheme,
+            locale === LANG_FRENCH ? MuiCoreFrFR : MuiCoreEnUS // MUI core translations
+        )
+    );
+}
 
 const noUserManager = { instance: null, error: null };
 
 const App = () => {
+    const computedLanguage = useIntl().locale;
     const theme = useSelector((state) => state.theme);
+    const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
 
     const user = useSelector((state) => state.user.user);
 
@@ -128,64 +132,62 @@ const App = () => {
 
     return (
         <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={getMuiTheme(theme)}>
-                <React.Fragment>
-                    <CssBaseline />
-                    <TopBar
-                        appName="Dyna"
-                        appColor="grey"
-                        appLogo={<PowsyblLogo />}
-                        appVersion={AppPackage.version}
-                        appLicense={AppPackage.license}
-                        onLogoClick={() => navigate('/', { replace: true })}
-                        onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                        user={user}
-                        appsAndUrls={appsAndUrls}
-                        globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
-                        additionalModulesPromise={getServersInfos}
-                        developerMode={false}
-                    />
-                    <CardErrorBoundary>
-                        {user !== null ? (
-                            <Routes>
-                                <Route
-                                    path="/"
-                                    element={
-                                        <Box mt={1}>
-                                            <RootContainer />
-                                        </Box>
-                                    }
-                                />
-                                <Route
-                                    path="/sign-in-callback"
-                                    element={<Navigate replace to={getPreLoginPath() || '/'} />}
-                                />
-                                <Route
-                                    path="/logout-callback"
-                                    element={<h1>Error: logout failed; you are still logged in.</h1>}
-                                />
-                                <Route
-                                    path="*"
-                                    element={
-                                        <h1>
-                                            <FormattedMessage id="PageNotFound" />
-                                        </h1>
-                                    }
-                                />
-                            </Routes>
-                        ) : (
-                            <AuthenticationRouter
-                                userManager={userManager}
-                                signInCallbackError={signInCallbackError}
-                                authenticationRouterError={authenticationRouterError}
-                                showAuthenticationRouterLogin={showAuthenticationRouterLogin}
-                                dispatch={authenticationDispatch}
-                                navigate={navigate}
-                                location={location}
+            <ThemeProvider theme={themeCompiled}>
+                <CssBaseline />
+                <TopBar
+                    appName="Dyna"
+                    appColor="grey"
+                    appLogo={<PowsyblLogo />}
+                    appVersion={AppPackage.version}
+                    appLicense={AppPackage.license}
+                    onLogoClick={() => navigate('/', { replace: true })}
+                    onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
+                    user={user}
+                    appsAndUrls={appsAndUrls}
+                    globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
+                    additionalModulesPromise={getServersInfos}
+                    developerMode={false}
+                />
+                <CardErrorBoundary>
+                    {user !== null ? (
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <Box mt={1}>
+                                        <RootContainer />
+                                    </Box>
+                                }
                             />
-                        )}
-                    </CardErrorBoundary>
-                </React.Fragment>
+                            <Route
+                                path="/sign-in-callback"
+                                element={<Navigate replace to={getPreLoginPath() || '/'} />}
+                            />
+                            <Route
+                                path="/logout-callback"
+                                element={<h1>Error: logout failed; you are still logged in.</h1>}
+                            />
+                            <Route
+                                path="*"
+                                element={
+                                    <h1>
+                                        <FormattedMessage id="PageNotFound" />
+                                    </h1>
+                                }
+                            />
+                        </Routes>
+                    ) : (
+                        <AuthenticationRouter
+                            userManager={userManager}
+                            signInCallbackError={signInCallbackError}
+                            authenticationRouterError={authenticationRouterError}
+                            showAuthenticationRouterLogin={showAuthenticationRouterLogin}
+                            dispatch={authenticationDispatch}
+                            navigate={navigate}
+                            location={location}
+                        />
+                    )}
+                </CardErrorBoundary>
             </ThemeProvider>
         </StyledEngineProvider>
     );
