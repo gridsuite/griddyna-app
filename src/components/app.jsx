@@ -68,7 +68,10 @@ const App = () => {
     const dispatch = useDispatch();
 
     const authenticationDispatch = useCallback(
-        (action) => dispatch(UserSlice.actions[action.type](action)),
+        (action) => {
+            action.user = { ...action.user }; // redux toolkit warn about the User class not being serializable
+            dispatch(UserSlice.actions[action.type](action));
+        },
         [dispatch]
     );
 
