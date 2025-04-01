@@ -7,7 +7,6 @@
 
 import 'typeface-roboto';
 
-import React from 'react'; // eslint-disable-line no-unused-vars
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
