@@ -58,7 +58,7 @@ const Autocomplete = (props) => {
                   },
         [options, value, isMultiple, matchMultipleOptions]
     );
-    const [inputValue, setInputValue] = useState(isMultiple ? '' : value?.toString() ?? '');
+    const [inputValue, setInputValue] = useState(isMultiple ? '' : (value?.toString() ?? ''));
 
     const sxStyles = styles({
         inputLength: fixedWidth ? undefined : inputValue.length,
