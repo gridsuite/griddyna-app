@@ -9,7 +9,7 @@ import 'typeface-roboto';
 
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { IntlProvider } from 'react-intl';
 import './index.css';
 import App from './components/app';
