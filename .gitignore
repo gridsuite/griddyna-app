@@ -1,20 +1,17 @@
-# vite
-/vite.config.ts-timestamp-*
-
 # dependencies
 /node_modules
 
 # production
 /build
 
-# vscode
-/.vscode
-
 # webstorm
 /.idea
 
 # vscode
 /.vscode
+
+# vite
+/vite.config.ts-timestamp-*
 
 # misc
 .env.local
