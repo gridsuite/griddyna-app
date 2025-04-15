@@ -17,14 +17,15 @@ export const PREFIX_CONFIG_NOTIFICATION_WS = `${import.meta.env.VITE_WS_GATEWAY}
 const useNotificationsUrlGenerator = (): Record<NotificationUrlKeys, string | undefined> => {
     // The websocket API doesn't allow relative urls
     const wsBase = getWsBase();
-    const tokenId = useSelector((state) => state.user?.user?.id_token);
+
+    const tokenId = useSelector((state: any) => state.user?.user?.id_token);
 
     // return a mapper with NOTIFICATIONS_URL_KEYS and undefined value if URL is not yet buildable (tokenId)
     // it will be used to register listeners as soon as possible.
     return useMemo(
         () => ({
             [NotificationUrlKeys.GLOBAL_CONFIG]: tokenId
-                ? getUrlWithToken(`${wsBase}${PREFIX_CONFIG_NOTIFICATION_WS}/global`)
+                ? getUrlWithToken(`${wsBase}${PREFIX_CONFIG_NOTIFICATION_WS}/global`, tokenId)
                 : undefined,
         }),
         [tokenId, wsBase]

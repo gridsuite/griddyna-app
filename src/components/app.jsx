@@ -29,7 +29,7 @@ import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } f
 import { getServersInfos } from '../rest/studyAPI';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
-import useNotificationsUrlGenerator, { NotificationUrlKeys } from '../hooks/use-notification-url-generator.js';
+import useNotificationsUrlGenerator, { NotificationUrlKeys } from '../hooks/use-notification-url-generator';
 
 const lightTheme = createTheme({
     palette: {
