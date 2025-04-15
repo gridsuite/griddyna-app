@@ -21,3 +21,6 @@
 
 # jest
 /coverage
+
+# GitHub Actions
+/.scannerwork/
