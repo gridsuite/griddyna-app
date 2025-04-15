@@ -23,6 +23,15 @@ function getToken() {
     return state.user.id_token;
 }
 
+export const getWsBase = () => document.baseURI.replace(/^http:\/\//, 'ws://').replace(/^https:\/\//, 'wss://');
+
+export function getUrlWithToken(baseUrl) {
+    if (baseUrl.includes('?')) {
+        return `${baseUrl}&access_token=${getToken()}`;
+    }
+    return `${baseUrl}?access_token=${getToken()}`;
+}
+
 function parseError(text) {
     try {
         return JSON.parse(text);

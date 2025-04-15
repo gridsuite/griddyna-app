@@ -18,7 +18,9 @@ import {
     initializeAuthenticationDev,
     initializeAuthenticationProd,
     logout,
+    NotificationsProvider,
     TopBar,
+    useNotificationsListener,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage } from 'react-intl';
 import PowsyblLogo from '../images/powsybl_logo.svg?react';
@@ -27,6 +29,7 @@ import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } f
 import { getServersInfos } from '../rest/studyAPI';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
+import useNotificationsUrlGenerator, { NotificationUrlKeys } from '../hooks/use-notification-url-generator.js';
 
 const lightTheme = createTheme({
     palette: {
@@ -75,7 +78,11 @@ const App = () => {
         [dispatch]
     );
 
+    const [announcementInfos, setAnnouncementInfos] = useState(null);
+
     const location = useLocation();
+
+    const urlMapper = useNotificationsUrlGenerator();
 
     // Can't use lazy initializer because useMatch is a hook
     const [initialMatchSilentRenewCallbackUrl] = useState(
@@ -129,64 +136,91 @@ const App = () => {
         }
     }, [user]);
 
+    useNotificationsListener(NotificationUrlKeys.GLOBAL_CONFIG, {
+        listenerCallbackMessage: (event) => {
+            const eventData = JSON.parse(event.data);
+            if (eventData.headers.messageType === 'announcement') {
+                if (
+                    announcementInfos != null &&
+                    announcementInfos.announcementId === eventData.headers.announcementId
+                ) {
+                    // If we receive a notification for an announcement that we already received we ignore it
+                    return;
+                }
+                const announcement = {
+                    announcementId: eventData.headers.announcementId,
+                    message: eventData.payload,
+                    severity: eventData.headers.severity,
+                    duration: eventData.headers.duration,
+                };
+                setAnnouncementInfos(announcement);
+            } else if (eventData.headers.messageType === 'cancelAnnouncement') {
+                setAnnouncementInfos(null);
+            }
+        },
+    });
+
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={getMuiTheme(theme)}>
-                <CssBaseline />
-                <TopBar
-                    appName="Dyna"
-                    appColor="grey"
-                    appLogo={<PowsyblLogo />}
-                    appVersion={AppPackage.version}
-                    appLicense={AppPackage.license}
-                    onLogoClick={() => navigate('/', { replace: true })}
-                    onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                    user={user}
-                    appsAndUrls={appsAndUrls}
-                    globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
-                    additionalModulesPromise={getServersInfos}
-                    developerMode={false}
-                />
-                <CardErrorBoundary>
-                    {user !== null ? (
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={
-                                    <Box mt={1}>
-                                        <RootContainer />
-                                    </Box>
-                                }
+                <NotificationsProvider urls={urlMapper}>
+                    <CssBaseline />
+                    <TopBar
+                        appName="Dyna"
+                        appColor="grey"
+                        appLogo={<PowsyblLogo />}
+                        appVersion={AppPackage.version}
+                        appLicense={AppPackage.license}
+                        onLogoClick={() => navigate('/', { replace: true })}
+                        onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
+                        user={user}
+                        appsAndUrls={appsAndUrls}
+                        globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
+                        additionalModulesPromise={getServersInfos}
+                        developerMode={false}
+                        announcementInfos={announcementInfos}
+                    />
+                    <CardErrorBoundary>
+                        {user !== null ? (
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={
+                                        <Box mt={1}>
+                                            <RootContainer />
+                                        </Box>
+                                    }
+                                />
+                                <Route
+                                    path="/sign-in-callback"
+                                    element={<Navigate replace to={getPreLoginPath() || '/'} />}
+                                />
+                                <Route
+                                    path="/logout-callback"
+                                    element={<h1>Error: logout failed; you are still logged in.</h1>}
+                                />
+                                <Route
+                                    path="*"
+                                    element={
+                                        <h1>
+                                            <FormattedMessage id="PageNotFound" />
+                                        </h1>
+                                    }
+                                />
+                            </Routes>
+                        ) : (
+                            <AuthenticationRouter
+                                userManager={userManager}
+                                signInCallbackError={signInCallbackError}
+                                authenticationRouterError={authenticationRouterError}
+                                showAuthenticationRouterLogin={showAuthenticationRouterLogin}
+                                dispatch={authenticationDispatch}
+                                navigate={navigate}
+                                location={location}
                             />
-                            <Route
-                                path="/sign-in-callback"
-                                element={<Navigate replace to={getPreLoginPath() || '/'} />}
-                            />
-                            <Route
-                                path="/logout-callback"
-                                element={<h1>Error: logout failed; you are still logged in.</h1>}
-                            />
-                            <Route
-                                path="*"
-                                element={
-                                    <h1>
-                                        <FormattedMessage id="PageNotFound" />
-                                    </h1>
-                                }
-                            />
-                        </Routes>
-                    ) : (
-                        <AuthenticationRouter
-                            userManager={userManager}
-                            signInCallbackError={signInCallbackError}
-                            authenticationRouterError={authenticationRouterError}
-                            showAuthenticationRouterLogin={showAuthenticationRouterLogin}
-                            dispatch={authenticationDispatch}
-                            navigate={navigate}
-                            location={location}
-                        />
-                    )}
-                </CardErrorBoundary>
+                        )}
+                    </CardErrorBoundary>
+                </NotificationsProvider>
             </ThemeProvider>
         </StyledEngineProvider>
     );
