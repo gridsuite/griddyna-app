@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Divider, Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
@@ -54,7 +54,7 @@ const AutomatonProperties = ({
                     // convert a string content with VALUE_DELIMITER to an array
                     const propertyValue = propertyDefinition.multiple
                         ? _.map(_.split(property?.value, VALUE_DELIMITER), _.trim)
-                        : property?.value ?? '';
+                        : (property?.value ?? '');
 
                     const options =
                         propertyDefinition?.values ??

@@ -7,10 +7,10 @@
 import { backendFetchJson, backendFetchText } from '../utils/rest-api';
 
 const API_URL =
-    process.env.REACT_APP_API_PREFIX +
-    (process.env.REACT_APP_USE_AUTHENTICATION === 'true'
-        ? process.env.REACT_APP_GATEWAY_PREFIX + '/dynamic-mapping'
-        : process.env.REACT_APP_URI) +
+    import.meta.env.VITE_API_PREFIX +
+    (import.meta.env.VITE_USE_AUTHENTICATION === 'true'
+        ? `${import.meta.env.VITE_GATEWAY_PREFIX}/dynamic-mapping`
+        : import.meta.env.VITE_URI) +
     '/mappings';
 
 export function postMapping(mappingName, rules, automata, controlledParameters, token) {

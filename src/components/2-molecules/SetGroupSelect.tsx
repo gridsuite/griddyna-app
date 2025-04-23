@@ -8,7 +8,7 @@
 import { Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { styles } from './SetGroupSelectStyle';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
 import { Group, Model } from '../../redux/types/model.type';

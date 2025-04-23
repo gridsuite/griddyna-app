@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 import { styles } from './TabBarStyles';
@@ -25,8 +24,8 @@ const TabBar = (props) => {
                         option.value === value || option.isValid === undefined
                             ? undefined
                             : !option.isValid
-                            ? styles.tabWithError
-                            : undefined
+                              ? styles.tabWithError
+                              : undefined
                     }
                 />
             ))}

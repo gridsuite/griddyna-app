@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Autocomplete as MuiAutocomplete, Popper, TextField } from '@mui/material';
 import { styles } from './AutocompleteStyles';
@@ -58,7 +58,7 @@ const Autocomplete = (props) => {
                   },
         [options, value, isMultiple, matchMultipleOptions]
     );
-    const [inputValue, setInputValue] = useState(isMultiple ? '' : value?.toString() ?? '');
+    const [inputValue, setInputValue] = useState(isMultiple ? '' : (value?.toString() ?? ''));
 
     const sxStyles = styles({
         inputLength: fixedWidth ? undefined : inputValue.length,

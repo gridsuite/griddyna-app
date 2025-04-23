@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import React from 'react';
 import PropTypes from 'prop-types';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
 import { Grid, Paper, Typography } from '@mui/material';

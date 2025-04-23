@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router';
 import { Box, createTheme, CssBaseline, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
 import { LIGHT_THEME } from '../redux/slices/Theme';
@@ -22,7 +22,7 @@ import {
     TopBar,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { ReactComponent as PowsyblLogo } from '../images/powsybl_logo.svg';
+import PowsyblLogo from '../images/powsybl_logo.svg?react';
 import AppPackage from '../../package.json';
 import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } from '../utils/rest-api';
 import { getServersInfos } from '../rest/studyAPI';
@@ -72,7 +72,10 @@ const App = () => {
     const dispatch = useDispatch();
 
     const authenticationDispatch = useCallback(
-        (action) => dispatch(UserSlice.actions[action.type](action)),
+        (action) => {
+            action.user = { ...action.user }; // redux toolkit warn about the User class not being serializable
+            dispatch(UserSlice.actions[action.type](action));
+        },
         [dispatch]
     );
 
@@ -95,9 +98,9 @@ const App = () => {
         // need subfunction when async as suggested by rule react-hooks/exhaustive-deps
         (async function initializeAuthentication() {
             try {
-                console.debug(`dev auth: ${process.env.REACT_APP_USE_AUTHENTICATION}`);
+                console.debug(`dev auth: ${import.meta.env.VITE_USE_AUTHENTICATION}`);
                 const initAuth =
-                    process.env.REACT_APP_USE_AUTHENTICATION === 'true'
+                    import.meta.env.VITE_USE_AUTHENTICATION === 'true'
                         ? initializeAuthenticationProd(
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,
