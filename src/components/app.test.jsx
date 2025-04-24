@@ -5,8 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-// app.test.js
-
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import { IntlProvider } from 'react-intl';
@@ -30,6 +28,7 @@ afterEach(() => {
 
 it('renders', async () => {
     const root = createRoot(container);
+    // eslint-disable-next-line testing-library/no-unnecessary-act
     await act(async () =>
         root.render(
             <IntlProvider locale="en">
