@@ -494,7 +494,7 @@ export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalNa
 export const getNetworkMatchesFromRule = createAsyncThunk('mappings/matchNetwork', async (ruleIndex, { getState }) => {
     const state = getState();
     const token = state?.user.user?.id_token;
-    const { rules, filteredRuleType } = state?.mappings;
+    const { rules, filteredRuleType } = state?.mappings ?? {};
     const networkId = state?.network.currentNetwork;
     const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
     const ruleToMatch = {
