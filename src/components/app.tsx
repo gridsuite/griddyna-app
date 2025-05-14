@@ -10,6 +10,7 @@ import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'rea
 import { Box, createTheme, CssBaseline, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
 import {
+    AnnouncementNotification,
     AuthenticationRouter,
     CardErrorBoundary,
     getPreLoginPath,
@@ -22,7 +23,6 @@ import {
     logout,
     NotificationsProvider,
     TopBar,
-    useNotificationsListener,
     type UserManagerState,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -33,7 +33,7 @@ import { getServersInfos } from '../rest/studyAPI';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
-import useNotificationsUrlGenerator, { NotificationUrlKeys } from '../hooks/use-notification-url-generator';
+import useNotificationsUrlGenerator from '../hooks/use-notification-url-generator';
 
 const lightTheme = createTheme({
     palette: {
@@ -89,8 +89,6 @@ const App = () => {
     const langDispatch = useCallback((lng: GsLang) => {
         /*not implemented yet*/
     }, []);
-
-    const [announcementInfos, setAnnouncementInfos] = useState(null);
 
     const location = useLocation();
 
@@ -148,30 +146,6 @@ const App = () => {
         }
     }, [user]);
 
-    useNotificationsListener(NotificationUrlKeys.GLOBAL_CONFIG, {
-        listenerCallbackMessage: (event) => {
-            const eventData = JSON.parse(event.data);
-            if (eventData.headers.messageType === 'announcement') {
-                if (
-                    announcementInfos != null &&
-                    announcementInfos.announcementId === eventData.headers.announcementId
-                ) {
-                    // If we receive a notification for an announcement that we already received we ignore it
-                    return;
-                }
-                const announcement = {
-                    announcementId: eventData.headers.announcementId,
-                    message: eventData.payload,
-                    severity: eventData.headers.severity,
-                    duration: eventData.headers.duration,
-                };
-                setAnnouncementInfos(announcement);
-            } else if (eventData.headers.messageType === 'cancelAnnouncement') {
-                setAnnouncementInfos(null);
-            }
-        },
-    });
-
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={themeCompiled}>
@@ -192,8 +166,8 @@ const App = () => {
                         developerMode={false}
                         onLanguageClick={langDispatch}
                         language={computedLanguage as any} //TODO fix type
-                        announcementInfos={announcementInfos}
                     />
+                    <AnnouncementNotification user={user} />
                     <CardErrorBoundary>
                         {user !== null ? (
                             <Routes>
