@@ -14,17 +14,18 @@ import { IntlProvider } from 'react-intl';
 import './index.css';
 import App from './components/app';
 import { store } from './redux/store';
-
 import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
 import {
+    CardErrorBoundary,
     cardErrorBoundaryEn,
     cardErrorBoundaryFr,
-    CardErrorBoundary,
     filterEn,
     filterExpertEn,
     filterExpertFr,
     filterFr,
+    GsLangUser,
+    LANG_ENGLISH,
     loginEn,
     loginFr,
     topBarEn,
@@ -48,16 +49,16 @@ const messages = {
         ...filterFr,
         ...filterExpertFr,
     },
-};
+} as const;
 
 const language = navigator.language.split(/[-_]/)[0]; // language without region code
 
-const basename = new URL(document.querySelector('base').href).pathname;
+const basename = new URL(document.querySelector('base')!.href).pathname;
 
 const container = document.getElementById('root');
-const root = createRoot(container);
+const root = createRoot(container!);
 root.render(
-    <IntlProvider locale={language} messages={messages[language]}>
+    <IntlProvider locale={language} messages={messages[language as GsLangUser /*TODO fix*/] || messages[LANG_ENGLISH]}>
         <Provider store={store}>
             <BrowserRouter basename={basename}>
                 <CardErrorBoundary>
