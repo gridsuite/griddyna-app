@@ -6,28 +6,31 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router';
 import { Box, createTheme, CssBaseline, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
-import { LIGHT_THEME } from '../redux/slices/Theme';
 import {
-    LANG_FRENCH,
     AuthenticationRouter,
     CardErrorBoundary,
     getPreLoginPath,
+    type GsLang,
+    type GsTheme,
     initializeAuthenticationDev,
     initializeAuthenticationProd,
+    LANG_FRENCH,
+    LIGHT_THEME,
     logout,
     NotificationsProvider,
     TopBar,
     useNotificationsListener,
+    type UserManagerState,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PowsyblLogo from '../images/powsybl_logo.svg?react';
 import AppPackage from '../../package.json';
 import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } from '../utils/rest-api';
 import { getServersInfos } from '../rest/studyAPI';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
 import useNotificationsUrlGenerator, { NotificationUrlKeys } from '../hooks/use-notification-url-generator';
@@ -44,7 +47,8 @@ const darkTheme = createTheme({
     },
     mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
 });
-function getMuiTheme(theme, locale) {
+
+function getMuiTheme(theme: GsTheme, locale: string /*TODO GsLangUser*/) {
     return responsiveFontSizes(
         createTheme(
             theme === LIGHT_THEME ? lightTheme : darkTheme,
@@ -53,34 +57,38 @@ function getMuiTheme(theme, locale) {
     );
 }
 
-const noUserManager = { instance: null, error: null };
+const noUserManager = { instance: null, error: null } satisfies UserManagerState;
 
 const App = () => {
     const computedLanguage = useIntl().locale;
-    const theme = useSelector((state) => state.theme);
+    const theme = useAppSelector((state) => state.theme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
 
-    const user = useSelector((state) => state.user.user);
+    const user = useAppSelector((state) => state.user.user);
 
-    const signInCallbackError = useSelector((state) => state.user.signInCallbackError);
-    const authenticationRouterError = useSelector((state) => state.user.authenticationRouterError);
-    const showAuthenticationRouterLogin = useSelector((state) => state.user.showAuthenticationRouterLogin);
+    const signInCallbackError = useAppSelector((state) => state.user.signInCallbackError);
+    const authenticationRouterError = useAppSelector((state) => state.user.authenticationRouterError);
+    const showAuthenticationRouterLogin = useAppSelector((state) => state.user.showAuthenticationRouterLogin);
 
-    const [userManager, setUserManager] = useState(noUserManager);
+    const [userManager, setUserManager] = useState<UserManagerState>(noUserManager);
 
     const [appsAndUrls, setAppsAndUrls] = useState([]);
 
     const navigate = useNavigate();
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const authenticationDispatch = useCallback(
-        (action) => {
+        (action: any) => {
             action.user = { ...action.user }; // redux toolkit warn about the User class not being serializable
             dispatch(UserSlice.actions[action.type](action));
         },
         [dispatch]
     );
+
+    const langDispatch = useCallback((lng: GsLang) => {
+        /*not implemented yet*/
+    }, []);
 
     const [announcementInfos, setAnnouncementInfos] = useState(null);
 
@@ -125,7 +133,7 @@ const App = () => {
                     instance: await initAuth,
                     error: null,
                 });
-            } catch (error) {
+            } catch (error: any) {
                 setUserManager({ instance: null, error: error.message });
             }
         })();
@@ -177,11 +185,13 @@ const App = () => {
                         appLicense={AppPackage.license}
                         onLogoClick={() => navigate('/', { replace: true })}
                         onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                        user={user}
+                        user={user ?? undefined}
                         appsAndUrls={appsAndUrls}
                         globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
                         additionalModulesPromise={getServersInfos}
                         developerMode={false}
+                        onLanguageClick={langDispatch}
+                        language={computedLanguage as any} //TODO fix type
                         announcementInfos={announcementInfos}
                     />
                     <CardErrorBoundary>
@@ -233,5 +243,5 @@ const App = () => {
 export default App;
 
 function ValidateUserDev() {
-    return new Promise((resolve) => window.setTimeout(() => resolve(true), 500));
+    return new Promise<boolean>((resolve) => window.setTimeout(() => resolve(true), 500));
 }

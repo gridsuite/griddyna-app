@@ -6,10 +6,14 @@
  */
 import { configureStore } from '@reduxjs/toolkit';
 import { setCommonStore } from '@gridsuite/commons-ui';
-import { reducer } from './reducer';
+import { rootReducers, type RootState } from './reducer';
+import { useDispatch, useSelector } from 'react-redux';
 
-export const store = configureStore({ reducer });
+export const store = configureStore({ reducer: rootReducers });
+// export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>(); // Export a hook that can be reused to resolve types
+export const useAppSelector = useSelector.withTypes<RootState>(); // Export a hook that can be reused to resolve types
 setCommonStore({
     getState: () => store.getState().user,
 });

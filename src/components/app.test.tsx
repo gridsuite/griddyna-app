@@ -15,7 +15,7 @@ import { BrowserRouter } from 'react-router';
 import App from './app';
 import { store } from '../redux/store';
 
-let container = null;
+let container: HTMLDivElement | null = null;
 beforeEach(() => {
     // setup a DOM element as a render target
     container = document.createElement('div');
@@ -24,12 +24,12 @@ beforeEach(() => {
 
 afterEach(() => {
     // cleanup on exiting
-    container.remove();
+    container?.remove();
     container = null;
 });
 
 it('renders', async () => {
-    const root = createRoot(container);
+    const root = createRoot(container!);
     await act(async () =>
         root.render(
             <IntlProvider locale="en">
@@ -42,7 +42,7 @@ it('renders', async () => {
         )
     );
 
-    expect(container.textContent).toContain('GridDyna');
+    expect(container?.textContent).toContain('GridDyna');
     act(() => {
         root.unmount();
     });
