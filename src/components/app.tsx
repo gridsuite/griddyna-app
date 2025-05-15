@@ -10,6 +10,7 @@ import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'rea
 import { Box, createTheme, CssBaseline, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
 import {
+    AnnouncementNotification,
     AuthenticationRouter,
     CardErrorBoundary,
     getPreLoginPath,
@@ -20,6 +21,7 @@ import {
     LANG_FRENCH,
     LIGHT_THEME,
     logout,
+    NotificationsProvider,
     TopBar,
     type UserManagerState,
 } from '@gridsuite/commons-ui';
@@ -31,6 +33,7 @@ import { getServersInfos } from '../rest/studyAPI';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
+import useNotificationsUrlGenerator from '../hooks/use-notification-url-generator';
 
 const lightTheme = createTheme({
     palette: {
@@ -89,6 +92,8 @@ const App = () => {
 
     const location = useLocation();
 
+    const urlMapper = useNotificationsUrlGenerator();
+
     // Can't use lazy initializer because useMatch is a hook
     const [initialMatchSilentRenewCallbackUrl] = useState(
         useMatch({
@@ -144,63 +149,66 @@ const App = () => {
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={themeCompiled}>
-                <CssBaseline />
-                <TopBar
-                    appName="Dyna"
-                    appColor="grey"
-                    appLogo={<PowsyblLogo />}
-                    appVersion={AppPackage.version}
-                    appLicense={AppPackage.license}
-                    onLogoClick={() => navigate('/', { replace: true })}
-                    onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                    user={user ?? undefined}
-                    appsAndUrls={appsAndUrls}
-                    globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
-                    additionalModulesPromise={getServersInfos}
-                    developerMode={false}
-                    onLanguageClick={langDispatch}
-                    language={computedLanguage as any} //TODO fix type
-                />
-                <CardErrorBoundary>
-                    {user !== null ? (
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={
-                                    <Box mt={1}>
-                                        <RootContainer />
-                                    </Box>
-                                }
+                <NotificationsProvider urls={urlMapper}>
+                    <CssBaseline />
+                    <TopBar
+                        appName="Dyna"
+                        appColor="grey"
+                        appLogo={<PowsyblLogo />}
+                        appVersion={AppPackage.version}
+                        appLicense={AppPackage.license}
+                        onLogoClick={() => navigate('/', { replace: true })}
+                        onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
+                        user={user ?? undefined}
+                        appsAndUrls={appsAndUrls}
+                        globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
+                        additionalModulesPromise={getServersInfos}
+                        developerMode={false}
+                        onLanguageClick={langDispatch}
+                        language={computedLanguage as any} //TODO fix type
+                    />
+                    <AnnouncementNotification user={user} />
+                    <CardErrorBoundary>
+                        {user !== null ? (
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={
+                                        <Box mt={1}>
+                                            <RootContainer />
+                                        </Box>
+                                    }
+                                />
+                                <Route
+                                    path="/sign-in-callback"
+                                    element={<Navigate replace to={getPreLoginPath() || '/'} />}
+                                />
+                                <Route
+                                    path="/logout-callback"
+                                    element={<h1>Error: logout failed; you are still logged in.</h1>}
+                                />
+                                <Route
+                                    path="*"
+                                    element={
+                                        <h1>
+                                            <FormattedMessage id="PageNotFound" />
+                                        </h1>
+                                    }
+                                />
+                            </Routes>
+                        ) : (
+                            <AuthenticationRouter
+                                userManager={userManager}
+                                signInCallbackError={signInCallbackError}
+                                authenticationRouterError={authenticationRouterError}
+                                showAuthenticationRouterLogin={showAuthenticationRouterLogin}
+                                dispatch={authenticationDispatch}
+                                navigate={navigate}
+                                location={location}
                             />
-                            <Route
-                                path="/sign-in-callback"
-                                element={<Navigate replace to={getPreLoginPath() || '/'} />}
-                            />
-                            <Route
-                                path="/logout-callback"
-                                element={<h1>Error: logout failed; you are still logged in.</h1>}
-                            />
-                            <Route
-                                path="*"
-                                element={
-                                    <h1>
-                                        <FormattedMessage id="PageNotFound" />
-                                    </h1>
-                                }
-                            />
-                        </Routes>
-                    ) : (
-                        <AuthenticationRouter
-                            userManager={userManager}
-                            signInCallbackError={signInCallbackError}
-                            authenticationRouterError={authenticationRouterError}
-                            showAuthenticationRouterLogin={showAuthenticationRouterLogin}
-                            dispatch={authenticationDispatch}
-                            navigate={navigate}
-                            location={location}
-                        />
-                    )}
-                </CardErrorBoundary>
+                        )}
+                    </CardErrorBoundary>
+                </NotificationsProvider>
             </ThemeProvider>
         </StyledEngineProvider>
     );
