@@ -29,4 +29,4 @@ export default function useNotificationsUrlGenerator(): Record<NotificationUrlKe
         }),
         [tokenId, wsBase]
     );
-};
+}
