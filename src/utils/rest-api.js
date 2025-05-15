@@ -23,13 +23,12 @@ function getToken() {
     return state.user.id_token;
 }
 
-export const getWsBase = () => document.baseURI.replace(/^http:\/\//, 'ws://').replace(/^https:\/\//, 'wss://');
+export function getWsBase() {
+    return document.baseURI.replace(/^http(s?):\/\//, (_, s) => `ws${s || ''}://`);
+}
 
 export function getUrlWithToken(baseUrl, token) {
-    if (baseUrl.includes('?')) {
-        return `${baseUrl}&access_token=${token}`;
-    }
-    return `${baseUrl}?access_token=${token}`;
+    return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}access_token=${token}`;
 }
 
 function parseError(text) {
