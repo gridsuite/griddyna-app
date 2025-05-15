@@ -25,6 +25,7 @@ declare module '@mui/material/styles' {
             highlightColor: Property.Color;
         };
         agGridBackground: CSSObject;
+        mapboxStyle: string;
     };
 
     export interface Theme extends /*MuiTheme,*/ ThemeExtension {}

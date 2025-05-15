@@ -12,10 +12,11 @@ import { UserReducer } from './slices/User';
 import { NetworkReducer } from './slices/Network';
 import { ModelReducer } from './slices/Model';
 
-export const reducer = combineReducers({
+export const rootReducers = combineReducers({
     user: UserReducer,
     theme: ThemeReducer,
     mappings: MappingReducer,
     models: ModelReducer,
     network: NetworkReducer,
 });
+export type RootState = ReturnType<typeof rootReducers>;

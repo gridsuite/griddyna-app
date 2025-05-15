@@ -5,14 +5,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { DARK_THEME } from './slices/Theme';
+import { DARK_THEME, type GsTheme } from '@gridsuite/commons-ui';
 
 const LOCAL_STORAGE_THEME_KEY = `${import.meta.env.VITE_NAME}_THEME`;
 
-export const getLocalStorageTheme = () => {
-    return localStorage.getItem(LOCAL_STORAGE_THEME_KEY) || DARK_THEME;
-};
+export function getLocalStorageTheme() {
+    return (localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as GsTheme) || DARK_THEME;
+}
 
-export const saveLocalStorageTheme = (theme) => {
+export function saveLocalStorageTheme(theme: GsTheme) {
     localStorage.setItem(LOCAL_STORAGE_THEME_KEY, theme);
-};
+}
