@@ -28,7 +28,7 @@ import {
 import { FormattedMessage, useIntl } from 'react-intl';
 import PowsyblLogo from '../images/powsybl_logo.svg?react';
 import AppPackage from '../../package.json';
-import { fetchAppsAndUrls, fetchIdpSettings, fetchValidateUser, fetchVersion } from '../utils/rest-api';
+import { fetchAppsAndUrls, fetchIdpSettings, fetchVersion } from '../utils/rest-api';
 import { getServersInfos } from '../rest/studyAPI';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
@@ -118,13 +118,11 @@ const App = () => {
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,
                               fetchIdpSettings,
-                              fetchValidateUser,
                               initialMatchSigninCallbackUrl != null
                           )
                         : initializeAuthenticationDev(
                               authenticationDispatch,
                               initialMatchSilentRenewCallbackUrl != null,
-                              ValidateUserDev,
                               initialMatchSigninCallbackUrl != null
                           );
                 setUserManager({
@@ -215,7 +213,3 @@ const App = () => {
 };
 
 export default App;
-
-function ValidateUserDev() {
-    return new Promise<boolean>((resolve) => window.setTimeout(() => resolve(true), 500));
-}

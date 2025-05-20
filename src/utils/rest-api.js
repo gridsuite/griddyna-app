@@ -6,9 +6,6 @@
  */
 
 import { store } from '../redux/store';
-const PREFIX_USER_ADMIN_SERVER_QUERIES = `${import.meta.env.VITE_API_PREFIX}${
-    import.meta.env.VITE_GATEWAY_PREFIX
-}/user-admin`;
 
 // If you want to use user-admin-server in dev mode you must avoid passing through gateway
 // and use the user-admin-server directly. SetupProxy should allow this.
@@ -85,36 +82,6 @@ export function backendFetchText(url, init, token) {
 export function backendFetchJson(url, init, token) {
     const initCopy = prepareRequest(init, token);
     return safeFetch(url, initCopy).then((safeResponse) => safeResponse.json());
-}
-
-export function fetchValidateUser(user) {
-    const sub = user?.profile?.sub;
-    if (!sub) {
-        return Promise.reject(new Error('Error : Fetching access for missing user.profile.sub : ' + user));
-    }
-
-    console.info(`Fetching access for user...`);
-    const CheckAccessUrl = PREFIX_USER_ADMIN_SERVER_QUERIES + `/v1/users/${sub}`;
-    console.debug(CheckAccessUrl);
-
-    return backendFetch(
-        CheckAccessUrl,
-        {
-            method: 'head',
-        },
-        user?.id_token
-    )
-        .then((response) => {
-            //if the response is ok, the responseCode will be either 200 or 204 otherwise it's a Http error and it will be caught
-            return response.status === 200;
-        })
-        .catch((error) => {
-            if (error.status === 403) {
-                return false;
-            } else {
-                throw error;
-            }
-        });
 }
 
 function fetchEnv() {
