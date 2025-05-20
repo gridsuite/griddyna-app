@@ -6,9 +6,6 @@
  */
 
 import { store } from '../redux/store';
-const PREFIX_USER_ADMIN_SERVER_QUERIES = `${import.meta.env.VITE_API_PREFIX}${
-    import.meta.env.VITE_GATEWAY_PREFIX
-}/user-admin`;
 
 // If you want to use user-admin-server in dev mode you must avoid passing through gateway
 // and use the user-admin-server directly. SetupProxy should allow this.
