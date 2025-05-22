@@ -4,19 +4,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { FieldErrors, FieldValues, useForm } from 'react-hook-form';
+import { type FieldErrors, type FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useFormInit from './useFormInit';
-import { yupConfig as yup } from '@gridsuite/commons-ui';
+import type { ObjectSchema } from 'yup';
 import useDataUpdate from './useDataUpdate';
 
-const useDataForm = (
-    formSchema: yup.ObjectSchema<any>,
+export default function useDataForm(
+    formSchema: ObjectSchema<any>,
     data: Object,
     invalidations: any[],
     onValid: (formData: FieldValues) => void,
     onInvalid: (errors: FieldErrors) => void
-) => {
+) {
     const formMethods = useForm({
         resolver: yupResolver(formSchema),
     });
@@ -30,6 +30,4 @@ const useDataForm = (
     useDataUpdate(formMethods, onValid, onInvalid);
 
     return { key, formMethods };
-};
-
-export default useDataForm;
+}

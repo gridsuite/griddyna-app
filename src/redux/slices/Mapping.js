@@ -18,8 +18,8 @@ import {
     getExpertFilterEmptyFormData,
     importExpertRules,
     rqbQuerySchemaValidator,
-    yupConfig as yup,
 } from '@gridsuite/commons-ui';
+import * as yup from 'yup';
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 import { assignArray } from '../../utils/functions';

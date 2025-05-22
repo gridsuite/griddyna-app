@@ -24,6 +24,7 @@ import {
     NotificationsProvider,
     TopBar,
     type UserManagerState,
+    useYupIntl,
 } from '@gridsuite/commons-ui';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PowsyblLogo from '../images/powsybl_logo.svg?react';
@@ -63,6 +64,7 @@ const App = () => {
     const computedLanguage = useIntl().locale;
     const theme = useAppSelector((state) => state.theme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
+    useYupIntl();
 
     const user = useAppSelector((state) => state.user.user);
 
