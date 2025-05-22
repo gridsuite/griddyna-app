@@ -214,9 +214,7 @@ const checkFilterValidity = (filter, isLast) => {
         // only last rule allows empty filter
         return !!isLast;
     }
-    const isQueryExist = !_.isEmpty(filter.rules);
-    const isQueryValid = isQueryExist && rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules);
-    return isQueryValid;
+    return !_.isEmpty(filter.rules) && rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules); // query exist and is valid
 };
 
 export const makeGetIsFilterValid = () =>
@@ -244,7 +242,7 @@ const checkRuleValidity = (rule, isLast) => {
 };
 
 const checkAutomatonValidity = (automaton, automatonDefinition = {}) => {
-    const result =
+    return (
         !!automaton.family &&
         !!automaton.model &&
         !!automaton.setGroup &&
@@ -256,8 +254,8 @@ const checkAutomatonValidity = (automaton, automatonDefinition = {}) => {
                     ? !!automaton.properties.find((elem) => elem.name === propertyName)?.value
                     : true),
             true
-        );
-    return result;
+        )
+    );
 };
 
 const indexingRuleByType = (rules) => {
@@ -622,8 +620,8 @@ const reducers = {
             const foundRule = foundMapping.rules?.find((rule) => rule?.filter?.id === modifiedFilter?.id);
 
             const oldQuery = foundRule?.filter?.rules;
-            const isDirty = formatQuery(oldQuery, 'json_without_ids') !== formatQuery(newQuery, 'json_without_ids');
-            modifiedRule.filterDirty = isDirty;
+            modifiedRule.filterDirty =
+                formatQuery(oldQuery, 'json_without_ids') !== formatQuery(newQuery, 'json_without_ids');
         }
     },
     deleteFilter: (state, action) => {
