@@ -8,31 +8,31 @@
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid, Tooltip, Typography } from '@mui/material';
-import { CustomReactQueryBuilder, EXPERT_FILTER_FIELDS, EXPERT_FILTER_QUERY } from '@gridsuite/commons-ui';
-import { useIntl } from 'react-intl';
+import { CustomReactQueryBuilder, EXPERT_FILTER_QUERY, useFormatLabelWithUnit } from '@gridsuite/commons-ui';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';
 import { mergeSx } from '../../utils/functions';
 import InfoIcon from '@mui/icons-material/Info';
+import { EXPERT_FILTER_FIELDS } from '../../constants/expertFilter';
 
 const filterLabel = 'Where:';
 const addFilterLabel = 'Add filter';
 const deleteFilterLabel = 'Delete filter';
 const noFilterLabel = 'no other filter applies';
 const ruleWithoutFilter = 'Only last rule can have empty filter';
+
 const Filter = (props) => {
     const { isValid, equipmentType, newFilter, deleteFilter, hasFilter } = props;
 
-    const intl = useIntl();
-
+    const formatLabelWithUnit = useFormatLabelWithUnit();
     const translatedFields = useMemo(() => {
         return EXPERT_FILTER_FIELDS[equipmentType]?.map((field) => {
             return {
                 ...field,
-                label: intl.formatMessage({ id: field.label }),
+                label: formatLabelWithUnit(field),
             };
         });
-    }, [intl, equipmentType]);
+    }, [formatLabelWithUnit, equipmentType]);
 
     return (
         <Grid container justify="space-between">
