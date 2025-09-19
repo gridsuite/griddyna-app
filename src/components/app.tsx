@@ -39,13 +39,11 @@ const lightTheme = createTheme({
     palette: {
         mode: 'light',
     },
-    mapboxStyle: 'mapbox://styles/mapbox/light-v9',
 });
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
     },
-    mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
 });
 
 function getMuiTheme(theme: GsTheme, locale: string /*TODO GsLangUser*/) {
