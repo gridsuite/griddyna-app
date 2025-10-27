@@ -14,11 +14,10 @@ import * as networkAPI from '../../rest/networkAPI';
 import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
 import {
+    expertFilterSchema,
     exportExpertRules,
     getExpertFilterEmptyFormData,
     importExpertRules,
-    rqbQuerySchemaValidator,
-    yupConfig as yup,
 } from '@gridsuite/commons-ui';
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
@@ -215,7 +214,7 @@ const checkFilterValidity = (filter, isLast) => {
         return !!isLast;
     }
     const isQueryExist = !_.isEmpty(filter.rules);
-    const isQueryValid = isQueryExist && rqbQuerySchemaValidator(yup.object()).isValidSync(filter.rules);
+    const isQueryValid = isQueryExist && expertFilterSchema.rules.isValidSync(filter.rules);
     return isQueryValid;
 };
 
