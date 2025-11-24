@@ -134,6 +134,7 @@ const reducers = {
         const definitions = state.parameterDefinitions;
         currentGroup.modelName = modelName;
         if (originalGroup) {
+            currentGroup.id = currentGroup.id ?? originalGroup.id;
             currentGroup.name = currentGroup.name !== '' ? currentGroup.name : originalGroup.name;
             currentGroup.type = currentGroup.type !== '' ? currentGroup.type : originalGroup.type;
         } else if (isAbsolute) {
@@ -230,6 +231,7 @@ const extraReducers = (builder) => {
         const updatedModel = state.models.find((model) => model.name === updatedGroup.modelName);
         if (updatedModel) {
             const simpleUpdatedGroup = {
+                id: updatedGroup.id,
                 name: updatedGroup.name,
                 type: updatedGroup.type,
                 setsNumber: updatedGroup.sets.length,
