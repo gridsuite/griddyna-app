@@ -86,7 +86,7 @@ const App = () => {
         [dispatch]
     );
 
-    const langDispatch = useCallback((lng: GsLang) => {
+    const langDispatch = useCallback((_lng: GsLang) => {
         /*not implemented yet*/
     }, []);
 

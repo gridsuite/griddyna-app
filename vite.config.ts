@@ -39,7 +39,7 @@ const serverSettings: CommonServerOptions = {
     },
 };
 
-export default defineConfig((config) => ({
+export default defineConfig((_config) => ({
     plugins: [
         react(),
         checker({
