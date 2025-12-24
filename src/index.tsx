@@ -20,6 +20,10 @@ import {
     CardErrorBoundary,
     cardErrorBoundaryEn,
     cardErrorBoundaryFr,
+    commonButtonEn,
+    commonButtonFr,
+    equipmentShortEn,
+    equipmentShortFr,
     errorsEn,
     errorsFr,
     filterEn,
@@ -32,6 +36,8 @@ import {
     loginFr,
     topBarEn,
     topBarFr,
+    treeviewFinderEn,
+    treeviewFinderFr,
 } from '@gridsuite/commons-ui';
 
 const messages = {
@@ -40,18 +46,24 @@ const messages = {
         ...loginEn,
         ...topBarEn,
         ...cardErrorBoundaryEn,
+        ...commonButtonEn,
+        ...equipmentShortEn,
         ...errorsEn,
         ...filterEn,
         ...filterExpertEn,
+        ...treeviewFinderEn,
     },
     fr: {
         ...messages_fr,
         ...loginFr,
         ...topBarFr,
         ...cardErrorBoundaryFr,
+        ...commonButtonFr,
+        ...equipmentShortFr,
         ...errorsFr,
         ...filterFr,
         ...filterExpertFr,
+        ...treeviewFinderFr,
     },
 } as const;
 
