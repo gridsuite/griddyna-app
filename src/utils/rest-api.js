@@ -31,7 +31,7 @@ export function getUrlWithToken(baseUrl, token) {
 function parseError(text) {
     try {
         return JSON.parse(text);
-    } catch (err) {
+    } catch {
         return null;
     }
 }

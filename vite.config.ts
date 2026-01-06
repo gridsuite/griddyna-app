@@ -39,7 +39,7 @@ const serverSettings: CommonServerOptions = {
     },
 };
 
-export default defineConfig((config) => ({
+export default defineConfig((_config) => ({
     plugins: [
         react(),
         checker({
@@ -53,6 +53,7 @@ export default defineConfig((config) => ({
                 dev: {
                     logLevel: ['error', 'warning'],
                 },
+                watchPath: './src',
             },
 
             overlay: false, // Disable overlay in browser

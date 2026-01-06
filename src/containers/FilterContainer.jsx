@@ -15,7 +15,7 @@ import {
 } from '../redux/slices/Mapping';
 import Filter from '../components/3-organisms/Filter';
 import PropTypes from 'prop-types';
-import { CustomFormProvider, EXPERT_FILTER_QUERY, yupConfig as yup } from '@gridsuite/commons-ui';
+import { CustomFormProvider, EXPERT_FILTER_QUERY, FieldConstants, yupConfig as yup } from '@gridsuite/commons-ui';
 import useDataForm from '../hooks/react-hook-form/form/useDataForm';
 
 // we do not need detail schema with all validation test for rqb filter
@@ -23,6 +23,7 @@ import useDataForm from '../hooks/react-hook-form/form/useDataForm';
 const filterFormSchema = yup
     .object()
     .shape({
+        [FieldConstants.EQUIPMENT_TYPE]: yup.string().required(), // hidden field but required for criteria ID IS_PART_OF filterUuids
         [EXPERT_FILTER_QUERY]: yup.object(),
     })
     .required();
@@ -78,6 +79,7 @@ const FilterContainer = ({ ruleIndex, equipmentType }) => {
     const { key, formMethods } = useDataForm(
         filterFormSchema,
         {
+            [FieldConstants.EQUIPMENT_TYPE]: equipmentType,
             [EXPERT_FILTER_QUERY]: query,
         },
         [filter?.id], // only reset form when filter id changed

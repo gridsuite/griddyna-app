@@ -187,7 +187,6 @@ const projectConfig = [
             '@typescript-eslint/no-unnecessary-type-assertion': 'off',
             '@typescript-eslint/no-unsafe-enum-comparison': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
-            '@typescript-eslint/no-unused-vars': 'off',
             '@typescript-eslint/no-wrapper-object-types': 'off',
 
             // @stylistic
@@ -205,7 +204,6 @@ const projectConfig = [
             'no-unneeded-ternary': 'off',
             'no-unsafe-optional-chaining': 'off',
             'no-unused-expressions': 'off',
-            'no-unused-vars': 'off',
             'no-use-before-define': 'off',
             'object-shorthand': 'off',
             'prefer-const': 'off',
