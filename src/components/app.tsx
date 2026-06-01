@@ -34,6 +34,7 @@ import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
 import useNotificationsUrlGenerator from '../hooks/use-notification-url-generator';
+import { shallowEqual } from 'react-redux';
 
 const lightTheme = createTheme({
     palette: {
@@ -64,7 +65,7 @@ const App = () => {
     const theme = useAppSelector((state) => state.theme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
 
-    const user = useAppSelector((state) => state.user.user);
+    const userProfile = useAppSelector((state) => state.user?.profile ?? null, shallowEqual);
 
     const signInCallbackError = useAppSelector((state) => state.user.signInCallbackError);
     const authenticationRouterError = useAppSelector((state) => state.user.authenticationRouterError);
@@ -137,12 +138,12 @@ const App = () => {
     }, [authenticationDispatch, initialMatchSilentRenewCallbackUrl, initialMatchSigninCallbackUrl]);
 
     useEffect(() => {
-        if (user !== null) {
+        if (userProfile !== null) {
             fetchAppsAndUrls().then((res) => {
                 setAppsAndUrls(res);
             });
         }
-    }, [user]);
+    }, [userProfile]);
 
     return (
         <StyledEngineProvider injectFirst>
@@ -157,7 +158,7 @@ const App = () => {
                         appLicense={AppPackage.license}
                         onLogoClick={() => navigate('/', { replace: true })}
                         onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                        user={user ?? undefined}
+                        userProfile={userProfile ?? undefined}
                         appsAndUrls={appsAndUrls}
                         globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
                         additionalModulesPromise={getServersInfos}
@@ -165,9 +166,9 @@ const App = () => {
                         onLanguageClick={langDispatch}
                         language={computedLanguage as any} //TODO fix type
                     />
-                    <AnnouncementNotification user={user} />
+                    <AnnouncementNotification userProfile={userProfile} />
                     <CardErrorBoundary>
-                        {user !== null ? (
+                        {userProfile !== null ? (
                             <Routes>
                                 <Route
                                     path="/"
