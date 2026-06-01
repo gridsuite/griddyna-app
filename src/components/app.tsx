@@ -65,7 +65,7 @@ const App = () => {
     const theme = useAppSelector((state) => state.theme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
 
-    const userProfile = useAppSelector((state) => state.user?.profile ?? null, shallowEqual);
+    const userProfile = useAppSelector((state) => state.user.user?.profile ?? null, shallowEqual);
 
     const signInCallbackError = useAppSelector((state) => state.user.signInCallbackError);
     const authenticationRouterError = useAppSelector((state) => state.user.authenticationRouterError);
