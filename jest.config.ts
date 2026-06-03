@@ -12,6 +12,8 @@ const config: Config = {
     moduleNameMapper: {
         '^.+\\.svg\\?react$': '<rootDir>/src/_mocks_/svg.tsx',
         '^.+\\.(css|less|scss)$': 'identity-obj-proxy',
+        '^@gridsuite/commons-ui$': '<rootDir>/node_modules/@gridsuite/commons-ui/dist/index.js',
+        '^@gridsuite/commons-ui/configureYup$': '<rootDir>/node_modules/@gridsuite/commons-ui/dist/configureYup.js',
     },
     transformIgnorePatterns: [
         'node_modules/(?!@gridsuite/commons-ui|react-dnd|dnd-core|@react-dnd|react-resizable-panel)',

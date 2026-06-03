@@ -45,6 +45,7 @@
         "redux": "^5.0.1",
         "typeface-roboto": "^1.1.13",
         "uuid": "^13.0.0",
+        "vitest": "^4.1.2",
         "yup": "^1.7.0"
     },
     "devDependencies": {
