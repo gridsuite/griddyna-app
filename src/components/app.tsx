@@ -64,8 +64,17 @@ const App = () => {
     const computedLanguage = useIntl().locale;
     const theme = useAppSelector((state) => state.theme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
-
-    const userProfile = useAppSelector((state) => state.user.user?.profile ?? null, shallowEqual);
+    const userProfile = useAppSelector(
+        (state) => state.user.user?.profile ?? null,
+        (a, b) =>
+            a === b ||
+            (a != null &&
+                b != null &&
+                a.sub === b.sub &&
+                a.name === b.name &&
+                a.email === b.email &&
+                a.profile === b.profile)
+    );
 
     const signInCallbackError = useAppSelector((state) => state.user.signInCallbackError);
     const authenticationRouterError = useAppSelector((state) => state.user.authenticationRouterError);
