@@ -34,7 +34,6 @@ import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
 import RootContainer from '../containers/RootContainer';
 import useNotificationsUrlGenerator from '../hooks/use-notification-url-generator';
-import { shallowEqual } from 'react-redux';
 
 const lightTheme = createTheme({
     palette: {
