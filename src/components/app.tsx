@@ -63,8 +63,11 @@ const App = () => {
     const computedLanguage = useIntl().locale;
     const theme = useAppSelector((state) => state.theme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
-
-    const user = useAppSelector((state) => state.user.user);
+    const userProfile = useAppSelector(
+        (state) => state.user.user?.profile ?? null,
+        (a, b) =>
+            a === b || (a?.sub === b?.sub && a?.name === b?.name && a?.email === b?.email && a?.profile === b?.profile)
+    );
 
     const signInCallbackError = useAppSelector((state) => state.user.signInCallbackError);
     const authenticationRouterError = useAppSelector((state) => state.user.authenticationRouterError);
@@ -137,12 +140,12 @@ const App = () => {
     }, [authenticationDispatch, initialMatchSilentRenewCallbackUrl, initialMatchSigninCallbackUrl]);
 
     useEffect(() => {
-        if (user !== null) {
+        if (userProfile !== null) {
             fetchAppsAndUrls().then((res) => {
                 setAppsAndUrls(res);
             });
         }
-    }, [user]);
+    }, [userProfile]);
 
     return (
         <StyledEngineProvider injectFirst>
@@ -157,7 +160,7 @@ const App = () => {
                         appLicense={AppPackage.license}
                         onLogoClick={() => navigate('/', { replace: true })}
                         onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                        user={user ?? undefined}
+                        userProfile={userProfile ?? undefined}
                         appsAndUrls={appsAndUrls}
                         globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
                         additionalModulesPromise={getServersInfos}
@@ -165,9 +168,9 @@ const App = () => {
                         onLanguageClick={langDispatch}
                         language={computedLanguage as any} //TODO fix type
                     />
-                    <AnnouncementNotification user={user} />
+                    <AnnouncementNotification userProfile={userProfile} />
                     <CardErrorBoundary>
-                        {user !== null ? (
+                        {userProfile !== null ? (
                             <Routes>
                                 <Route
                                     path="/"

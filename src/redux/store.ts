@@ -15,5 +15,6 @@ export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>(); // Export a hook that can be reused to resolve types
 export const useAppSelector = useSelector.withTypes<RootState>(); // Export a hook that can be reused to resolve types
 setCommonStore({
+    subscribe: (listener: () => void) => store.subscribe(listener),
     getState: () => store.getState().user,
 });

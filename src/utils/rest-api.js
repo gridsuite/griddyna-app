@@ -24,10 +24,6 @@ export function getWsBase() {
     return document.baseURI.replace(/^http(s?):\/\//, (_, s) => `ws${s || ''}://`);
 }
 
-export function getUrlWithToken(baseUrl, token) {
-    return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}access_token=${token}`;
-}
-
 function parseError(text) {
     try {
         return JSON.parse(text);
