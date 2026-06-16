@@ -22,6 +22,7 @@ import {
     LIGHT_THEME,
     logout,
     NotificationsProvider,
+    SnackbarProvider,
     TopBar,
     type UserManagerState,
 } from '@gridsuite/commons-ui';
@@ -150,66 +151,68 @@ const App = () => {
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={themeCompiled}>
-                <NotificationsProvider urls={urlMapper}>
-                    <CssBaseline />
-                    <TopBar
-                        appName="Dyna"
-                        appColor="grey"
-                        appLogo={<PowsyblLogo />}
-                        appVersion={AppPackage.version}
-                        appLicense={AppPackage.license}
-                        onLogoClick={() => navigate('/', { replace: true })}
-                        onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                        userProfile={userProfile ?? undefined}
-                        appsAndUrls={appsAndUrls}
-                        globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
-                        additionalModulesPromise={getServersInfos}
-                        developerMode={false}
-                        onLanguageClick={langDispatch}
-                        language={computedLanguage as any} //TODO fix type
-                    />
-                    <AnnouncementNotification userProfile={userProfile} />
-                    <CardErrorBoundary>
-                        {userProfile !== null ? (
-                            <Routes>
-                                <Route
-                                    path="/"
-                                    element={
-                                        <Box mt={1}>
-                                            <RootContainer />
-                                        </Box>
-                                    }
+                <SnackbarProvider hideIconVariant={false}>
+                    <NotificationsProvider urls={urlMapper}>
+                        <CssBaseline />
+                        <TopBar
+                            appName="Dyna"
+                            appColor="grey"
+                            appLogo={<PowsyblLogo />}
+                            appVersion={AppPackage.version}
+                            appLicense={AppPackage.license}
+                            onLogoClick={() => navigate('/', { replace: true })}
+                            onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
+                            userProfile={userProfile ?? undefined}
+                            appsAndUrls={appsAndUrls}
+                            globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
+                            additionalModulesPromise={getServersInfos}
+                            developerMode={false}
+                            onLanguageClick={langDispatch}
+                            language={computedLanguage as any} //TODO fix type
+                        />
+                        <AnnouncementNotification userProfile={userProfile} />
+                        <CardErrorBoundary>
+                            {userProfile !== null ? (
+                                <Routes>
+                                    <Route
+                                        path="/"
+                                        element={
+                                            <Box mt={1}>
+                                                <RootContainer />
+                                            </Box>
+                                        }
+                                    />
+                                    <Route
+                                        path="/sign-in-callback"
+                                        element={<Navigate replace to={getPreLoginPath() || '/'} />}
+                                    />
+                                    <Route
+                                        path="/logout-callback"
+                                        element={<h1>Error: logout failed; you are still logged in.</h1>}
+                                    />
+                                    <Route
+                                        path="*"
+                                        element={
+                                            <h1>
+                                                <FormattedMessage id="PageNotFound" />
+                                            </h1>
+                                        }
+                                    />
+                                </Routes>
+                            ) : (
+                                <AuthenticationRouter
+                                    userManager={userManager}
+                                    signInCallbackError={signInCallbackError}
+                                    authenticationRouterError={authenticationRouterError}
+                                    showAuthenticationRouterLogin={showAuthenticationRouterLogin}
+                                    dispatch={authenticationDispatch}
+                                    navigate={navigate}
+                                    location={location}
                                 />
-                                <Route
-                                    path="/sign-in-callback"
-                                    element={<Navigate replace to={getPreLoginPath() || '/'} />}
-                                />
-                                <Route
-                                    path="/logout-callback"
-                                    element={<h1>Error: logout failed; you are still logged in.</h1>}
-                                />
-                                <Route
-                                    path="*"
-                                    element={
-                                        <h1>
-                                            <FormattedMessage id="PageNotFound" />
-                                        </h1>
-                                    }
-                                />
-                            </Routes>
-                        ) : (
-                            <AuthenticationRouter
-                                userManager={userManager}
-                                signInCallbackError={signInCallbackError}
-                                authenticationRouterError={authenticationRouterError}
-                                showAuthenticationRouterLogin={showAuthenticationRouterLogin}
-                                dispatch={authenticationDispatch}
-                                navigate={navigate}
-                                location={location}
-                            />
-                        )}
-                    </CardErrorBoundary>
-                </NotificationsProvider>
+                            )}
+                        </CardErrorBoundary>
+                    </NotificationsProvider>
+                </SnackbarProvider>
             </ThemeProvider>
         </StyledEngineProvider>
     );

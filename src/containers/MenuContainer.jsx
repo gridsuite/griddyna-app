@@ -8,9 +8,12 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    canCreateNewMapping,
+    addMapping as importMappingAction,
     copyMapping as copyMappingAction,
     deleteMapping as deleteMappingAction,
+    exportMapping as exportMappingAction,
+    getAddError,
+    getExportError,
     getMappings,
     getMappingsInfo,
     MappingSlice,
@@ -19,16 +22,14 @@ import {
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
-import { Divider, Typography } from '@mui/material';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
+import { useSnackMessage } from '@gridsuite/commons-ui';
 
-const CANNOT_CREATE_MAPPING_LABEL = '"default" is already taken';
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector((state) => state.mappings.activeMapping);
-    const canCreateMapping = useSelector(canCreateNewMapping);
 
     useEffect(() => {
         // Fetch data on mount
@@ -39,8 +40,8 @@ const MenuContainer = () => {
     }, [dispatch]);
 
     // Mappings
-    const addMapping = () => {
-        dispatch(MappingSlice.actions.createMapping());
+    const addMapping = ({ operationType, file, name }) => {
+        dispatch(importMappingAction({ operationType, file, name }));
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
@@ -76,24 +77,41 @@ const MenuContainer = () => {
         dispatch(copyMappingAction({ originalName: name, copyName: name + ' Copy' }));
     };
 
+    const { snackError } = useSnackMessage();
+    const exportError = useSelector(getExportError);
+    const addError = useSelector(getAddError);
+
+    // Show snackbar when an export error occurs
+    useEffect(() => {
+        if (exportError) {
+            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+            snackError({ messageId: 'exportMappingError', messageTxt: exportError });
+        }
+    }, [exportError, snackError]);
+
+    // Show snackbar when an add error occurs
+    useEffect(() => {
+        if (addError) {
+            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+            snackError({ headerId: 'addMappingError', messageId: addError });
+        }
+    }, [addError, snackError]);
+
+    const exportMapping = (name) => () => {
+        dispatch(exportMappingAction(name));
+    };
+
     return (
-        <>
-            <Typography variant="h4" align={'center'}>
-                Mappings
-            </Typography>
-            <Divider />
-            <NavigationMenu
-                items={mappingsInfo}
-                addItem={addMapping}
-                deleteItem={deleteMapping}
-                renameItem={renameMapping}
-                copyItem={copyMapping}
-                selectItem={selectMapping}
-                selected={selectedMapping}
-                canAdd={canCreateMapping}
-                addTooltip={!canCreateMapping ? CANNOT_CREATE_MAPPING_LABEL : undefined}
-            />
-        </>
+        <NavigationMenu
+            items={mappingsInfo}
+            addItem={addMapping}
+            deleteItem={deleteMapping}
+            renameItem={renameMapping}
+            copyItem={copyMapping}
+            exportItem={exportMapping}
+            selectItem={selectMapping}
+            selected={selectedMapping}
+        />
     );
 };
 

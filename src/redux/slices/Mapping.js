@@ -22,6 +22,8 @@ import {
 import { v4 as uuid4 } from 'uuid';
 import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 import { assignArray } from '../../utils/functions';
+import { downloadBlob, extractFilename, readFileAsText } from '../../utils/file-utils.ts';
+import { OperationType } from '../../utils/types.ts';
 
 const initialState = {
     mappings: [],
@@ -32,6 +34,8 @@ const initialState = {
     filteredRuleType: '',
     filteredAutomatonFamily: '',
     controlledParameters: false,
+    exportError: null,
+    addError: null,
 };
 
 const DEFAULT_RULE = {
@@ -406,6 +410,9 @@ const canCreateNewMappingCheck = (mappings) => !mappings.some((mapping) => mappi
 
 export const canCreateNewMapping = (state) => canCreateNewMappingCheck(state.mappings.mappings);
 
+export const getExportError = (state) => state.mappings.exportError;
+export const getAddError = (state) => state.mappings.addError;
+
 export const makeGetMatches = () =>
     createSelector(
         getRules,
@@ -490,6 +497,47 @@ export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalNa
     return await mappingsAPI.copyMapping(originalName, copyName, token);
 });
 
+export const exportMapping = createAsyncThunk('mappings/export', async (mappingName, { getState }) => {
+    const token = getState()?.user.user?.id_token;
+    const response = await mappingsAPI.exportMapping(mappingName, token);
+
+    const filename = extractFilename(response.headers.get('Content-Disposition'), `${mappingName}.json`);
+
+    const blob = await response.blob();
+    downloadBlob(blob, filename);
+
+    return mappingName;
+});
+
+export const addMapping = createAsyncThunk(
+    'mappings/add',
+    async ({ operationType, file, name: mappingName }, { getState }) => {
+        const token = getState()?.user.user?.id_token;
+
+        let mapping = null;
+        if (operationType === OperationType.IMPORT) {
+            const mappingJson = await readFileAsText(file);
+            mapping = JSON.parse(mappingJson);
+        } else {
+            // OperationType.NEW => create an empty
+            mapping = {
+                name: mappingName,
+                rules: [],
+                automata: [],
+            };
+        }
+
+        // TODO to remove later when finishing replace name by uuid
+        const names = getState()?.mappings?.mappings.map((mapping) => mapping.name);
+        if (names.includes(mappingName)) {
+            throw new Error('mapping.nameAlreadyExists');
+        }
+
+        const response = await mappingsAPI.importMapping(mappingName, mapping, token);
+
+        return response.json();
+    }
+);
 export const getNetworkMatchesFromRule = createAsyncThunk('mappings/matchNetwork', async (ruleIndex, { getState }) => {
     const state = getState();
     const token = state?.user.user?.id_token;
@@ -812,6 +860,36 @@ const extraReducers = (builder) => {
     });
     builder.addCase(getNetworkMatchesFromRule.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
+    });
+
+    // --- exportMapping ---
+    builder.addCase(exportMapping.pending, (state) => {
+        state.exportError = null;
+    });
+    builder.addCase(exportMapping.fulfilled, (state) => {
+        state.exportError = null;
+    });
+    builder.addCase(exportMapping.rejected, (state, action) => {
+        state.exportError = action.error.message;
+    });
+
+    // --- addMapping ---
+    builder.addCase(addMapping.pending, (state) => {
+        state.addError = null;
+    });
+    builder.addCase(addMapping.fulfilled, (state, action) => {
+        state.addError = null;
+        // Add the new mapping to the list
+        const newMapping = transformMapping(action.payload);
+        state.mappings.push(newMapping);
+        // switch to current mapping
+        state.activeMapping = newMapping.name;
+        state.rules = newMapping.rules;
+        state.automata = newMapping.automata;
+        state.controlledParameters = newMapping.controlledParameters;
+    });
+    builder.addCase(addMapping.rejected, (state, action) => {
+        state.addError = action.error.message;
     });
 };
 
