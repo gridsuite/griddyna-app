@@ -5,5 +5,5 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 export const businessErrorsFr = {
-    'mapping.nameAlreadyExists': 'Nom du mapping déjà existant',
+    'mapping.nameAlreadyExists': 'Le nom du mapping existe déjà',
 };
