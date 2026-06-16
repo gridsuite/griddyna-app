@@ -111,11 +111,11 @@ const NavigationMenu = (props) => {
 
 NavigationMenu.propTypes = {
     items: PropTypes.array.isRequired,
+    addItem: PropTypes.func,
     deleteItem: PropTypes.func,
     renameItem: PropTypes.func,
     copyItem: PropTypes.func,
     exportItem: PropTypes.func,
-    addItem: PropTypes.func,
     selectItem: PropTypes.func.isRequired,
     selected: PropTypes.string,
 };

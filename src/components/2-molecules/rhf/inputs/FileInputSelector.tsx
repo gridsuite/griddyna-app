@@ -8,7 +8,6 @@ import { Button, Grid2 as Grid, Input } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { ChangeEvent, useCallback } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { ErrorInput, FieldErrorAlert } from '@gridsuite/commons-ui';
 
 type UploadFileProps = { name: string; label: string; accept?: string };
 function FileInputSelector({ name, label, accept }: Readonly<UploadFileProps>) {
@@ -43,30 +42,27 @@ function FileInputSelector({ name, label, accept }: Readonly<UploadFileProps>) {
     );
 
     return (
-        <>
-            <Grid container alignItems="center" spacing={1} pt={1}>
-                <Grid>
-                    <Button variant="contained" color="primary" component="label">
-                        <FormattedMessage id={label} />
-                        <Input
-                            ref={ref}
-                            type="file"
-                            name="file"
-                            onChange={onChange}
-                            sx={{ display: 'none' }}
-                            data-testid="FileInputSelector"
-                            inputProps={{
-                                accept: accept,
-                            }}
-                        />
-                    </Button>
-                </Grid>
-                <Grid sx={{ fontWeight: 'bold' }}>
-                    <p>{valueRender()}</p>
-                </Grid>
+        <Grid container alignItems="center" spacing={1} pt={1}>
+            <Grid>
+                <Button variant="contained" color="primary" component="label">
+                    <FormattedMessage id={label} />
+                    <Input
+                        ref={ref}
+                        type="file"
+                        name="file"
+                        onChange={onChange}
+                        sx={{ display: 'none' }}
+                        data-testid="FileInputSelector"
+                        inputProps={{
+                            accept: accept,
+                        }}
+                    />
+                </Button>
             </Grid>
-            <ErrorInput name={name} InputField={FieldErrorAlert} />
-        </>
+            <Grid sx={{ fontWeight: 'bold' }}>
+                <p>{valueRender()}</p>
+            </Grid>
+        </Grid>
     );
 }
 

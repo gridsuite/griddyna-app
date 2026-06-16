@@ -39,33 +39,6 @@ export function extractFilename(contentDisposition: string | null, defaultFileNa
 }
 
 /**
- * Open a file browser on-fly.
- *
- * @param accept - Accepted file types (e.g. '.json').
- * @returns A Promise resolving to the selected File.
- */
-export function pickFile(accept = '.json'): Promise<File> {
-    return new Promise<File>((resolve, reject) => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = accept;
-
-        input.onchange = (event: Event) => {
-            const file = (event.target as HTMLInputElement).files?.[0];
-            if (file) {
-                resolve(file);
-            } else {
-                reject(new Error('No file selected'));
-            }
-        };
-
-        input.oncancel = () => reject(new Error('File selection cancelled'));
-
-        input.click();
-    });
-}
-
-/**
  * Read a File as a text string.
  *
  * @param file - The file to read.
