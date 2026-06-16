@@ -5,23 +5,29 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Menu, MenuItem } from '@mui/material';
+import { Menu, MenuItem, Tooltip } from '@mui/material';
 import PropTypes from 'prop-types';
 
 const ContextMenu = (props) => {
-    const { anchorEl, open, onClose, options } = props;
+    const { anchorEl, open, onClose, options, ...otherProps } = props;
     return (
-        <Menu anchorEl={anchorEl} keepMounted open={open} onClose={onClose}>
+        <Menu anchorEl={anchorEl} keepMounted open={open} onClose={onClose} {...otherProps}>
             {options.map((option) => (
-                <MenuItem
-                    key={option.label}
-                    onClick={() => {
-                        option.action();
-                        onClose();
-                    }}
-                >
-                    {option.label}
-                </MenuItem>
+                <Tooltip title={option.tooltip} key={option.label}>
+                    <span style={{ display: 'block' }}>
+                        <MenuItem
+                            key={option.label}
+                            onClick={() => {
+                                option.action();
+                                onClose();
+                            }}
+                            disabled={option.disabled}
+                            style={option.disabled ? { pointerEvents: 'none' } : undefined}
+                        >
+                            {option.label}
+                        </MenuItem>
+                    </span>
+                </Tooltip>
             ))}
         </Menu>
     );

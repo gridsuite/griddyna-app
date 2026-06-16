@@ -9,17 +9,17 @@ import PropTypes from 'prop-types';
 import { Button, Tooltip } from '@mui/material';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
-const NewButton = ({ onClick, sx, disabled, tooltip }) => (
+const AddButton = ({ label, onClick, sx, disabled, tooltip }) => (
     <Tooltip title={tooltip}>
         <Button variant="outlined" onClick={onClick} endIcon={<AddRoundedIcon />} sx={sx} disabled={disabled}>
-            New
+            {label}
         </Button>
     </Tooltip>
 );
 
-NewButton.propTypes = {
+AddButton.propTypes = {
     onClick: PropTypes.func.isRequired,
     sx: PropTypes.object,
 };
 
-export default NewButton;
+export default AddButton;

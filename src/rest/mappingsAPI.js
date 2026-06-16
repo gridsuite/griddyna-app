@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { backendFetchJson, backendFetchText } from '../utils/rest-api';
+import { backendFetch, backendFetchJson, backendFetchText } from '../utils/rest-api';
 
 const API_URL =
     import.meta.env.VITE_API_PREFIX +
@@ -88,6 +88,36 @@ export async function copyMapping(originalName, copyName, token) {
                 'Content-Type': 'application/json',
             },
             cache: 'default',
+        },
+        token
+    );
+}
+
+export function exportMapping(mappingName, token) {
+    return backendFetch(
+        `${API_URL}/${mappingName}/export`,
+        {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        token
+    );
+}
+
+export function importMapping(mappingName, mappingJson, token) {
+    return backendFetch(
+        `${API_URL}/${mappingName ?? ''}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: mappingJson,
         },
         token
     );
