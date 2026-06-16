@@ -5,6 +5,10 @@
     "addMappingDialogTitle": "Add a mapping",
     "emptyMapping": "Create an empty mapping",
     "importMapping": "Import from file",
+    "exportMapping": "Export to file",
+    "deleteMapping": "Delete",
+    "renameMapping": "Rename",
+    "copyMapping": "Copy",
     "selectMapping": "Select mapping",
     "uploadMessage": "No file selected"
 }

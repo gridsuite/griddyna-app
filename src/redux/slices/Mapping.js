@@ -514,12 +514,13 @@ export const addMapping = createAsyncThunk(
     async ({ operationType, file, name: mappingName }, { getState }) => {
         const token = getState()?.user.user?.id_token;
 
-        let mappingJson = null;
+        let mapping = null;
         if (operationType === OperationType.IMPORT) {
-            mappingJson = await readFileAsText(file);
+            const mappingJson = await readFileAsText(file);
+            mapping = JSON.parse(mappingJson);
         } else {
             // OperationType.NEW => create an empty
-            mappingJson = {
+            mapping = {
                 name: mappingName,
                 rules: [],
                 automata: [],
@@ -532,7 +533,7 @@ export const addMapping = createAsyncThunk(
             throw new Error('mapping.nameAlreadyExists');
         }
 
-        const response = await mappingsAPI.importMapping(mappingName, mappingJson, token);
+        const response = await mappingsAPI.importMapping(mappingName, mapping, token);
 
         return response.json();
     }

@@ -30,25 +30,25 @@ const NavigationMenu = (props) => {
         let options = [];
         if (deleteItem) {
             options.push({
-                label: 'Delete',
+                label: intl.formatMessage({ id: 'deleteMapping' }),
                 action: deleteItem(itemName),
             });
         }
         if (renameItem) {
             options.push({
-                label: 'Rename',
+                label: intl.formatMessage({ id: 'renameMapping' }),
                 action: () => setOpenDialog(itemName),
             });
         }
         if (copyItem) {
             options.push({
-                label: 'Copy',
+                label: intl.formatMessage({ id: 'copyMapping' }),
                 action: copyItem(itemName),
             });
         }
         if (exportItem) {
             options.push({
-                label: 'Export',
+                label: intl.formatMessage({ id: 'exportMapping' }),
                 action: exportItem(itemName),
             });
         }

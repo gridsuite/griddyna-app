@@ -31,7 +31,6 @@ export function usePrefilledName({ inputName, selectorName, prefilledNameProvide
                     if (fileName) {
                         prefilledNameProvider(fileName)
                             .then((prefilledName) => {
-                                console.log('xxx prefilledName', prefilledName);
                                 setValue(inputName, prefilledName, { shouldDirty: true });
                             })
                             .catch((error) => {

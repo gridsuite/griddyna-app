@@ -108,7 +108,7 @@ export function exportMapping(mappingName, token) {
     );
 }
 
-export function importMapping(mappingName, mappingJson, token) {
+export function importMapping(mappingName, mapping, token) {
     return backendFetch(
         `${API_URL}/${mappingName ?? ''}`,
         {
@@ -117,7 +117,7 @@ export function importMapping(mappingName, mappingJson, token) {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: mappingJson,
+            body: JSON.stringify(mapping),
         },
         token
     );

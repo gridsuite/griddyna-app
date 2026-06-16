@@ -1,10 +1,14 @@
 {
     "close": "Fermer",
     "addMapping": "Ajouter un mapping",
-    "addMappingError" : "Une erreur est survenue lors de l'ajoute d'un mapping",
+    "addMappingError" : "Une erreur est survenue lors de l'ajout d'un mapping",
     "addMappingDialogTitle": "Ajouter un mapping",
     "emptyMapping": "Créer un mapping vide",
     "importMapping": "Importer à partir d'un fichier",
-    "selectMapping": "Selecte mapping",
+    "exportMapping": "Exporter vers un fichier",
+    "deleteMapping": "Supprimer",
+    "renameMapping": "Renommer",
+    "copyMapping": "Copier",
+    "selectMapping": "Sélectionner un mapping",
     "uploadMessage": "Aucun fichier sélectionné"
 }

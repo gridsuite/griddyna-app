@@ -14,7 +14,7 @@ import { OperationType } from '../../../../../utils/types';
 
 const ADD_MAPPING_OPTIONS = [
     { id: OperationType.NEW, label: 'emptyMapping' },
-    { id: OperationType.IMPORT, label: 'addMapping' },
+    { id: OperationType.IMPORT, label: 'importMapping' },
 ];
 
 function NewMappingForm() {
