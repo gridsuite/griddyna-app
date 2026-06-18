@@ -5,12 +5,21 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { Grid2 as Grid } from '@mui/material';
-import { ElementType, FieldConstants, RadioInput, UniqueNameInput } from '@gridsuite/commons-ui';
+import {
+    DescriptionField,
+    DIRECTORY_ITEM,
+    DirectoryItemInput,
+    ElementType,
+    FieldConstants,
+    RadioInput,
+    UniqueNameInput,
+} from '@gridsuite/commons-ui';
 import { FILE_SELECTOR, MAPPING_NAME } from './new-mapping-dialog-utils';
 import FileInputSelector from '../../inputs/FileInputSelector';
 import { usePrefilledName } from '../../hooks/usePrefilledName';
 import { useWatch } from 'react-hook-form';
 import { OperationType } from '../../../../../utils/types';
+import { useIntl } from 'react-intl';
 
 const ADD_MAPPING_OPTIONS = [
     { id: OperationType.NEW, label: 'emptyMapping' },
@@ -18,6 +27,7 @@ const ADD_MAPPING_OPTIONS = [
 ];
 
 function NewMappingForm() {
+    const intl = useIntl();
     const { autoFocus, setManualChanged } = usePrefilledName({
         inputName: MAPPING_NAME,
         selectorName: FILE_SELECTOR,
@@ -38,7 +48,7 @@ function NewMappingForm() {
                     <UniqueNameInput
                         name={MAPPING_NAME}
                         label="nameProperty"
-                        elementType={ElementType.DYNAMIC_SIMULATION_MAPPING}
+                        elementType={ElementType.DYNAMIC_MAPPING}
                         autoFocus={autoFocus}
                         onManualChangeCallback={() => setManualChanged(true)}
                     />
@@ -47,6 +57,22 @@ function NewMappingForm() {
             {operationType === OperationType.IMPORT && (
                 <FileInputSelector name={FILE_SELECTOR} label="selectMapping" accept={'.json,application/json'} />
             )}
+            <Grid container spacing={2} marginTop="auto" direction="column">
+                <Grid>
+                    <DescriptionField />
+                </Grid>
+                <Grid>
+                    <DirectoryItemInput
+                        name={DIRECTORY_ITEM}
+                        types={[ElementType.DIRECTORY]}
+                        multiSelect={false}
+                        onlyLeaves={false}
+                        title={intl.formatMessage({
+                            id: 'showSelectDirectoryDialog',
+                        })}
+                    />
+                </Grid>
+            </Grid>
         </>
     );
 }

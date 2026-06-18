@@ -48,6 +48,11 @@ function NewMappingDialog({ onClose, open, onSubmit }: NewMappingDialogProps) {
             open={open}
             onSave={handleSubmit}
             disabledSave={!isFormValid}
+            sx={{
+                '.MuiDialog-paper': {
+                    minWidth: '20vw',
+                },
+            }}
         >
             <NewMappingForm />
         </CustomMuiDialog>
