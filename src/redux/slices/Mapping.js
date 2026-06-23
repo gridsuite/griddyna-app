@@ -352,11 +352,11 @@ export const isMappingValid = createSelector(
     (state) => state.models.automatonDefinitions,
     getRules,
     getAutomata,
-    (name, automatonDefinitions, rules, automata) => {
+    (id, automatonDefinitions, rules, automata) => {
         const ruleTabsValid = getRuleTabsValid(rules);
         const automatonTabsValid = getAutomatonTabsValid(automata, automatonDefinitions);
         return (
-            !!name &&
+            !!id &&
             Object.keys(ruleTabsValid).reduce((acc, type) => acc && ruleTabsValid[type], true) &&
             Object.keys(automatonTabsValid).reduce((acc, family) => acc && automatonTabsValid[family], true)
         );
@@ -368,7 +368,17 @@ export const getMappingsInfo = createSelector(
     (mappings) =>
         mappings.map((mapping) => ({
             name: mapping.name,
+            id: mapping.id,
         }))
+);
+
+export const activeMappingName = createSelector(
+    (state) => state.mappings.activeMapping,
+    (state) => state.mappings.mappings,
+    (activeMapping, mappings) => {
+        const foundMapping = mappings.find((mapping) => mapping.id === activeMapping);
+        return foundMapping?.name;
+    }
 );
 
 export const isModified = createSelector(
@@ -378,9 +388,12 @@ export const isModified = createSelector(
     (state) => state.mappings.automata,
     (state) => state.mappings.mappings,
 
-    (activeName, controlledParameters, activeRules, activeAutomata, savedMappings) => {
-        const foundMapping = savedMappings.find((mapping) => mapping.name === activeName);
-
+    (activeMapping, controlledParameters, activeRules, activeAutomata, savedMappings) => {
+        const foundMapping = savedMappings.find((mapping) => mapping.id === activeMapping);
+        if (!foundMapping) {
+            // no longer active mapping
+            return false;
+        }
         function ignoreInternalProperties(rule) {
             const ruleToTest = _.cloneDeep(rule);
 
@@ -406,10 +419,6 @@ export const isModified = createSelector(
     }
 );
 
-const canCreateNewMappingCheck = (mappings) => !mappings.some((mapping) => mapping.name === DEFAULT_NAME);
-
-export const canCreateNewMapping = (state) => canCreateNewMappingCheck(state.mappings.mappings);
-
 export const getExportError = (state) => state.mappings.exportError;
 export const getAddError = (state) => state.mappings.addError;
 
@@ -428,13 +437,13 @@ const augmentFilter = (filter, equipmentType) => ({
     type: 'EXPERT',
     rules: exportExpertRules(filter.rules),
 });
-export const postMapping = createAsyncThunk('mappings/post', async (name, { getState }) => {
+export const postMapping = createAsyncThunk('mappings/post', async (id, { getState }) => {
     const state = getState();
     const token = state?.user.user?.id_token;
-    const mappingName = name ?? state?.mappings.activeMapping;
+    const mappingId = id ?? state?.mappings.activeMapping;
     const rules =
-        name && name !== state?.mappings.activeMapping
-            ? state?.mappings.mappings.find((mapping) => mapping.name === name)?.rules
+        id && id !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.id === id)?.rules
             : state?.mappings.rules;
 
     const augmentedRules = rules.map((rule) => {
@@ -450,8 +459,8 @@ export const postMapping = createAsyncThunk('mappings/post', async (name, { getS
     });
 
     const automata =
-        name && name !== state?.mappings.activeMapping
-            ? state?.mappings.mappings.find((mapping) => mapping.name === name)?.automata
+        id && id !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.id === id)?.automata
             : state?.mappings.automata;
     const formattedAutomata = automata.map((automaton) => {
         const { family, model, setGroup, properties } = automaton;
@@ -470,11 +479,11 @@ export const postMapping = createAsyncThunk('mappings/post', async (name, { getS
     });
 
     const controlledParameters =
-        name && name !== state?.mappings.activeMapping
-            ? state?.mappings.mappings.find((mapping) => mapping.name === name)?.controlledParameters
+        id && id !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.id === id)?.controlledParameters
             : state?.mappings.controlledParameters;
 
-    return await mappingsAPI.postMapping(mappingName, augmentedRules, formattedAutomata, controlledParameters, token);
+    return await mappingsAPI.postMapping(mappingId, augmentedRules, formattedAutomata, controlledParameters, token);
 });
 
 export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getState }) => {
@@ -482,36 +491,38 @@ export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getSt
     return await mappingsAPI.getMappings(token);
 });
 
-export const deleteMapping = createAsyncThunk('mappings/delete', async (mappingName, { getState }) => {
+export const deleteMapping = createAsyncThunk('mappings/delete', async (id, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.deleteMapping(mappingName, token);
+    return await mappingsAPI.deleteMapping(id, token).then(() => id);
 });
 
-export const renameMapping = createAsyncThunk('mappings/rename', async ({ nameToReplace, newName }, { getState }) => {
+export const renameMapping = createAsyncThunk('mappings/rename', async ({ id, newName }, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.renameMapping(nameToReplace, newName, token);
+    await mappingsAPI.renameMapping(id, newName, token);
+    return await mappingsAPI.getMapping(id, token);
 });
 
-export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalName, copyName }, { getState }) => {
+export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalId }, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.copyMapping(originalName, copyName, token);
+    const newMappingId = await mappingsAPI.copyMapping(originalId, token);
+    return await mappingsAPI.getMapping(newMappingId, token);
 });
 
-export const exportMapping = createAsyncThunk('mappings/export', async (mappingName, { getState }) => {
+export const exportMapping = createAsyncThunk('mappings/export', async ({ id, name }, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    const response = await mappingsAPI.exportMapping(mappingName, token);
+    const response = await mappingsAPI.exportMapping(id, name, token);
 
-    const filename = extractFilename(response.headers.get('Content-Disposition'), `${mappingName}.json`);
+    const filename = extractFilename(response.headers.get('Content-Disposition'), `dynamic-mapping.json`);
 
     const blob = await response.blob();
     downloadBlob(blob, filename);
 
-    return mappingName;
+    return filename;
 });
 
 export const addMapping = createAsyncThunk(
     'mappings/add',
-    async ({ operationType, file, name: mappingName }, { getState }) => {
+    async ({ operationType, file, name, description, parentDirectoryUuid }, { getState }) => {
         const token = getState()?.user.user?.id_token;
 
         let mapping = null;
@@ -521,21 +532,15 @@ export const addMapping = createAsyncThunk(
         } else {
             // OperationType.NEW => create an empty
             mapping = {
-                name: mappingName,
                 rules: [],
                 automata: [],
+                controlledParameters: false,
             };
         }
 
-        // TODO to remove later when finishing replace name by uuid
-        const names = getState()?.mappings?.mappings.map((mapping) => mapping.name);
-        if (names.includes(mappingName)) {
-            throw new Error('mapping.nameAlreadyExists');
-        }
+        const newMappingId = await mappingsAPI.createMapping(name, description, mapping, parentDirectoryUuid, token);
 
-        const response = await mappingsAPI.importMapping(mappingName, mapping, token);
-
-        return response.json();
+        return await mappingsAPI.getMapping(newMappingId, token);
     }
 );
 export const getNetworkMatchesFromRule = createAsyncThunk('mappings/matchNetwork', async (ruleIndex, { getState }) => {
@@ -664,7 +669,7 @@ const reducers = {
             // check whether query is modified by comparing to the query in original rule
             const activeMapping = state.activeMapping;
             const savedMappings = state.mappings;
-            const foundMapping = savedMappings.find((mapping) => mapping.name === activeMapping);
+            const foundMapping = savedMappings.find((mapping) => mapping.id === activeMapping);
 
             const foundRule = foundMapping.rules?.find((rule) => rule?.filter?.id === modifiedFilter?.id);
 
@@ -728,28 +733,13 @@ const reducers = {
         );
         state.automata.push(automatonToCopy);
     },
-    // Mappings
-    createMapping: (state, _action) => {
-        const mappings = state.mappings;
-        if (canCreateNewMappingCheck(mappings)) {
-            mappings.push({
-                name: DEFAULT_NAME,
-                rules: [],
-                automata: [],
-            });
-            state.activeMapping = DEFAULT_NAME;
-            state.rules = [];
-            state.automata = [];
-            state.controlledParameters = false;
-        }
-    },
     selectMapping: (state, action) => {
-        const { name } = action.payload;
-        const mappingToUse = state.mappings.find((mapping) => mapping.name === name);
+        const { id } = action.payload;
+        const mappingToUse = state.mappings.find((mapping) => mapping.id === id);
         if (mappingToUse) {
             state.rules = mappingToUse.rules;
             state.automata = mappingToUse.automata;
-            state.activeMapping = name;
+            state.activeMapping = id;
             state.controlledParameters = mappingToUse.controlledParameters;
         }
     },
@@ -765,13 +755,13 @@ const extraReducers = (builder) => {
     builder.addCase(postMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const receivedMapping = transformMapping(action.payload);
-        const foundMapping = state.mappings.find((mapping) => mapping.name === receivedMapping.name);
+        const foundMapping = state.mappings.find((mapping) => mapping.id === receivedMapping.id);
         if (foundMapping) {
             // --- reset the original mapping --- //
             foundMapping.rules = receivedMapping.rules;
             foundMapping.automata = receivedMapping.automata;
             foundMapping.controlledParameters = receivedMapping.controlledParameters;
-            if (receivedMapping.name === state.activeMapping) {
+            if (receivedMapping.id === state.activeMapping) {
                 // --- reset the active mapping --- //
                 state.rules = assignArray(
                     receivedMapping.rules,
@@ -802,12 +792,12 @@ const extraReducers = (builder) => {
     });
     builder.addCase(deleteMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        const name = action.payload;
-        state.mappings = state.mappings.filter((mapping) => mapping.name !== name);
-        if (name === state.activeMapping) {
+        const id = action.payload;
+        state.mappings = state.mappings.filter((mapping) => mapping.id !== id);
+        if (id === state.activeMapping) {
             state.rules = [];
             state.automata = [];
-            state.activeMapping = '';
+            state.activeMapping = undefined;
         }
     });
     builder.addCase(deleteMapping.rejected, (state, _action) => {
@@ -817,13 +807,10 @@ const extraReducers = (builder) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(renameMapping.fulfilled, (state, action) => {
-        const { oldName, newName } = action.payload;
-        const mappingToRename = state.mappings.find((mapping) => mapping.name === oldName);
+        const { id, name } = action.payload;
+        const mappingToRename = state.mappings.find((mapping) => mapping.id === id);
         if (mappingToRename) {
-            mappingToRename.name = newName;
-        }
-        if (state.activeMapping === oldName) {
-            state.activeMapping = newName;
+            mappingToRename.name = name;
         }
         state.status = RequestStatus.SUCCESS;
     });
@@ -834,9 +821,9 @@ const extraReducers = (builder) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(copyMapping.fulfilled, (state, action) => {
-        const copiedMapping = transformMapping(action.payload);
-
-        state.mappings.push(copiedMapping);
+        const newMapping = transformMapping(action.payload);
+        // Add the copied mapping to the list
+        state.mappings = [...state.mappings, newMapping];
         state.status = RequestStatus.SUCCESS;
     });
     builder.addCase(copyMapping.rejected, (state, _action) => {
@@ -879,11 +866,11 @@ const extraReducers = (builder) => {
     });
     builder.addCase(addMapping.fulfilled, (state, action) => {
         state.addError = null;
-        // Add the new mapping to the list
         const newMapping = transformMapping(action.payload);
-        state.mappings.push(newMapping);
+        // Add the new mapping to the list
+        state.mappings = [...state.mappings, newMapping];
         // switch to current mapping
-        state.activeMapping = newMapping.name;
+        state.activeMapping = newMapping.id;
         state.rules = newMapping.rules;
         state.automata = newMapping.automata;
         state.controlledParameters = newMapping.controlledParameters;

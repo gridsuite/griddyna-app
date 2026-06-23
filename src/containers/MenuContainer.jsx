@@ -8,7 +8,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    addMapping as importMappingAction,
+    addMapping as addMappingAction,
     copyMapping as copyMappingAction,
     deleteMapping as deleteMappingAction,
     exportMapping as exportMappingAction,
@@ -40,41 +40,41 @@ const MenuContainer = () => {
     }, [dispatch]);
 
     // Mappings
-    const addMapping = ({ operationType, file, name }) => {
-        dispatch(importMappingAction({ operationType, file, name }));
+    const addMapping = ({ operationType, file, name, description, parentDirectoryUuid }) => {
+        dispatch(addMappingAction({ operationType, file, name, description, parentDirectoryUuid }));
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
-    const renameMapping = (name) => (newName) => {
+    const renameMapping = ({ id, newName }) => {
         dispatch(
             renameMappingAction({
-                nameToReplace: name,
+                id: id,
                 newName: newName,
             })
         );
         dispatch(NetworkSlice.actions.cleanNetwork());
     };
 
-    const selectMapping = (name) => () => {
-        dispatch(MappingSlice.actions.selectMapping({ name }));
+    const selectMapping = (id) => () => {
+        dispatch(MappingSlice.actions.selectMapping({ id }));
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
-    const deleteMapping = (name) => () => {
-        dispatch(deleteMappingAction(name));
-        if (name === selectedMapping) {
+    const deleteMapping = (id) => () => {
+        dispatch(deleteMappingAction(id));
+        if (id === selectedMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
             dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
             dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
         }
     };
 
-    const copyMapping = (name) => () => {
-        dispatch(copyMappingAction({ originalName: name, copyName: name + ' Copy' }));
+    const copyMapping = (id) => () => {
+        dispatch(copyMappingAction({ originalId: id }));
     };
 
     const { snackError } = useSnackMessage();
@@ -97,8 +97,8 @@ const MenuContainer = () => {
         }
     }, [addError, snackError]);
 
-    const exportMapping = (name) => () => {
-        dispatch(exportMappingAction(name));
+    const exportMapping = (id, name) => () => {
+        dispatch(exportMappingAction({ id, name }));
     };
 
     return (

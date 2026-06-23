@@ -5,6 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { backendFetch, backendFetchJson, backendFetchText } from '../utils/rest-api';
+import { fetchElementNames } from '@gridsuite/commons-ui';
 
 const API_URL =
     import.meta.env.VITE_API_PREFIX +
@@ -13,9 +14,16 @@ const API_URL =
         : import.meta.env.VITE_URI) +
     '/mappings';
 
-export function postMapping(mappingName, rules, automata, controlledParameters, token) {
+const API_EXPLORE_URL =
+    import.meta.env.VITE_API_PREFIX +
+    (import.meta.env.VITE_USE_AUTHENTICATION === 'true'
+        ? `${import.meta.env.VITE_GATEWAY_PREFIX}/explore/v1`
+        : `${import.meta.env.VITE_EXPLORE_URI}/v1`) +
+    `/explore`;
+
+export function postMapping(mappingId, rules, automata, controlledParameters, token) {
     return backendFetchJson(
-        `${API_URL}/${mappingName}`,
+        `${API_URL}/${mappingId}`,
         {
             method: 'POST',
             headers: {
@@ -24,7 +32,7 @@ export function postMapping(mappingName, rules, automata, controlledParameters, 
             },
             cache: 'default',
             body: JSON.stringify({
-                name: mappingName,
+                name: mappingId,
                 rules,
                 automata,
                 controlledParameters,
@@ -35,7 +43,7 @@ export function postMapping(mappingName, rules, automata, controlledParameters, 
 }
 
 export function getMappings(token) {
-    return backendFetchJson(
+    const mappingsPromise = backendFetchJson(
         `${API_URL}/`,
         {
             headers: {
@@ -46,11 +54,49 @@ export function getMappings(token) {
         },
         token
     );
+
+    return mappingsPromise.then((mappings) => {
+        const mappingIds = mappings.map((mapping) => mapping.id);
+        if (mappingIds?.length > 0) {
+            return fetchElementNames(new Set(mappingIds)).then((elementIdNames) => {
+                return mappings.map((mapping) => {
+                    return {
+                        ...mapping,
+                        name: elementIdNames?.[mapping.id],
+                    };
+                });
+            });
+        }
+        return mappings;
+    });
 }
 
-export function deleteMapping(mappingName, token) {
+export function getMapping(mappingId, token) {
+    const mappingPromise = backendFetchJson(
+        `${API_URL}/${mappingId}`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        token
+    );
+
+    return mappingPromise.then((mapping) => {
+        return fetchElementNames(new Set([mappingId])).then((elementIdNames) => {
+            return {
+                ...mapping,
+                name: elementIdNames?.[mapping.id],
+            };
+        });
+    });
+}
+
+export function deleteMapping(mappingId, token) {
     return backendFetchText(
-        `${API_URL}/${mappingName}`,
+        `${API_EXPLORE_URL}/elements/${mappingId}`,
         {
             method: 'DELETE',
             headers: {
@@ -63,39 +109,48 @@ export function deleteMapping(mappingName, token) {
     );
 }
 
-export async function renameMapping(nameToReplace, newName, token) {
-    return backendFetchJson(
-        `${API_URL}/rename/${nameToReplace}/to/${newName}`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'default',
-        },
-        token
-    );
-}
-
-export async function copyMapping(originalName, copyName, token) {
-    return backendFetchJson(
-        `${API_URL}/copy/${originalName}/to/${copyName}`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'default',
-        },
-        token
-    );
-}
-
-export function exportMapping(mappingName, token) {
+export async function renameMapping(id, newName, token) {
+    // type is ElementAttributes from directory-server
+    const elementAttributes = {
+        elementName: newName,
+    };
     return backendFetch(
-        `${API_URL}/${mappingName}/export`,
+        `${API_EXPLORE_URL}/elements/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+            body: JSON.stringify(elementAttributes),
+        },
+        token
+    );
+}
+
+export async function copyMapping(originalId, token) {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('duplicateFrom', originalId);
+    return backendFetchJson(
+        `${API_EXPLORE_URL}/dynamic-mappings?${urlSearchParams.toString()}`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        token
+    );
+}
+
+export function exportMapping(mappingId, fileName, token) {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('fileName', fileName);
+    return backendFetch(
+        `${API_URL}/${mappingId}/export?${urlSearchParams.toString()}`,
         {
             method: 'GET',
             headers: {
@@ -108,9 +163,14 @@ export function exportMapping(mappingName, token) {
     );
 }
 
-export function importMapping(mappingName, mapping, token) {
-    return backendFetch(
-        `${API_URL}/${mappingName ?? ''}`,
+export function createMapping(name, description, mapping, parentDirectoryUuid, token) {
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('name', name);
+    urlSearchParams.append('description', description);
+    urlSearchParams.append('parentDirectoryUuid', parentDirectoryUuid);
+
+    return backendFetchJson(
+        `${API_EXPLORE_URL}/dynamic-mappings?${urlSearchParams.toString()}`,
         {
             method: 'POST',
             headers: {

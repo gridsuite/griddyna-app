@@ -5,7 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import * as yup from 'yup';
-import { FieldConstants } from '@gridsuite/commons-ui';
+import { InferType } from 'yup';
+import { DIRECTORY_ITEM, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
 
 export const MAPPING_NAME = 'mappingName';
@@ -21,10 +22,14 @@ export const newMappingDialogSchema = yup.object().shape({
             is: (operationType: OperationType) => operationType === OperationType.IMPORT,
             then: (schema) => schema.required(),
         }),
+    [DIRECTORY_ITEM]: directoryItemSchema.required(),
 });
 
 export const newMappingDialogEmpty = {
     [FieldConstants.OPERATION_TYPE]: OperationType.NEW,
     [MAPPING_NAME]: '',
     [FILE_SELECTOR]: null,
+    [DIRECTORY_ITEM]: null,
 };
+
+export type NewMappingDialogForm = InferType<typeof newMappingDialogSchema>;

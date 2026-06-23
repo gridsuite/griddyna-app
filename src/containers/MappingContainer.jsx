@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
     getGroupedAutomataNumber,
@@ -70,6 +71,7 @@ const MappingContainer = () => {
     const totalRulesNumber = useSelector((state) => state.mappings.rules.length);
     const rulesNumber = useSelector(getRulesNumber);
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
+    const activeMappingName = useSelector(activeMappingNameSelector);
     const isModified = useSelector(isModifiedSelector);
     const ruleTabsValid = useSelector(ruleTabsValidSelector);
     const automatonTabsValid = useSelector(automatonTabsValidSelector);
@@ -172,74 +174,80 @@ const MappingContainer = () => {
 
     return (
         <>
-            <Paper>
-                <Header
-                    name={activeMapping}
-                    currentNetwork={currentNetwork}
-                    isModified={isModified}
-                    isValid={isMappingValid && areParametersValid}
-                    save={saveMapping}
-                    saveTooltip={SAVE_LABEL}
-                    attach={() => setIsAttachedModalOpen(true)}
-                    attachTooltip={ATTACH_LABEL}
-                />
-                <Grid container justify="center">
-                    <Grid item>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    // <Checkbox
-                                    checked={controlledParameters}
-                                    onChange={changeControlledParameters}
-                                />
-                            }
-                            label={CONTROLLED_PARAMETERS_LABEL}
-                        />
+            {activeMapping && (
+                <Paper>
+                    <Header
+                        name={activeMappingName}
+                        currentNetwork={currentNetwork}
+                        isModified={isModified}
+                        isValid={isMappingValid && areParametersValid}
+                        save={saveMapping}
+                        saveTooltip={SAVE_LABEL}
+                        attach={() => setIsAttachedModalOpen(true)}
+                        attachTooltip={ATTACH_LABEL}
+                    />
+                    <Grid container justify="center">
+                        <Grid item>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        // <Checkbox
+                                        checked={controlledParameters}
+                                        onChange={changeControlledParameters}
+                                    />
+                                }
+                                label={CONTROLLED_PARAMETERS_LABEL}
+                            />
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{`${MODELS_TITLE} ${
-                            totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
-                        }`}</Typography>
-                    </AccordionSummary>
-                    <Divider />
-                    <AccordionDetails>
-                        <Grid container>
-                            <Grid item xs sx={styles.tabBar}>
-                                <TabBar value={filteredType} options={filterRulesOptions} setValue={setFilteredType} />
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>{`${MODELS_TITLE} ${
+                                totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
+                            }`}</Typography>
+                        </AccordionSummary>
+                        <Divider />
+                        <AccordionDetails>
+                            <Grid container>
+                                <Grid item xs sx={styles.tabBar}>
+                                    <TabBar
+                                        value={filteredType}
+                                        options={filterRulesOptions}
+                                        setValue={setFilteredType}
+                                    />
+                                </Grid>
+                                <Grid item xs="auto">
+                                    <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
+                                </Grid>
                             </Grid>
-                            <Grid item xs="auto">
-                                <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
+                            <List>{buildRules()}</List>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>{`${AUTOMATA_TITLE} ${
+                                totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
+                            }`}</Typography>
+                        </AccordionSummary>
+                        <Divider />
+                        <AccordionDetails>
+                            <Grid container>
+                                <Grid item xs sx={styles.tabBar}>
+                                    <TabBar
+                                        value={filteredFamily}
+                                        options={filterAutomataOptions}
+                                        setValue={setFilteredFamily}
+                                    />
+                                </Grid>
+                                <Grid item xs="auto">
+                                    <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <List>{buildRules()}</List>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography>{`${AUTOMATA_TITLE} ${
-                            totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
-                        }`}</Typography>
-                    </AccordionSummary>
-                    <Divider />
-                    <AccordionDetails>
-                        <Grid container>
-                            <Grid item xs sx={styles.tabBar}>
-                                <TabBar
-                                    value={filteredFamily}
-                                    options={filterAutomataOptions}
-                                    setValue={setFilteredFamily}
-                                />
-                            </Grid>
-                            <Grid item xs="auto">
-                                <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
-                            </Grid>
-                        </Grid>
-                        <List>{buildAutomata()}</List>
-                    </AccordionDetails>
-                </Accordion>
-            </Paper>
+                            <List>{buildAutomata()}</List>
+                        </AccordionDetails>
+                    </Accordion>
+                </Paper>
+            )}
             <AttachDialog
                 networks={networks}
                 open={isAttachedModalOpen}

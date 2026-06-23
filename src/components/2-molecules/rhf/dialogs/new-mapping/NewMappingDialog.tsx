@@ -4,23 +4,43 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { CustomMuiDialog, FieldConstants, isObjectEmpty } from '@gridsuite/commons-ui';
+import {
+    CustomMuiDialog,
+    DIRECTORY_ITEM,
+    DIRECTORY_ITEM_ID,
+    FieldConstants,
+    isObjectEmpty,
+    Nullable,
+} from '@gridsuite/commons-ui';
 import { FieldValues, useForm } from 'react-hook-form';
-import { FILE_SELECTOR, MAPPING_NAME, newMappingDialogEmpty, newMappingDialogSchema } from './new-mapping-dialog-utils';
+import {
+    FILE_SELECTOR,
+    MAPPING_NAME,
+    newMappingDialogEmpty,
+    NewMappingDialogForm,
+    newMappingDialogSchema,
+} from './new-mapping-dialog-utils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import NewMappingForm from './NewMappingForm';
 import { OperationType } from '../../../../../utils/types';
+import { UUID } from 'node:crypto';
 
 type NewMappingDialogProps = {
     onClose: () => void;
     open: boolean;
-    onSubmit: (params: { operationType: OperationType; file: File; name: string }) => void;
+    onSubmit: (params: {
+        operationType: OperationType;
+        file: File;
+        name: string;
+        description: string;
+        parentDirectoryUuid: UUID;
+    }) => void;
 };
 
 function NewMappingDialog({ onClose, open, onSubmit }: NewMappingDialogProps) {
-    const formMethods = useForm({
+    const formMethods = useForm<Nullable<NewMappingDialogForm>>({
         defaultValues: newMappingDialogEmpty,
-        resolver: yupResolver(newMappingDialogSchema),
+        resolver: yupResolver<Nullable<NewMappingDialogForm>>(newMappingDialogSchema),
     });
     const {
         formState: { errors, isValid },
@@ -30,10 +50,12 @@ function NewMappingDialog({ onClose, open, onSubmit }: NewMappingDialogProps) {
 
     const handleSubmit = (values: FieldValues) => {
         const operationType = values[FieldConstants.OPERATION_TYPE] as OperationType;
-        const mappingName = values[MAPPING_NAME] as string;
+        const name = values[MAPPING_NAME] as string;
         const file = values[FILE_SELECTOR] as File;
-        if (mappingName) {
-            onSubmit({ operationType: operationType, file, name: mappingName });
+        const description = (values[FieldConstants.DESCRIPTION] ?? '') as string;
+        const parentDirectoryUuid = values[DIRECTORY_ITEM][DIRECTORY_ITEM_ID] as UUID;
+        if (name) {
+            onSubmit({ operationType, file, name, description, parentDirectoryUuid });
         }
     };
     return (
