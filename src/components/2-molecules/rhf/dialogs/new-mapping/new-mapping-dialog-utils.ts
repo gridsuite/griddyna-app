@@ -15,6 +15,7 @@ export const FILE_SELECTOR = 'fileSelectorName';
 export const newMappingDialogSchema = yup.object().shape({
     [FieldConstants.OPERATION_TYPE]: yup.string().required(),
     [MAPPING_NAME]: yup.string().trim().required('nameEmpty'),
+    [FieldConstants.DESCRIPTION]: yup.string(),
     [FILE_SELECTOR]: yup
         .mixed<File>()
         .nullable()
@@ -28,6 +29,7 @@ export const newMappingDialogSchema = yup.object().shape({
 export const newMappingDialogEmpty = {
     [FieldConstants.OPERATION_TYPE]: OperationType.NEW,
     [MAPPING_NAME]: '',
+    [FieldConstants.DESCRIPTION]: '',
     [FILE_SELECTOR]: null,
     [DIRECTORY_ITEM]: null,
 };
