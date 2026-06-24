@@ -13,6 +13,7 @@
     "deleteMapping": "Supprimer",
     "renameMapping": "Renommer",
     "copyMapping": "Copier",
+    "renameMappingDialogTitle": "Renommer un mapping",
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping"
 }

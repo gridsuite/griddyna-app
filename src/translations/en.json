@@ -13,6 +13,7 @@
     "deleteMapping": "Delete",
     "renameMapping": "Rename",
     "copyMapping": "Copy",
+    "renameMappingDialogTitle": "Rename a mapping",
 
     "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping"
 }
