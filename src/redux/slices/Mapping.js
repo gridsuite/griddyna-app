@@ -489,9 +489,9 @@ export const updateMapping = createAsyncThunk('mappings/update', async (id, { ge
         controlledParameters,
     };
 
-    const newMappingId = await mappingsAPI.updateMapping(mappingId, mapping, token);
+    await mappingsAPI.updateMapping(mappingId, mapping, token);
 
-    return await mappingsAPI.getMapping(newMappingId, token);
+    return await mappingsAPI.getMapping(mappingId, token);
 });
 
 export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getState }) => {

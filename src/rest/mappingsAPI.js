@@ -164,7 +164,7 @@ export function createMapping(name, description, mapping, parentDirectoryUuid, t
 }
 
 export function updateMapping(mappingId, mapping, token) {
-    return backendFetchJson(
+    return backendFetch(
         `${API_URL}/${mappingId}`,
         {
             method: 'PUT',
