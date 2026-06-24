@@ -437,7 +437,7 @@ const augmentFilter = (filter, equipmentType) => ({
     type: 'EXPERT',
     rules: exportExpertRules(filter.rules),
 });
-export const postMapping = createAsyncThunk('mappings/post', async (id, { getState }) => {
+export const updateMapping = createAsyncThunk('mappings/update', async (id, { getState }) => {
     const state = getState();
     const token = state?.user.user?.id_token;
     const mappingId = id ?? state?.mappings.activeMapping;
@@ -483,7 +483,15 @@ export const postMapping = createAsyncThunk('mappings/post', async (id, { getSta
             ? state?.mappings.mappings.find((mapping) => mapping.id === id)?.controlledParameters
             : state?.mappings.controlledParameters;
 
-    return await mappingsAPI.postMapping(mappingId, augmentedRules, formattedAutomata, controlledParameters, token);
+    const mapping = {
+        rules: augmentedRules,
+        automata: formattedAutomata,
+        controlledParameters,
+    };
+
+    const newMappingId = await mappingsAPI.updateMapping(mappingId, mapping, token);
+
+    return await mappingsAPI.getMapping(newMappingId, token);
 });
 
 export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getState }) => {
@@ -752,7 +760,7 @@ const reducers = {
 };
 
 const extraReducers = (builder) => {
-    builder.addCase(postMapping.fulfilled, (state, action) => {
+    builder.addCase(updateMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const receivedMapping = transformMapping(action.payload);
         const foundMapping = state.mappings.find((mapping) => mapping.id === receivedMapping.id);
@@ -774,10 +782,10 @@ const extraReducers = (builder) => {
             }
         }
     });
-    builder.addCase(postMapping.rejected, (state, _action) => {
+    builder.addCase(updateMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(postMapping.pending, (state, _action) => {
+    builder.addCase(updateMapping.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getMappings.fulfilled, (state, action) => {

@@ -21,30 +21,9 @@ const API_EXPLORE_URL =
         : `${import.meta.env.VITE_EXPLORE_URI}/v1`) +
     `/explore`;
 
-export function postMapping(mappingId, rules, automata, controlledParameters, token) {
-    return backendFetchJson(
-        `${API_URL}/${mappingId}`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'default',
-            body: JSON.stringify({
-                name: mappingId,
-                rules,
-                automata,
-                controlledParameters,
-            }),
-        },
-        token
-    );
-}
-
 export function getMappings(token) {
     const mappingsPromise = backendFetchJson(
-        `${API_URL}/`,
+        `${API_URL}`,
         {
             headers: {
                 Accept: 'application/json',
@@ -177,6 +156,23 @@ export function createMapping(name, description, mapping, parentDirectoryUuid, t
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
+            cache: 'default',
+            body: JSON.stringify(mapping),
+        },
+        token
+    );
+}
+
+export function updateMapping(mappingId, mapping, token) {
+    return backendFetchJson(
+        `${API_URL}/${mappingId}`,
+        {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
             body: JSON.stringify(mapping),
         },
         token

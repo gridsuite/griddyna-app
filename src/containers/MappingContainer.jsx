@@ -17,8 +17,8 @@ import {
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
     MappingSlice,
-    postMapping,
     ruleTabsValid as ruleTabsValidSelector,
+    updateMapping,
 } from '../redux/slices/Mapping';
 import {
     getCurrentNetworkObj,
@@ -117,7 +117,7 @@ const MappingContainer = () => {
     }
 
     function saveMapping() {
-        dispatch(postMapping());
+        dispatch(updateMapping());
     }
 
     function attachWithId(id) {
