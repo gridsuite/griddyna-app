@@ -5,9 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { Grid2 as Grid } from '@mui/material';
+import type { UUID } from 'node:crypto';
 import { ElementType, UniqueNameInput } from '@gridsuite/commons-ui';
 import { MAPPING_NAME } from '../new-mapping/new-mapping-dialog-utils';
-import { UUID } from 'node:crypto';
 
 type RenameMappingFormProps = {
     parentDirectory?: UUID;

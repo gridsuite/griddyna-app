@@ -5,23 +5,25 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { UUID } from 'node:crypto';
+import type { UUID } from 'node:crypto';
+import { useEffect, useMemo, useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
     CustomMuiDialog,
     ElementAttributes,
     fetchDirectoryElementPath,
     isObjectEmpty,
     Nullable,
+    snackWithFallback,
+    useSnackMessage,
 } from '@gridsuite/commons-ui';
 import { FieldValues, useForm } from 'react-hook-form';
 import { MAPPING_NAME } from '../new-mapping/new-mapping-dialog-utils';
-import { yupResolver } from '@hookform/resolvers/yup';
 import {
     renameMappingDialogEmpty,
     RenameMappingDialogForm,
     renameMappingDialogSchema,
 } from './rename-mapping-dialog-utils';
-import { useEffect, useMemo, useState } from 'react';
 import RenameMappingForm from './RenameMappingForm';
 
 export type RenameMappingDialogProps = {
@@ -39,6 +41,7 @@ const RenameMappingDialog = ({
     previousName,
     mappingId,
 }: Readonly<RenameMappingDialogProps>) => {
+    const { snackError } = useSnackMessage();
     const renameMappingDialogDefault = useMemo(
         () => ({
             ...renameMappingDialogEmpty,
@@ -67,11 +70,15 @@ const RenameMappingDialog = ({
     const [initialized, setInitialized] = useState(false);
     const [parentDirectory, setParentDirectory] = useState<UUID | undefined>();
     useEffect(() => {
-        fetchDirectoryElementPath(mappingId).then((path: ElementAttributes[]) => {
-            setParentDirectory(path[path.length - 2]?.elementUuid);
-            setInitialized(true);
-        });
-    }, [mappingId]);
+        fetchDirectoryElementPath(mappingId)
+            .then((path: ElementAttributes[]) => {
+                setParentDirectory(path[path.length - 2]?.elementUuid);
+                setInitialized(true);
+            })
+            .catch((error) => {
+                snackWithFallback(snackError, error, { headerId: 'loadParentDirectoryMappingError' });
+            });
+    }, [mappingId, snackError]);
 
     return (
         <CustomMuiDialog

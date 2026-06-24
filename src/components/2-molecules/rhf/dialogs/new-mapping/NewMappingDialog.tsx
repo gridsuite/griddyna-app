@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import type { UUID } from 'node:crypto';
 import {
     CustomMuiDialog,
     DIRECTORY_ITEM,
@@ -13,6 +14,7 @@ import {
     Nullable,
 } from '@gridsuite/commons-ui';
 import { FieldValues, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
     FILE_SELECTOR,
     MAPPING_NAME,
@@ -20,10 +22,8 @@ import {
     NewMappingDialogForm,
     newMappingDialogSchema,
 } from './new-mapping-dialog-utils';
-import { yupResolver } from '@hookform/resolvers/yup';
 import NewMappingForm from './NewMappingForm';
 import { OperationType } from '../../../../../utils/types';
-import { UUID } from 'node:crypto';
 
 type NewMappingDialogProps = {
     onClose: () => void;

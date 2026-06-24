@@ -5,10 +5,14 @@
     "addMappingDialogTitle": "Add a mapping",
     "emptyMapping": "Create an empty mapping",
     "importMapping": "Import from file",
+    "selectMapping": "Select mapping",
+    "uploadMessage": "No file selected",
+    "AddDescription": "Add a description (optional)",
+
     "exportMapping": "Export to file",
     "deleteMapping": "Delete",
     "renameMapping": "Rename",
     "copyMapping": "Copy",
-    "selectMapping": "Select mapping",
-    "uploadMessage": "No file selected"
+
+    "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping"
 }

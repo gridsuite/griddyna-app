@@ -5,10 +5,14 @@
     "addMappingDialogTitle": "Ajouter un mapping",
     "emptyMapping": "Créer un mapping vide",
     "importMapping": "Importer à partir d'un fichier",
+    "selectMapping": "Sélectionner un mapping",
+    "uploadMessage": "Aucun fichier sélectionné",
+    "AddDescription": "Ajouter une description (optionnel)",
+
     "exportMapping": "Exporter vers un fichier",
     "deleteMapping": "Supprimer",
     "renameMapping": "Renommer",
     "copyMapping": "Copier",
-    "selectMapping": "Sélectionner un mapping",
-    "uploadMessage": "Aucun fichier sélectionné"
+
+    "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping"
 }
