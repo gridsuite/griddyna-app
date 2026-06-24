@@ -1,6 +1,6 @@
 {
     "close": "Close",
-    "addMapping": "Add a mapping",
+    "addMapping": "ADD A MAPPING",
     "addMappingError" : "Error occurred while adding a mapping",
     "addMappingDialogTitle": "Add a mapping",
     "emptyMapping": "Create an empty mapping",

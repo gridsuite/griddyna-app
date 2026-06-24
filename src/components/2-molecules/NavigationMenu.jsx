@@ -7,7 +7,7 @@
 
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText } from '@mui/material';
+import { IconButton, List, ListItem, ListItemButton } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContextMenu from './ContextMenu';
 import RenameMappingDialog from './rhf/dialogs/rename-mapping/RenameMappingDialog.tsx';
@@ -15,6 +15,7 @@ import AddButton from '../1-atoms/buttons/AddButton.jsx';
 import { styles } from './NavigationMenuStyles';
 import NewMappingDialog from './rhf/dialogs/new-mapping/NewMappingDialog.tsx';
 import { useIntl } from 'react-intl';
+import { OverflowableText } from '@gridsuite/commons-ui';
 
 const NavigationMenu = (props) => {
     const { items, deleteItem, renameItem, copyItem, exportItem, addItem, selectItem, selected = undefined } = props;
@@ -82,13 +83,18 @@ const NavigationMenu = (props) => {
             <List>
                 {items.map((item) => {
                     return (
-                        <ListItem button key={item.id} onClick={selectItem(item.id)} selected={item.id === selected}>
-                            <ListItemText primary={item.name} />
-                            <ListItemSecondaryAction>
+                        <ListItem
+                            key={item.id}
+                            secondaryAction={
                                 <IconButton edge="end" id={item.id} onClick={setMenu}>
                                     <MoreVertIcon />
                                 </IconButton>
-                            </ListItemSecondaryAction>
+                            }
+                            disablePadding
+                        >
+                            <ListItemButton selected={item.id === selected} onClick={selectItem(item.id)}>
+                                <OverflowableText text={item.name} sx={styles.itemText} />
+                            </ListItemButton>
                         </ListItem>
                     );
                 })}

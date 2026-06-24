@@ -11,7 +11,7 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 const AddButton = ({ label, onClick, sx, disabled, tooltip }) => (
     <Tooltip title={tooltip}>
-        <Button variant="outlined" onClick={onClick} endIcon={<AddRoundedIcon />} sx={sx} disabled={disabled}>
+        <Button variant="contained" onClick={onClick} endIcon={<AddRoundedIcon />} sx={sx} disabled={disabled}>
             {label}
         </Button>
     </Tooltip>
