@@ -12,10 +12,13 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { IntlProvider } from 'react-intl';
 import './index.css';
+import './configure-yup-init';
 import App from './components/app';
 import { store } from './redux/store';
 import messages_en from './translations/en.json';
 import messages_fr from './translations/fr.json';
+import { businessErrorsEn } from './translations/businessErrorsEn';
+import { businessErrorsFr } from './translations/businessErrorsFr';
 import {
     CardErrorBoundary,
     cardErrorBoundaryEn,
@@ -38,6 +41,8 @@ import {
     topBarFr,
     treeviewFinderEn,
     treeviewFinderFr,
+    useUniqueNameValidationEn,
+    useUniqueNameValidationFr,
 } from '@gridsuite/commons-ui';
 
 const messages = {
@@ -52,6 +57,8 @@ const messages = {
         ...filterEn,
         ...filterExpertEn,
         ...treeviewFinderEn,
+        ...useUniqueNameValidationEn,
+        ...businessErrorsEn,
     },
     fr: {
         ...messages_fr,
@@ -64,6 +71,8 @@ const messages = {
         ...filterFr,
         ...filterExpertFr,
         ...treeviewFinderFr,
+        ...useUniqueNameValidationFr,
+        ...businessErrorsFr,
     },
 } as const;
 

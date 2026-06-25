@@ -11,58 +11,69 @@ import { IconButton, List, ListItem, ListItemSecondaryAction, ListItemText } fro
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContextMenu from './ContextMenu';
 import RenameDialog from './RenameDialog';
-import NewButton from '../1-atoms/buttons/NewButton';
+import AddButton from '../1-atoms/buttons/AddButton.jsx';
 import { styles } from './NavigationMenuStyles';
+import NewMappingDialog from './rhf/dialogs/new-mapping/NewMappingDialog.tsx';
+import { useIntl } from 'react-intl';
 
 const NavigationMenu = (props) => {
-    const {
-        items,
-        addItem,
-        deleteItem,
-        renameItem,
-        copyItem,
-        selectItem,
-        selected = '',
-        canAdd = true,
-        addTooltip = '',
-    } = props;
+    const { items, deleteItem, renameItem, copyItem, exportItem, addItem, selectItem, selected = '' } = props;
+    const intl = useIntl();
 
     const [anchor, setAnchor] = useState(null);
     //TODO ADD + Rename
     const [openDialog, setOpenDialog] = useState(null);
+    const [addDialog, setAddDialog] = useState(null);
     const setMenu = (event) => setAnchor(event.currentTarget);
 
     const buildOptions = (itemName) => {
         let options = [];
         if (deleteItem) {
             options.push({
-                label: 'Delete',
+                label: intl.formatMessage({ id: 'deleteMapping' }),
                 action: deleteItem(itemName),
             });
         }
         if (renameItem) {
             options.push({
-                label: 'Rename',
+                label: intl.formatMessage({ id: 'renameMapping' }),
                 action: () => setOpenDialog(itemName),
             });
         }
         if (copyItem) {
             options.push({
-                label: 'Copy',
+                label: intl.formatMessage({ id: 'copyMapping' }),
                 action: copyItem(itemName),
+            });
+        }
+        if (exportItem) {
+            options.push({
+                label: intl.formatMessage({ id: 'exportMapping' }),
+                action: exportItem(itemName),
             });
         }
         return options;
     };
     const closeContextMenu = () => setAnchor(null);
 
-    const closeDialog = () => {
+    const closeRenameDialog = () => {
         closeContextMenu();
         setOpenDialog(null);
     };
 
+    const closeAddDialog = () => {
+        setAddDialog(null);
+    };
+
     return (
         <>
+            {addItem !== undefined && (
+                <AddButton
+                    label={intl.formatMessage({ id: 'addMapping' })}
+                    onClick={() => setAddDialog(true)}
+                    sx={styles.new}
+                />
+            )}
             <List>
                 {items.map((item) => {
                     return (
@@ -82,20 +93,18 @@ const NavigationMenu = (props) => {
                     );
                 })}
             </List>
-            {addItem !== undefined && (
-                <NewButton onClick={addItem} sx={styles.new} disabled={!canAdd} tooltip={addTooltip} />
-            )}
             {anchor !== null && (
                 <ContextMenu anchorEl={anchor} open onClose={closeContextMenu} options={buildOptions(anchor.id)} />
             )}
             {openDialog !== null && (
                 <RenameDialog
                     open
-                    handleClose={closeDialog}
+                    handleClose={closeRenameDialog}
                     handleConfirm={renameItem(openDialog)}
                     previousName={openDialog}
                 />
             )}
+            {addDialog !== null && <NewMappingDialog open onClose={closeAddDialog} onSubmit={addItem} />}
         </>
     );
 };
@@ -106,10 +115,9 @@ NavigationMenu.propTypes = {
     deleteItem: PropTypes.func,
     renameItem: PropTypes.func,
     copyItem: PropTypes.func,
+    exportItem: PropTypes.func,
     selectItem: PropTypes.func.isRequired,
     selected: PropTypes.string,
-    canAdd: PropTypes.bool,
-    addTooltip: PropTypes.string,
 };
 
 export default NavigationMenu;
