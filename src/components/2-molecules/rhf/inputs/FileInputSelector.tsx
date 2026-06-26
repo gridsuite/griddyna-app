@@ -42,7 +42,7 @@ function FileInputSelector({ name, label, accept }: Readonly<UploadFileProps>) {
     );
 
     return (
-        <Grid container alignItems="center" spacing={1} pt={1}>
+        <Grid container alignItems="center" spacing={2}>
             <Grid>
                 <Button variant="contained" color="primary" component="label">
                     <FormattedMessage id={label} />

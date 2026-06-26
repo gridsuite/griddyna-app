@@ -41,12 +41,22 @@ const lightTheme = createTheme({
         mode: 'light',
     },
     mapboxStyle: 'mapbox://styles/mapbox/light-v9',
+    typography: {
+        button: {
+            textTransform: 'none',
+        },
+    },
 });
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
     },
     mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
+    typography: {
+        button: {
+            textTransform: 'none',
+        },
+    },
 });
 
 function getMuiTheme(theme: GsTheme, locale: string /*TODO GsLangUser*/) {

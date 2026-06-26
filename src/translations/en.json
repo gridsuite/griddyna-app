@@ -1,14 +1,19 @@
 {
     "close": "Close",
-    "addMapping": "Add a mapping",
+    "addMapping": "ADD A MAPPING",
     "addMappingError" : "Error occurred while adding a mapping",
     "addMappingDialogTitle": "Add a mapping",
     "emptyMapping": "Create an empty mapping",
     "importMapping": "Import from file",
+    "selectMapping": "Select mapping",
+    "uploadMessage": "No file selected",
+    "AddDescription": "Add a description (optional)",
+
     "exportMapping": "Export to file",
     "deleteMapping": "Delete",
     "renameMapping": "Rename",
     "copyMapping": "Copy",
-    "selectMapping": "Select mapping",
-    "uploadMessage": "No file selected"
+    "renameMappingDialogTitle": "Rename a mapping",
+
+    "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping"
 }
