@@ -7,7 +7,7 @@
 
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Grid, Tooltip, Typography } from '@mui/material';
+import { Box, Grid2 as Grid, Tooltip, Typography } from '@mui/material';
 import { CustomReactQueryBuilder, EXPERT_FILTER_QUERY, useFormatLabelWithUnit } from '@gridsuite/commons-ui';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';
@@ -35,22 +35,22 @@ const Filter = (props) => {
     }, [formatLabelWithUnit, equipmentType]);
 
     return (
-        <Grid container justify="space-between">
-            <Grid item container justify={'flex-start'}>
-                <Grid item xs>
+        <Grid container justifyContent="space-between">
+            <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+                <Grid size="grow">
                     <Typography>{filterLabel}</Typography>
                 </Grid>
-                <Grid item xs={'auto'} paddingLeft={1}>
+                <Grid size="auto" paddingLeft={1}>
                     <AddIconButton onClick={newFilter} tooltip={addFilterLabel} disabled={hasFilter} />
                     <DeleteButton onClick={deleteFilter} isDirty tooltip={deleteFilterLabel} disabled={!hasFilter} />
                 </Grid>
             </Grid>
             {hasFilter ? (
-                <Grid item xs>
+                <Grid size="grow">
                     <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
                 </Grid>
             ) : (
-                <Grid item xs="auto">
+                <Grid size="auto">
                     <Box display="flex" alignItems="center">
                         <Typography variant="subtitle2" sx={mergeSx(styles.noFilter, !isValid && styles.invalid)}>
                             {noFilterLabel}

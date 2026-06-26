@@ -8,7 +8,7 @@
 import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid2 as Grid, Paper, Typography } from '@mui/material';
 import { styles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
@@ -52,17 +52,23 @@ const Automaton = (props) => {
     return (
         <Paper elevation={24} sx={mergeSx(styles.automatonPaper, !isAutomatonValid && styles.invalidAutomatonPaper)}>
             <Grid container>
-                <Grid container item xs={12} md={4} paddingRight={1} direction={'column'} justifyContent={'flex-start'}>
-                    <Grid container item justifyContent={'flex-start'}>
-                        <Grid item xs sx={styles.titleLabel}>
+                <Grid
+                    container
+                    size={{ xs: 12, md: 4 }}
+                    paddingRight={1}
+                    direction={'column'}
+                    justifyContent={'flex-start'}
+                >
+                    <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+                        <Grid size="grow" sx={styles.titleLabel}>
                             <Typography variant="subtitle2">{`${automatonLabel} ${family}`}</Typography>
                         </Grid>
-                        <Grid item xs={'auto'} paddingLeft={1}>
+                        <Grid size="auto" paddingLeft={1}>
                             <DeleteButton onClick={deleteAutomaton} tooltip={deleteAutomatonLabel} />
                             <CopyButton onClick={copyAutomaton} tooltip={copyAutomatonLabel} />
                         </Grid>
                     </Grid>
-                    <Grid item container sx={styles.automatonModel} direction="column" justifyContent={'flex-start'}>
+                    <Grid container sx={styles.automatonModel} direction="column" justifyContent={'flex-start'}>
                         <ModelSelect model={model} models={models} changeModel={changeModel} />
                         <SetGroupSelect
                             model={model}
@@ -76,9 +82,9 @@ const Automaton = (props) => {
                         />
                     </Grid>
                 </Grid>
-                <Grid item container xs={12} md={8} direction="column" justifyContent={'flex-start'}>
-                    <Grid item container justify={'flex-start'} marginBottom={2}>
-                        <Grid item xs>
+                <Grid container size={{ xs: 12, md: 8 }} direction="column" justifyContent={'flex-start'}>
+                    <Grid container justifyContent={'flex-start'} marginBottom={2} sx={{ width: '100%' }}>
+                        <Grid size="grow">
                             <Typography>{'Properties :'}</Typography>
                         </Grid>
                     </Grid>

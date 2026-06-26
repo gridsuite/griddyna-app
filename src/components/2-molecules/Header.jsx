@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Grid, Tooltip, Typography } from '@mui/material';
+import { Grid2 as Grid, Tooltip, Typography } from '@mui/material';
 import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
 import PropTypes from 'prop-types';
 import { styles } from './HeaderStyles';
@@ -48,8 +48,8 @@ const Header = (props) => {
         return titleStyle;
     };
     return (
-        <Grid container sx={getHeaderBoxStyle()}>
-            <Grid item xs sx={styles.gridTitle}>
+        <Grid container sx={mergeSx(getHeaderBoxStyle(), { width: '100%' })}>
+            <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h5" sx={getTitleStyle()}>
                         {`${name}${isModified ? '*' : ''} :`}
@@ -59,7 +59,7 @@ const Header = (props) => {
                     {`${currentNetwork?.networkName ?? ''}`}
                 </Typography>
             </Grid>
-            <Grid item xs="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
+            <Grid size="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
                 {save !== undefined && (
                     <SaveButton onClick={save} tooltip={saveTooltip} disabled={!isModified || !isValid} />
                 )}

@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Checkbox, Grid, Typography } from '@mui/material';
+import { Checkbox, Grid2 as Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { styles } from './SetGroupSelectStyle';
 import { useEffect, useState } from 'react';
@@ -80,26 +80,26 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
 
     return (
         <Grid container justifyContent={'flex-start'}>
-            <Grid item container justifyContent={'flex-start'}>
-                <Grid item xs sx={styles.gridItem}>
+            <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+                <Grid size="grow" sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${isAbsoluteLabel} :`}</Typography>
                 </Grid>
-                <Grid item container xs="auto" justifyContent={'flex-end'}>
+                <Grid container size="auto" justifyContent={'flex-end'}>
                     <Checkbox checked={isAbsolute} onChange={onAbsoluteChange} disabled={!isNetworkAttached} />
                 </Grid>
             </Grid>
-            <Grid item container justifyContent={'flex-start'}>
-                <Grid item xs sx={styles.gridItem}>
+            <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+                <Grid size="grow" sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${setLabel} :`}</Typography>
                 </Grid>
-                <Grid item xs="auto" sx={mergeSx(styles.button, styles.gridItem, errorInParams && styles.errorButton)}>
+                <Grid size="auto" sx={mergeSx(styles.button, styles.gridItem, errorInParams && styles.errorButton)}>
                     <EditButton
                         onClick={editGroup(isAbsolute)}
                         disabled={model === '' || (setGroup && !controlledParameters)}
                         tooltip={setGroup && !controlledParameters ? simpledEditLabel : editGroupLabel}
                     />
                 </Grid>
-                <Grid item xs="auto" sx={styles.titleSelect}>
+                <Grid size="auto" sx={styles.titleSelect}>
                     <Select
                         options={groupOptions}
                         value={foundGroup ?? newEmptyGroup}

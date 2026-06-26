@@ -6,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid2 as Grid, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
@@ -63,12 +63,18 @@ const AutomatonProperties = ({
                         [];
 
                     return (
-                        <Grid key={propertyName} container item justifyContent={'flex-start'} paddingLeft={1}>
+                        <Grid
+                            key={propertyName}
+                            container
+                            justifyContent={'flex-start'}
+                            paddingLeft={1}
+                            sx={{ width: '100%' }}
+                        >
                             <Grid container>
-                                <Grid item xs={4} sx={styles.label} alignItems={'center'}>
+                                <Grid size={4} sx={{ ...styles.label, alignItems: 'center' }}>
                                     <Typography>{`${propertyDefinition.label} :`}</Typography>
                                 </Grid>
-                                <Grid item xs={8} sx={styles.value}>
+                                <Grid size={8} sx={styles.value}>
                                     <Autocomplete
                                         isFree={!(options && options.length > 0)}
                                         isMultiple={propertyDefinition.multiple}
@@ -86,7 +92,7 @@ const AutomatonProperties = ({
                                 </Grid>
                             </Grid>
                             {index !== propertyNames.length - 1 && (
-                                <Grid item xs={12} sx={{ paddingRight: '8px' }}>
+                                <Grid size={12} sx={{ paddingRight: '8px' }}>
                                     <Divider />
                                 </Grid>
                             )}

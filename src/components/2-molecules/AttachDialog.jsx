@@ -14,7 +14,7 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
-    Grid,
+    Grid2 as Grid,
     Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -54,7 +54,7 @@ const AttachDialog = (props) => {
                     <Box>
                         <Typography>Attach a known network :</Typography>
                         <Grid container sx={styles.margins}>
-                            <Grid item xs={10}>
+                            <Grid size={10}>
                                 <Autocomplete
                                     options={networks.map((network) => ({
                                         label: network.networkName,
@@ -65,7 +65,7 @@ const AttachDialog = (props) => {
                                     fixedWidth
                                 />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid size={2}>
                                 <Button
                                     onClick={() => onAttach('id')}
                                     sx={styles.idVerticalAlign}
@@ -81,10 +81,10 @@ const AttachDialog = (props) => {
                     <Box>
                         <Typography>Attach a new network using the iidm:</Typography>
                         <Grid container sx={styles.margins}>
-                            <Grid item xs={10}>
+                            <Grid size={10}>
                                 <input type="file" name="file" onChange={(e) => onChangeFile(e)} />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid size={2}>
                                 <Button
                                     onClick={() => onAttach('file')}
                                     sx={styles.idVerticalAlign}

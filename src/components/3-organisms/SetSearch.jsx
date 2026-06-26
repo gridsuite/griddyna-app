@@ -7,7 +7,7 @@
 
 import { useState } from 'react';
 import { ApplyAllButton, ApplyOneButton, ResetButton } from '../1-atoms/buttons';
-import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid2 as Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { styles } from './SetSearchStyle';
@@ -125,9 +125,9 @@ function SetSearch(props) {
                     spacing={2}
                     direction={'column'}
                 >
-                    <Grid item xs={12}>
+                    <Grid sx={{ width: '100%' }}>
                         <Grid container justifyContent={'flex-start'} alignItems={'stretch'} direction={'column'}>
-                            <Grid item xs={12}>
+                            <Grid sx={{ width: '100%' }}>
                                 <Select
                                     label={'Model'}
                                     options={_models}
@@ -137,7 +137,7 @@ function SetSearch(props) {
                                     sx={styles.fieldSearch}
                                 ></Select>
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid sx={{ width: '100%' }}>
                                 <Select
                                     label={'Group'}
                                     options={_groups}
@@ -147,7 +147,7 @@ function SetSearch(props) {
                                     sx={styles.fieldSearch}
                                 ></Select>
                             </Grid>
-                            <Grid item xs={12}>
+                            <Grid sx={{ width: '100%' }}>
                                 <Autocomplete
                                     isFree={false}
                                     isMultiple={false}
@@ -165,15 +165,15 @@ function SetSearch(props) {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid sx={{ width: '100%' }}>
                         <Grid container justifyContent="flex-end" alignItems={'flex-start'} spacing={1}>
-                            <Grid item>
+                            <Grid>
                                 <ApplyOneButton onClick={handleApplyOne} tooltip={APPLY_ONE_SET_SEARCH_LABEL} />
                             </Grid>
-                            <Grid item>
+                            <Grid>
                                 <ApplyAllButton onClick={handleApplyAll} tooltip={APPLY_ALL_SET_SEARCH_LABEL} />
                             </Grid>
-                            <Grid item>
+                            <Grid>
                                 <ResetButton onClick={handleReset} tooltip={RESET_SET_SEARCH_LABEL} />
                             </Grid>
                         </Grid>

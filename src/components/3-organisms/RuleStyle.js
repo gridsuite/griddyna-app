@@ -14,7 +14,7 @@ export const styles = {
     rulePaper: {
         borderRadius: '5px',
         marginBottom: 1,
-        '& >.MuiGrid-root': {
+        '& >.MuiGrid2-root': {
             marginTop: 1,
         },
     },
@@ -25,11 +25,5 @@ export const styles = {
     matches: (theme) => ({
         backgroundColor: theme.palette.grey[800],
         maxHeight: '8em',
-        '& .MuiGrid-container': {
-            '& .MuiGrid-item': {
-                maxHeight: '7em',
-                overflowY: 'auto',
-            },
-        },
     }),
 };
