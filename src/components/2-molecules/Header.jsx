@@ -6,7 +6,7 @@
  */
 
 import { Grid2 as Grid, Tooltip, Typography } from '@mui/material';
-import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
+import { AttachButton, SaveButton } from '../1-atoms/buttons/';
 import PropTypes from 'prop-types';
 import { styles } from './HeaderStyles';
 import { mergeSx } from 'utils/functions';
@@ -21,8 +21,6 @@ const Header = (props) => {
         isValid = true,
         save,
         saveTooltip,
-        addElement,
-        addTooltip,
         attach,
         attachTooltip,
         isCurrent = true,
@@ -48,7 +46,7 @@ const Header = (props) => {
         return titleStyle;
     };
     return (
-        <Grid container sx={mergeSx(getHeaderBoxStyle(), { width: '100%' })}>
+        <Grid container sx={getHeaderBoxStyle()}>
             <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h5" sx={getTitleStyle()}>
@@ -64,7 +62,6 @@ const Header = (props) => {
                     <SaveButton onClick={save} tooltip={saveTooltip} disabled={!isModified || !isValid} />
                 )}
                 {attach !== undefined && <AttachButton onClick={attach} tooltip={attachTooltip} />}
-                {addElement !== undefined && <AddIconButton onClick={addElement} tooltip={addTooltip} />}
             </Grid>
         </Grid>
     );
@@ -81,8 +78,6 @@ Header.propTypes = {
     isCurrent: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
-    addElement: PropTypes.func,
-    addTooltip: PropTypes.string,
     attach: PropTypes.func,
     attachTooltip: PropTypes.string,
 };

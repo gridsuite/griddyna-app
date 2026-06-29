@@ -42,10 +42,10 @@ const Rule = (props) => {
                     container
                     size={{ xs: 12, md: 4 }}
                     paddingRight={1}
-                    direction={'column'}
+                    direction="column"
                     justifyContent={'flex-start'}
                 >
-                    <Grid container sx={{ width: '100%' }}>
+                    <Grid container>
                         <Grid container size="grow">
                             <Grid container justifyContent={'flex-start'} spacing={1} alignItems={'baseline'}>
                                 <Grid>

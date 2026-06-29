@@ -46,7 +46,7 @@ const AutomatonProperties = ({
     );
     return (
         propertyNames?.length > 0 && (
-            <Grid container sx={styles.gridContainer}>
+            <Grid container sx={styles.gridContainer} direction="column">
                 {propertyNames.map((propertyName, index) => {
                     const propertyDefinition = automatonDefinition[propertyName];
                     const property = automaton.properties.find((elem) => elem.name === propertyName);
@@ -68,7 +68,7 @@ const AutomatonProperties = ({
                             container
                             justifyContent={'flex-start'}
                             paddingLeft={1}
-                            sx={{ width: '100%' }}
+                            direction="column"
                         >
                             <Grid container>
                                 <Grid size={4} sx={{ ...styles.label, alignItems: 'center' }}>
@@ -92,7 +92,7 @@ const AutomatonProperties = ({
                                 </Grid>
                             </Grid>
                             {index !== propertyNames.length - 1 && (
-                                <Grid size={12} sx={{ paddingRight: '8px' }}>
+                                <Grid sx={{ paddingRight: '8px' }}>
                                     <Divider />
                                 </Grid>
                             )}

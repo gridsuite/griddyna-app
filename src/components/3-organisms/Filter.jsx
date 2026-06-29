@@ -35,8 +35,8 @@ const Filter = (props) => {
     }, [formatLabelWithUnit, equipmentType]);
 
     return (
-        <Grid container justifyContent="space-between">
-            <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+        <Grid container justifyContent="space-between" direction="column" alignItems="stretch">
+            <Grid container justifyContent={'flex-start'}>
                 <Grid size="grow">
                     <Typography>{filterLabel}</Typography>
                 </Grid>
@@ -46,11 +46,11 @@ const Filter = (props) => {
                 </Grid>
             </Grid>
             {hasFilter ? (
-                <Grid size="grow">
+                <Grid>
                     <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
                 </Grid>
             ) : (
-                <Grid size="auto">
+                <Grid>
                     <Box display="flex" alignItems="center">
                         <Typography variant="subtitle2" sx={mergeSx(styles.noFilter, !isValid && styles.invalid)}>
                             {noFilterLabel}

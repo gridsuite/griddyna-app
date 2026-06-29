@@ -72,7 +72,7 @@ const SetEditor = (props) => {
                                     sx={{ width: '100%' }}
                                 />
                             </Grid>
-                            <Grid size="grow" justifyContent={'center'} sx={{ alignItems: 'center' }}>
+                            <Grid size="grow" justifyContent="center" alignItems="center">
                                 <Tooltip title={infoTypeLabel + definition.type}>
                                     <InfoIcon />
                                 </Tooltip>

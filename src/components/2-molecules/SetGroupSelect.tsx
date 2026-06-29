@@ -80,7 +80,7 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
 
     return (
         <Grid container justifyContent={'flex-start'}>
-            <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+            <Grid container justifyContent={'flex-start'}>
                 <Grid size="grow" sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${isAbsoluteLabel} :`}</Typography>
                 </Grid>
@@ -88,7 +88,7 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
                     <Checkbox checked={isAbsolute} onChange={onAbsoluteChange} disabled={!isNetworkAttached} />
                 </Grid>
             </Grid>
-            <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+            <Grid container justifyContent={'flex-start'}>
                 <Grid size="grow" sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${setLabel} :`}</Typography>
                 </Grid>

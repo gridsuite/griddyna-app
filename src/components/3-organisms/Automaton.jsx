@@ -56,10 +56,10 @@ const Automaton = (props) => {
                     container
                     size={{ xs: 12, md: 4 }}
                     paddingRight={1}
-                    direction={'column'}
+                    direction="column"
                     justifyContent={'flex-start'}
                 >
-                    <Grid container justifyContent={'flex-start'} sx={{ width: '100%' }}>
+                    <Grid container justifyContent={'flex-start'}>
                         <Grid size="grow" sx={styles.titleLabel}>
                             <Typography variant="subtitle2">{`${automatonLabel} ${family}`}</Typography>
                         </Grid>
@@ -83,7 +83,7 @@ const Automaton = (props) => {
                     </Grid>
                 </Grid>
                 <Grid container size={{ xs: 12, md: 8 }} direction="column" justifyContent={'flex-start'}>
-                    <Grid container justifyContent={'flex-start'} marginBottom={2} sx={{ width: '100%' }}>
+                    <Grid container justifyContent={'flex-start'} marginBottom={2}>
                         <Grid size="grow">
                             <Typography>{'Properties :'}</Typography>
                         </Grid>

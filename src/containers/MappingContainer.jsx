@@ -186,8 +186,8 @@ const MappingContainer = () => {
                         attach={() => setIsAttachedModalOpen(true)}
                         attachTooltip={ATTACH_LABEL}
                     />
-                    <Grid container justifyContent="center">
-                        <Grid>
+                    <Grid container justifyContent="flex-start">
+                        <Grid size={12}>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -208,7 +208,7 @@ const MappingContainer = () => {
                         </AccordionSummary>
                         <Divider />
                         <AccordionDetails>
-                            <Grid container sx={{ width: '100%' }}>
+                            <Grid container>
                                 <Grid size="grow" sx={styles.tabBar}>
                                     <TabBar
                                         value={filteredType}
@@ -231,7 +231,7 @@ const MappingContainer = () => {
                         </AccordionSummary>
                         <Divider />
                         <AccordionDetails>
-                            <Grid container sx={{ width: '100%' }}>
+                            <Grid container>
                                 <Grid size="grow" sx={styles.tabBar}>
                                     <TabBar
                                         value={filteredFamily}

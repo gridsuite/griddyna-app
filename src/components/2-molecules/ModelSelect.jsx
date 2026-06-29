@@ -18,10 +18,10 @@ const ModelSelect = (props) => {
 
     return (
         <Grid container justifyContent={'center'}>
-            <Grid size="auto" sx={styles.gridItem}>
+            <Grid size="grow" sx={styles.gridItem}>
                 <Typography variant="subtitle1">{`${modelLabel} :`}</Typography>
             </Grid>
-            <Grid size="grow" sx={styles.titleSelect}>
+            <Grid size="auto" sx={styles.titleSelect}>
                 <Select options={getModelsOptions(models)} value={model} setValue={changeModel} error={model === ''} />
             </Grid>
         </Grid>

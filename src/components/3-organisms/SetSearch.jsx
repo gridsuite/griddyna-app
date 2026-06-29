@@ -118,64 +118,54 @@ function SetSearch(props) {
             </AccordionSummary>
             <Divider />
             <AccordionDetails style={{ display: 'inherit' }}>
-                <Grid
-                    container
-                    justifyContent={'space-between'}
-                    alignItems={'stretch'}
-                    spacing={2}
-                    direction={'column'}
-                >
-                    <Grid sx={{ width: '100%' }}>
-                        <Grid container justifyContent={'flex-start'} alignItems={'stretch'} direction={'column'}>
-                            <Grid sx={{ width: '100%' }}>
-                                <Select
-                                    label={'Model'}
-                                    options={_models}
-                                    value={getModel()?.value ?? ''}
-                                    setValue={handleSetModel}
-                                    error={false}
-                                    sx={styles.fieldSearch}
-                                ></Select>
-                            </Grid>
-                            <Grid sx={{ width: '100%' }}>
-                                <Select
-                                    label={'Group'}
-                                    options={_groups}
-                                    value={getGroup()?.value ?? ''}
-                                    setValue={handleSetGroup}
-                                    error={false}
-                                    sx={styles.fieldSearch}
-                                ></Select>
-                            </Grid>
-                            <Grid sx={{ width: '100%' }}>
-                                <Autocomplete
-                                    isFree={false}
-                                    isMultiple={false}
-                                    value={getSet()?.value ?? ''}
-                                    onChange={handleChangeSet}
-                                    options={_sets}
-                                    highlightOptions={[]}
-                                    type={undefined}
-                                    error={false}
-                                    label={'Parameters set'}
-                                    sx={mergeSx(styles.fieldSearch, {
-                                        marginLeft: 1,
-                                    })}
-                                />
-                            </Grid>
+                <Grid container justifyContent="space-between" alignItems="stretch" spacing={2} direction="column">
+                    <Grid container justifyContent="flex-start" alignItems="stretch" direction="column">
+                        <Grid>
+                            <Select
+                                label={'Model'}
+                                options={_models}
+                                value={getModel()?.value ?? ''}
+                                setValue={handleSetModel}
+                                error={false}
+                                sx={styles.fieldSearch}
+                            ></Select>
+                        </Grid>
+                        <Grid>
+                            <Select
+                                label={'Group'}
+                                options={_groups}
+                                value={getGroup()?.value ?? ''}
+                                setValue={handleSetGroup}
+                                error={false}
+                                sx={styles.fieldSearch}
+                            ></Select>
+                        </Grid>
+                        <Grid>
+                            <Autocomplete
+                                isFree={false}
+                                isMultiple={false}
+                                value={getSet()?.value ?? ''}
+                                onChange={handleChangeSet}
+                                options={_sets}
+                                highlightOptions={[]}
+                                type={undefined}
+                                error={false}
+                                label={'Parameters set'}
+                                sx={mergeSx(styles.fieldSearch, {
+                                    marginLeft: 1,
+                                })}
+                            />
                         </Grid>
                     </Grid>
-                    <Grid sx={{ width: '100%' }}>
-                        <Grid container justifyContent="flex-end" alignItems={'flex-start'} spacing={1}>
-                            <Grid>
-                                <ApplyOneButton onClick={handleApplyOne} tooltip={APPLY_ONE_SET_SEARCH_LABEL} />
-                            </Grid>
-                            <Grid>
-                                <ApplyAllButton onClick={handleApplyAll} tooltip={APPLY_ALL_SET_SEARCH_LABEL} />
-                            </Grid>
-                            <Grid>
-                                <ResetButton onClick={handleReset} tooltip={RESET_SET_SEARCH_LABEL} />
-                            </Grid>
+                    <Grid container justifyContent="flex-end" alignItems="flex-start" spacing={1}>
+                        <Grid>
+                            <ApplyOneButton onClick={handleApplyOne} tooltip={APPLY_ONE_SET_SEARCH_LABEL} />
+                        </Grid>
+                        <Grid>
+                            <ApplyAllButton onClick={handleApplyAll} tooltip={APPLY_ALL_SET_SEARCH_LABEL} />
+                        </Grid>
+                        <Grid>
+                            <ResetButton onClick={handleReset} tooltip={RESET_SET_SEARCH_LABEL} />
                         </Grid>
                     </Grid>
                 </Grid>
