@@ -7,7 +7,7 @@
 
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Grid2 as Grid, Tooltip, Typography } from '@mui/material';
+import { Box, Grid2 as Grid, Stack, Tooltip, Typography } from '@mui/material';
 import { CustomReactQueryBuilder, EXPERT_FILTER_QUERY, useFormatLabelWithUnit } from '@gridsuite/commons-ui';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';
@@ -35,7 +35,7 @@ const Filter = (props) => {
     }, [formatLabelWithUnit, equipmentType]);
 
     return (
-        <Grid container justifyContent="space-between" direction="column" alignItems="stretch">
+        <Stack>
             <Grid container justifyContent={'flex-start'}>
                 <Grid size="grow">
                     <Typography>{filterLabel}</Typography>
@@ -46,24 +46,20 @@ const Filter = (props) => {
                 </Grid>
             </Grid>
             {hasFilter ? (
-                <Grid>
-                    <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
-                </Grid>
+                <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
             ) : (
-                <Grid>
-                    <Box display="flex" alignItems="center">
-                        <Typography variant="subtitle2" sx={mergeSx(styles.noFilter, !isValid && styles.invalid)}>
-                            {noFilterLabel}
-                        </Typography>
-                        {!isValid && (
-                            <Tooltip title={ruleWithoutFilter}>
-                                <InfoIcon />
-                            </Tooltip>
-                        )}
-                    </Box>
-                </Grid>
+                <Box display="flex" alignItems="center">
+                    <Typography variant="subtitle2" sx={mergeSx(styles.noFilter, !isValid && styles.invalid)}>
+                        {noFilterLabel}
+                    </Typography>
+                    {!isValid && (
+                        <Tooltip title={ruleWithoutFilter}>
+                            <InfoIcon />
+                        </Tooltip>
+                    )}
+                </Box>
             )}
-        </Grid>
+        </Stack>
     );
 };
 

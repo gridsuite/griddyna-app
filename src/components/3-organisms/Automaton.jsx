@@ -8,7 +8,7 @@
 import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import { Grid2 as Grid, Paper, Typography } from '@mui/material';
+import { Grid2 as Grid, Paper, Stack, Typography } from '@mui/material';
 import { styles } from './AutomatonStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import { SetType } from '../../constants/models';
@@ -52,48 +52,46 @@ const Automaton = (props) => {
     return (
         <Paper elevation={24} sx={mergeSx(styles.automatonPaper, !isAutomatonValid && styles.invalidAutomatonPaper)}>
             <Grid container>
-                <Grid
-                    container
-                    size={{ xs: 12, md: 4 }}
-                    paddingRight={1}
-                    direction="column"
-                    justifyContent={'flex-start'}
-                >
-                    <Grid container justifyContent={'flex-start'}>
-                        <Grid size="grow" sx={styles.titleLabel}>
-                            <Typography variant="subtitle2">{`${automatonLabel} ${family}`}</Typography>
+                <Grid size={{ xs: 12, md: 4 }} paddingRight={1}>
+                    <Stack>
+                        <Grid container justifyContent="flex-start">
+                            <Grid size="grow" sx={styles.titleLabel}>
+                                <Typography variant="subtitle2">{`${automatonLabel} ${family}`}</Typography>
+                            </Grid>
+                            <Grid size="auto" paddingLeft={1}>
+                                <DeleteButton onClick={deleteAutomaton} tooltip={deleteAutomatonLabel} />
+                                <CopyButton onClick={copyAutomaton} tooltip={copyAutomatonLabel} />
+                            </Grid>
                         </Grid>
-                        <Grid size="auto" paddingLeft={1}>
-                            <DeleteButton onClick={deleteAutomaton} tooltip={deleteAutomatonLabel} />
-                            <CopyButton onClick={copyAutomaton} tooltip={copyAutomatonLabel} />
-                        </Grid>
-                    </Grid>
-                    <Grid container sx={styles.automatonModel} direction="column" justifyContent={'flex-start'}>
-                        <ModelSelect model={model} models={models} changeModel={changeModel} />
-                        <SetGroupSelect
-                            model={model}
-                            models={models}
-                            setGroup={setGroup}
-                            groupType={SetType.FIXED}
-                            changeGroup={changeParameters}
-                            editGroup={editGroup}
-                            controlledParameters={controlledParameters}
-                            isNetworkAttached={isNetworkAttached}
-                        />
-                    </Grid>
+                        <Stack sx={styles.automatonModel}>
+                            <ModelSelect model={model} models={models} changeModel={changeModel} />
+                            <SetGroupSelect
+                                model={model}
+                                models={models}
+                                setGroup={setGroup}
+                                groupType={SetType.FIXED}
+                                changeGroup={changeParameters}
+                                editGroup={editGroup}
+                                controlledParameters={controlledParameters}
+                                isNetworkAttached={isNetworkAttached}
+                            />
+                        </Stack>
+                    </Stack>
                 </Grid>
-                <Grid container size={{ xs: 12, md: 8 }} direction="column" justifyContent={'flex-start'}>
-                    <Grid container justifyContent={'flex-start'} marginBottom={2}>
-                        <Grid size="grow">
-                            <Typography>{'Properties :'}</Typography>
+                <Grid size={{ xs: 12, md: 8 }}>
+                    <Stack>
+                        <Grid container justifyContent="flex-start" marginBottom={2}>
+                            <Grid size="grow">
+                                <Typography>{'Properties :'}</Typography>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <AutomatonProperties
-                        automaton={automaton}
-                        automatonDefinition={automatonDefinition}
-                        networkPropertyValues={networkPropertyValues}
-                        onChangeProperty={onChangeProperty}
-                    />
+                        <AutomatonProperties
+                            automaton={automaton}
+                            automatonDefinition={automatonDefinition}
+                            networkPropertyValues={networkPropertyValues}
+                            onChangeProperty={onChangeProperty}
+                        />
+                    </Stack>
                 </Grid>
             </Grid>
         </Paper>

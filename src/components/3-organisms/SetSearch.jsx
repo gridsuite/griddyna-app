@@ -7,7 +7,15 @@
 
 import { useState } from 'react';
 import { ApplyAllButton, ApplyOneButton, ResetButton } from '../1-atoms/buttons';
-import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid2 as Grid, Typography } from '@mui/material';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Divider,
+    Grid2 as Grid,
+    Stack,
+    Typography,
+} from '@mui/material';
 import Select from '../1-atoms/Select';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { styles } from './SetSearchStyle';
@@ -118,45 +126,41 @@ function SetSearch(props) {
             </AccordionSummary>
             <Divider />
             <AccordionDetails style={{ display: 'inherit' }}>
-                <Grid container justifyContent="space-between" alignItems="stretch" spacing={2} direction="column">
-                    <Grid container justifyContent="flex-start" alignItems="stretch" direction="column">
-                        <Grid>
-                            <Select
-                                label={'Model'}
-                                options={_models}
-                                value={getModel()?.value ?? ''}
-                                setValue={handleSetModel}
-                                error={false}
-                                sx={styles.fieldSearch}
-                            ></Select>
-                        </Grid>
-                        <Grid>
-                            <Select
-                                label={'Group'}
-                                options={_groups}
-                                value={getGroup()?.value ?? ''}
-                                setValue={handleSetGroup}
-                                error={false}
-                                sx={styles.fieldSearch}
-                            ></Select>
-                        </Grid>
-                        <Grid>
-                            <Autocomplete
-                                isFree={false}
-                                isMultiple={false}
-                                value={getSet()?.value ?? ''}
-                                onChange={handleChangeSet}
-                                options={_sets}
-                                highlightOptions={[]}
-                                type={undefined}
-                                error={false}
-                                label={'Parameters set'}
-                                sx={mergeSx(styles.fieldSearch, {
-                                    marginLeft: 1,
-                                })}
-                            />
-                        </Grid>
-                    </Grid>
+                <Stack justifyContent="space-between" alignItems="stretch" spacing={2}>
+                    <Stack justifyContent="flex-start" alignItems="stretch">
+                        <Select
+                            label={'Model'}
+                            options={_models}
+                            value={getModel()?.value ?? ''}
+                            setValue={handleSetModel}
+                            error={false}
+                            sx={styles.fieldSearch}
+                        ></Select>
+
+                        <Select
+                            label={'Group'}
+                            options={_groups}
+                            value={getGroup()?.value ?? ''}
+                            setValue={handleSetGroup}
+                            error={false}
+                            sx={styles.fieldSearch}
+                        ></Select>
+
+                        <Autocomplete
+                            isFree={false}
+                            isMultiple={false}
+                            value={getSet()?.value ?? ''}
+                            onChange={handleChangeSet}
+                            options={_sets}
+                            highlightOptions={[]}
+                            type={undefined}
+                            error={false}
+                            label={'Parameters set'}
+                            sx={mergeSx(styles.fieldSearch, {
+                                marginLeft: 1,
+                            })}
+                        />
+                    </Stack>
                     <Grid container justifyContent="flex-end" alignItems="flex-start" spacing={1}>
                         <Grid>
                             <ApplyOneButton onClick={handleApplyOne} tooltip={APPLY_ONE_SET_SEARCH_LABEL} />
@@ -168,7 +172,7 @@ function SetSearch(props) {
                             <ResetButton onClick={handleReset} tooltip={RESET_SET_SEARCH_LABEL} />
                         </Grid>
                     </Grid>
-                </Grid>
+                </Stack>
             </AccordionDetails>
         </Accordion>
     );

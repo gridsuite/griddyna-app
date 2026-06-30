@@ -6,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { Divider, Grid2 as Grid, Typography } from '@mui/material';
+import { Divider, Grid2 as Grid, Stack, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
@@ -46,7 +46,7 @@ const AutomatonProperties = ({
     );
     return (
         propertyNames?.length > 0 && (
-            <Grid container sx={styles.gridContainer} direction="column">
+            <Stack sx={styles.container}>
                 {propertyNames.map((propertyName, index) => {
                     const propertyDefinition = automatonDefinition[propertyName];
                     const property = automaton.properties.find((elem) => elem.name === propertyName);
@@ -63,13 +63,7 @@ const AutomatonProperties = ({
                         [];
 
                     return (
-                        <Grid
-                            key={propertyName}
-                            container
-                            justifyContent={'flex-start'}
-                            paddingLeft={1}
-                            direction="column"
-                        >
+                        <Stack key={propertyName} justifyContent={'flex-start'} paddingLeft={1}>
                             <Grid container>
                                 <Grid size={4} sx={{ ...styles.label, alignItems: 'center' }}>
                                     <Typography>{`${propertyDefinition.label} :`}</Typography>
@@ -96,10 +90,10 @@ const AutomatonProperties = ({
                                     <Divider />
                                 </Grid>
                             )}
-                        </Grid>
+                        </Stack>
                     );
                 })}
-            </Grid>
+            </Stack>
         )
     );
 };
