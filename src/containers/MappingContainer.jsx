@@ -32,7 +32,7 @@ import {
     AccordionSummary,
     Divider,
     FormControlLabel,
-    Grid,
+    Grid2 as Grid,
     List,
     Paper,
     Switch,
@@ -186,8 +186,8 @@ const MappingContainer = () => {
                         attach={() => setIsAttachedModalOpen(true)}
                         attachTooltip={ATTACH_LABEL}
                     />
-                    <Grid container justify="center">
-                        <Grid item>
+                    <Grid container justifyContent="flex-start">
+                        <Grid size={12}>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -209,14 +209,14 @@ const MappingContainer = () => {
                         <Divider />
                         <AccordionDetails>
                             <Grid container>
-                                <Grid item xs sx={styles.tabBar}>
+                                <Grid size="grow" sx={styles.tabBar}>
                                     <TabBar
                                         value={filteredType}
                                         options={filterRulesOptions}
                                         setValue={setFilteredType}
                                     />
                                 </Grid>
-                                <Grid item xs="auto">
+                                <Grid size="auto">
                                     <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
                                 </Grid>
                             </Grid>
@@ -232,14 +232,14 @@ const MappingContainer = () => {
                         <Divider />
                         <AccordionDetails>
                             <Grid container>
-                                <Grid item xs sx={styles.tabBar}>
+                                <Grid size="grow" sx={styles.tabBar}>
                                     <TabBar
                                         value={filteredFamily}
                                         options={filterAutomataOptions}
                                         setValue={setFilteredFamily}
                                     />
                                 </Grid>
-                                <Grid item xs="auto">
+                                <Grid size="auto">
                                     <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
                                 </Grid>
                             </Grid>
