@@ -6,7 +6,7 @@
  */
 import * as yup from 'yup';
 import { InferType } from 'yup';
-import { DIRECTORY_ITEM, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
+import { DIRECTORY_ITEM, directoryItemSchema, FieldConstants, NAME_EMPTY } from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
 
 export const MAPPING_NAME = 'mappingName';
@@ -14,7 +14,7 @@ export const FILE_SELECTOR = 'fileSelectorName';
 
 export const newMappingDialogSchema = yup.object().shape({
     [FieldConstants.OPERATION_TYPE]: yup.string().required(),
-    [MAPPING_NAME]: yup.string().trim().required('nameEmpty'),
+    [MAPPING_NAME]: yup.string().trim().required(NAME_EMPTY),
     [FieldConstants.DESCRIPTION]: yup.string(),
     [FILE_SELECTOR]: yup
         .mixed<File>()
