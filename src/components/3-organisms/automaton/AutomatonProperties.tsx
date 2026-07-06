@@ -6,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid2 as Grid, Stack, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';
@@ -46,7 +46,7 @@ const AutomatonProperties = ({
     );
     return (
         propertyNames?.length > 0 && (
-            <Grid container sx={styles.gridContainer}>
+            <Stack sx={styles.container}>
                 {propertyNames.map((propertyName, index) => {
                     const propertyDefinition = automatonDefinition[propertyName];
                     const property = automaton.properties.find((elem) => elem.name === propertyName);
@@ -63,12 +63,12 @@ const AutomatonProperties = ({
                         [];
 
                     return (
-                        <Grid key={propertyName} container item justifyContent={'flex-start'} paddingLeft={1}>
+                        <Stack key={propertyName} justifyContent={'flex-start'} paddingLeft={1}>
                             <Grid container>
-                                <Grid item xs={4} sx={styles.label} alignItems={'center'}>
+                                <Grid size={4} sx={{ ...styles.label, alignItems: 'center' }}>
                                     <Typography>{`${propertyDefinition.label} :`}</Typography>
                                 </Grid>
-                                <Grid item xs={8} sx={styles.value}>
+                                <Grid size={8} sx={styles.value}>
                                     <Autocomplete
                                         isFree={!(options && options.length > 0)}
                                         isMultiple={propertyDefinition.multiple}
@@ -86,14 +86,14 @@ const AutomatonProperties = ({
                                 </Grid>
                             </Grid>
                             {index !== propertyNames.length - 1 && (
-                                <Grid item xs={12} sx={{ paddingRight: '8px' }}>
+                                <Grid sx={{ paddingRight: '8px' }}>
                                     <Divider />
                                 </Grid>
                             )}
-                        </Grid>
+                        </Stack>
                     );
                 })}
-            </Grid>
+            </Stack>
         )
     );
 };

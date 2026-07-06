@@ -5,8 +5,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Grid, Tooltip, Typography } from '@mui/material';
-import { AddIconButton, AttachButton, SaveButton } from '../1-atoms/buttons/';
+import { Grid2 as Grid, Tooltip, Typography } from '@mui/material';
+import { AttachButton, SaveButton } from '../1-atoms/buttons/';
 import PropTypes from 'prop-types';
 import { styles } from './HeaderStyles';
 import { mergeSx } from 'utils/functions';
@@ -21,8 +21,6 @@ const Header = (props) => {
         isValid = true,
         save,
         saveTooltip,
-        addElement,
-        addTooltip,
         attach,
         attachTooltip,
         isCurrent = true,
@@ -49,7 +47,7 @@ const Header = (props) => {
     };
     return (
         <Grid container sx={getHeaderBoxStyle()}>
-            <Grid item xs sx={styles.gridTitle}>
+            <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h5" sx={getTitleStyle()}>
                         {`${name}${isModified ? '*' : ''} :`}
@@ -59,12 +57,11 @@ const Header = (props) => {
                     {`${currentNetwork?.networkName ?? ''}`}
                 </Typography>
             </Grid>
-            <Grid item xs="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
+            <Grid size="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
                 {save !== undefined && (
                     <SaveButton onClick={save} tooltip={saveTooltip} disabled={!isModified || !isValid} />
                 )}
                 {attach !== undefined && <AttachButton onClick={attach} tooltip={attachTooltip} />}
-                {addElement !== undefined && <AddIconButton onClick={addElement} tooltip={addTooltip} />}
             </Grid>
         </Grid>
     );
@@ -81,8 +78,6 @@ Header.propTypes = {
     isCurrent: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
-    addElement: PropTypes.func,
-    addTooltip: PropTypes.string,
     attach: PropTypes.func,
     attachTooltip: PropTypes.string,
 };

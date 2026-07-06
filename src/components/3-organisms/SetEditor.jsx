@@ -7,7 +7,7 @@
 
 import PropTypes from 'prop-types';
 import { ParameterOrigin, ParameterType } from '../../constants/models';
-import { Box, Grid, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Grid2 as Grid, TextField, Tooltip, Typography } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import * as _ from 'lodash';
 import { isParameterValueValid } from '../../utils/parameters';
@@ -50,11 +50,11 @@ const SetEditor = (props) => {
                 .map((definition) => {
                     const correspondingParameter = set.parameters.find((param) => param.name === definition.name);
                     return (
-                        <Grid container justify="space-evenly" sx={{ padding: '8px 0px' }}>
-                            <Grid item xs={7}>
+                        <Grid container key={definition.name} justifyContent="space-evenly" sx={{ padding: '8px 0px' }}>
+                            <Grid size={7}>
                                 <Typography>{definition.name}</Typography>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid size={4}>
                                 <TextField
                                     size="small"
                                     id={definition.name}
@@ -72,7 +72,7 @@ const SetEditor = (props) => {
                                     sx={{ width: '100%' }}
                                 />
                             </Grid>
-                            <Grid item xs alignItems={'center'} justifyContent={'center'}>
+                            <Grid size="grow" padding={1}>
                                 <Tooltip title={infoTypeLabel + definition.type}>
                                     <InfoIcon />
                                 </Tooltip>
