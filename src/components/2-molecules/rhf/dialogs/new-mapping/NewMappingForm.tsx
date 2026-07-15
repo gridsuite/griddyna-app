@@ -26,7 +26,8 @@ import { OperationType } from '../../../../../utils/types';
 
 const ADD_MAPPING_OPTIONS = [
     { id: OperationType.NEW, label: 'emptyMapping' },
-    { id: OperationType.IMPORT, label: 'importMapping' },
+    { id: OperationType.IMPORT_FILE, label: 'importMappingFile' },
+    { id: OperationType.IMPORT_EXPLORE, label: 'importMappingExplore' },
 ];
 
 function NewMappingForm() {
@@ -44,23 +45,31 @@ function NewMappingForm() {
     return (
         <Stack spacing={2} marginTop="auto">
             <RadioInput name={FieldConstants.OPERATION_TYPE} options={ADD_MAPPING_OPTIONS} />
-            <UniqueNameInput
-                name={MAPPING_NAME}
-                label="nameProperty"
-                elementType={ElementType.DYNAMIC_MAPPING}
-                activeDirectory={folderItem?.[DIRECTORY_ITEM_ID] as UUID}
-                autoFocus={autoFocus}
-                onManualChangeCallback={() => setManualChanged(true)}
-            />
-            {operationType === OperationType.IMPORT && (
+            {(operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE) && (
+                <UniqueNameInput
+                    name={MAPPING_NAME}
+                    label="nameProperty"
+                    elementType={ElementType.DYNAMIC_MAPPING}
+                    activeDirectory={folderItem?.[DIRECTORY_ITEM_ID] as UUID}
+                    autoFocus={autoFocus}
+                    onManualChangeCallback={() => setManualChanged(true)}
+                />
+            )}
+            {operationType === OperationType.IMPORT_FILE && (
                 <FileInputSelector name={FILE_SELECTOR} label="selectMapping" accept={'.json,application/json'} />
             )}
-            <Grid>
-                <DescriptionField />
-            </Grid>
+            {(operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE) && (
+                <Grid>
+                    <DescriptionField />
+                </Grid>
+            )}
             <DirectoryItemInput
                 name={DIRECTORY_ITEM}
-                types={[ElementType.DIRECTORY]}
+                types={[
+                    operationType === OperationType.IMPORT_EXPLORE
+                        ? ElementType.DYNAMIC_MAPPING
+                        : ElementType.DIRECTORY,
+                ]}
                 multiSelect={false}
                 onlyLeaves={false}
                 title={intl.formatMessage({

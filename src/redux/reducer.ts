@@ -11,6 +11,7 @@ import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
 import { NetworkReducer } from './slices/Network';
 import { ModelReducer } from './slices/Model';
+import { WorkspaceReducer } from './slices/Workspace';
 
 export const rootReducers = combineReducers({
     user: UserReducer,
@@ -18,5 +19,6 @@ export const rootReducers = combineReducers({
     mappings: MappingReducer,
     models: ModelReducer,
     network: NetworkReducer,
+    workspaces: WorkspaceReducer,
 });
 export type RootState = ReturnType<typeof rootReducers>;

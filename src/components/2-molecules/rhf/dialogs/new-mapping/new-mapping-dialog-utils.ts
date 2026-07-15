@@ -6,25 +6,44 @@
  */
 import * as yup from 'yup';
 import { InferType } from 'yup';
-import { DIRECTORY_ITEM, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
+import { DIRECTORY_ITEM, DIRECTORY_ITEM_ID, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
+import { UUID } from 'crypto';
 
 export const MAPPING_NAME = 'mappingName';
 export const FILE_SELECTOR = 'fileSelectorName';
 
-export const newMappingDialogSchema = yup.object().shape({
-    [FieldConstants.OPERATION_TYPE]: yup.string().required(),
-    [MAPPING_NAME]: yup.string().trim().required('nameEmpty'),
-    [FieldConstants.DESCRIPTION]: yup.string(),
-    [FILE_SELECTOR]: yup
-        .mixed<File>()
-        .nullable()
-        .when([FieldConstants.OPERATION_TYPE], {
-            is: (operationType: OperationType) => operationType === OperationType.IMPORT,
-            then: (schema) => schema.required(),
-        }),
-    [DIRECTORY_ITEM]: directoryItemSchema.required(),
-});
+export const getNewMappingDialogSchema = (mappingIdsInWorkspace: UUID[]) =>
+    yup.object().shape({
+        [FieldConstants.OPERATION_TYPE]: yup.string().required(),
+        [MAPPING_NAME]: yup
+            .string()
+            .trim()
+            .when([FieldConstants.OPERATION_TYPE], {
+                is: (operationType: OperationType) =>
+                    operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE,
+                then: (schema) => schema.required('nameEmpty'),
+            }),
+        [FieldConstants.DESCRIPTION]: yup.string(),
+        [FILE_SELECTOR]: yup
+            .mixed<File>()
+            .nullable()
+            .when([FieldConstants.OPERATION_TYPE], {
+                is: (operationType: OperationType) => operationType === OperationType.IMPORT_FILE,
+                then: (schema) => schema.required(),
+            }),
+        [DIRECTORY_ITEM]: directoryItemSchema
+            .required()
+            .test('checkMappingAlreadyAdded', 'mappingAlreadyAdded', (value, _context) => {
+                if (_context.parent[FieldConstants.OPERATION_TYPE] === OperationType.IMPORT_EXPLORE) {
+                    const matched = mappingIdsInWorkspace?.some(
+                        (mappingId) => mappingId === value?.[DIRECTORY_ITEM_ID]
+                    );
+                    return !matched;
+                }
+                return true;
+            }),
+    });
 
 export const newMappingDialogEmpty = {
     [FieldConstants.OPERATION_TYPE]: OperationType.NEW,
@@ -34,4 +53,4 @@ export const newMappingDialogEmpty = {
     [DIRECTORY_ITEM]: null,
 };
 
-export type NewMappingDialogForm = InferType<typeof newMappingDialogSchema>;
+export type NewMappingDialogForm = InferType<ReturnType<typeof getNewMappingDialogSchema>>;

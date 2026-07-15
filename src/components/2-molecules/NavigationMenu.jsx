@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { IconButton, List, ListItem, ListItemButton } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContextMenu from './ContextMenu';
-import RenameMappingDialog from './rhf/dialogs/rename-mapping/RenameMappingDialog.tsx';
 import AddButton from '../1-atoms/buttons/AddButton.jsx';
 import { styles } from './NavigationMenuStyles';
 import NewMappingDialog from './rhf/dialogs/new-mapping/NewMappingDialog.tsx';
@@ -18,12 +17,11 @@ import { useIntl } from 'react-intl';
 import { OverflowableText } from '@gridsuite/commons-ui';
 
 const NavigationMenu = (props) => {
-    const { items, deleteItem, renameItem, copyItem, exportItem, addItem, selectItem, selected = undefined } = props;
+    const { items, removeItem, exportItem, addItem, selectItem, selected = undefined } = props;
     const intl = useIntl();
 
     const [anchor, setAnchor] = useState(null);
-    //TODO ADD + Rename
-    const [openDialog, setOpenDialog] = useState(null);
+
     const [addDialog, setAddDialog] = useState(null);
     const setMenu = (event) => setAnchor(event.currentTarget);
 
@@ -31,22 +29,10 @@ const NavigationMenu = (props) => {
         (itemId) => {
             const itemName = items?.find((item) => item.id === itemId)?.name;
             const options = [];
-            if (deleteItem) {
+            if (removeItem) {
                 options.push({
-                    label: intl.formatMessage({ id: 'deleteMapping' }),
-                    action: deleteItem(itemId),
-                });
-            }
-            if (renameItem) {
-                options.push({
-                    label: intl.formatMessage({ id: 'renameMapping' }),
-                    action: () => setOpenDialog({ itemId, itemName }),
-                });
-            }
-            if (copyItem) {
-                options.push({
-                    label: intl.formatMessage({ id: 'copyMapping' }),
-                    action: copyItem(itemId),
+                    label: intl.formatMessage({ id: 'removeMapping' }),
+                    action: removeItem(itemId),
                 });
             }
             if (exportItem) {
@@ -57,15 +43,10 @@ const NavigationMenu = (props) => {
             }
             return options;
         },
-        [copyItem, deleteItem, exportItem, intl, renameItem, items]
+        [removeItem, exportItem, intl, items]
     );
 
     const closeContextMenu = () => setAnchor(null);
-
-    const closeRenameDialog = () => {
-        closeContextMenu();
-        setOpenDialog(null);
-    };
 
     const closeAddDialog = () => {
         setAddDialog(null);
@@ -102,16 +83,7 @@ const NavigationMenu = (props) => {
             {anchor !== null && (
                 <ContextMenu anchorEl={anchor} open onClose={closeContextMenu} options={buildOptions(anchor.id)} />
             )}
-            {openDialog !== null && (
-                <RenameMappingDialog
-                    open
-                    onClose={closeRenameDialog}
-                    onSubmit={renameItem}
-                    mappingId={openDialog?.itemId}
-                    previousName={openDialog?.itemName}
-                />
-            )}
-            {addDialog !== null && <NewMappingDialog open onClose={closeAddDialog} onSubmit={addItem} />}
+            {addDialog !== null && <NewMappingDialog open onClose={closeAddDialog} onSubmit={addItem} items={items} />}
         </>
     );
 };
@@ -119,9 +91,7 @@ const NavigationMenu = (props) => {
 NavigationMenu.propTypes = {
     items: PropTypes.array.isRequired,
     addItem: PropTypes.func,
-    deleteItem: PropTypes.func,
-    renameItem: PropTypes.func,
-    copyItem: PropTypes.func,
+    removeItem: PropTypes.func,
     exportItem: PropTypes.func,
     selectItem: PropTypes.func.isRequired,
     selected: PropTypes.string,

@@ -8,6 +8,7 @@
 import { formatQuery } from 'react-querybuilder';
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
+import * as workspaceAPI from '../../rest/workspaceAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
@@ -24,6 +25,7 @@ import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 import { assignArray } from '../../utils/functions';
 import { downloadBlob, extractFilename, readFileAsText } from '../../utils/file-utils.ts';
 import { OperationType } from '../../utils/types.ts';
+import { loadWorkspace } from './Workspace.ts';
 
 const initialState = {
     mappings: [],
@@ -494,26 +496,24 @@ export const updateMapping = createAsyncThunk('mappings/update', async (id, { ge
     return await mappingsAPI.getMapping(mappingId, token);
 });
 
-export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getState }) => {
+export const getMappings = createAsyncThunk('mappings/get', async ({ ids }, { getState }) => {
     const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.getMappings(token);
+    return await mappingsAPI.getMappings({ ids, token });
 });
 
-export const deleteMapping = createAsyncThunk('mappings/delete', async (id, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.deleteMapping(id, token).then(() => id);
-});
+export const removeMapping = createAsyncThunk('mappings/delete', async (id, { getState, dispatch }) => {
+    const state = getState();
+    const token = state?.user.user?.id_token;
 
-export const renameMapping = createAsyncThunk('mappings/rename', async ({ id, newName }, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    await mappingsAPI.renameMapping(id, newName, token);
-    return await mappingsAPI.getMapping(id, token);
-});
-
-export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalId }, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    const newMappingId = await mappingsAPI.copyMapping(originalId, token);
-    return await mappingsAPI.getMapping(newMappingId, token);
+    // cross-slice to workspaces
+    const workspace = state?.workspaces?.workspace;
+    const updatedWorkspace = {
+        ...workspace,
+        mappingWorkspaceItems: workspace.mappingWorkspaceItems.filter((item) => item.mappingId !== id),
+    };
+    await workspaceAPI.updateWorkspace(workspace.id, updatedWorkspace, token);
+    await dispatch(loadWorkspace());
+    return id;
 });
 
 export const exportMapping = createAsyncThunk('mappings/export', async ({ id, name }, { getState }) => {
@@ -530,11 +530,13 @@ export const exportMapping = createAsyncThunk('mappings/export', async ({ id, na
 
 export const addMapping = createAsyncThunk(
     'mappings/add',
-    async ({ operationType, file, name, description, parentDirectoryUuid }, { getState }) => {
-        const token = getState()?.user.user?.id_token;
+    async ({ operationType, file, name, description, directoryInputUuid }, { getState, dispatch }) => {
+        const state = getState();
+        const token = state?.user.user?.id_token;
 
+        console.log('xxx addMapping', operationType, file, name, description, directoryInputUuid);
         let mapping = null;
-        if (operationType === OperationType.IMPORT) {
+        if (operationType === OperationType.IMPORT_FILE) {
             const mappingJson = await readFileAsText(file);
             mapping = JSON.parse(mappingJson);
         } else {
@@ -546,8 +548,22 @@ export const addMapping = createAsyncThunk(
             };
         }
 
-        const newMappingId = await mappingsAPI.createMapping(name, description, mapping, parentDirectoryUuid, token);
+        const newMappingId =
+            operationType === OperationType.IMPORT_EXPLORE
+                ? directoryInputUuid
+                : await mappingsAPI.createMapping(name, description, mapping, directoryInputUuid, token);
 
+        // cross-slice to workspaces
+        const workspace = state?.workspaces?.workspace;
+        const newMappingWorkspaceItem = { mappingId: newMappingId, pinned: false };
+        const updatedWorkspace = {
+            ...workspace,
+            mappingWorkspaceItems: [...workspace.mappingWorkspaceItems, newMappingWorkspaceItem],
+        };
+        await workspaceAPI.updateWorkspace(workspace.id, updatedWorkspace, token);
+        await dispatch(loadWorkspace());
+
+        // return to current slice mappings
         return await mappingsAPI.getMapping(newMappingId, token);
     }
 );
@@ -798,7 +814,7 @@ const extraReducers = (builder) => {
     builder.addCase(getMappings.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
-    builder.addCase(deleteMapping.fulfilled, (state, action) => {
+    builder.addCase(removeMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const id = action.payload;
         state.mappings = state.mappings.filter((mapping) => mapping.id !== id);
@@ -808,36 +824,10 @@ const extraReducers = (builder) => {
             state.activeMapping = undefined;
         }
     });
-    builder.addCase(deleteMapping.rejected, (state, _action) => {
+    builder.addCase(removeMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(deleteMapping.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(renameMapping.fulfilled, (state, action) => {
-        const { id, name } = action.payload;
-        const mappingToRename = state.mappings.find((mapping) => mapping.id === id);
-        if (mappingToRename) {
-            mappingToRename.name = name;
-        }
-        state.status = RequestStatus.SUCCESS;
-    });
-    builder.addCase(renameMapping.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(renameMapping.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(copyMapping.fulfilled, (state, action) => {
-        const newMapping = transformMapping(action.payload);
-        // Add the copied mapping to the list
-        state.mappings = [...state.mappings, newMapping];
-        state.status = RequestStatus.SUCCESS;
-    });
-    builder.addCase(copyMapping.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(copyMapping.pending, (state, _action) => {
+    builder.addCase(removeMapping.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getNetworkMatchesFromRule.fulfilled, (state, action) => {
@@ -874,7 +864,8 @@ const extraReducers = (builder) => {
     });
     builder.addCase(addMapping.fulfilled, (state, action) => {
         state.addError = null;
-        const newMapping = transformMapping(action.payload);
+        const mapping = action.payload;
+        const newMapping = transformMapping(mapping);
         // Add the new mapping to the list
         state.mappings = [...state.mappings, newMapping];
         // switch to current mapping

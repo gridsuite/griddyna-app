@@ -5,15 +5,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-export enum OperationType {
-    NEW = 'NEW',
-    IMPORT_FILE = 'IMPORT_FILE',
-    IMPORT_EXPLORE = 'IMPORT_EXPLORE',
+import type { UUID } from 'node:crypto';
+
+export interface MappingWorkspaceItem {
+    id: UUID;
+    mappingId: UUID;
+    pinned: boolean;
 }
 
-export enum RequestStatus {
-    IDLE = 'IDLE',
-    PENDING = 'PENDING',
-    SUCCESS = 'SUCCESS',
-    ERROR = 'ERROR',
+export interface Workspace {
+    id: UUID;
+    userId: string;
+    mappingWorkspaceItems: MappingWorkspaceItem[];
 }
