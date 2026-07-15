@@ -76,12 +76,15 @@ const MenuContainer = () => {
     };
 
     const removeMapping = (id) => () => {
-        dispatch(removeMappingAction(id));
-        if (id === selectedMapping) {
-            dispatch(NetworkSlice.actions.cleanNetwork());
-            dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
-            dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
-        }
+        dispatch(removeMappingAction(id))
+            .unwrap()
+            .then(() => {
+                if (id === selectedMapping) {
+                    dispatch(NetworkSlice.actions.cleanNetwork());
+                    dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+                    dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
+                }
+            });
     };
 
     const { snackError } = useSnackMessage();

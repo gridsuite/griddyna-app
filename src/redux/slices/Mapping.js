@@ -534,7 +534,6 @@ export const addMapping = createAsyncThunk(
         const state = getState();
         const token = state?.user.user?.id_token;
 
-        console.log('xxx addMapping', operationType, file, name, description, directoryInputUuid);
         let mapping = null;
         if (operationType === OperationType.IMPORT_FILE) {
             const mappingJson = await readFileAsText(file);
