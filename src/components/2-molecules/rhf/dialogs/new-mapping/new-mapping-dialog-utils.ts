@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { InferType } from 'yup';
 import { DIRECTORY_ITEM, DIRECTORY_ITEM_ID, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
-import { UUID } from 'crypto';
+import { UUID } from 'node:crypto';
 
 export const MAPPING_NAME = 'mappingName';
 export const FILE_SELECTOR = 'fileSelectorName';
@@ -36,9 +36,7 @@ export const getNewMappingDialogSchema = (mappingIdsInWorkspace: UUID[]) =>
             .required()
             .test('checkMappingAlreadyAdded', 'mappingAlreadyAdded', (value, _context) => {
                 if (_context.parent[FieldConstants.OPERATION_TYPE] === OperationType.IMPORT_EXPLORE) {
-                    const matched = mappingIdsInWorkspace?.some(
-                        (mappingId) => mappingId === value?.[DIRECTORY_ITEM_ID]
-                    );
+                    const matched = mappingIdsInWorkspace?.includes(value?.[DIRECTORY_ITEM_ID] as UUID);
                     return !matched;
                 }
                 return true;
