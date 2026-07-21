@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Grid2 as Grid, TextField, Typography } from '@mui/material';
+import { Grid, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import { SetType } from '../../constants/models';

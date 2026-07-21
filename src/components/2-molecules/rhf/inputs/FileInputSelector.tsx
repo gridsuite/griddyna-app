@@ -4,7 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { Button, Grid2 as Grid, Input } from '@mui/material';
+import { Button, Grid, Input } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import { ChangeEvent, useCallback } from 'react';
 import { useController, useFormContext } from 'react-hook-form';

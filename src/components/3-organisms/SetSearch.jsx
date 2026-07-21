@@ -7,15 +7,7 @@
 
 import { useState } from 'react';
 import { ApplyAllButton, ApplyOneButton, ResetButton } from '../1-atoms/buttons';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Divider,
-    Grid2 as Grid,
-    Stack,
-    Typography,
-} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Grid, Stack, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import Autocomplete from '../1-atoms/Autocomplete';
 import { styles } from './SetSearchStyle';

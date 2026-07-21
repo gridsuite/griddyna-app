@@ -7,7 +7,7 @@
 
 import PropTypes from 'prop-types';
 import { CopyButton, DeleteButton } from '../1-atoms/buttons';
-import { Grid2 as Grid, Paper, Stack, Typography } from '@mui/material';
+import { Grid, Paper, Stack, Typography } from '@mui/material';
 import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';

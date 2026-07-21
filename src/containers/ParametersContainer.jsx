@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getModelDefinitions, getModelSets, makeGetModel, ModelSlice, postModelSetsGroup } from '../redux/slices/Model';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid2 as Grid } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import { GroupEditionOrigin, ParameterOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';
