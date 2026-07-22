@@ -7,7 +7,7 @@
 
 import { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Grid2 as Grid, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Grid, Stack, Tooltip, Typography } from '@mui/material';
 import { CustomReactQueryBuilder, EXPERT_FILTER_QUERY, useFormatLabelWithUnit } from '@gridsuite/commons-ui';
 import { AddIconButton, DeleteButton } from '../1-atoms/buttons';
 import { styles } from './FilterStyle';

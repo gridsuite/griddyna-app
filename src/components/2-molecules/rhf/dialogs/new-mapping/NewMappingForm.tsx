@@ -6,7 +6,7 @@
  */
 import { useIntl } from 'react-intl';
 import type { UUID } from 'node:crypto';
-import { Grid2 as Grid, Stack } from '@mui/material';
+import { Grid, Stack } from '@mui/material';
 import { useWatch } from 'react-hook-form';
 import {
     DescriptionField,

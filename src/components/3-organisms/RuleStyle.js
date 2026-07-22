@@ -14,7 +14,7 @@ export const styles = {
     rulePaper: {
         borderRadius: '5px',
         marginBottom: 1,
-        '& >.MuiGrid2-root': {
+        '& >.MuiGrid-root': {
             marginTop: 1,
         },
     },

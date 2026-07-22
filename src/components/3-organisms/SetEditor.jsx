@@ -7,7 +7,7 @@
 
 import PropTypes from 'prop-types';
 import { ParameterOrigin, ParameterType } from '../../constants/models';
-import { Box, Grid2 as Grid, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Grid, TextField, Tooltip, Typography } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import * as _ from 'lodash';
 import { isParameterValueValid } from '../../utils/parameters';
