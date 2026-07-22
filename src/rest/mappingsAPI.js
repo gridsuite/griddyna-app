@@ -109,10 +109,8 @@ export async function renameMapping(id, newName, token) {
 }
 
 export async function copyMapping(originalId, token) {
-    const urlSearchParams = new URLSearchParams();
-    urlSearchParams.append('duplicateFrom', originalId);
     return backendFetchJson(
-        `${API_EXPLORE_URL}/dynamic-mappings?${urlSearchParams.toString()}`,
+        `${API_EXPLORE_URL}/dynamic-mappings/${originalId}/duplicate`,
         {
             method: 'POST',
             headers: {
