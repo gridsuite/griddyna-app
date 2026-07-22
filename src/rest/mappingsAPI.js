@@ -4,10 +4,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-import { backendFetch, backendFetchJson, backendFetchText } from '../utils/rest-api';
+import { backendFetch, backendFetchJson } from '../utils/rest-api';
 import { fetchElementNames } from '@gridsuite/commons-ui';
 
-const API_URL =
+const API_MAPPING_URL =
     import.meta.env.VITE_API_PREFIX +
     (import.meta.env.VITE_USE_AUTHENTICATION === 'true'
         ? `${import.meta.env.VITE_GATEWAY_PREFIX}/dynamic-mapping`
@@ -21,9 +21,17 @@ const API_EXPLORE_URL =
         : `${import.meta.env.VITE_EXPLORE_URI}/v1`) +
     `/explore`;
 
-export function getMappings(token) {
+export function getMappings({ ids, token }) {
+    let url = `${API_MAPPING_URL}/all`;
+    if (ids?.length > 0) {
+        const urlSearchParams = new URLSearchParams();
+        ids.forEach((id) => urlSearchParams.append('ids', id));
+        url += `?${urlSearchParams.toString()}`;
+    } else {
+        return Promise.resolve([]);
+    }
     const mappingsPromise = backendFetchJson(
-        `${API_URL}`,
+        url,
         {
             headers: {
                 Accept: 'application/json',
@@ -52,7 +60,7 @@ export function getMappings(token) {
 
 export function getMapping(mappingId, token) {
     const mappingPromise = backendFetchJson(
-        `${API_URL}/${mappingId}`,
+        `${API_MAPPING_URL}/${mappingId}`,
         {
             headers: {
                 Accept: 'application/json',
@@ -73,61 +81,11 @@ export function getMapping(mappingId, token) {
     });
 }
 
-export function deleteMapping(mappingId, token) {
-    return backendFetchText(
-        `${API_EXPLORE_URL}/elements/${mappingId}`,
-        {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'default',
-        },
-        token
-    );
-}
-
-export async function renameMapping(id, newName, token) {
-    // type is ElementAttributes from directory-server
-    const elementAttributes = {
-        elementName: newName,
-    };
-    return backendFetch(
-        `${API_EXPLORE_URL}/elements/${id}`,
-        {
-            method: 'PUT',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'default',
-            body: JSON.stringify(elementAttributes),
-        },
-        token
-    );
-}
-
-export async function copyMapping(originalId, token) {
-    return backendFetchJson(
-        `${API_EXPLORE_URL}/dynamic-mappings/${originalId}/duplicate`,
-        {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            cache: 'default',
-        },
-        token
-    );
-}
-
 export function exportMapping(mappingId, fileName, token) {
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append('fileName', fileName);
     return backendFetch(
-        `${API_URL}/${mappingId}/export?${urlSearchParams.toString()}`,
+        `${API_MAPPING_URL}/${mappingId}/export?${urlSearchParams.toString()}`,
         {
             method: 'GET',
             headers: {
@@ -163,7 +121,7 @@ export function createMapping(name, description, mapping, parentDirectoryUuid, t
 
 export function updateMapping(mappingId, mapping, token) {
     return backendFetch(
-        `${API_URL}/${mappingId}`,
+        `${API_MAPPING_URL}/${mappingId}`,
         {
             method: 'PUT',
             headers: {

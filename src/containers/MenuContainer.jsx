@@ -5,19 +5,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     addMapping as addMappingAction,
-    copyMapping as copyMappingAction,
-    deleteMapping as deleteMappingAction,
     exportMapping as exportMappingAction,
     getAddError,
     getExportError,
     getMappings,
     getMappingsInfo,
     MappingSlice,
-    renameMapping as renameMappingAction,
+    removeMapping as removeMappingAction,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
@@ -25,36 +23,49 @@ import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { useSnackMessage } from '@gridsuite/commons-ui';
+import { getWorkspace, loadWorkspace } from '../redux/slices/Workspace.ts';
 
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector((state) => state.mappings.activeMapping);
+    const workspace = useSelector(getWorkspace);
+    const [workspaceInitialized, setWorkspaceInitialized] = useState(false);
 
+    // On mount component
     useEffect(() => {
-        // Fetch data on mount
-        dispatch(getMappings());
+        // shared between workspaces, fetch data on mount
         dispatch(getNetworkNames());
         dispatch(getModels());
         dispatch(getAutomatonDefinitions());
+
+        // fetch workspace configuration only once on mount
+        dispatch(loadWorkspace());
     }, [dispatch]);
 
+    // On loaded workspace
+    // Note that mappingWorkspaceItems is not used to render the menu with mapping names
+    // The menu is still rendered by mappingsInfo
+    useEffect(() => {
+        if (!workspace) {
+            return;
+        }
+        if (!workspaceInitialized) {
+            const ids = workspace.mappingWorkspaceItems.map((elem) => elem.mappingId);
+            dispatch(getMappings({ ids }))
+                .unwrap()
+                .then((_) => {
+                    setWorkspaceInitialized(true);
+                });
+        }
+    }, [dispatch, workspace, workspaceInitialized]);
+
     // Mappings
-    const addMapping = ({ operationType, file, name, description, parentDirectoryUuid }) => {
-        dispatch(addMappingAction({ operationType, file, name, description, parentDirectoryUuid }));
+    const addMapping = ({ operationType, file, name, description, directoryInputUuid }) => {
+        dispatch(addMappingAction({ operationType, file, name, description, directoryInputUuid }));
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
-    };
-
-    const renameMapping = ({ id, newName }) => {
-        dispatch(
-            renameMappingAction({
-                id: id,
-                newName: newName,
-            })
-        );
-        dispatch(NetworkSlice.actions.cleanNetwork());
     };
 
     const selectMapping = (id) => () => {
@@ -64,17 +75,16 @@ const MenuContainer = () => {
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
-    const deleteMapping = (id) => () => {
-        dispatch(deleteMappingAction(id));
-        if (id === selectedMapping) {
-            dispatch(NetworkSlice.actions.cleanNetwork());
-            dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
-            dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
-        }
-    };
-
-    const copyMapping = (id) => () => {
-        dispatch(copyMappingAction({ originalId: id }));
+    const removeMapping = (id) => () => {
+        dispatch(removeMappingAction(id))
+            .unwrap()
+            .then(() => {
+                if (id === selectedMapping) {
+                    dispatch(NetworkSlice.actions.cleanNetwork());
+                    dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+                    dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
+                }
+            });
     };
 
     const { snackError } = useSnackMessage();
@@ -105,9 +115,7 @@ const MenuContainer = () => {
         <NavigationMenu
             items={mappingsInfo}
             addItem={addMapping}
-            deleteItem={deleteMapping}
-            renameItem={renameMapping}
-            copyItem={copyMapping}
+            removeItem={removeMapping}
             exportItem={exportMapping}
             selectItem={selectMapping}
             selected={selectedMapping}

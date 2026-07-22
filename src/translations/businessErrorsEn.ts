@@ -5,5 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 export const businessErrorsEn = {
-    'mapping.nameAlreadyExists': 'Mapping name already exists',
+    'dynamicMapping.workspaceNotAllowChangeUser': 'Changing user of an existing workspace is not allowed',
+    'dynamicMapping.workspaceNotFound': 'Workspace not found',
 };
