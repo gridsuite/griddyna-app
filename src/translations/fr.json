@@ -11,7 +11,9 @@
     "AddDescription": "Ajouter une description (optionnel)",
 
     "exportMapping": "Exporter en JSON",
+     "exportMappingError" : "Une erreur est survenue lors de l'exportation d'un mapping",
     "removeMapping": "Retirer de la liste",
+    "removeMappingError" : "Une erreur est survenue lors de la suppression d'un mapping",
     "renameMappingDialogTitle": "Renommer un mapping",
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping",

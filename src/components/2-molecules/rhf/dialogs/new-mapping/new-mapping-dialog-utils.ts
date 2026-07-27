@@ -8,7 +8,7 @@ import * as yup from 'yup';
 import { InferType } from 'yup';
 import { DIRECTORY_ITEM, DIRECTORY_ITEM_ID, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
-import { UUID } from 'node:crypto';
+import type { UUID } from 'node:crypto';
 
 export const MAPPING_NAME = 'mappingName';
 export const FILE_SELECTOR = 'fileSelectorName';

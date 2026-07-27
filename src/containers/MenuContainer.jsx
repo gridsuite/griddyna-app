@@ -10,12 +10,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     addMapping as addMappingAction,
     exportMapping as exportMappingAction,
-    getAddError,
-    getExportError,
     getMappings,
     getMappingsInfo,
     MappingSlice,
-    removeMapping as removeMappingAction,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
 import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
@@ -26,6 +23,8 @@ import { useSnackMessage } from '@gridsuite/commons-ui';
 import { addFavoriteMappings, getFavoriteMappings, removeFavoriteMappings } from '../redux/slices/Config';
 
 const MenuContainer = () => {
+    const { snackError } = useSnackMessage();
+
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector((state) => state.mappings.activeMapping);
@@ -54,6 +53,10 @@ const MenuContainer = () => {
             .unwrap()
             .then((newAddedMapping) => {
                 dispatch(addFavoriteMappings({ mappingId: newAddedMapping.id }));
+            })
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'addMappingError', messageId: error.message });
             });
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
@@ -68,40 +71,20 @@ const MenuContainer = () => {
     };
 
     const removeMapping = (id) => () => {
-        dispatch(removeMappingAction(id))
-            .unwrap()
-            .then(() => {
-                dispatch(removeFavoriteMappings({ mappingId: id }));
-                if (id === selectedMapping) {
-                    dispatch(NetworkSlice.actions.cleanNetwork());
-                    dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
-                    dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
-                }
-            });
+        dispatch(MappingSlice.actions.removeMapping({ id }));
+        if (id === selectedMapping) {
+            dispatch(NetworkSlice.actions.cleanNetwork());
+            dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+            dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
+        }
+        dispatch(removeFavoriteMappings({ mappingId: id }));
     };
 
-    const { snackError } = useSnackMessage();
-    const exportError = useSelector(getExportError);
-    const addError = useSelector(getAddError);
-
-    // Show snackbar when an export error occurs
-    useEffect(() => {
-        if (exportError) {
-            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-            snackError({ messageId: 'exportMappingError', messageTxt: exportError });
-        }
-    }, [exportError, snackError]);
-
-    // Show snackbar when an add error occurs
-    useEffect(() => {
-        if (addError) {
-            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-            snackError({ headerId: 'addMappingError', messageId: addError });
-        }
-    }, [addError, snackError]);
-
     const exportMapping = (id, name) => () => {
-        dispatch(exportMappingAction({ id, name }));
+        dispatch(exportMappingAction({ id, name })).catch((error) => {
+            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+            snackError({ headerId: 'exportMappingError', messageId: error.message });
+        });
     };
 
     return (

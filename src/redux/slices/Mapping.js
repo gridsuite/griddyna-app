@@ -34,8 +34,6 @@ const initialState = {
     filteredRuleType: '',
     filteredAutomatonFamily: '',
     controlledParameters: false,
-    exportError: null,
-    addError: null,
 };
 
 const DEFAULT_RULE = {
@@ -417,9 +415,6 @@ export const isModified = createSelector(
     }
 );
 
-export const getExportError = (state) => state.mappings.exportError;
-export const getAddError = (state) => state.mappings.addError;
-
 export const makeGetMatches = () =>
     createSelector(
         getRules,
@@ -500,18 +495,9 @@ export const getMappings = createAsyncThunk('mappings/get', async ({ ids }, { ge
     const uncachedIds = ids.filter((id) => !cachedMappings?.some((mapping) => mapping.id === id));
     // detect deleted mappings in the cache
     const deletedIds = cachedMappings?.filter((mapping) => !ids.includes(mapping.id))?.map((mapping) => mapping.id);
-    if (uncachedIds?.length) {
-        const uncachedMappings = await mappingsAPI.getMappings({ ids: uncachedIds, token });
-        return { type: 'ADD', addedMappings: uncachedMappings };
-    } else if (deletedIds?.length) {
-        return { type: 'REMOVE', deletedMappingIds: deletedIds };
-    } else {
-        return { type: 'UNCHANGE' };
-    }
-});
 
-export const removeMapping = createAsyncThunk('mappings/delete', async (id, _thunkApi) => {
-    return id;
+    const addedMappings = uncachedIds?.length ? await mappingsAPI.getMappings({ ids: uncachedIds, token }) : [];
+    return { addedMappings, deletedMappingIds: deletedIds ?? [] };
 });
 
 export const exportMapping = createAsyncThunk('mappings/export', async ({ id, name }, { getState }) => {
@@ -754,11 +740,14 @@ const reducers = {
             state.controlledParameters = mappingToUse.controlledParameters;
         }
     },
-    deselectMapping: (state, _action) => {
-        state.rules = [];
-        state.automata = [];
-        state.activeMapping = '';
-        state.controlledParameters = false;
+    removeMapping: (state, action) => {
+        const { id } = action.payload;
+        state.mappings = state.mappings.filter((mapping) => mapping.id !== id);
+        if (id === state.activeMapping) {
+            state.rules = [];
+            state.automata = [];
+            state.activeMapping = undefined;
+        }
     },
 };
 
@@ -792,39 +781,22 @@ const extraReducers = (builder) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getMappings.fulfilled, (state, action) => {
-        const { type, addedMappings, deletedMappingIds } = action.payload;
-        if (type === 'ADD') {
-            state.mappings = [...state.mappings, ...(addedMappings ?? []).map(transformMapping)];
-        } else if (type === 'REMOVE') {
-            state.mappings = state.mappings.filter((mapping) => !(deletedMappingIds ?? []).includes(mapping.id));
-            if (deletedMappingIds?.includes(state.activeMapping)) {
-                state.rules = [];
-                state.automata = [];
-                state.activeMapping = undefined;
-            }
-        }
         state.status = RequestStatus.SUCCESS;
-    });
-    builder.addCase(getMappings.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(getMappings.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(removeMapping.fulfilled, (state, action) => {
-        state.status = RequestStatus.SUCCESS;
-        const id = action.payload;
-        state.mappings = state.mappings.filter((mapping) => mapping.id !== id);
-        if (id === state.activeMapping) {
+        const { addedMappings = [], deletedMappingIds = [] } = action.payload;
+        state.mappings = [
+            ...state.mappings.filter((mapping) => !deletedMappingIds.includes(mapping.id)),
+            ...addedMappings.map(transformMapping),
+        ];
+        if (deletedMappingIds.includes(state.activeMapping)) {
             state.rules = [];
             state.automata = [];
             state.activeMapping = undefined;
         }
     });
-    builder.addCase(removeMapping.rejected, (state, _action) => {
+    builder.addCase(getMappings.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(removeMapping.pending, (state, _action) => {
+    builder.addCase(getMappings.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getNetworkMatchesFromRule.fulfilled, (state, action) => {
@@ -846,21 +818,21 @@ const extraReducers = (builder) => {
 
     // --- exportMapping ---
     builder.addCase(exportMapping.pending, (state) => {
-        state.exportError = null;
+        state.status = RequestStatus.PENDING;
     });
     builder.addCase(exportMapping.fulfilled, (state) => {
-        state.exportError = null;
+        state.status = RequestStatus.SUCCESS;
     });
-    builder.addCase(exportMapping.rejected, (state, action) => {
-        state.exportError = action.error.message;
+    builder.addCase(exportMapping.rejected, (state, _action) => {
+        state.status = RequestStatus.ERROR;
     });
 
     // --- addMapping ---
     builder.addCase(addMapping.pending, (state) => {
-        state.addError = null;
+        state.status = RequestStatus.PENDING;
     });
     builder.addCase(addMapping.fulfilled, (state, action) => {
-        state.addError = null;
+        state.status = RequestStatus.SUCCESS;
         const mapping = action.payload;
         const newMapping = transformMapping(mapping);
         // Add the new mapping to the list
@@ -871,8 +843,8 @@ const extraReducers = (builder) => {
         state.automata = newMapping.automata;
         state.controlledParameters = newMapping.controlledParameters;
     });
-    builder.addCase(addMapping.rejected, (state, action) => {
-        state.addError = action.error.message;
+    builder.addCase(addMapping.rejected, (state, _action) => {
+        state.status = RequestStatus.ERROR;
     });
 };
 

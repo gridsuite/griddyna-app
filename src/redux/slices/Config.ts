@@ -54,7 +54,12 @@ function updateParams(name: string, value: any, state: ConfigState) {
             state[PARAM_DEVELOPER_MODE] = String(value) === 'true';
             break;
         case FAVORITE_MAPPINGS:
-            state[FAVORITE_MAPPINGS] = value?.split(',') as UUID[];
+            state[FAVORITE_MAPPINGS] = value
+                ? (String(value)
+                      .split(',')
+                      .map((id) => id.trim())
+                      .filter(Boolean) as UUID[])
+                : [];
             break;
         default:
             console.warn(`Unknown config parameter: ${name}`);

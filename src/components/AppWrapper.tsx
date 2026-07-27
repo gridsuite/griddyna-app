@@ -123,14 +123,14 @@ const messages = {
 const basename = new URL(document.querySelector('base')!.href).pathname;
 
 function AppProvidersWithStore() {
-    const computedLanguage = useSelector(getLang) as GsLangUser;
-    const theme = useSelector(getTheme) as GsTheme;
+    const computedLanguage = (useSelector(getLang) ?? LANG_ENGLISH) as GsLangUser;
+    const theme = useSelector(getTheme) ?? (LIGHT_THEME as GsTheme);
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
 
     const urlMapper = useNotificationsUrlGenerator();
 
     return (
-        <IntlProvider locale={computedLanguage} messages={messages[computedLanguage] || messages[LANG_ENGLISH]}>
+        <IntlProvider locale={computedLanguage} messages={messages[computedLanguage]}>
             <BrowserRouter basename={basename}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={themeCompiled}>

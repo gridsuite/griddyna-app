@@ -4,14 +4,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
 import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router';
 import { Box, CssBaseline } from '@mui/material';
+import { upperFirst } from 'lodash';
 import {
     AnnouncementNotification,
     AuthenticationRouter,
     CardErrorBoundary,
+    COMMON_APP_NAME,
     fetchConfigParameter,
     getPreLoginPath,
     type GsLang,
@@ -41,7 +43,6 @@ import RootContainer from '../containers/RootContainer';
 import { APP_NAME } from '../utils/config-params';
 import { ConfigSlice, getDeveloperMode, getLang, getTheme, loadConfig } from '../redux/slices/Config';
 import { ConfigParameter } from '../redux/types/config.type';
-import { useSelector } from 'react-redux';
 
 const noUserManager = { instance: null, error: null } satisfies UserManagerState;
 
@@ -77,7 +78,7 @@ const App = () => {
     const lang = useSelector(getLang);
     const handleLangClick = useCallback(
         (newLangValue: GsLang) => {
-            updateConfigParameter(APP_NAME, PARAM_LANGUAGE, newLangValue).catch((error) => {
+            updateConfigParameter(COMMON_APP_NAME, PARAM_LANGUAGE, newLangValue).catch((error) => {
                 snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
             });
         },
@@ -87,9 +88,11 @@ const App = () => {
     const isDeveloperMode = useSelector(getDeveloperMode);
     const handleDeveloperModeClick = useCallback(
         (newDeveloperModeValue: boolean) => {
-            updateConfigParameter(APP_NAME, PARAM_DEVELOPER_MODE, newDeveloperModeValue.toString()).catch((error) => {
-                snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
-            });
+            updateConfigParameter(COMMON_APP_NAME, PARAM_DEVELOPER_MODE, newDeveloperModeValue.toString()).catch(
+                (error) => {
+                    snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
+                }
+            );
         },
         [snackError]
     );
@@ -97,7 +100,7 @@ const App = () => {
     const theme = useSelector(getTheme);
     const handleThemeClick = useCallback(
         (newThemeValue: GsTheme) => {
-            updateConfigParameter(APP_NAME, PARAM_THEME, newThemeValue).catch((error) => {
+            updateConfigParameter(COMMON_APP_NAME, PARAM_THEME, newThemeValue).catch((error) => {
                 snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
             });
         },
@@ -178,7 +181,7 @@ const App = () => {
         <>
             <CssBaseline />
             <TopBar
-                appName={APP_NAME}
+                appName={upperFirst(APP_NAME)}
                 appColor="grey"
                 appLogo={<PowsyblLogo />}
                 appVersion={AppPackage.version}
