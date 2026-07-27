@@ -8,7 +8,6 @@
 import { formatQuery } from 'react-querybuilder';
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import * as mappingsAPI from '../../rest/mappingsAPI';
-import * as workspaceAPI from '../../rest/workspaceAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
 import * as networkAPI from '../../rest/networkAPI';
@@ -25,7 +24,6 @@ import { enrichIdRqbQuery } from '../../utils/rqb-utils';
 import { assignArray } from '../../utils/functions';
 import { downloadBlob, extractFilename, readFileAsText } from '../../utils/file-utils.ts';
 import { OperationType } from '../../utils/types.ts';
-import { loadWorkspace } from './Workspace.ts';
 
 const initialState = {
     mappings: [],
@@ -55,8 +53,6 @@ const DEFAULT_AUTOMATON = {
     model: '',
     setGroup: '',
 };
-
-export const DEFAULT_NAME = 'default';
 
 //utils
 
@@ -497,22 +493,24 @@ export const updateMapping = createAsyncThunk('mappings/update', async (id, { ge
 });
 
 export const getMappings = createAsyncThunk('mappings/get', async ({ ids }, { getState }) => {
+    const state = getState();
     const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.getMappings({ ids, token });
+    // fetch only absence ids in the cache
+    const cachedMappings = state?.mappings?.mappings;
+    const uncachedIds = ids.filter((id) => !cachedMappings?.some((mapping) => mapping.id === id));
+    // detect deleted mappings in the cache
+    const deletedIds = cachedMappings?.filter((mapping) => !ids.includes(mapping.id))?.map((mapping) => mapping.id);
+    if (uncachedIds?.length) {
+        const uncachedMappings = await mappingsAPI.getMappings({ ids: uncachedIds, token });
+        return { type: 'ADD', addedMappings: uncachedMappings };
+    } else if (deletedIds?.length) {
+        return { type: 'REMOVE', deletedMappingIds: deletedIds };
+    } else {
+        return { type: 'UNCHANGE' };
+    }
 });
 
-export const removeMapping = createAsyncThunk('mappings/delete', async (id, { getState, dispatch }) => {
-    const state = getState();
-    const token = state?.user.user?.id_token;
-
-    // cross-slice to workspaces
-    const workspace = state?.workspaces?.workspace;
-    const updatedWorkspace = {
-        ...workspace,
-        mappingWorkspaceItems: workspace.mappingWorkspaceItems.filter((item) => item.mappingId !== id),
-    };
-    await workspaceAPI.updateWorkspace(workspace.id, updatedWorkspace, token);
-    await dispatch(loadWorkspace());
+export const removeMapping = createAsyncThunk('mappings/delete', async (id, _thunkApi) => {
     return id;
 });
 
@@ -530,7 +528,7 @@ export const exportMapping = createAsyncThunk('mappings/export', async ({ id, na
 
 export const addMapping = createAsyncThunk(
     'mappings/add',
-    async ({ operationType, file, name, description, directoryInputUuid }, { getState, dispatch }) => {
+    async ({ operationType, file, name, description, directoryInputUuid }, { getState }) => {
         const state = getState();
         const token = state?.user.user?.id_token;
 
@@ -551,16 +549,6 @@ export const addMapping = createAsyncThunk(
             operationType === OperationType.IMPORT_EXPLORE
                 ? directoryInputUuid
                 : await mappingsAPI.createMapping(name, description, mapping, directoryInputUuid, token);
-
-        // cross-slice to workspaces
-        const workspace = state?.workspaces?.workspace;
-        const newMappingWorkspaceItem = { mappingId: newMappingId, pinned: false };
-        const updatedWorkspace = {
-            ...workspace,
-            mappingWorkspaceItems: [...workspace.mappingWorkspaceItems, newMappingWorkspaceItem],
-        };
-        await workspaceAPI.updateWorkspace(workspace.id, updatedWorkspace, token);
-        await dispatch(loadWorkspace());
 
         // return to current slice mappings
         return await mappingsAPI.getMapping(newMappingId, token);
@@ -804,7 +792,17 @@ const extraReducers = (builder) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getMappings.fulfilled, (state, action) => {
-        state.mappings = action.payload.map(transformMapping);
+        const { type, addedMappings, deletedMappingIds } = action.payload;
+        if (type === 'ADD') {
+            state.mappings = [...state.mappings, ...(addedMappings ?? []).map(transformMapping)];
+        } else if (type === 'REMOVE') {
+            state.mappings = state.mappings.filter((mapping) => !(deletedMappingIds ?? []).includes(mapping.id));
+            if (deletedMappingIds?.includes(state.activeMapping)) {
+                state.rules = [];
+                state.automata = [];
+                state.activeMapping = undefined;
+            }
+        }
         state.status = RequestStatus.SUCCESS;
     });
     builder.addCase(getMappings.rejected, (state, _action) => {

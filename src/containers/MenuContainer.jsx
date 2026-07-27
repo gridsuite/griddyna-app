@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     addMapping as addMappingAction,
@@ -23,14 +23,13 @@ import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { useSnackMessage } from '@gridsuite/commons-ui';
-import { getWorkspace, loadWorkspace } from '../redux/slices/Workspace.ts';
+import { addFavoriteMappings, getFavoriteMappings, removeFavoriteMappings } from '../redux/slices/Config';
 
 const MenuContainer = () => {
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector((state) => state.mappings.activeMapping);
-    const workspace = useSelector(getWorkspace);
-    const [workspaceInitialized, setWorkspaceInitialized] = useState(false);
+    const favoriteMappings = useSelector(getFavoriteMappings);
 
     // On mount component
     useEffect(() => {
@@ -38,31 +37,24 @@ const MenuContainer = () => {
         dispatch(getNetworkNames());
         dispatch(getModels());
         dispatch(getAutomatonDefinitions());
-
-        // fetch workspace configuration only once on mount
-        dispatch(loadWorkspace());
     }, [dispatch]);
 
-    // On loaded workspace
-    // Note that mappingWorkspaceItems is not used to render the menu with mapping names
+    // Note that favoriteMappings is not used to render the menu with mapping names
     // The menu is still rendered by mappingsInfo
     useEffect(() => {
-        if (!workspace) {
+        if (!favoriteMappings) {
             return;
         }
-        if (!workspaceInitialized) {
-            const ids = workspace.mappingWorkspaceItems.map((elem) => elem.mappingId);
-            dispatch(getMappings({ ids }))
-                .unwrap()
-                .then((_) => {
-                    setWorkspaceInitialized(true);
-                });
-        }
-    }, [dispatch, workspace, workspaceInitialized]);
+        dispatch(getMappings({ ids: favoriteMappings }));
+    }, [dispatch, favoriteMappings]);
 
     // Mappings
     const addMapping = ({ operationType, file, name, description, directoryInputUuid }) => {
-        dispatch(addMappingAction({ operationType, file, name, description, directoryInputUuid }));
+        dispatch(addMappingAction({ operationType, file, name, description, directoryInputUuid }))
+            .unwrap()
+            .then((newAddedMapping) => {
+                dispatch(addFavoriteMappings({ mappingId: newAddedMapping.id }));
+            });
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
@@ -79,6 +71,7 @@ const MenuContainer = () => {
         dispatch(removeMappingAction(id))
             .unwrap()
             .then(() => {
+                dispatch(removeFavoriteMappings({ mappingId: id }));
                 if (id === selectedMapping) {
                     dispatch(NetworkSlice.actions.cleanNetwork());
                     dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
