@@ -81,10 +81,12 @@ const MenuContainer = () => {
     };
 
     const exportMapping = (id, name) => () => {
-        dispatch(exportMappingAction({ id, name })).catch((error) => {
-            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-            snackError({ headerId: 'exportMappingError', messageId: error.message });
-        });
+        dispatch(exportMappingAction({ id, name }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'exportMappingError', messageId: error.message });
+            });
     };
 
     return (
