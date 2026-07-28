@@ -7,6 +7,7 @@
     "importMappingFile": "Importer à partir d'un fichier",
     "importMappingExplore": "Importer de GridExplore",
     "selectMapping": "Sélectionner un mapping",
+    "selectDirectoryDialog": "Sélectionner un répertoire",
     "uploadMessage": "Aucun fichier sélectionné",
     "AddDescription": "Ajouter une description (optionnel)",
 
@@ -17,5 +18,8 @@
     "renameMappingDialogTitle": "Renommer un mapping",
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping",
-    "mappingAlreadyAdded": "Mapping déjà ajouté"
+    "mappingAlreadyAdded": "Mapping déjà ajouté",
+
+    "NoFolder": "Aucun dossier",
+    "NoItem": "Aucun élément"
 }

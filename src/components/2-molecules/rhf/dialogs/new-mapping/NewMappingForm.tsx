@@ -73,7 +73,7 @@ function NewMappingForm() {
                 multiSelect={false}
                 onlyLeaves={false}
                 title={intl.formatMessage({
-                    id: 'showSelectDirectoryDialog',
+                    id: operationType === OperationType.IMPORT_EXPLORE ? 'selectMapping' : 'selectDirectoryDialog',
                 })}
             />
         </Stack>
