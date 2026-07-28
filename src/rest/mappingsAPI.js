@@ -22,7 +22,7 @@ const API_EXPLORE_URL =
     `/explore`;
 
 export function getMappings({ ids, token }) {
-    let url = `${API_MAPPING_URL}/all`;
+    let url = `${API_MAPPING_URL}`;
     if (ids?.length > 0) {
         const urlSearchParams = new URLSearchParams();
         ids.forEach((id) => urlSearchParams.append('ids', id));
