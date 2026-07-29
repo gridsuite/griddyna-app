@@ -5,15 +5,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-// app.test.js
-
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
-import App from './app';
+import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
+import { SnackbarProvider } from '@gridsuite/commons-ui';
 import { store } from '../redux/store';
+import App from './app';
 
 jest.mock('uuid', () => ({ v4: () => '00000000-0000-0000-0000-000000000000' }));
 
@@ -35,11 +35,18 @@ it('renders', async () => {
     await act(async () =>
         root.render(
             <IntlProvider locale="en">
-                <Provider store={store}>
-                    <BrowserRouter>
-                        <App />
-                    </BrowserRouter>
-                </Provider>
+                <BrowserRouter>
+                    <Provider store={store}>
+                        <StyledEngineProvider injectFirst>
+                            <ThemeProvider theme={createTheme()}>
+                                <SnackbarProvider hideIconVariant={false}>
+                                    <CssBaseline />
+                                    <App />
+                                </SnackbarProvider>
+                            </ThemeProvider>
+                        </StyledEngineProvider>
+                    </Provider>
+                </BrowserRouter>
             </IntlProvider>
         )
     );

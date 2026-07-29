@@ -8,92 +8,10 @@
 import 'typeface-roboto';
 
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router';
-import { IntlProvider } from 'react-intl';
 import './index.css';
 import './configure-yup-init';
-import App from './components/app';
-import { store } from './redux/store';
-import messages_en from './translations/en.json';
-import messages_fr from './translations/fr.json';
-import { businessErrorsEn } from './translations/businessErrorsEn';
-import { businessErrorsFr } from './translations/businessErrorsFr';
-import {
-    CardErrorBoundary,
-    cardErrorBoundaryEn,
-    cardErrorBoundaryFr,
-    commonButtonEn,
-    commonButtonFr,
-    descriptionEn,
-    descriptionFr,
-    equipmentShortEn,
-    equipmentShortFr,
-    errorsEn,
-    errorsFr,
-    filterEn,
-    filterExpertEn,
-    filterExpertFr,
-    filterFr,
-    GsLangUser,
-    LANG_ENGLISH,
-    loginEn,
-    loginFr,
-    topBarEn,
-    topBarFr,
-    treeviewFinderEn,
-    treeviewFinderFr,
-    useUniqueNameValidationEn,
-    useUniqueNameValidationFr,
-} from '@gridsuite/commons-ui';
-
-const messages = {
-    en: {
-        ...messages_en,
-        ...loginEn,
-        ...topBarEn,
-        ...cardErrorBoundaryEn,
-        ...commonButtonEn,
-        ...descriptionEn,
-        ...equipmentShortEn,
-        ...errorsEn,
-        ...filterEn,
-        ...filterExpertEn,
-        ...treeviewFinderEn,
-        ...useUniqueNameValidationEn,
-        ...businessErrorsEn,
-    },
-    fr: {
-        ...messages_fr,
-        ...loginFr,
-        ...topBarFr,
-        ...cardErrorBoundaryFr,
-        ...commonButtonFr,
-        ...descriptionFr,
-        ...equipmentShortFr,
-        ...errorsFr,
-        ...filterFr,
-        ...filterExpertFr,
-        ...treeviewFinderFr,
-        ...useUniqueNameValidationFr,
-        ...businessErrorsFr,
-    },
-} as const;
-
-const language = navigator.language.split(/[-_]/)[0]; // language without region code
-
-const basename = new URL(document.querySelector('base')!.href).pathname;
+import AppWrapper from './components/AppWrapper';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
-root.render(
-    <IntlProvider locale={language} messages={messages[language as GsLangUser /*TODO fix*/] || messages[LANG_ENGLISH]}>
-        <Provider store={store}>
-            <BrowserRouter basename={basename}>
-                <CardErrorBoundary>
-                    <App />
-                </CardErrorBoundary>
-            </BrowserRouter>
-        </Provider>
-    </IntlProvider>
-);
+root.render(<AppWrapper />);

@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getModelDefinitions, getModelSets, makeGetModel, ModelSlice, postModelSetsGroup } from '../redux/slices/Model';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid2 as Grid } from '@mui/material';
 import { makeGetMatches, MappingSlice } from '../redux/slices/Mapping';
 import { GroupEditionOrigin, ParameterOrigin, SetType } from '../constants/models';
 import PropTypes from 'prop-types';
@@ -176,7 +176,7 @@ const ParametersContainer = ({
                 ) : (
                     <Grid container>
                         {showVerticalSteps && (
-                            <Grid item xs={3} pt={10}>
+                            <Grid size={3} pt={10}>
                                 <VerticalStepper
                                     steps={currentGroup.sets.map((set, index) => ({
                                         label: set.name,
@@ -188,7 +188,7 @@ const ParametersContainer = ({
                                 />
                             </Grid>
                         )}
-                        <Grid item xs={showVerticalSteps ? 5 : 8}>
+                        <Grid size={showVerticalSteps ? 5 : 8}>
                             <SetEditor
                                 definitions={definitions}
                                 filter={definitionFilter}
@@ -196,7 +196,7 @@ const ParametersContainer = ({
                                 set={currentSet}
                             />
                         </Grid>
-                        <Grid item xs={4} pt={1}>
+                        <Grid size={4} pt={1}>
                             <SetSearch
                                 typeFilter={modelToEdit?.type}
                                 modelsSelector={modelsSelector}

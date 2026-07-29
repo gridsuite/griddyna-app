@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Grid, TextField, Typography } from '@mui/material';
+import { Grid2 as Grid, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import Select from '../1-atoms/Select';
 import { SetType } from '../../constants/models';
@@ -22,10 +22,10 @@ const SetGroupEditor = (props) => {
     return (
         <>
             <Grid container>
-                <Grid item xs>
+                <Grid size="grow">
                     <Typography> {`${nameLabel} :`}</Typography>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid size={8}>
                     <TextField
                         autoFocus
                         margin="dense"
@@ -40,10 +40,10 @@ const SetGroupEditor = (props) => {
             </Grid>
             {!isAbsolute && (
                 <Grid container>
-                    <Grid item xs>
+                    <Grid size="grow">
                         <Typography> {`${typeLabel} :`} </Typography>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid size={8}>
                         <Select
                             options={[
                                 {

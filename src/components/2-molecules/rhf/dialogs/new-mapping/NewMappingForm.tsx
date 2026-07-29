@@ -6,7 +6,7 @@
  */
 import { useIntl } from 'react-intl';
 import type { UUID } from 'node:crypto';
-import { Grid2 as Grid } from '@mui/material';
+import { Grid2 as Grid, Stack } from '@mui/material';
 import { useWatch } from 'react-hook-form';
 import {
     DescriptionField,
@@ -26,7 +26,8 @@ import { OperationType } from '../../../../../utils/types';
 
 const ADD_MAPPING_OPTIONS = [
     { id: OperationType.NEW, label: 'emptyMapping' },
-    { id: OperationType.IMPORT, label: 'importMapping' },
+    { id: OperationType.IMPORT_FILE, label: 'importMappingFile' },
+    { id: OperationType.IMPORT_EXPLORE, label: 'importMappingExplore' },
 ];
 
 function NewMappingForm() {
@@ -42,11 +43,9 @@ function NewMappingForm() {
     const operationType = useWatch({ name: FieldConstants.OPERATION_TYPE });
     const folderItem = useWatch({ name: DIRECTORY_ITEM }) as DirectoryItemSchema;
     return (
-        <Grid container spacing={2} marginTop="auto" direction="column">
-            <Grid>
-                <RadioInput name={FieldConstants.OPERATION_TYPE} options={ADD_MAPPING_OPTIONS} />
-            </Grid>
-            <Grid>
+        <Stack spacing={2} marginTop="auto">
+            <RadioInput name={FieldConstants.OPERATION_TYPE} options={ADD_MAPPING_OPTIONS} />
+            {(operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE) && (
                 <UniqueNameInput
                     name={MAPPING_NAME}
                     label="nameProperty"
@@ -55,25 +54,29 @@ function NewMappingForm() {
                     autoFocus={autoFocus}
                     onManualChangeCallback={() => setManualChanged(true)}
                 />
-            </Grid>
-            {operationType === OperationType.IMPORT && (
+            )}
+            {operationType === OperationType.IMPORT_FILE && (
                 <FileInputSelector name={FILE_SELECTOR} label="selectMapping" accept={'.json,application/json'} />
             )}
-            <Grid>
-                <DescriptionField />
-            </Grid>
-            <Grid>
-                <DirectoryItemInput
-                    name={DIRECTORY_ITEM}
-                    types={[ElementType.DIRECTORY]}
-                    multiSelect={false}
-                    onlyLeaves={false}
-                    title={intl.formatMessage({
-                        id: 'showSelectDirectoryDialog',
-                    })}
-                />
-            </Grid>
-        </Grid>
+            {(operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE) && (
+                <Grid>
+                    <DescriptionField />
+                </Grid>
+            )}
+            <DirectoryItemInput
+                name={DIRECTORY_ITEM}
+                types={[
+                    operationType === OperationType.IMPORT_EXPLORE
+                        ? ElementType.DYNAMIC_MAPPING
+                        : ElementType.DIRECTORY,
+                ]}
+                multiSelect={false}
+                onlyLeaves={false}
+                title={intl.formatMessage({
+                    id: operationType === OperationType.IMPORT_EXPLORE ? 'selectMapping' : 'selectDirectoryDialog',
+                })}
+            />
+        </Stack>
     );
 }
 export default NewMappingForm;

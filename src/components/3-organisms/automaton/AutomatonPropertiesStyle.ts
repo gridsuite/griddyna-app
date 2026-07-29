@@ -7,7 +7,7 @@
 import { type MuiStyles } from '@gridsuite/commons-ui';
 
 export const styles = {
-    gridContainer: (theme) => ({
+    container: (theme) => ({
         border: 1,
         borderRadius: 1,
         borderColor: theme.palette.grey[500],
