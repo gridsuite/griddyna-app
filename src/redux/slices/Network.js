@@ -7,13 +7,13 @@
 
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
-import * as networkAPI from '../../rest/networkAPI';
+import * as studyAPI from '../../rest/studyAPI';
 import { PropertyType } from '../../constants/equipmentType';
 
 const initialState = {
     propertyValues: [],
-    knownNetworks: [],
-    currentNetwork: '',
+    knownStudies: [],
+    currentStudy: '',
     status: RequestStatus.IDLE,
 };
 
@@ -28,41 +28,36 @@ export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
             fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value
         ) ?? [];
 
-export const getCurrentNetworkId = (state) => state.network.currentNetwork;
+export const getCurrentNetworkId = (state) => state.network.currentStudy;
 
-// from current network id => get network object
-export const getCurrentNetworkObj = createSelector(
-    (state) => state.network.currentNetwork,
-    (state) => state.network.knownNetworks,
-    (currentNetwork, knownNetworks) => {
-        return knownNetworks?.find((knowNetwork) => knowNetwork.networkId === currentNetwork);
+// from the current study id => get study infos
+export const getCurrentStudyInfos = createSelector(
+    (state) => state.network.currentStudy,
+    (state) => state.network.knownStudies,
+    (currentStudy, knownStudies) => {
+        return knownStudies?.find((study) => study.studyId === currentStudy);
     }
 );
 
 // Reducers
 
-export const getPropertyValuesFromFile = createAsyncThunk('network/getValuesFromFile', async (file, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    return await networkAPI.getPropertyValuesFromFile(file, token);
-});
-
-export const getPropertyValuesFromNetworkId = createAsyncThunk(
-    'network/getValuesFromId',
-    async (networkId, { getState }) => {
+export const getPropertyValuesFromStudyId = createAsyncThunk(
+    'network/getValuesFromStudyId',
+    async (studyId, { getState }) => {
         const token = getState()?.user.user?.id_token;
-        return await networkAPI.getPropertyValuesFromId(networkId, token);
+        const { propertyValues } = await studyAPI.getNetworkValuesFromStudy(studyId, token);
+        return { propertyValues, studyId };
     }
 );
 
-export const getNetworkNames = createAsyncThunk('network/getNetworks', async (_args, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    return await networkAPI.getNetworksName(token);
+export const getStudies = createAsyncThunk('network/getStudies', async ({ ids }, _thunkApi) => {
+    return studyAPI.getStudyNames(ids);
 });
 
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
-        state.currentNetwork = '';
+        state.currentStudy = '';
     },
 };
 
@@ -71,38 +66,26 @@ const extraReducers = (builder) => {
 [GET_EQUIPMENTS] // read the idm (only if we want
 [GET_TYPES] // Get the properties
 */
-    builder.addCase(getPropertyValuesFromFile.fulfilled, (state, action) => {
+    builder.addCase(getPropertyValuesFromStudyId.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        const { propertyValues, networkId } = action.payload;
+        const { propertyValues, studyId } = action.payload;
         state.propertyValues = propertyValues;
-        state.currentNetwork = networkId;
+        state.currentStudy = studyId;
     });
-    builder.addCase(getPropertyValuesFromFile.rejected, (state, _action) => {
+    builder.addCase(getPropertyValuesFromStudyId.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(getPropertyValuesFromFile.pending, (state, _action) => {
+    builder.addCase(getPropertyValuesFromStudyId.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
-    builder.addCase(getPropertyValuesFromNetworkId.fulfilled, (state, action) => {
+    builder.addCase(getStudies.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
-        const { propertyValues, networkId } = action.payload;
-        state.propertyValues = propertyValues;
-        state.currentNetwork = networkId;
+        state.knownStudies = action.payload;
     });
-    builder.addCase(getPropertyValuesFromNetworkId.rejected, (state, _action) => {
+    builder.addCase(getStudies.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(getPropertyValuesFromNetworkId.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(getNetworkNames.fulfilled, (state, action) => {
-        state.status = RequestStatus.SUCCESS;
-        state.knownNetworks = action.payload;
-    });
-    builder.addCase(getNetworkNames.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(getNetworkNames.pending, (state, _action) => {
+    builder.addCase(getStudies.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
 };
