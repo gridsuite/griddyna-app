@@ -6,14 +6,10 @@
  */
 import { useMemo } from 'react';
 import { getWsBase } from '../utils/rest-api';
+import { NotificationsUrlKeys, PREFIX_CONFIG_NOTIFICATION_WS } from '@gridsuite/commons-ui';
+import { APP_NAME } from '../utils/config-params';
 
-export enum NotificationUrlKeys {
-    GLOBAL_CONFIG = 'GLOBAL_CONFIG',
-}
-
-export const PREFIX_CONFIG_NOTIFICATION_WS = `${import.meta.env.VITE_WS_GATEWAY}/config-notification`;
-
-export default function useNotificationsUrlGenerator(): Record<NotificationUrlKeys, string | undefined> {
+export default function useNotificationsUrlGenerator(): Partial<Record<NotificationsUrlKeys, string | undefined>> {
     // The websocket API doesn't allow relative urls
     const wsBase = getWsBase();
 
@@ -21,7 +17,10 @@ export default function useNotificationsUrlGenerator(): Record<NotificationUrlKe
     // it will be used to register listeners as soon as possible.
     return useMemo(
         () => ({
-            [NotificationUrlKeys.GLOBAL_CONFIG]: `${wsBase}${PREFIX_CONFIG_NOTIFICATION_WS}/global`,
+            [NotificationsUrlKeys.CONFIG]: `${wsBase}${PREFIX_CONFIG_NOTIFICATION_WS}/notify?${new URLSearchParams({
+                appName: APP_NAME,
+            })}`,
+            [NotificationsUrlKeys.GLOBAL_CONFIG]: `${wsBase}${PREFIX_CONFIG_NOTIFICATION_WS}/global`,
         }),
         [wsBase]
     );
