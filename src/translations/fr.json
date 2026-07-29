@@ -20,6 +20,15 @@
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
 
-    "NoFolder": "Aucun dossier",
-    "NoItem": "Aucun élément"
+    "NoFolder": "Aucun dossier sélectionné",
+    "NoItem": "Aucun élément sélectionné",
+    "edit": "Modifier",
+    "selectStudyDialogTitle": "Choisir une étude",
+    "noSelectedStudyText": "Aucune étude sélectionnée.",
+
+    "attachStudyDialogTitle": "Attacher une étude",
+    "attachKnownStudy": "Attacher une étude connue",
+    "attachKnownStudyError": "Une erreur est survenue lors de l'attache d'une étude connue",
+    "attachNewStudy": "Attacher une nouvelle étude",
+    "attachNewStudyError": "Une erreur est survenue lors de l'attache d'une nouvelle étude"
 }

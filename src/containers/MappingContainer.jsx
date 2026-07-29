@@ -20,12 +20,7 @@ import {
     ruleTabsValid as ruleTabsValidSelector,
     updateMapping,
 } from '../redux/slices/Mapping';
-import {
-    getCurrentNetworkObj,
-    getNetworkNames,
-    getPropertyValuesFromFile,
-    getPropertyValuesFromNetworkId,
-} from '../redux/slices/Network';
+import { getCurrentStudyInfos, getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
 import {
     Accordion,
     AccordionDetails,
@@ -49,6 +44,7 @@ import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
+import { addFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config.ts';
 
 const styles = {
     tabBar: {
@@ -76,9 +72,9 @@ const MappingContainer = () => {
     const ruleTabsValid = useSelector(ruleTabsValidSelector);
     const automatonTabsValid = useSelector(automatonTabsValidSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
-    const networks = useSelector((state) => state.network.knownNetworks);
+    const studies = useSelector((state) => state.network.knownStudies);
     const networkValues = useSelector((state) => state.network.propertyValues);
-    const currentNetwork = useSelector(getCurrentNetworkObj);
+    const currentStudy = useSelector(getCurrentStudyInfos);
     const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector((state) => state.mappings.filteredRuleType);
     const filteredFamily = useSelector((state) => state.mappings.filteredAutomatonFamily);
@@ -91,8 +87,8 @@ const MappingContainer = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        // Get known networks on start-up and update after file import
-        dispatch(getNetworkNames());
+        // Get known studies on start-up and update after attach a new study
+        dispatch(getStudies());
     }, [networkValues, dispatch]);
 
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
@@ -120,12 +116,18 @@ const MappingContainer = () => {
         dispatch(updateMapping());
     }
 
-    function attachWithId(id) {
-        dispatch(getPropertyValuesFromNetworkId(id));
+    function attachKnownStudy(id) {
+        dispatch(getPropertyValuesFromStudyId(id));
     }
 
-    function attachWithFile(file) {
-        dispatch(getPropertyValuesFromFile(file));
+    function attachNewStudy(id) {
+        dispatch(addFavoriteStudies({ studyId: id }));
+        dispatch(getPropertyValuesFromStudyId(id));
+    }
+
+    function deleteKnownStudy(id) {
+        console.log('xxx removeKnownStudy', id);
+        dispatch(removeFavoriteStudies({ studyId: id }));
     }
 
     function setFilteredType(type) {
@@ -178,7 +180,7 @@ const MappingContainer = () => {
                 <Paper>
                     <Header
                         name={activeMappingName}
-                        currentNetwork={currentNetwork}
+                        currentStudy={currentStudy}
                         isModified={isModified}
                         isValid={isMappingValid && areParametersValid}
                         save={saveMapping}
@@ -249,11 +251,12 @@ const MappingContainer = () => {
                 </Paper>
             )}
             <AttachDialog
-                networks={networks}
+                studies={studies}
                 open={isAttachedModalOpen}
                 handleClose={() => setIsAttachedModalOpen(false)}
-                attachWithId={attachWithId}
-                attachWithFile={attachWithFile}
+                attachKnownStudy={attachKnownStudy}
+                attachNewStudy={attachNewStudy}
+                deleteKnownStudy={deleteKnownStudy}
             />
             {editParameters && (
                 <ParametersContainer
