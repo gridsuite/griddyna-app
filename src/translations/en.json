@@ -4,16 +4,22 @@
     "addMappingError" : "Error occurred while adding a mapping",
     "addMappingDialogTitle": "Add a mapping",
     "emptyMapping": "Create an empty mapping",
-    "importMapping": "Import from file",
+    "importMappingFile": "Import from file",
+    "importMappingExplore": "Import from GridExplore",
     "selectMapping": "Select mapping",
+    "selectDirectoryDialog": "Select directory",
     "uploadMessage": "No file selected",
     "AddDescription": "Add a description (optional)",
 
-    "exportMapping": "Export to file",
-    "deleteMapping": "Delete",
-    "renameMapping": "Rename",
-    "copyMapping": "Copy",
+    "exportMapping": "Export to JSON",
+    "exportMappingError" : "Error occurred while exporting a mapping",
+    "removeMapping": "Remove from the list",
+    "removeMappingError" : "Error occurred while removing a mapping",
     "renameMappingDialogTitle": "Rename a mapping",
 
-    "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping"
+    "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping",
+    "mappingAlreadyAdded": "Mapping already added",
+
+    "NoFolder": "No folder",
+    "NoItem": "No item"
 }

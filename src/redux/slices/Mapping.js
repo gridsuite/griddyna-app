@@ -34,8 +34,6 @@ const initialState = {
     filteredRuleType: '',
     filteredAutomatonFamily: '',
     controlledParameters: false,
-    exportError: null,
-    addError: null,
 };
 
 const DEFAULT_RULE = {
@@ -53,8 +51,6 @@ const DEFAULT_AUTOMATON = {
     model: '',
     setGroup: '',
 };
-
-export const DEFAULT_NAME = 'default';
 
 //utils
 
@@ -419,9 +415,6 @@ export const isModified = createSelector(
     }
 );
 
-export const getExportError = (state) => state.mappings.exportError;
-export const getAddError = (state) => state.mappings.addError;
-
 export const makeGetMatches = () =>
     createSelector(
         getRules,
@@ -494,26 +487,17 @@ export const updateMapping = createAsyncThunk('mappings/update', async (id, { ge
     return await mappingsAPI.getMapping(mappingId, token);
 });
 
-export const getMappings = createAsyncThunk('mappings/get', async (_arg, { getState }) => {
+export const getMappings = createAsyncThunk('mappings/get', async ({ ids }, { getState }) => {
+    const state = getState();
     const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.getMappings(token);
-});
+    // fetch only absence ids in the cache
+    const cachedMappings = state?.mappings?.mappings;
+    const uncachedIds = ids.filter((id) => !cachedMappings?.some((mapping) => mapping.id === id));
+    // detect deleted mappings in the cache
+    const deletedIds = cachedMappings?.filter((mapping) => !ids.includes(mapping.id))?.map((mapping) => mapping.id);
 
-export const deleteMapping = createAsyncThunk('mappings/delete', async (id, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    return await mappingsAPI.deleteMapping(id, token).then(() => id);
-});
-
-export const renameMapping = createAsyncThunk('mappings/rename', async ({ id, newName }, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    await mappingsAPI.renameMapping(id, newName, token);
-    return await mappingsAPI.getMapping(id, token);
-});
-
-export const copyMapping = createAsyncThunk('mappings/copy', async ({ originalId }, { getState }) => {
-    const token = getState()?.user.user?.id_token;
-    const newMappingId = await mappingsAPI.copyMapping(originalId, token);
-    return await mappingsAPI.getMapping(newMappingId, token);
+    const addedMappings = uncachedIds?.length ? await mappingsAPI.getMappings({ ids: uncachedIds, token }) : [];
+    return { addedMappings, deletedMappingIds: deletedIds ?? [] };
 });
 
 export const exportMapping = createAsyncThunk('mappings/export', async ({ id, name }, { getState }) => {
@@ -530,11 +514,12 @@ export const exportMapping = createAsyncThunk('mappings/export', async ({ id, na
 
 export const addMapping = createAsyncThunk(
     'mappings/add',
-    async ({ operationType, file, name, description, parentDirectoryUuid }, { getState }) => {
-        const token = getState()?.user.user?.id_token;
+    async ({ operationType, file, name, description, directoryInputUuid }, { getState }) => {
+        const state = getState();
+        const token = state?.user.user?.id_token;
 
         let mapping = null;
-        if (operationType === OperationType.IMPORT) {
+        if (operationType === OperationType.IMPORT_FILE) {
             const mappingJson = await readFileAsText(file);
             mapping = JSON.parse(mappingJson);
         } else {
@@ -546,8 +531,12 @@ export const addMapping = createAsyncThunk(
             };
         }
 
-        const newMappingId = await mappingsAPI.createMapping(name, description, mapping, parentDirectoryUuid, token);
+        const newMappingId =
+            operationType === OperationType.IMPORT_EXPLORE
+                ? directoryInputUuid
+                : await mappingsAPI.createMapping(name, description, mapping, directoryInputUuid, token);
 
+        // return to current slice mappings
         return await mappingsAPI.getMapping(newMappingId, token);
     }
 );
@@ -751,11 +740,14 @@ const reducers = {
             state.controlledParameters = mappingToUse.controlledParameters;
         }
     },
-    deselectMapping: (state, _action) => {
-        state.rules = [];
-        state.automata = [];
-        state.activeMapping = '';
-        state.controlledParameters = false;
+    removeMapping: (state, action) => {
+        const { id } = action.payload;
+        state.mappings = state.mappings.filter((mapping) => mapping.id !== id);
+        if (id === state.activeMapping) {
+            state.rules = [];
+            state.automata = [];
+            state.activeMapping = undefined;
+        }
     },
 };
 
@@ -789,55 +781,22 @@ const extraReducers = (builder) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getMappings.fulfilled, (state, action) => {
-        state.mappings = action.payload.map(transformMapping);
         state.status = RequestStatus.SUCCESS;
-    });
-    builder.addCase(getMappings.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(getMappings.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(deleteMapping.fulfilled, (state, action) => {
-        state.status = RequestStatus.SUCCESS;
-        const id = action.payload;
-        state.mappings = state.mappings.filter((mapping) => mapping.id !== id);
-        if (id === state.activeMapping) {
+        const { addedMappings = [], deletedMappingIds = [] } = action.payload;
+        state.mappings = [
+            ...state.mappings.filter((mapping) => !deletedMappingIds.includes(mapping.id)),
+            ...addedMappings.map(transformMapping),
+        ];
+        if (deletedMappingIds.includes(state.activeMapping)) {
             state.rules = [];
             state.automata = [];
             state.activeMapping = undefined;
         }
     });
-    builder.addCase(deleteMapping.rejected, (state, _action) => {
+    builder.addCase(getMappings.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(deleteMapping.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(renameMapping.fulfilled, (state, action) => {
-        const { id, name } = action.payload;
-        const mappingToRename = state.mappings.find((mapping) => mapping.id === id);
-        if (mappingToRename) {
-            mappingToRename.name = name;
-        }
-        state.status = RequestStatus.SUCCESS;
-    });
-    builder.addCase(renameMapping.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(renameMapping.pending, (state, _action) => {
-        state.status = RequestStatus.PENDING;
-    });
-    builder.addCase(copyMapping.fulfilled, (state, action) => {
-        const newMapping = transformMapping(action.payload);
-        // Add the copied mapping to the list
-        state.mappings = [...state.mappings, newMapping];
-        state.status = RequestStatus.SUCCESS;
-    });
-    builder.addCase(copyMapping.rejected, (state, _action) => {
-        state.status = RequestStatus.ERROR;
-    });
-    builder.addCase(copyMapping.pending, (state, _action) => {
+    builder.addCase(getMappings.pending, (state, _action) => {
         state.status = RequestStatus.PENDING;
     });
     builder.addCase(getNetworkMatchesFromRule.fulfilled, (state, action) => {
@@ -859,22 +818,23 @@ const extraReducers = (builder) => {
 
     // --- exportMapping ---
     builder.addCase(exportMapping.pending, (state) => {
-        state.exportError = null;
+        state.status = RequestStatus.PENDING;
     });
     builder.addCase(exportMapping.fulfilled, (state) => {
-        state.exportError = null;
+        state.status = RequestStatus.SUCCESS;
     });
-    builder.addCase(exportMapping.rejected, (state, action) => {
-        state.exportError = action.error.message;
+    builder.addCase(exportMapping.rejected, (state, _action) => {
+        state.status = RequestStatus.ERROR;
     });
 
     // --- addMapping ---
     builder.addCase(addMapping.pending, (state) => {
-        state.addError = null;
+        state.status = RequestStatus.PENDING;
     });
     builder.addCase(addMapping.fulfilled, (state, action) => {
-        state.addError = null;
-        const newMapping = transformMapping(action.payload);
+        state.status = RequestStatus.SUCCESS;
+        const mapping = action.payload;
+        const newMapping = transformMapping(mapping);
         // Add the new mapping to the list
         state.mappings = [...state.mappings, newMapping];
         // switch to current mapping
@@ -883,8 +843,8 @@ const extraReducers = (builder) => {
         state.automata = newMapping.automata;
         state.controlledParameters = newMapping.controlledParameters;
     });
-    builder.addCase(addMapping.rejected, (state, action) => {
-        state.addError = action.error.message;
+    builder.addCase(addMapping.rejected, (state, _action) => {
+        state.status = RequestStatus.ERROR;
     });
 };
 

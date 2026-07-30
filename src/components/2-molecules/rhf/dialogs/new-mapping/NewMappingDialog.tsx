@@ -17,13 +17,14 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
     FILE_SELECTOR,
+    getNewMappingDialogSchema,
     MAPPING_NAME,
     newMappingDialogEmpty,
     NewMappingDialogForm,
-    newMappingDialogSchema,
 } from './new-mapping-dialog-utils';
 import NewMappingForm from './NewMappingForm';
 import { OperationType } from '../../../../../utils/types';
+import { useEffect, useMemo } from 'react';
 
 type NewMappingDialogProps = {
     onClose: () => void;
@@ -33,29 +34,55 @@ type NewMappingDialogProps = {
         file: File;
         name: string;
         description: string;
-        parentDirectoryUuid: UUID;
+        directoryInputUuid: UUID;
     }) => void;
+    items: {
+        id: UUID;
+        name: string;
+    }[];
 };
 
-function NewMappingDialog({ onClose, open, onSubmit }: NewMappingDialogProps) {
+function NewMappingDialog({ onClose, open, onSubmit, items }: NewMappingDialogProps) {
+    const schema = useMemo(() => getNewMappingDialogSchema(items?.map((elem) => elem.id)), [items]);
+
     const formMethods = useForm<Nullable<NewMappingDialogForm>>({
         defaultValues: newMappingDialogEmpty,
-        resolver: yupResolver<Nullable<NewMappingDialogForm>>(newMappingDialogSchema),
+        resolver: yupResolver<Nullable<NewMappingDialogForm>>(schema),
     });
-    const {
-        formState: { errors, isValid },
-    } = formMethods;
 
-    const isFormValid = isObjectEmpty(errors) && isValid;
+    const {
+        formState: { errors },
+        subscribe,
+        setValue,
+    } = formMethods;
+    const nameError = errors?.[MAPPING_NAME];
+    const disabledSave = !isObjectEmpty(errors) || !!nameError;
+
+    useEffect(() => {
+        const unsubscribe = subscribe({
+            name: [FieldConstants.OPERATION_TYPE],
+            formState: {
+                values: true, // Subscribe to field value changes
+            },
+            callback: () => {
+                // When operation changes, reset the directory item
+                setValue(DIRECTORY_ITEM, null);
+            },
+        });
+        return () => unsubscribe();
+    }, [setValue, subscribe]);
 
     const handleSubmit = (values: FieldValues) => {
         const operationType = values[FieldConstants.OPERATION_TYPE] as OperationType;
         const name = values[MAPPING_NAME] as string;
         const file = values[FILE_SELECTOR] as File;
         const description = (values[FieldConstants.DESCRIPTION] ?? '') as string;
-        const parentDirectoryUuid = values[DIRECTORY_ITEM][DIRECTORY_ITEM_ID] as UUID;
-        if (name) {
-            onSubmit({ operationType, file, name, description, parentDirectoryUuid });
+        const directoryInputUuid = values[DIRECTORY_ITEM][DIRECTORY_ITEM_ID] as UUID;
+        if (
+            (operationType !== OperationType.IMPORT_EXPLORE && name) ||
+            operationType === OperationType.IMPORT_EXPLORE
+        ) {
+            onSubmit({ operationType, file, name, description, directoryInputUuid });
         }
     };
     return (
@@ -63,16 +90,16 @@ function NewMappingDialog({ onClose, open, onSubmit }: NewMappingDialogProps) {
             titleId="addMappingDialogTitle"
             formContext={{
                 ...formMethods,
-                validationSchema: newMappingDialogSchema,
+                validationSchema: schema,
                 removeOptional: true,
             }}
             onClose={onClose}
             open={open}
             onSave={handleSubmit}
-            disabledSave={!isFormValid}
+            disabledSave={disabledSave}
             sx={{
                 '.MuiDialog-paper': {
-                    minWidth: '20vw',
+                    minWidth: '40vw',
                 },
             }}
         >

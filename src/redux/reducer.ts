@@ -7,16 +7,16 @@
 
 import { combineReducers } from '@reduxjs/toolkit';
 import { MappingReducer } from './slices/Mapping';
-import { ThemeReducer } from './slices/Theme';
 import { UserReducer } from './slices/User';
 import { NetworkReducer } from './slices/Network';
 import { ModelReducer } from './slices/Model';
+import { ConfigReducer } from './slices/Config';
 
 export const rootReducers = combineReducers({
     user: UserReducer,
-    theme: ThemeReducer,
     mappings: MappingReducer,
     models: ModelReducer,
     network: NetworkReducer,
+    configs: ConfigReducer,
 });
 export type RootState = ReturnType<typeof rootReducers>;
