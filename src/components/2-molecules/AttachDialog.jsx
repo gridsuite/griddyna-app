@@ -53,7 +53,7 @@ const AttachDialog = (props) => {
             aria-labelledby="form-dialog-title"
             sx={{
                 '.MuiDialog-paper': {
-                    minWidth: '500px',
+                    minWidth: '600px',
                 },
             }}
         >
@@ -65,15 +65,6 @@ const AttachDialog = (props) => {
                             <Typography>{intl.formatMessage({ id: 'attachKnownStudy' })}</Typography>
                             <Grid container paddingY={2}>
                                 <Grid size={10}>
-                                    {/*<Autocomplete
-                                        options={studies.map((study) => ({
-                                            label: study.studyName,
-                                            value: study.studyId,
-                                        }))}
-                                        value={knownStudyId}
-                                        onChange={setKnownStudyId}
-                                        fixedWidth
-                                    />*/}
                                     <DeletableAutocomplete
                                         options={studies.map((study) => ({
                                             value: study.studyId,
@@ -84,6 +75,7 @@ const AttachDialog = (props) => {
                                         onDelete={(value) => {
                                             deleteKnownStudy(value);
                                         }}
+                                        inputPlaceholderTextId="selectStudy"
                                     />
                                 </Grid>
                                 <Grid size={2}>
@@ -93,7 +85,7 @@ const AttachDialog = (props) => {
                                         disabled={!knownStudyId}
                                         variant="outlined"
                                     >
-                                        {intl.formatMessage({ id: 'Attach' })}
+                                        {intl.formatMessage({ id: 'attach' })}
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -119,7 +111,7 @@ const AttachDialog = (props) => {
                                         variant="outlined"
                                         sx={styles.attachNewButton}
                                     >
-                                        {intl.formatMessage({ id: 'Attach' })}
+                                        {intl.formatMessage({ id: 'attach' })}
                                     </Button>
                                 </Grid>
                             </Grid>

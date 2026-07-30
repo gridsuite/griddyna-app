@@ -46,7 +46,7 @@ export function getStudyNames(studyIds) {
 
 export function getNetworkValuesFromStudy(studyId, token) {
     return backendFetchJson(
-        `${API_URL}/studies/${studyId}/network-values`,
+        `${API_URL}/studies/${studyId}/dynamic-mapping/network/values`,
         {
             headers: {
                 Accept: 'application/json',
@@ -60,7 +60,7 @@ export function getNetworkValuesFromStudy(studyId, token) {
 
 export function getNetworkMatchesFromRule(studyId, ruleToMatch, token) {
     return backendFetchJson(
-        `${API_URL}/studies/${studyId}/matches/rule`,
+        `${API_URL}/studies/${studyId}/dynamic-mapping/network/matches/rule`,
         {
             method: 'POST',
             headers: {

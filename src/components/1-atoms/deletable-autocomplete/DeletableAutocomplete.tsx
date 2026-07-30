@@ -5,8 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Autocomplete, Box, IconButton, ListItemText, TextField } from '@mui/material';
+import { useIntl } from 'react-intl';
 
 export interface Option {
     value: string;
@@ -18,9 +19,17 @@ interface DeletableAutocompleteProps {
     value: string | undefined;
     onChange: (value: string | undefined) => void;
     onDelete: (value: string) => void;
+    inputPlaceholderTextId?: string;
 }
 
-export default function DeletableAutocomplete({ options, value, onChange, onDelete }: DeletableAutocompleteProps) {
+export default function DeletableAutocomplete({
+    options,
+    value,
+    onChange,
+    onDelete,
+    inputPlaceholderTextId,
+}: DeletableAutocompleteProps) {
+    const intl = useIntl();
     const matchedOption = options.find((option) => option.value === value);
 
     return (
@@ -30,7 +39,9 @@ export default function DeletableAutocomplete({ options, value, onChange, onDele
             value={matchedOption}
             getOptionLabel={(option) => option.label}
             onChange={(_, option) => onChange(option?.value)}
-            renderInput={(params) => <TextField {...params} label="Select an item" />}
+            renderInput={(params) => (
+                <TextField {...params} label={intl.formatMessage({ id: inputPlaceholderTextId })} />
+            )}
             renderOption={(props, option) => (
                 <Box
                     component="li"
@@ -39,26 +50,25 @@ export default function DeletableAutocomplete({ options, value, onChange, onDele
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        '& .delete-btn': {
-                            visibility: 'hidden',
-                        },
-                        '&:hover .delete-btn': {
-                            visibility: 'visible',
-                        },
                     }}
                 >
                     <ListItemText primary={option.label} />
 
                     <IconButton
-                        className="delete-btn"
                         size="small"
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             onDelete(option.value);
                         }}
+                        sx={{
+                            opacity: 0, // visible
+                            '.MuiAutocomplete-option:hover &': {
+                                opacity: 1, // hidden
+                            },
+                        }}
                     >
-                        <DeleteOutlineIcon fontSize="small" />
+                        <DeleteIcon />
                     </IconButton>
                 </Box>
             )}

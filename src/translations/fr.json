@@ -25,6 +25,8 @@
     "edit": "Modifier",
     "selectStudyDialogTitle": "Choisir une étude",
     "noSelectedStudyText": "Aucune étude sélectionnée.",
+    "selectStudy": "Sélectionner une étude",
+    "attach": "Attacher",
 
     "attachStudyDialogTitle": "Attacher une étude",
     "attachKnownStudy": "Attacher une étude connue",

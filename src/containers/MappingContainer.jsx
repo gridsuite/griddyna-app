@@ -126,7 +126,6 @@ const MappingContainer = () => {
     }
 
     function deleteKnownStudy(id) {
-        console.log('xxx removeKnownStudy', id);
         dispatch(removeFavoriteStudies({ studyId: id }));
     }
 

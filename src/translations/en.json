@@ -25,6 +25,8 @@
     "edit": "Edit",
     "selectStudyDialogTitle": "Pick a study",
     "noSelectedStudyText": "No study selected.",
+    "selectStudy": "Select a study",
+    "attach": "Attach",
 
     "attachStudyDialogTitle": "Attach a study",
     "attachKnownStudy": "Attach a known study",

@@ -13,12 +13,18 @@ import { useCallback, useMemo, useState } from 'react';
 import type { UUID } from 'node:crypto';
 
 const separator = '/';
+
 export type DirectoryItemSelectProps = DirectoryItemSelectorProps & {
     dialogTitleTextId: string;
     noSelectedItemTextId: string;
     disabled?: boolean;
     onItemSelect?: (item: UUID | undefined) => void;
 };
+
+/**
+ * This component is extracted from the component FilterBasedContingencyListVisualizationPanel of filter-based contingency list in explore-app
+ * This is a none-rhf component, it should be moved to commons-ui later, then implement a rhf wrapper based on this pure component.
+ */
 export default function DirectoryItemSelect({
     types,
     multiSelect,
