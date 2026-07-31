@@ -57,18 +57,16 @@ function updateParams(name: string, value: any, state: ConfigState) {
             break;
         case FAVORITE_MAPPINGS:
             state[FAVORITE_MAPPINGS] = value
-                ? (String(value)
+                ? String(value)
                       .split(',')
-                      .map((id) => id.trim())
-                      .filter(Boolean) as UUID[])
+                      .map((id) => id.trim() as UUID)
                 : [];
             break;
         case FAVORITE_STUDIES:
             state[FAVORITE_STUDIES] = value
-                ? (String(value)
+                ? String(value)
                       .split(',')
-                      .map((id) => id.trim())
-                      .filter(Boolean) as UUID[])
+                      .map((id) => id.trim() as UUID)
                 : [];
             break;
         default:
