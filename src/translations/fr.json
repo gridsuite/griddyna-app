@@ -16,8 +16,8 @@
     "removeMapping": "Retirer de la liste",
     "renameMappingDialogTitle": "Renommer un mapping",
     "getMappingsError": "Une erreur est survenue lors de la récupération des mappings",
-    "addFavoriteMappingsError": "Une erreur est survenue lors de l'ajout des mappings favorites",
-    "removeFavoriteMappingsError": "Une erreur est survenue lors de la suppression des mappings favorites",
+    "addFavoriteMappingsError": "Une erreur est survenue lors de l'ajout des mappings favoris",
+    "removeFavoriteMappingsError": "Une erreur est survenue lors de la suppression des mappings favoris",
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
