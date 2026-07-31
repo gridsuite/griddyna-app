@@ -44,7 +44,7 @@ import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
-import { addFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config.ts';
+import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config.ts';
 
 const styles = {
     tabBar: {
@@ -73,7 +73,7 @@ const MappingContainer = () => {
     const automatonTabsValid = useSelector(automatonTabsValidSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
     const studies = useSelector((state) => state.network.knownStudies);
-    const networkValues = useSelector((state) => state.network.propertyValues);
+    const favoriteStudies = useSelector(getFavoriteStudies);
     const currentStudy = useSelector(getCurrentStudyInfos);
     const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector((state) => state.mappings.filteredRuleType);
@@ -86,10 +86,14 @@ const MappingContainer = () => {
     const areParametersValid = useSelector(areParametersValidSelector);
     const dispatch = useDispatch();
 
+    // but we fetch the names of the studies to display them in the attachment dialog.
     useEffect(() => {
+        if (!favoriteStudies) {
+            return;
+        }
         // Get known studies on start-up and update after attach a new study
-        dispatch(getStudies());
-    }, [networkValues, dispatch]);
+        dispatch(getStudies({ ids: favoriteStudies }));
+    }, [dispatch, favoriteStudies]);
 
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);

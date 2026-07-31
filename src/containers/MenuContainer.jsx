@@ -15,17 +15,12 @@ import {
     MappingSlice,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
-import { getStudies, NetworkSlice } from '../redux/slices/Network';
+import { NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { useSnackMessage } from '@gridsuite/commons-ui';
-import {
-    addFavoriteMappings,
-    getFavoriteMappings,
-    getFavoriteStudies,
-    removeFavoriteMappings,
-} from '../redux/slices/Config';
+import { addFavoriteMappings, getFavoriteMappings, removeFavoriteMappings } from '../redux/slices/Config';
 
 const MenuContainer = () => {
     const { snackError } = useSnackMessage();
@@ -34,7 +29,6 @@ const MenuContainer = () => {
     const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector((state) => state.mappings.activeMapping);
     const favoriteMappings = useSelector(getFavoriteMappings);
-    const favoriteStudies = useSelector(getFavoriteStudies);
 
     // On mount component
     useEffect(() => {
@@ -51,14 +45,6 @@ const MenuContainer = () => {
         }
         dispatch(getMappings({ ids: favoriteMappings }));
     }, [dispatch, favoriteMappings]);
-
-    // but we fetch the names of the studies to display them in the attachment dialog.
-    useEffect(() => {
-        if (!favoriteStudies) {
-            return;
-        }
-        dispatch(getStudies({ ids: favoriteStudies }));
-    }, [dispatch, favoriteStudies]);
 
     // Mappings
     const addMapping = ({ operationType, file, name, description, directoryInputUuid }) => {

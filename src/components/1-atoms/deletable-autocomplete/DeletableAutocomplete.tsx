@@ -30,7 +30,7 @@ export default function DeletableAutocomplete({
     inputPlaceholderTextId,
 }: DeletableAutocompleteProps) {
     const intl = useIntl();
-    const matchedOption = options.find((option) => option.value === value);
+    const matchedOption = options.find((option) => option.value === value) ?? null;
 
     return (
         <Autocomplete
@@ -40,12 +40,16 @@ export default function DeletableAutocomplete({
             getOptionLabel={(option) => option.label}
             onChange={(_, option) => onChange(option?.value)}
             renderInput={(params) => (
-                <TextField {...params} label={intl.formatMessage({ id: inputPlaceholderTextId })} />
+                <TextField
+                    {...params}
+                    label={inputPlaceholderTextId ? intl.formatMessage({ id: inputPlaceholderTextId }) : undefined}
+                />
             )}
             renderOption={(props, option) => (
                 <Box
                     component="li"
                     {...props}
+                    key={option.value}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -62,9 +66,9 @@ export default function DeletableAutocomplete({
                             onDelete(option.value);
                         }}
                         sx={{
-                            opacity: 0, // visible
+                            opacity: 0, // hidden
                             '.MuiAutocomplete-option:hover &': {
-                                opacity: 1, // hidden
+                                opacity: 1, // visible
                             },
                         }}
                     >

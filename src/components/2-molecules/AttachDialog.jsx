@@ -60,7 +60,7 @@ const AttachDialog = (props) => {
             <DialogTitle id="form-dialog-title">{intl.formatMessage({ id: 'attachStudyDialogTitle' })}</DialogTitle>
             <DialogContent>
                 <Stack>
-                    {studies.length >= 0 && (
+                    {studies.length > 0 && (
                         <Stack sx={styles.attachKnownStudy}>
                             <Typography>{intl.formatMessage({ id: 'attachKnownStudy' })}</Typography>
                             <Grid container paddingY={2}>
