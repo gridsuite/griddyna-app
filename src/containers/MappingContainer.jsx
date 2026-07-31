@@ -8,6 +8,20 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Divider,
+    FormControlLabel,
+    Grid2 as Grid,
+    List,
+    Paper,
+    Switch,
+    Typography,
+} from '@mui/material';
+import { useIntl } from 'react-intl';
+import { useSnackMessage } from '@gridsuite/commons-ui';
+import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
@@ -21,18 +35,6 @@ import {
     updateMapping,
 } from '../redux/slices/Mapping';
 import { getCurrentStudyInfos, getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Divider,
-    FormControlLabel,
-    Grid2 as Grid,
-    List,
-    Paper,
-    Switch,
-    Typography,
-} from '@mui/material';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -56,13 +58,15 @@ const styles = {
 // TODO intl
 const ADD_MODEL_LABEL = 'Add a model';
 const SAVE_LABEL = 'Save Mapping';
-const ATTACH_LABEL = 'Attach a Network';
 const MODELS_TITLE = 'Models';
 const AUTOMATA_TITLE = 'Automata';
 const ADD_AUTOMATON_LABEL = 'Add an automaton';
 const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
 
 const MappingContainer = () => {
+    const { snackError } = useSnackMessage();
+    const intl = useIntl();
+
     // TODO Add path parameter here
     const totalRulesNumber = useSelector((state) => state.mappings.rules.length);
     const rulesNumber = useSelector(getRulesNumber);
@@ -92,8 +96,13 @@ const MappingContainer = () => {
             return;
         }
         // Get known studies on start-up and update after attach a new study
-        dispatch(getStudies({ ids: favoriteStudies }));
-    }, [dispatch, favoriteStudies]);
+        dispatch(getStudies({ ids: favoriteStudies }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getStudiesError', messageId: error.message });
+            });
+    }, [dispatch, snackError, favoriteStudies]);
 
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
@@ -121,16 +130,36 @@ const MappingContainer = () => {
     }
 
     function attachKnownStudy(id) {
-        dispatch(getPropertyValuesFromStudyId(id));
+        dispatch(getPropertyValuesFromStudyId(id))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+            });
     }
 
     function attachNewStudy(id) {
-        dispatch(addFavoriteStudies({ studyId: id }));
-        dispatch(getPropertyValuesFromStudyId(id));
+        dispatch(addFavoriteStudies({ studyId: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'addFavoriteStudiesError', messageId: error.message });
+            });
+        dispatch(getPropertyValuesFromStudyId(id))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+            });
     }
 
     function deleteKnownStudy(id) {
-        dispatch(removeFavoriteStudies({ studyId: id }));
+        dispatch(removeFavoriteStudies({ studyId: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'removeFavoriteStudiesError', messageId: error.message });
+            });
     }
 
     function setFilteredType(type) {
@@ -189,7 +218,7 @@ const MappingContainer = () => {
                         save={saveMapping}
                         saveTooltip={SAVE_LABEL}
                         attach={() => setIsAttachedModalOpen(true)}
-                        attachTooltip={ATTACH_LABEL}
+                        attachTooltip={intl.formatMessage({ id: 'attachStudyDialogTitle' })}
                     />
                     <Grid container justifyContent="flex-start">
                         <Grid size={12}>

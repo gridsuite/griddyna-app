@@ -12,10 +12,12 @@
     "AddDescription": "Ajouter une description (optionnel)",
 
     "exportMapping": "Exporter en JSON",
-     "exportMappingError" : "Une erreur est survenue lors de l'exportation d'un mapping",
+    "exportMappingError" : "Une erreur est survenue lors de l'exportation d'un mapping",
     "removeMapping": "Retirer de la liste",
-    "removeMappingError" : "Une erreur est survenue lors de la suppression d'un mapping",
     "renameMappingDialogTitle": "Renommer un mapping",
+    "getMappingsError": "Une erreur est survenue lors de la récupération des mappings",
+    "addFavoriteMappingsError": "Une erreur est survenue lors de l'ajout des mappings favorites",
+    "removeFavoriteMappingsError": "Une erreur est survenue lors de la suppression des mappings favorites",
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
@@ -30,7 +32,9 @@
 
     "attachStudyDialogTitle": "Attacher une étude",
     "attachKnownStudy": "Attacher une étude connue",
-    "attachKnownStudyError": "Une erreur est survenue lors de l'attache d'une étude connue",
     "attachNewStudy": "Attacher une nouvelle étude",
-    "attachNewStudyError": "Une erreur est survenue lors de l'attache d'une nouvelle étude"
+    "addFavoriteStudiesError": "Une erreur est survenue lors de l'ajout d'études favorites",
+    "removeFavoriteStudiesError": "Une erreur est survenue lors de la suppression d'études favorites",
+    "getStudiesError": "Une erreur est survenue lors de la récupération des études",
+    "getPropertyValuesFromStudyIdError": "Une erreur est survenue lors de la récupération des valeurs de propriété à partir d'une étude"
 }

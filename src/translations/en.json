@@ -14,8 +14,10 @@
     "exportMapping": "Export to JSON",
     "exportMappingError" : "Error occurred while exporting a mapping",
     "removeMapping": "Remove from the list",
-    "removeMappingError" : "Error occurred while removing a mapping",
     "renameMappingDialogTitle": "Rename a mapping",
+    "getMappingsError": "An error occurred while fetching mappings",
+    "addFavoriteMappingsError": "An error occurred while adding favorite mappings",
+    "removeFavoriteMappingsError": "An error occurred while removing favorite mappings",
 
     "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping",
     "mappingAlreadyAdded": "Mapping already added",
@@ -30,7 +32,9 @@
 
     "attachStudyDialogTitle": "Attach a study",
     "attachKnownStudy": "Attach a known study",
-    "attachKnownStudyError": "An error occurred while attaching a known study",
     "attachNewStudy": "Attach a new study",
-    "attachNewStudyError": "An error occurred while attaching a new study"
+    "addFavoriteStudiesError": "An error occurred while adding favorite studies",
+    "removeFavoriteStudiesError": "An error occurred while removing favorite studies",
+    "getStudiesError": "An error occurred while fetching studies",
+    "getPropertyValuesFromStudyIdError": "An error occurred while fetching property values from a study"
 }
