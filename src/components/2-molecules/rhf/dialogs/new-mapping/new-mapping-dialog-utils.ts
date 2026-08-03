@@ -6,7 +6,13 @@
  */
 import * as yup from 'yup';
 import { InferType } from 'yup';
-import { DIRECTORY_ITEM, DIRECTORY_ITEM_ID, directoryItemSchema, FieldConstants } from '@gridsuite/commons-ui';
+import {
+    DIRECTORY_ITEM,
+    DIRECTORY_ITEM_ID,
+    directoryItemSchema,
+    FieldConstants,
+    NAME_EMPTY,
+} from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
 import type { UUID } from 'node:crypto';
 
@@ -22,7 +28,7 @@ export const getNewMappingDialogSchema = (mappingIdsInWorkspace: UUID[]) =>
             .when([FieldConstants.OPERATION_TYPE], {
                 is: (operationType: OperationType) =>
                     operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE,
-                then: (schema) => schema.required('nameEmpty'),
+                then: (schema) => schema.required(NAME_EMPTY),
             }),
         [FieldConstants.DESCRIPTION]: yup.string(),
         [FILE_SELECTOR]: yup

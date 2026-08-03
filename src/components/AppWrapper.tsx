@@ -13,8 +13,6 @@ import messages_en from '../translations/en.json';
 import messages_fr from '../translations/fr.json';
 import { businessErrorsEn } from '../translations/businessErrorsEn';
 import { businessErrorsFr } from '../translations/businessErrorsFr';
-import { yupEn } from '../translations/yupEn';
-import { yupFr } from '../translations/yupFr';
 import {
     CardErrorBoundary,
     cardErrorBoundaryEn,
@@ -31,6 +29,8 @@ import {
     filterExpertEn,
     filterExpertFr,
     filterFr,
+    genericValidationEn,
+    genericValidationFr,
     GsLangUser,
     type GsTheme,
     LANG_ENGLISH,
@@ -100,7 +100,7 @@ const messages = {
         ...treeviewFinderEn,
         ...useUniqueNameValidationEn,
         ...businessErrorsEn,
-        ...yupEn,
+        ...genericValidationEn,
     },
     fr: {
         ...messages_fr,
@@ -116,7 +116,7 @@ const messages = {
         ...treeviewFinderFr,
         ...useUniqueNameValidationFr,
         ...businessErrorsFr,
-        ...yupFr,
+        ...genericValidationFr,
     },
 } as const;
 
