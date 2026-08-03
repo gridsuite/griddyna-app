@@ -6,7 +6,13 @@
  */
 import * as yup from 'yup';
 import { InferType } from 'yup';
-import { DIRECTORY_ITEM, DIRECTORY_ITEM_ID, directoryItemSchema, FieldConstants, NAME_EMPTY } from '@gridsuite/commons-ui';
+import {
+    DIRECTORY_ITEM,
+    DIRECTORY_ITEM_ID,
+    directoryItemSchema,
+    FieldConstants,
+    NAME_EMPTY,
+} from '@gridsuite/commons-ui';
 import { OperationType } from '../../../../../utils/types';
 import type { UUID } from 'node:crypto';
 
