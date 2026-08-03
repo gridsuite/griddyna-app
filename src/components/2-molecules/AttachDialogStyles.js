@@ -6,11 +6,18 @@
  */
 
 export const styles = {
-    idVerticalAlign: {
-        marginTop: '1em',
+    attachKnownButton: {
+        marginTop: '0.2em',
         marginLeft: '1em',
     },
-    margins: {
-        padding: '1em',
+    attachNewButton: {
+        marginTop: '0.7em',
+        marginLeft: '1em',
+    },
+    attachKnownStudy: {
+        marginBottom: '1em',
+    },
+    attachNewStudy: {
+        marginTop: '1em',
     },
 };

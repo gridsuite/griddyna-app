@@ -17,7 +17,7 @@ import {
     PARAM_THEME,
     updateConfigParameter,
 } from '@gridsuite/commons-ui';
-import { ConfigParameter, FAVORITE_MAPPINGS } from '../types/config.type';
+import { ConfigParameter, FAVORITE_MAPPINGS, FAVORITE_STUDIES } from '../types/config.type';
 import type { RootState } from '../reducer';
 import { RequestStatus } from '../../utils/types';
 import { APP_NAME } from '../../utils/config-params';
@@ -29,6 +29,7 @@ interface ConfigState {
     [PARAM_THEME]: GsTheme | null;
     [PARAM_DEVELOPER_MODE]: boolean | null;
     [FAVORITE_MAPPINGS]: UUID[] | null;
+    [FAVORITE_STUDIES]: UUID[] | null;
     status: RequestStatus;
 }
 
@@ -37,6 +38,7 @@ const initialState: ConfigState = {
     [PARAM_THEME]: null,
     [PARAM_DEVELOPER_MODE]: null,
     [FAVORITE_MAPPINGS]: null,
+    [FAVORITE_STUDIES]: null,
     status: RequestStatus.IDLE,
 };
 
@@ -55,10 +57,16 @@ function updateParams(name: string, value: any, state: ConfigState) {
             break;
         case FAVORITE_MAPPINGS:
             state[FAVORITE_MAPPINGS] = value
-                ? (String(value)
+                ? String(value)
                       .split(',')
-                      .map((id) => id.trim())
-                      .filter(Boolean) as UUID[])
+                      .map((id) => id.trim() as UUID)
+                : [];
+            break;
+        case FAVORITE_STUDIES:
+            state[FAVORITE_STUDIES] = value
+                ? String(value)
+                      .split(',')
+                      .map((id) => id.trim() as UUID)
                 : [];
             break;
         default:
@@ -95,6 +103,28 @@ export const removeFavoriteMappings = createAsyncThunk(
         );
         // using notifier to call the simple action updateConfigParameter later
         await updateConfigParameter(APP_NAME, FAVORITE_MAPPINGS, updatedFavoriteMappings?.join(',') ?? '');
+    }
+);
+
+export const addFavoriteStudies = createAsyncThunk(
+    'configs/addFavoriteStudies',
+    async ({ studyId }: { studyId: UUID }, { getState }) => {
+        const state = getState() as { configs: ConfigState };
+        const favoriteStudies = state.configs?.[FAVORITE_STUDIES];
+        const updatedFavoriteStudies = [...(favoriteStudies ?? []), studyId];
+        // using notifier to call the simple action updateConfigParameter later
+        await updateConfigParameter(APP_NAME, FAVORITE_STUDIES, updatedFavoriteStudies?.join(','));
+    }
+);
+
+export const removeFavoriteStudies = createAsyncThunk(
+    'configs/removeFavoriteStudies',
+    async ({ studyId }: { studyId: UUID }, { getState }) => {
+        const state = getState() as { configs: ConfigState };
+        const favoriteStudies = state.configs?.[FAVORITE_STUDIES];
+        const updatedFavoriteStudies = favoriteStudies?.filter((favoriteStudy: UUID) => favoriteStudy !== studyId);
+        // using notifier to call the simple action updateConfigParameter later
+        await updateConfigParameter(APP_NAME, FAVORITE_STUDIES, updatedFavoriteStudies?.join(',') ?? '');
     }
 );
 
@@ -144,6 +174,26 @@ export const ConfigSlice = createSlice({
         builder.addCase(removeFavoriteMappings.rejected, (state) => {
             state.status = RequestStatus.ERROR;
         });
+        // --- addFavoriteStudies ---
+        builder.addCase(addFavoriteStudies.pending, (state) => {
+            state.status = RequestStatus.PENDING;
+        });
+        builder.addCase(addFavoriteStudies.fulfilled, (state, _action) => {
+            state.status = RequestStatus.SUCCESS;
+        });
+        builder.addCase(addFavoriteStudies.rejected, (state) => {
+            state.status = RequestStatus.ERROR;
+        });
+        // --- removeFavoriteStudies ---
+        builder.addCase(removeFavoriteStudies.pending, (state) => {
+            state.status = RequestStatus.PENDING;
+        });
+        builder.addCase(removeFavoriteStudies.fulfilled, (state, _action) => {
+            state.status = RequestStatus.SUCCESS;
+        });
+        builder.addCase(removeFavoriteStudies.rejected, (state) => {
+            state.status = RequestStatus.ERROR;
+        });
     },
 });
 
@@ -153,6 +203,7 @@ export const getLang = (state: RootState): GsLang | null => state.configs[PARAM_
 export const getTheme = (state: RootState): GsTheme | null => state.configs[PARAM_THEME];
 export const getDeveloperMode = (state: RootState): boolean | null => state.configs[PARAM_DEVELOPER_MODE];
 export const getFavoriteMappings = (state: RootState): UUID[] | null => state.configs[FAVORITE_MAPPINGS];
+export const getFavoriteStudies = (state: RootState): UUID[] | null => state.configs[FAVORITE_STUDIES];
 
 // --- Reducer --- //
 export const ConfigReducer = ConfigSlice.reducer;
