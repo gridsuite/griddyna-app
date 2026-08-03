@@ -7,6 +7,7 @@
 import { GsLang, GsTheme, PARAM_DEVELOPER_MODE, PARAM_LANGUAGE, PARAM_THEME } from '@gridsuite/commons-ui';
 
 export const FAVORITE_MAPPINGS = 'favoriteMappings';
+export const FAVORITE_STUDIES = 'favoriteStudies';
 
 // corresponding to org/gridsuite/config/server/dto/ParameterInfos.java
 export type ConfigParameter =
@@ -24,5 +25,9 @@ export type ConfigParameter =
       }
     | {
           readonly name: typeof FAVORITE_MAPPINGS;
+          value: string;
+      }
+    | {
+          readonly name: typeof FAVORITE_STUDIES;
           value: string;
       };

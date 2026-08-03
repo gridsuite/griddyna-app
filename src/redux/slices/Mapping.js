@@ -10,7 +10,7 @@ import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import * as mappingsAPI from '../../rest/mappingsAPI';
 import * as _ from 'lodash';
 import RequestStatus from '../../constants/RequestStatus';
-import * as networkAPI from '../../rest/networkAPI';
+import * as studyAPI from '../../rest/studyAPI';
 import { AutomatonFamily } from '../../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../../constants/equipmentType';
 import {
@@ -544,14 +544,14 @@ export const getNetworkMatchesFromRule = createAsyncThunk('mappings/matchNetwork
     const state = getState();
     const token = state?.user.user?.id_token;
     const { rules, filteredRuleType } = state?.mappings;
-    const networkId = state?.network.currentNetwork;
+    const studyId = state?.network.currentStudy;
     const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
     const ruleToMatch = {
         ruleIndex,
         equipmentType: foundRule.type,
         filter: augmentFilter(foundRule.filter, foundRule.type),
     };
-    return await networkAPI.getNetworkMatchesFromRule(networkId, ruleToMatch, token);
+    return await studyAPI.getNetworkMatchesFromRule(studyId, ruleToMatch, token);
 });
 
 // daisy-chain action creators
@@ -571,8 +571,8 @@ export const makeChangeFilterValueThenGetNetworkMatches = () => {
             // --- Fail-fast check conditions to fire the next action --- //
             const state = getState();
 
-            // network should be attached
-            if (!state.network.currentNetwork) {
+            // study should be attached
+            if (!state.network.currentStudy) {
                 return;
             }
 
@@ -834,14 +834,14 @@ const extraReducers = (builder) => {
     builder.addCase(addMapping.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
         const mapping = action.payload;
-        const newMapping = transformMapping(mapping);
+        const transformedMapping = transformMapping(mapping);
         // Add the new mapping to the list
-        state.mappings = [...state.mappings, newMapping];
+        state.mappings = [...state.mappings, transformedMapping];
         // switch to current mapping
-        state.activeMapping = newMapping.id;
-        state.rules = newMapping.rules;
-        state.automata = newMapping.automata;
-        state.controlledParameters = newMapping.controlledParameters;
+        state.activeMapping = transformedMapping.id;
+        state.rules = transformedMapping.rules;
+        state.automata = transformedMapping.automata;
+        state.controlledParameters = transformedMapping.controlledParameters;
     });
     builder.addCase(addMapping.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;

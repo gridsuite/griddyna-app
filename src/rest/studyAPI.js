@@ -5,6 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 import { backendFetchJson } from '../utils/rest-api';
+import { fetchElementNames } from '@gridsuite/commons-ui';
 
 const API_URL =
     import.meta.env.VITE_API_PREFIX +
@@ -27,4 +28,48 @@ export function getServersInfos(token) {
         console.error('Error while fetching the servers infos : ' + reason);
         return reason;
     });
+}
+
+export function getStudyNames(studyIds) {
+    if (studyIds?.length > 0) {
+        return fetchElementNames(new Set(studyIds)).then((studyIdNames) => {
+            return studyIds.map((studyId) => {
+                return {
+                    studyId,
+                    studyName: studyIdNames?.[studyId],
+                };
+            });
+        });
+    }
+    return Promise.resolve([]);
+}
+
+export function getNetworkValuesFromStudy(studyId, token) {
+    return backendFetchJson(
+        `${API_URL}/studies/${studyId}/dynamic-mapping/network/values`,
+        {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+        },
+        token
+    );
+}
+
+export function getNetworkMatchesFromRule(studyId, ruleToMatch, token) {
+    return backendFetchJson(
+        `${API_URL}/studies/${studyId}/dynamic-mapping/network/matches/rule`,
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+            body: JSON.stringify(ruleToMatch),
+        },
+        token
+    );
 }

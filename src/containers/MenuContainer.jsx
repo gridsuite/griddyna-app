@@ -15,7 +15,7 @@ import {
     MappingSlice,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
-import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
+import { NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
@@ -33,7 +33,6 @@ const MenuContainer = () => {
     // On mount component
     useEffect(() => {
         // shared between workspaces, fetch data on mount
-        dispatch(getNetworkNames());
         dispatch(getModels());
         dispatch(getAutomatonDefinitions());
     }, [dispatch]);
@@ -44,15 +43,25 @@ const MenuContainer = () => {
         if (!favoriteMappings) {
             return;
         }
-        dispatch(getMappings({ ids: favoriteMappings }));
-    }, [dispatch, favoriteMappings]);
+        dispatch(getMappings({ ids: favoriteMappings }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getMappingsError', messageId: error.message });
+            });
+    }, [dispatch, snackError, favoriteMappings]);
 
     // Mappings
     const addMapping = ({ operationType, file, name, description, directoryInputUuid }) => {
         dispatch(addMappingAction({ operationType, file, name, description, directoryInputUuid }))
             .unwrap()
             .then((newAddedMapping) => {
-                dispatch(addFavoriteMappings({ mappingId: newAddedMapping.id }));
+                dispatch(addFavoriteMappings({ mappingId: newAddedMapping.id }))
+                    .unwrap()
+                    .catch((error) => {
+                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                        snackError({ headerId: 'addFavoriteMappingsError', messageId: error.message });
+                    });
             })
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
@@ -77,7 +86,12 @@ const MenuContainer = () => {
             dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
             dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
         }
-        dispatch(removeFavoriteMappings({ mappingId: id }));
+        dispatch(removeFavoriteMappings({ mappingId: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'removeFavoriteMappingsError', messageId: error.message });
+            });
     };
 
     const exportMapping = (id, name) => () => {

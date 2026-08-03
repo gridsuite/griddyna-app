@@ -8,6 +8,20 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Divider,
+    FormControlLabel,
+    Grid2 as Grid,
+    List,
+    Paper,
+    Switch,
+    Typography,
+} from '@mui/material';
+import { useIntl } from 'react-intl';
+import { useSnackMessage } from '@gridsuite/commons-ui';
+import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
@@ -20,24 +34,7 @@ import {
     ruleTabsValid as ruleTabsValidSelector,
     updateMapping,
 } from '../redux/slices/Mapping';
-import {
-    getCurrentNetworkObj,
-    getNetworkNames,
-    getPropertyValuesFromFile,
-    getPropertyValuesFromNetworkId,
-} from '../redux/slices/Network';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Divider,
-    FormControlLabel,
-    Grid2 as Grid,
-    List,
-    Paper,
-    Switch,
-    Typography,
-} from '@mui/material';
+import { getCurrentStudyInfos, getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -49,6 +46,7 @@ import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
+import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config.ts';
 
 const styles = {
     tabBar: {
@@ -60,13 +58,15 @@ const styles = {
 // TODO intl
 const ADD_MODEL_LABEL = 'Add a model';
 const SAVE_LABEL = 'Save Mapping';
-const ATTACH_LABEL = 'Attach a Network';
 const MODELS_TITLE = 'Models';
 const AUTOMATA_TITLE = 'Automata';
 const ADD_AUTOMATON_LABEL = 'Add an automaton';
 const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
 
 const MappingContainer = () => {
+    const { snackError } = useSnackMessage();
+    const intl = useIntl();
+
     // TODO Add path parameter here
     const totalRulesNumber = useSelector((state) => state.mappings.rules.length);
     const rulesNumber = useSelector(getRulesNumber);
@@ -76,9 +76,9 @@ const MappingContainer = () => {
     const ruleTabsValid = useSelector(ruleTabsValidSelector);
     const automatonTabsValid = useSelector(automatonTabsValidSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
-    const networks = useSelector((state) => state.network.knownNetworks);
-    const networkValues = useSelector((state) => state.network.propertyValues);
-    const currentNetwork = useSelector(getCurrentNetworkObj);
+    const studies = useSelector((state) => state.network.knownStudies);
+    const favoriteStudies = useSelector(getFavoriteStudies);
+    const currentStudy = useSelector(getCurrentStudyInfos);
     const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector((state) => state.mappings.filteredRuleType);
     const filteredFamily = useSelector((state) => state.mappings.filteredAutomatonFamily);
@@ -90,10 +90,19 @@ const MappingContainer = () => {
     const areParametersValid = useSelector(areParametersValidSelector);
     const dispatch = useDispatch();
 
+    // but we fetch the names of the studies to display them in the attachment dialog.
     useEffect(() => {
-        // Get known networks on start-up and update after file import
-        dispatch(getNetworkNames());
-    }, [networkValues, dispatch]);
+        if (!favoriteStudies) {
+            return;
+        }
+        // Get known studies on start-up and update after attach a new study
+        dispatch(getStudies({ ids: favoriteStudies }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getStudiesError', messageId: error.message });
+            });
+    }, [dispatch, snackError, favoriteStudies]);
 
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
@@ -120,12 +129,37 @@ const MappingContainer = () => {
         dispatch(updateMapping());
     }
 
-    function attachWithId(id) {
-        dispatch(getPropertyValuesFromNetworkId(id));
+    function attachKnownStudy(id) {
+        dispatch(getPropertyValuesFromStudyId(id))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+            });
     }
 
-    function attachWithFile(file) {
-        dispatch(getPropertyValuesFromFile(file));
+    function attachNewStudy(id) {
+        dispatch(addFavoriteStudies({ studyId: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'addFavoriteStudiesError', messageId: error.message });
+            });
+        dispatch(getPropertyValuesFromStudyId(id))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+            });
+    }
+
+    function deleteKnownStudy(id) {
+        dispatch(removeFavoriteStudies({ studyId: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'removeFavoriteStudiesError', messageId: error.message });
+            });
     }
 
     function setFilteredType(type) {
@@ -178,13 +212,13 @@ const MappingContainer = () => {
                 <Paper>
                     <Header
                         name={activeMappingName}
-                        currentNetwork={currentNetwork}
+                        currentStudy={currentStudy}
                         isModified={isModified}
                         isValid={isMappingValid && areParametersValid}
                         save={saveMapping}
                         saveTooltip={SAVE_LABEL}
                         attach={() => setIsAttachedModalOpen(true)}
-                        attachTooltip={ATTACH_LABEL}
+                        attachTooltip={intl.formatMessage({ id: 'attachStudyDialogTitle' })}
                     />
                     <Grid container justifyContent="flex-start">
                         <Grid size={12}>
@@ -249,11 +283,12 @@ const MappingContainer = () => {
                 </Paper>
             )}
             <AttachDialog
-                networks={networks}
+                studies={studies}
                 open={isAttachedModalOpen}
                 handleClose={() => setIsAttachedModalOpen(false)}
-                attachWithId={attachWithId}
-                attachWithFile={attachWithFile}
+                attachKnownStudy={attachKnownStudy}
+                attachNewStudy={attachNewStudy}
+                deleteKnownStudy={deleteKnownStudy}
             />
             {editParameters && (
                 <ParametersContainer
