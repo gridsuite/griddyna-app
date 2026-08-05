@@ -13,7 +13,7 @@ import {
     AccordionSummary,
     Divider,
     FormControlLabel,
-    Grid2 as Grid,
+    Grid,
     List,
     Paper,
     Switch,
