@@ -7,12 +7,12 @@
 
 import * as yup from 'yup';
 import { InferType } from 'yup';
-import { FieldConstants } from '@gridsuite/commons-ui';
+import { FieldConstants, NAME_EMPTY } from '@gridsuite/commons-ui';
 
 export const MAPPING_NAME = 'mappingName';
 
 export const renameMappingDialogSchema = yup.object().shape({
-    [MAPPING_NAME]: yup.string().trim().required('nameEmpty'),
+    [MAPPING_NAME]: yup.string().trim().required(NAME_EMPTY),
     [FieldConstants.DIRECTORY]: yup
         .string()
         .notRequired() /* not used (use activeDirectory instead) but should be coherent to empty data */,

@@ -7,7 +7,6 @@
 
 import { useState } from 'react';
 import {
-    Box,
     Button,
     Dialog,
     DialogActions,
@@ -15,92 +14,114 @@ import {
     DialogTitle,
     Divider,
     Grid,
+    Stack,
     Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { styles } from './AttachDialogStyles';
-import Autocomplete from '../1-atoms/Autocomplete';
+import { ElementType } from '@gridsuite/commons-ui';
+import { useIntl } from 'react-intl';
+import DirectoryItemSelect from './directory-item-select/DirectoryItemSelect.tsx';
+import DeletableAutocomplete from '../1-atoms/deletable-autocomplete/DeletableAutocomplete.tsx';
 
 const AttachDialog = (props) => {
-    const { open, handleClose, attachWithFile, networks, attachWithId } = props;
-    const [file, setFile] = useState(null);
-    const [networkId, setNetworkId] = useState('');
+    const intl = useIntl();
+    const { open, handleClose, studies, attachKnownStudy, attachNewStudy, deleteKnownStudy } = props;
+    const [newStudyId, setNewStudyId] = useState();
+    const [knownStudyId, setKnownStudyId] = useState();
 
-    const onChangeFile = (event) => {
-        setFile(event.target.files[0]);
+    const handleAttachKnownStudy = () => {
+        attachKnownStudy(knownStudyId);
+        closeDialog();
     };
 
-    const onAttach = (type) => {
-        if (type === 'file') {
-            attachWithFile(file);
-        } else {
-            attachWithId(networkId);
-        }
+    const handleAttachNewStudy = () => {
+        attachNewStudy(newStudyId);
         closeDialog();
     };
 
     const closeDialog = () => {
         handleClose();
-        setFile(null);
-        setNetworkId('');
+        setNewStudyId(null);
+        setKnownStudyId(null);
     };
 
     return (
-        <Dialog open={open} onClose={closeDialog} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Attach a Network</DialogTitle>
-            <Divider />
+        <Dialog
+            open={open}
+            onClose={closeDialog}
+            aria-labelledby="form-dialog-title"
+            sx={{
+                '.MuiDialog-paper': {
+                    minWidth: '600px',
+                },
+            }}
+        >
+            <DialogTitle id="form-dialog-title">{intl.formatMessage({ id: 'attachStudyDialogTitle' })}</DialogTitle>
             <DialogContent>
-                {attachWithId && networks.length > 0 && (
-                    <Box>
-                        <Typography>Attach a known network :</Typography>
-                        <Grid container sx={styles.margins}>
-                            <Grid size={10}>
-                                <Autocomplete
-                                    options={networks.map((network) => ({
-                                        label: network.networkName,
-                                        value: network.networkId,
-                                    }))}
-                                    value={networkId}
-                                    onChange={setNetworkId}
-                                    fixedWidth
-                                />
+                <Stack>
+                    {studies.length > 0 && (
+                        <Stack sx={styles.attachKnownStudy}>
+                            <Typography>{intl.formatMessage({ id: 'attachKnownStudy' })}</Typography>
+                            <Grid container paddingY={2}>
+                                <Grid size={10}>
+                                    <DeletableAutocomplete
+                                        options={studies.map((study) => ({
+                                            value: study.studyId,
+                                            label: study.studyName,
+                                        }))}
+                                        value={knownStudyId}
+                                        onChange={setKnownStudyId}
+                                        onDelete={(value) => {
+                                            deleteKnownStudy(value);
+                                        }}
+                                        inputPlaceholderTextId="selectStudy"
+                                    />
+                                </Grid>
+                                <Grid size={2}>
+                                    <Button
+                                        onClick={handleAttachKnownStudy}
+                                        sx={styles.attachKnownButton}
+                                        disabled={!knownStudyId}
+                                        variant="outlined"
+                                    >
+                                        {intl.formatMessage({ id: 'attach' })}
+                                    </Button>
+                                </Grid>
                             </Grid>
-                            <Grid size={2}>
-                                <Button
-                                    onClick={() => onAttach('id')}
-                                    sx={styles.idVerticalAlign}
-                                    disabled={networkId === ''}
-                                >
-                                    Attach
-                                </Button>
+                        </Stack>
+                    )}
+                    <Divider />
+                    {
+                        <Stack sx={styles.attachNewStudy}>
+                            <Typography>{intl.formatMessage({ id: 'attachNewStudy' })}</Typography>
+                            <Grid container paddingY={1}>
+                                <Grid size={10}>
+                                    <DirectoryItemSelect
+                                        types={[ElementType.STUDY]}
+                                        onItemSelect={setNewStudyId}
+                                        dialogTitleTextId="selectStudyDialogTitle"
+                                        noSelectedItemTextId="noSelectedStudyText"
+                                    />
+                                </Grid>
+                                <Grid size={2}>
+                                    <Button
+                                        onClick={handleAttachNewStudy}
+                                        disabled={!newStudyId}
+                                        variant="outlined"
+                                        sx={styles.attachNewButton}
+                                    >
+                                        {intl.formatMessage({ id: 'attach' })}
+                                    </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Box>
-                )}
-                {attachWithFile && (
-                    <Box>
-                        <Typography>Attach a new network using the iidm:</Typography>
-                        <Grid container sx={styles.margins}>
-                            <Grid size={10}>
-                                <input type="file" name="file" onChange={(e) => onChangeFile(e)} />
-                            </Grid>
-                            <Grid size={2}>
-                                <Button
-                                    onClick={() => onAttach('file')}
-                                    sx={styles.idVerticalAlign}
-                                    disabled={file === null}
-                                >
-                                    Attach
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                )}
+                        </Stack>
+                    }
+                </Stack>
             </DialogContent>
-            <Divider />
             <DialogActions>
                 <Button onClick={closeDialog} color="primary">
-                    Cancel
+                    {intl.formatMessage({ id: 'cancel' })}
                 </Button>
             </DialogActions>
         </Dialog>
@@ -109,10 +130,11 @@ const AttachDialog = (props) => {
 
 AttachDialog.propTypes = {
     open: PropTypes.bool.isRequired,
-    networks: PropTypes.array.isRequired,
+    studies: PropTypes.array.isRequired,
     handleClose: PropTypes.func.isRequired,
-    attachWithFile: PropTypes.func,
-    attachWithId: PropTypes.func,
+    attachKnownStudy: PropTypes.func,
+    attachNewStudy: PropTypes.func,
+    deleteKnownStudy: PropTypes.func,
 };
 
 export default AttachDialog;

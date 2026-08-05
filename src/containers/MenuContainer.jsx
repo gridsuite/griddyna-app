@@ -9,52 +9,67 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     addMapping as addMappingAction,
-    copyMapping as copyMappingAction,
-    deleteMapping as deleteMappingAction,
     exportMapping as exportMappingAction,
-    getAddError,
-    getExportError,
     getMappings,
     getMappingsInfo,
     MappingSlice,
-    renameMapping as renameMappingAction,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
-import { getNetworkNames, NetworkSlice } from '../redux/slices/Network';
+import { NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { useSnackMessage } from '@gridsuite/commons-ui';
+import { addFavoriteMappings, getFavoriteMappings, removeFavoriteMappings } from '../redux/slices/Config';
 
 const MenuContainer = () => {
+    const { snackError } = useSnackMessage();
+
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
     const selectedMapping = useSelector((state) => state.mappings.activeMapping);
+    const favoriteMappings = useSelector(getFavoriteMappings);
 
+    // On mount component
     useEffect(() => {
-        // Fetch data on mount
-        dispatch(getMappings());
-        dispatch(getNetworkNames());
+        // shared between workspaces, fetch data on mount
         dispatch(getModels());
         dispatch(getAutomatonDefinitions());
     }, [dispatch]);
 
+    // Note that favoriteMappings is not used to render the menu with mapping names
+    // The menu is still rendered by mappingsInfo
+    useEffect(() => {
+        if (!favoriteMappings) {
+            return;
+        }
+        dispatch(getMappings({ ids: favoriteMappings }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getMappingsError', messageId: error.message });
+            });
+    }, [dispatch, snackError, favoriteMappings]);
+
     // Mappings
-    const addMapping = ({ operationType, file, name, description, parentDirectoryUuid }) => {
-        dispatch(addMappingAction({ operationType, file, name, description, parentDirectoryUuid }));
+    const addMapping = ({ operationType, file, name, description, directoryInputUuid }) => {
+        dispatch(addMappingAction({ operationType, file, name, description, directoryInputUuid }))
+            .unwrap()
+            .then((newAddedMapping) => {
+                dispatch(addFavoriteMappings({ mappingId: newAddedMapping.id }))
+                    .unwrap()
+                    .catch((error) => {
+                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                        snackError({ headerId: 'addFavoriteMappingsError', messageId: error.message });
+                    });
+            })
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'addMappingError', messageId: error.message });
+            });
         dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
-    };
-
-    const renameMapping = ({ id, newName }) => {
-        dispatch(
-            renameMappingAction({
-                id: id,
-                newName: newName,
-            })
-        );
-        dispatch(NetworkSlice.actions.cleanNetwork());
     };
 
     const selectMapping = (id) => () => {
@@ -64,50 +79,35 @@ const MenuContainer = () => {
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
-    const deleteMapping = (id) => () => {
-        dispatch(deleteMappingAction(id));
+    const removeMapping = (id) => () => {
+        dispatch(MappingSlice.actions.removeMapping({ id }));
         if (id === selectedMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
             dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
             dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
         }
+        dispatch(removeFavoriteMappings({ mappingId: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'removeFavoriteMappingsError', messageId: error.message });
+            });
     };
-
-    const copyMapping = (id) => () => {
-        dispatch(copyMappingAction({ originalId: id }));
-    };
-
-    const { snackError } = useSnackMessage();
-    const exportError = useSelector(getExportError);
-    const addError = useSelector(getAddError);
-
-    // Show snackbar when an export error occurs
-    useEffect(() => {
-        if (exportError) {
-            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-            snackError({ messageId: 'exportMappingError', messageTxt: exportError });
-        }
-    }, [exportError, snackError]);
-
-    // Show snackbar when an add error occurs
-    useEffect(() => {
-        if (addError) {
-            // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-            snackError({ headerId: 'addMappingError', messageId: addError });
-        }
-    }, [addError, snackError]);
 
     const exportMapping = (id, name) => () => {
-        dispatch(exportMappingAction({ id, name }));
+        dispatch(exportMappingAction({ id, name }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'exportMappingError', messageId: error.message });
+            });
     };
 
     return (
         <NavigationMenu
             items={mappingsInfo}
             addItem={addMapping}
-            deleteItem={deleteMapping}
-            renameItem={renameMapping}
-            copyItem={copyMapping}
+            removeItem={removeMapping}
             exportItem={exportMapping}
             selectItem={selectMapping}
             selected={selectedMapping}

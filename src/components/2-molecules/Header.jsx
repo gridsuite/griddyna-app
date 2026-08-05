@@ -16,7 +16,7 @@ const outdatedLabel = 'Generated elements are outdated, re-generate them to dele
 const Header = (props) => {
     const {
         name,
-        currentNetwork,
+        currentStudy,
         isModified = false,
         isValid = true,
         save,
@@ -54,7 +54,7 @@ const Header = (props) => {
                     </Typography>
                 </Tooltip>
                 <Typography variant="h4" sx={getTitleStyle()}>
-                    {`${currentNetwork?.networkName ?? ''}`}
+                    {`${currentStudy?.studyName ?? ''}`}
                 </Typography>
             </Grid>
             <Grid size="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
@@ -69,9 +69,9 @@ const Header = (props) => {
 
 Header.propTypes = {
     name: PropTypes.string.isRequired,
-    currentNetwork: PropTypes.shape({
-        networkId: PropTypes.string,
-        networkName: PropTypes.string,
+    currentStudy: PropTypes.shape({
+        studyId: PropTypes.string,
+        studyName: PropTypes.string,
     }),
     isModified: PropTypes.bool,
     isValid: PropTypes.bool,
