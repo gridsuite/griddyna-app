@@ -13,7 +13,7 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
-    Grid2 as Grid,
+    Grid,
     Stack,
     Typography,
 } from '@mui/material';

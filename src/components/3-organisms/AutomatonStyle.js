@@ -14,7 +14,7 @@ export const styles = {
     automatonPaper: {
         borderRadius: '5px',
         marginBottom: '5px',
-        '& >.MuiGrid2-root': {
+        '& >.MuiGrid-root': {
             marginTop: '5px',
         },
     },

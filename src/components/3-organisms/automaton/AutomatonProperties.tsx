@@ -6,7 +6,7 @@
  */
 
 import { useCallback } from 'react';
-import { Divider, Grid2 as Grid, Stack, Typography } from '@mui/material';
+import { Divider, Grid, Stack, Typography } from '@mui/material';
 import Autocomplete from '../../1-atoms/Autocomplete';
 import { styles } from './AutomatonPropertiesStyle';
 import { getPossibleOptionsForProperty } from '../../../utils/automata';

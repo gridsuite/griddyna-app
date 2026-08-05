@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Button, Grid2 as Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import { FolderOutlined } from '@mui/icons-material';
 import { FormattedMessage } from 'react-intl';
 import { DirectoryItemSelector, DirectoryItemSelectorProps, TreeViewFinderNodeProps } from '@gridsuite/commons-ui';

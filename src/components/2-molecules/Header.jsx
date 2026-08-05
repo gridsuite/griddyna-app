@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Grid2 as Grid, Tooltip, Typography } from '@mui/material';
+import { Grid, Tooltip, Typography } from '@mui/material';
 import { AttachButton, SaveButton } from '../1-atoms/buttons/';
 import PropTypes from 'prop-types';
 import { styles } from './HeaderStyles';

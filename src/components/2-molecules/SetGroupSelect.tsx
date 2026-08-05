@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Checkbox, Grid2 as Grid, Typography } from '@mui/material';
+import { Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { styles } from './SetGroupSelectStyle';
 import { useEffect, useState } from 'react';
