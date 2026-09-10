@@ -14,7 +14,7 @@ import { Typography } from '@mui/material';
 const RootContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     let mainContainer = (
-        <Typography align="center" variant="h5">
+        <Typography align="center" variant="h5" paddingTop={1}>
             No mapping selected
         </Typography>
     );

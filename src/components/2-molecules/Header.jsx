@@ -49,11 +49,11 @@ const Header = (props) => {
         <Grid container sx={getHeaderBoxStyle()}>
             <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
-                    <Typography variant="h5" sx={getTitleStyle()}>
+                    <Typography variant="h6" sx={getTitleStyle()}>
                         {`${name}${isModified ? '*' : ''} :`}
                     </Typography>
                 </Tooltip>
-                <Typography variant="h4" sx={getTitleStyle()}>
+                <Typography variant="h6" sx={getTitleStyle()}>
                     {`${currentStudy?.studyName ?? ''}`}
                 </Typography>
             </Grid>

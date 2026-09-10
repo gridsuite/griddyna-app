@@ -21,6 +21,7 @@ import { ConfigParameter, FAVORITE_MAPPINGS, FAVORITE_STUDIES } from '../types/c
 import type { RootState } from '../reducer';
 import { RequestStatus } from '../../utils/types';
 import { APP_NAME } from '../../utils/config-params';
+import { saveLocalStorageLanguage, saveLocalStorageTheme } from '../local-storage';
 
 // --- State shape --- //
 
@@ -48,9 +49,11 @@ function updateParams(name: string, value: any, state: ConfigState) {
     switch (name) {
         case PARAM_LANGUAGE:
             state[PARAM_LANGUAGE] = value as GsLang;
+            saveLocalStorageLanguage(state[PARAM_LANGUAGE] as GsLang);
             break;
         case PARAM_THEME:
             state[PARAM_THEME] = value as GsTheme;
+            saveLocalStorageTheme(state[PARAM_THEME] as GsTheme);
             break;
         case PARAM_DEVELOPER_MODE:
             state[PARAM_DEVELOPER_MODE] = String(value) === 'true';

@@ -4,15 +4,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { useMemo } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { IntlProvider } from 'react-intl';
-import App from '../components/app';
-import { store } from '../redux/store';
-import messages_en from '../translations/en.json';
-import messages_fr from '../translations/fr.json';
-import { businessErrorsEn } from '../translations/businessErrorsEn';
-import { businessErrorsFr } from '../translations/businessErrorsFr';
+import { CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import {
     CardErrorBoundary,
     cardErrorBoundaryEn,
@@ -31,11 +27,7 @@ import {
     filterFr,
     genericValidationEn,
     genericValidationFr,
-    GsLangUser,
-    type GsTheme,
-    LANG_ENGLISH,
-    LANG_FRENCH,
-    LIGHT_THEME,
+    getComputedLanguage,
     loginEn,
     loginFr,
     NotificationsProvider,
@@ -47,43 +39,17 @@ import {
     useUniqueNameValidationEn,
     useUniqueNameValidationFr,
 } from '@gridsuite/commons-ui';
-import { createTheme, responsiveFontSizes, StyledEngineProvider, ThemeProvider } from '@mui/material';
-import { useMemo } from 'react';
-import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
-import useNotificationsUrlGenerator from '../hooks/use-notification-url-generator';
-import { getLang, getTheme } from '../redux/slices/Config';
+import { getMuiTheme } from 'utils/config-theme';
+import { store } from 'redux/store';
+import messages_en from 'translations/en.json';
+import messages_fr from 'translations/fr.json';
+import { businessErrorsEn } from 'translations/businessErrorsEn';
+import { businessErrorsFr } from 'translations/businessErrorsFr';
 
-const lightTheme = createTheme({
-    palette: {
-        mode: 'light',
-    },
-    mapboxStyle: 'mapbox://styles/mapbox/light-v9',
-    typography: {
-        button: {
-            textTransform: 'none',
-        },
-    },
-});
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-    },
-    mapboxStyle: 'mapbox://styles/mapbox/dark-v9',
-    typography: {
-        button: {
-            textTransform: 'none',
-        },
-    },
-});
-
-function getMuiTheme(theme: GsTheme, locale: GsLangUser) {
-    return responsiveFontSizes(
-        createTheme(
-            theme === LIGHT_THEME ? lightTheme : darkTheme,
-            locale === LANG_FRENCH ? MuiCoreFrFR : MuiCoreEnUS // MUI core translations
-        )
-    );
-}
+import useNotificationsUrlGenerator from 'hooks/use-notification-url-generator';
+import { getLang, getTheme } from 'redux/slices/Config';
+import { getLocalStorageLanguage, getLocalStorageTheme } from 'redux/local-storage';
+import App from '../App';
 
 const messages = {
     en: {
@@ -123,8 +89,9 @@ const messages = {
 const basename = new URL(document.querySelector('base')!.href).pathname;
 
 function AppProvidersWithStore() {
-    const computedLanguage = (useSelector(getLang) ?? LANG_ENGLISH) as GsLangUser;
-    const theme = useSelector(getTheme) ?? (LIGHT_THEME as GsTheme);
+    const language = useSelector(getLang) ?? getLocalStorageLanguage();
+    const computedLanguage = getComputedLanguage(language);
+    const theme = useSelector(getTheme) ?? getLocalStorageTheme();
     const themeCompiled = useMemo(() => getMuiTheme(theme, computedLanguage), [computedLanguage, theme]);
 
     const urlMapper = useNotificationsUrlGenerator();
@@ -134,6 +101,7 @@ function AppProvidersWithStore() {
             <BrowserRouter basename={basename}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={themeCompiled}>
+                        <CssBaseline />
                         <SnackbarProvider hideIconVariant={false}>
                             <NotificationsProvider urls={urlMapper}>
                                 <CardErrorBoundary>

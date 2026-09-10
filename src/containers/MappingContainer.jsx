@@ -11,11 +11,12 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Box,
     Divider,
     FormControlLabel,
     Grid,
     List,
-    Paper,
+    Stack,
     Switch,
     Typography,
 } from '@mui/material';
@@ -209,7 +210,7 @@ const MappingContainer = () => {
     return (
         <>
             {activeMapping && (
-                <Paper>
+                <Stack height="100%">
                     <Header
                         name={activeMappingName}
                         currentStudy={currentStudy}
@@ -220,7 +221,7 @@ const MappingContainer = () => {
                         attach={() => setIsAttachedModalOpen(true)}
                         attachTooltip={intl.formatMessage({ id: 'attachStudyDialogTitle' })}
                     />
-                    <Grid container justifyContent="flex-start">
+                    <Grid container justifyContent="flex-start" paddingLeft={1}>
                         <Grid size={12}>
                             <FormControlLabel
                                 control={
@@ -234,53 +235,61 @@ const MappingContainer = () => {
                             />
                         </Grid>
                     </Grid>
-                    <Accordion>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography>{`${MODELS_TITLE} ${
-                                totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
-                            }`}</Typography>
-                        </AccordionSummary>
-                        <Divider />
-                        <AccordionDetails>
-                            <Grid container>
-                                <Grid size="grow" sx={styles.tabBar}>
-                                    <TabBar
-                                        value={filteredType}
-                                        options={filterRulesOptions}
-                                        setValue={setFilteredType}
-                                    />
+                    <Box
+                        // scrollbar only in the mapping definition zone
+                        sx={{
+                            flex: 1,
+                            overflowY: 'auto',
+                        }}
+                    >
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography>{`${MODELS_TITLE} ${
+                                    totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
+                                }`}</Typography>
+                            </AccordionSummary>
+                            <Divider />
+                            <AccordionDetails>
+                                <Grid container>
+                                    <Grid size="grow" sx={styles.tabBar}>
+                                        <TabBar
+                                            value={filteredType}
+                                            options={filterRulesOptions}
+                                            setValue={setFilteredType}
+                                        />
+                                    </Grid>
+                                    <Grid size="auto">
+                                        <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
+                                    </Grid>
                                 </Grid>
-                                <Grid size="auto">
-                                    <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
+                                <List>{buildRules()}</List>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography>{`${AUTOMATA_TITLE} ${
+                                    totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
+                                }`}</Typography>
+                            </AccordionSummary>
+                            <Divider />
+                            <AccordionDetails>
+                                <Grid container>
+                                    <Grid size="grow" sx={styles.tabBar}>
+                                        <TabBar
+                                            value={filteredFamily}
+                                            options={filterAutomataOptions}
+                                            setValue={setFilteredFamily}
+                                        />
+                                    </Grid>
+                                    <Grid size="auto">
+                                        <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                            <List>{buildRules()}</List>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography>{`${AUTOMATA_TITLE} ${
-                                totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
-                            }`}</Typography>
-                        </AccordionSummary>
-                        <Divider />
-                        <AccordionDetails>
-                            <Grid container>
-                                <Grid size="grow" sx={styles.tabBar}>
-                                    <TabBar
-                                        value={filteredFamily}
-                                        options={filterAutomataOptions}
-                                        setValue={setFilteredFamily}
-                                    />
-                                </Grid>
-                                <Grid size="auto">
-                                    <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
-                                </Grid>
-                            </Grid>
-                            <List>{buildAutomata()}</List>
-                        </AccordionDetails>
-                    </Accordion>
-                </Paper>
+                                <List>{buildAutomata()}</List>
+                            </AccordionDetails>
+                        </Accordion>
+                    </Box>
+                </Stack>
             )}
             <AttachDialog
                 studies={studies}

@@ -51,7 +51,7 @@ const Automaton = (props) => {
 
     return (
         <Paper elevation={24} sx={mergeSx(styles.automatonPaper, !isAutomatonValid && styles.invalidAutomatonPaper)}>
-            <Grid container>
+            <Grid container sx={{ padding: 1 }}>
                 <Grid size={{ xs: 12, md: 4 }} paddingRight={1}>
                     <Stack>
                         <Grid container justifyContent="flex-start">

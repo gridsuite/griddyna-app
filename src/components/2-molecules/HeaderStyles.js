@@ -8,11 +8,11 @@
 const ICON_SIZE = '2em';
 
 export const styles = {
-    headerBox: {
-        border: '1px solid',
+    headerBox: (theme) => ({
+        border: `1px solid ${theme.palette.grey[500]}`,
         borderRadius: '5px',
-        marginBottom: 1,
-    },
+        margin: 1,
+    }),
     errorBorderColor: {
         borderColor: 'red',
     },

@@ -12,8 +12,8 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from '@gridsuite/commons-ui';
-import { store } from '../redux/store';
-import App from './app';
+import { store } from 'redux/store';
+import App from '../App';
 
 jest.mock('uuid', () => ({ v4: () => '00000000-0000-0000-0000-000000000000' }));
 

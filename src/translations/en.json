@@ -36,5 +36,8 @@
     "addFavoriteStudiesError": "An error occurred while adding favorite studies",
     "removeFavoriteStudiesError": "An error occurred while removing favorite studies",
     "getStudiesError": "An error occurred while fetching studies",
-    "getPropertyValuesFromStudyIdError": "An error occurred while fetching property values from a study"
+    "getPropertyValuesFromStudyIdError": "An error occurred while fetching property values from a study",
+
+    "updateConfigParameterError": "An error occurred while updating a configuration parameter",
+    "fetchAppsMetadataError": "An error occurred while fetching apps metadata"
 }
