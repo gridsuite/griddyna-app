@@ -36,5 +36,8 @@
     "addFavoriteStudiesError": "Une erreur est survenue lors de l'ajout d'études favorites",
     "removeFavoriteStudiesError": "Une erreur est survenue lors de la suppression d'études favorites",
     "getStudiesError": "Une erreur est survenue lors de la récupération des études",
-    "getPropertyValuesFromStudyIdError": "Une erreur est survenue lors de la récupération des valeurs de propriété à partir d'une étude"
+    "getPropertyValuesFromStudyIdError": "Une erreur est survenue lors de la récupération des valeurs de propriété à partir d'une étude",
+
+    "updateConfigParameterError": "Une erreur est survenue lors de la mise à jour d'un paramètre de configuration",
+    "fetchAppsMetadataError": "Une erreur est survenue lors de la récupération des métadonnées des applications"
 }

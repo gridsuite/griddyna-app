@@ -6,43 +6,29 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router';
-import { Box, CssBaseline } from '@mui/material';
-import { upperFirst } from 'lodash';
+import { useLocation, useMatch, useNavigate } from 'react-router';
 import {
     AnnouncementNotification,
     AuthenticationRouter,
     CardErrorBoundary,
-    COMMON_APP_NAME,
     fetchConfigParameter,
-    getPreLoginPath,
-    type GsLang,
-    GsTheme,
     initializeAuthenticationDev,
     initializeAuthenticationProd,
     logout,
     NotificationsUrlKeys,
-    PARAM_DEVELOPER_MODE,
-    PARAM_LANGUAGE,
-    PARAM_THEME,
     snackWithFallback,
-    TopBar,
-    updateConfigParameter,
     useNotificationsListener,
     type UserManagerState,
     useSnackMessage,
 } from '@gridsuite/commons-ui';
-import { FormattedMessage } from 'react-intl';
-import PowsyblLogo from '../images/powsybl_logo.svg?react';
-import AppPackage from '../../package.json';
-import { fetchAppsAndUrls, fetchIdpSettings, fetchVersion } from '../utils/rest-api';
-import { getServersInfos } from '../rest/studyAPI';
+import { fetchIdpSettings } from '../utils/rest-api';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { UserSlice } from '../redux/slices/User';
-import RootContainer from '../containers/RootContainer';
 import { APP_NAME } from '../utils/config-params';
-import { ConfigSlice, getDeveloperMode, getLang, getTheme, loadConfig } from '../redux/slices/Config';
+import { ConfigSlice, getDeveloperMode, loadConfig } from '../redux/slices/Config';
 import { ConfigParameter } from '../redux/types/config.type';
+import { AppLayout } from './layout/AppLayout';
+import { AppRouter } from './router/AppRouter';
 
 const noUserManager = { instance: null, error: null } satisfies UserManagerState;
 
@@ -61,8 +47,6 @@ const App = () => {
 
     const [userManager, setUserManager] = useState<UserManagerState>(noUserManager);
 
-    const [appsAndUrls, setAppsAndUrls] = useState([]);
-
     const navigate = useNavigate();
 
     const dispatch = useAppDispatch();
@@ -75,37 +59,7 @@ const App = () => {
         [dispatch]
     );
 
-    const lang = useSelector(getLang);
-    const handleLangClick = useCallback(
-        (newLangValue: GsLang) => {
-            updateConfigParameter(COMMON_APP_NAME, PARAM_LANGUAGE, newLangValue).catch((error) => {
-                snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
-            });
-        },
-        [snackError]
-    );
-
     const isDeveloperMode = useSelector(getDeveloperMode);
-    const handleDeveloperModeClick = useCallback(
-        (newDeveloperModeValue: boolean) => {
-            updateConfigParameter(COMMON_APP_NAME, PARAM_DEVELOPER_MODE, newDeveloperModeValue.toString()).catch(
-                (error) => {
-                    snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
-                }
-            );
-        },
-        [snackError]
-    );
-
-    const theme = useSelector(getTheme);
-    const handleThemeClick = useCallback(
-        (newThemeValue: GsTheme) => {
-            updateConfigParameter(COMMON_APP_NAME, PARAM_THEME, newThemeValue).catch((error) => {
-                snackWithFallback(snackError, error, { headerId: 'paramsChangingError' });
-            });
-        },
-        [snackError]
-    );
 
     const location = useLocation();
 
@@ -153,9 +107,6 @@ const App = () => {
 
     useEffect(() => {
         if (userProfile !== null) {
-            fetchAppsAndUrls().then((res) => {
-                setAppsAndUrls(res);
-            });
             // load config
             dispatch(loadConfig());
         }
@@ -178,53 +129,15 @@ const App = () => {
     });
 
     return (
-        <>
-            <CssBaseline />
-            <TopBar
-                appName={upperFirst(APP_NAME)}
-                appColor="grey"
-                appLogo={<PowsyblLogo />}
-                appVersion={AppPackage.version}
-                appLicense={AppPackage.license}
-                onLogoClick={() => navigate('/', { replace: true })}
-                onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
-                userProfile={userProfile ?? undefined}
-                appsAndUrls={appsAndUrls}
-                globalVersionPromise={() => fetchVersion().then((res) => res?.deployVersion)}
-                additionalModulesPromise={getServersInfos}
-                onDeveloperModeClick={handleDeveloperModeClick}
-                developerMode={isDeveloperMode ?? false}
-                onLanguageClick={handleLangClick}
-                language={lang as GsLang}
-                onThemeClick={handleThemeClick}
-                theme={theme as GsTheme}
-            />
+        <AppLayout
+            onLogoutClick={() => logout(authenticationDispatch, userManager.instance)}
+            isDeveloperMode={isDeveloperMode ?? false}
+            isAuthenticated={userProfile !== null}
+        >
             <AnnouncementNotification userProfile={userProfile} />
             <CardErrorBoundary>
                 {userProfile !== null ? (
-                    <Routes>
-                        <Route
-                            path="/"
-                            element={
-                                <Box mt={1}>
-                                    <RootContainer />
-                                </Box>
-                            }
-                        />
-                        <Route path="/sign-in-callback" element={<Navigate replace to={getPreLoginPath() || '/'} />} />
-                        <Route
-                            path="/logout-callback"
-                            element={<h1>Error: logout failed; you are still logged in.</h1>}
-                        />
-                        <Route
-                            path="*"
-                            element={
-                                <h1>
-                                    <FormattedMessage id="PageNotFound" />
-                                </h1>
-                            }
-                        />
-                    </Routes>
+                    <AppRouter />
                 ) : (
                     <AuthenticationRouter
                         userManager={userManager}
@@ -237,7 +150,7 @@ const App = () => {
                     />
                 )}
             </CardErrorBoundary>
-        </>
+        </AppLayout>
     );
 };
 

@@ -7,7 +7,7 @@
 
 import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { IconButton, List, ListItem, ListItemButton } from '@mui/material';
+import { Box, IconButton, List, ListItem, ListItemButton } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ContextMenu from './ContextMenu';
 import AddButton from '../1-atoms/buttons/AddButton.jsx';
@@ -55,11 +55,13 @@ const NavigationMenu = (props) => {
     return (
         <>
             {addItem !== undefined && (
-                <AddButton
-                    label={intl.formatMessage({ id: 'addMapping' })}
-                    onClick={() => setAddDialog(true)}
-                    sx={styles.new}
-                />
+                <Box sx={{ margin: 1 }}>
+                    <AddButton
+                        label={intl.formatMessage({ id: 'addMapping' })}
+                        onClick={() => setAddDialog(true)}
+                        sx={styles.new}
+                    />
+                </Box>
             )}
             <List>
                 {items.map((item) => {

@@ -5,9 +5,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { DARK_THEME, type GsTheme } from '@gridsuite/commons-ui';
+import { DARK_THEME, GsLang, type GsTheme, LANG_SYSTEM } from '@gridsuite/commons-ui';
+import { APP_NAME } from 'utils/config-params';
 
-const LOCAL_STORAGE_THEME_KEY = `${import.meta.env.VITE_NAME}_THEME`;
+const LOCAL_STORAGE_THEME_KEY = `${APP_NAME}_THEME`.toUpperCase();
+const LOCAL_STORAGE_LANGUAGE_KEY = `${APP_NAME}_LANGUAGE`.toUpperCase();
 
 export function getLocalStorageTheme() {
     return (localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as GsTheme) || DARK_THEME;
@@ -15,4 +17,12 @@ export function getLocalStorageTheme() {
 
 export function saveLocalStorageTheme(theme: GsTheme) {
     localStorage.setItem(LOCAL_STORAGE_THEME_KEY, theme);
+}
+
+export function getLocalStorageLanguage() {
+    return (localStorage.getItem(LOCAL_STORAGE_LANGUAGE_KEY) as GsLang) || LANG_SYSTEM;
+}
+
+export function saveLocalStorageLanguage(language: GsLang) {
+    localStorage.setItem(LOCAL_STORAGE_LANGUAGE_KEY, language);
 }

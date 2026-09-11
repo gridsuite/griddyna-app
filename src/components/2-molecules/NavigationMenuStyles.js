@@ -7,10 +7,10 @@
 
 export const styles = {
     new: {
-        marginTop: '10px',
         justifyContent: 'space-between',
         pointerEvents: 'auto !important',
         borderRadius: '16px',
+        width: '100%',
     },
     itemText: { paddingTop: 0.5, paddingBottom: 0.5 },
 };
