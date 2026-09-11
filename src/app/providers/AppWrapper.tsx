@@ -9,82 +9,15 @@ import { Provider, useSelector } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { IntlProvider } from 'react-intl';
 import { CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
-import {
-    CardErrorBoundary,
-    cardErrorBoundaryEn,
-    cardErrorBoundaryFr,
-    commonButtonEn,
-    commonButtonFr,
-    descriptionEn,
-    descriptionFr,
-    equipmentShortEn,
-    equipmentShortFr,
-    errorsEn,
-    errorsFr,
-    filterEn,
-    filterExpertEn,
-    filterExpertFr,
-    filterFr,
-    genericValidationEn,
-    genericValidationFr,
-    getComputedLanguage,
-    loginEn,
-    loginFr,
-    NotificationsProvider,
-    SnackbarProvider,
-    topBarEn,
-    topBarFr,
-    treeviewFinderEn,
-    treeviewFinderFr,
-    useUniqueNameValidationEn,
-    useUniqueNameValidationFr,
-} from '@gridsuite/commons-ui';
+import { CardErrorBoundary, getComputedLanguage, NotificationsProvider, SnackbarProvider } from '@gridsuite/commons-ui';
 import { getMuiTheme } from 'utils/config-theme';
 import { store } from 'redux/store';
-import messages_en from 'translations/en.json';
-import messages_fr from 'translations/fr.json';
-import { businessErrorsEn } from 'translations/businessErrorsEn';
-import { businessErrorsFr } from 'translations/businessErrorsFr';
 
 import useNotificationsUrlGenerator from 'hooks/use-notification-url-generator';
 import { getLang, getTheme } from 'redux/slices/Config';
 import { getLocalStorageLanguage, getLocalStorageTheme } from 'redux/local-storage';
 import App from '../App';
-
-const messages = {
-    en: {
-        ...messages_en,
-        ...loginEn,
-        ...topBarEn,
-        ...cardErrorBoundaryEn,
-        ...commonButtonEn,
-        ...descriptionEn,
-        ...equipmentShortEn,
-        ...errorsEn,
-        ...filterEn,
-        ...filterExpertEn,
-        ...treeviewFinderEn,
-        ...useUniqueNameValidationEn,
-        ...businessErrorsEn,
-        ...genericValidationEn,
-    },
-    fr: {
-        ...messages_fr,
-        ...loginFr,
-        ...topBarFr,
-        ...cardErrorBoundaryFr,
-        ...commonButtonFr,
-        ...descriptionFr,
-        ...equipmentShortFr,
-        ...errorsFr,
-        ...filterFr,
-        ...filterExpertFr,
-        ...treeviewFinderFr,
-        ...useUniqueNameValidationFr,
-        ...businessErrorsFr,
-        ...genericValidationFr,
-    },
-} as const;
+import { appMessages } from '../config/app-messages';
 
 const basename = new URL(document.querySelector('base')!.href).pathname;
 
@@ -97,7 +30,7 @@ function AppProvidersWithStore() {
     const urlMapper = useNotificationsUrlGenerator();
 
     return (
-        <IntlProvider locale={computedLanguage} messages={messages[computedLanguage]}>
+        <IntlProvider locale={computedLanguage} messages={appMessages[computedLanguage]}>
             <BrowserRouter basename={basename}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={themeCompiled}>

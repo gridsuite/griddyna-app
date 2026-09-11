@@ -21,12 +21,12 @@ import {
     type UserManagerState,
     useSnackMessage,
 } from '@gridsuite/commons-ui';
-import { fetchIdpSettings } from 'utils/rest-api';
-import { useAppDispatch, useAppSelector } from 'redux/store';
-import { UserSlice } from 'redux/slices/User';
-import { APP_NAME } from 'utils/config-params';
-import { ConfigSlice, getDeveloperMode, loadConfig } from 'redux/slices/Config';
-import { ConfigParameter } from 'redux/types/config.type';
+import { fetchIdpSettings } from '../utils/rest-api';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { UserSlice } from '../redux/slices/User';
+import { APP_NAME } from '../utils/config-params';
+import { ConfigSlice, getDeveloperMode, loadConfig } from '../redux/slices/Config';
+import { ConfigParameter } from '../redux/types/config.type';
 import { AppLayout } from './layout/AppLayout';
 import { AppRouter } from './router/AppRouter';
 

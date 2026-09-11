@@ -4,19 +4,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-
+import { screen } from '@testing-library/react';
 import { createRoot } from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import { IntlProvider } from 'react-intl';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import { createTheme, CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from '@gridsuite/commons-ui';
-import { store } from 'redux/store';
+import { store } from '../../redux/store';
+import { appMessages } from '../config/app-messages';
 import App from '../App';
 
 jest.mock('uuid', () => ({ v4: () => '00000000-0000-0000-0000-000000000000' }));
-
+jest.mock('features/side-bar/components/AppSideBar', () => ({
+    AppSideBar: () => <div>GridDyna</div>,
+}));
 let container: HTMLDivElement | null = null;
 beforeEach(() => {
     // setup a DOM element as a render target
@@ -34,7 +37,7 @@ it('renders', async () => {
     const root = createRoot(container!);
     await act(async () =>
         root.render(
-            <IntlProvider locale="en">
+            <IntlProvider locale="en" messages={appMessages.en}>
                 <BrowserRouter>
                     <Provider store={store}>
                         <StyledEngineProvider injectFirst>
@@ -51,7 +54,12 @@ it('renders', async () => {
         )
     );
 
-    expect(container?.textContent).toContain('GridDyna');
+    const res1 = await screen.findAllByText((_, element) => {
+        return element?.textContent === 'GridDyna';
+    });
+
+    expect(res1.length).toBeGreaterThan(0);
+
     act(() => {
         root.unmount();
     });

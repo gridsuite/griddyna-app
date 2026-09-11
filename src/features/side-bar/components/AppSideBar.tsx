@@ -26,15 +26,15 @@ import {
     useSnackMessage,
 } from '@gridsuite/commons-ui';
 import { upperFirst } from 'lodash';
-import GriddynaLogoLight from 'images/griddyna_logo_light.svg?react';
-import GriddynaLogoDark from 'images/griddyna_logo_dark.svg?react';
-import { fetchVersion } from 'utils/rest-api';
-import { getServersInfos } from 'rest/studyAPI';
-import { APP_NAME } from 'utils/config-params';
-import { getMuiTheme } from 'utils/config-theme';
+import GriddynaLogoLight from '../../../images/griddyna_logo_light.svg?react';
+import GriddynaLogoDark from '../../../images/griddyna_logo_dark.svg?react';
+import { fetchVersion } from '../../../utils/rest-api';
+import { getServersInfos } from '../../../rest/studyAPI';
+import { APP_NAME } from '../../../utils/config-params';
+import { getMuiTheme } from '../../../utils/config-theme';
 import AppPackage from '../../../../package.json';
-import { getDeveloperMode, getLang, getTheme } from 'redux/slices/Config';
-import { useAppSelector } from 'redux/store';
+import { getDeveloperMode, getLang, getTheme } from '../../../redux/slices/Config';
+import { useAppSelector } from '../../../redux/store';
 import { getLocalStorageLanguage, getLocalStorageTheme } from '../../../redux/local-storage';
 
 type SideBarProps = {
