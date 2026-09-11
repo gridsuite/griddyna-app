@@ -127,7 +127,7 @@ export function AppSideBar({ onLogoutClick }: Readonly<SideBarProps>) {
             selectedLanguage={selectedLanguage}
             setSelectedLanguage={setSelectedLanguage}
             appName={upperFirst(APP_NAME)}
-            appNameColor={isDarkMode ? '#47b452' : '#6fd377'}
+            appNameColor={isDarkMode ? '#5EC900' : '#77FF00'}
             appLogo={isDarkMode ? <GriddynaLogoDark /> : <GriddynaLogoLight />}
             userProfile={userProfile ?? undefined}
             globalVersionPromise={() => fetchVersion().then((res) => res.deployVersion ?? 'unknown')}
