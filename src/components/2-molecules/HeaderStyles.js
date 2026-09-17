@@ -12,6 +12,8 @@ export const styles = {
         border: `1px solid ${theme.palette.grey[500]}`,
         borderRadius: '5px',
         margin: 1,
+        pt: 0.5,
+        pb: 0.5,
     }),
     errorBorderColor: {
         borderColor: 'red',

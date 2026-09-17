@@ -7,9 +7,9 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeGetAutomaton, makeIsAutomatonValid, MappingSlice } from '../redux/slices/Mapping';
+import { getCurrentStudy, makeGetAutomaton, makeIsAutomatonValid, MappingSlice } from '../redux/slices/Mapping';
 import { makeGetAutomatonDefinition, makeGetModels } from '../redux/slices/Model';
-import { getCurrentNetworkId, getPropertyValues } from '../redux/slices/Network';
+import { getPropertyValues } from '../redux/slices/Network';
 import PropTypes from 'prop-types';
 import Automaton from '../components/3-organisms/Automaton';
 import { GroupEditionOrigin, SetType } from '../constants/models';
@@ -32,7 +32,7 @@ const AutomatonContainer = ({ index, editParameters }) => {
 
     const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
 
-    const currentNetworkId = useSelector(getCurrentNetworkId);
+    const currentStudy = useSelector(getCurrentStudy);
     const dispatch = useDispatch();
     const changeFamily = (newFamily) =>
         dispatch(
@@ -136,7 +136,7 @@ const AutomatonContainer = ({ index, editParameters }) => {
             copyAutomaton={copyAutomaton}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
-            isNetworkAttached={!!currentNetworkId}
+            isStudyAttached={!!currentStudy}
         />
     );
 };

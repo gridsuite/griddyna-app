@@ -5,12 +5,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { useCallback, useMemo, useState } from 'react';
 import { Button, Grid, Typography } from '@mui/material';
 import { FolderOutlined } from '@mui/icons-material';
 import { FormattedMessage } from 'react-intl';
-import { DirectoryItemSelector, DirectoryItemSelectorProps, TreeViewFinderNodeProps } from '@gridsuite/commons-ui';
-import { useCallback, useMemo, useState } from 'react';
 import type { UUID } from 'node:crypto';
+import { DirectoryItemSelector, DirectoryItemSelectorProps, TreeViewFinderNodeProps } from '@gridsuite/commons-ui';
+import { breadCrumb } from '../../../utils/directory-utils';
 
 const separator = '/';
 
@@ -41,19 +42,7 @@ export default function DirectoryItemSelect({
     const itemName = selectedFolder ? selectedFolder + separator + selectedItem : selectedItem;
 
     const formatPathName = useMemo(() => {
-        if (itemName.length > 48) {
-            const splitNameList = itemName.split('/');
-            const lastFolder = splitNameList.at(-1) as string;
-            if (splitNameList.length > 2) {
-                const firstFolder = splitNameList.at(0) as string;
-                if (firstFolder.length + lastFolder.length < 48) {
-                    return `${firstFolder}/.../${lastFolder}`;
-                }
-            }
-            return `.../${lastFolder}`;
-            // splitNameList length can not be equal to one because there is at least one root folder
-        }
-        return itemName;
+        return breadCrumb(itemName);
     }, [itemName]);
 
     const handleClose = useCallback(

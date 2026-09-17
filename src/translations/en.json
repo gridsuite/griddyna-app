@@ -1,6 +1,7 @@
 {
     "close": "Close",
     "addMapping": "ADD A MAPPING",
+    "saveMapping": "Save",
     "addMappingError" : "Error occurred while adding a mapping",
     "addMappingDialogTitle": "Add a mapping",
     "emptyMapping": "Create an empty mapping",
@@ -29,6 +30,11 @@
     "noSelectedStudyText": "No study selected.",
     "selectStudy": "Select a study",
     "attach": "Attach",
+    "attachStudy": "Pick a study",
+    "updateStudy": "Pick other study",
+    "detachStudy": "Detach",
+    "detachStudyTooltip": "Detach a study from current mapping",
+    "fetchDirectoryElementPathError": "An error occurred while loading the directory element path",
 
     "attachStudyDialogTitle": "Attach a study",
     "attachKnownStudy": "Attach a known study",

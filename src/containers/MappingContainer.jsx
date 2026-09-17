@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FolderOutlined } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -20,12 +21,13 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import { useIntl } from 'react-intl';
-import { useSnackMessage } from '@gridsuite/commons-ui';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { fetchDirectoryElementPath, snackWithFallback, useSnackMessage } from '@gridsuite/commons-ui';
 import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
+    getCurrentStudy,
     getGroupedAutomataNumber,
     getGroupedRulesNumber,
     getRulesNumber,
@@ -34,8 +36,9 @@ import {
     MappingSlice,
     ruleTabsValid as ruleTabsValidSelector,
     updateMapping,
+    updateMappingStudy,
 } from '../redux/slices/Mapping';
-import { getCurrentStudyInfos, getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
+import { getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -47,7 +50,10 @@ import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
-import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config.ts';
+import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config';
+import DetachButton from '../components/1-atoms/buttons/DetachButton';
+import AttachButton from '../components/1-atoms/buttons/AttachButton';
+import { breadCrumb } from '../utils/directory-utils';
 
 const styles = {
     tabBar: {
@@ -79,7 +85,7 @@ const MappingContainer = () => {
     const isMappingValid = useSelector(isMappingValidSelector);
     const studies = useSelector((state) => state.network.knownStudies);
     const favoriteStudies = useSelector(getFavoriteStudies);
-    const currentStudy = useSelector(getCurrentStudyInfos);
+    const currentStudy = useSelector(getCurrentStudy);
     const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector((state) => state.mappings.filteredRuleType);
     const filteredFamily = useSelector((state) => state.mappings.filteredAutomatonFamily);
@@ -104,6 +110,29 @@ const MappingContainer = () => {
                 snackError({ headerId: 'getStudiesError', messageId: error.message });
             });
     }, [dispatch, snackError, favoriteStudies]);
+
+    const [currentStudyBreadCrumb, setCurrentStudyBreadCrumb] = useState();
+    const [loadingBreadCrumb, setLoadingBreadCrumb] = useState(false);
+
+    // fetch breadCrumb the current study
+    useEffect(() => {
+        if (currentStudy) {
+            setLoadingBreadCrumb(true);
+            fetchDirectoryElementPath(currentStudy)
+                .then((path) => {
+                    const itemName = path.map((elem) => elem.elementName).join('/');
+                    setCurrentStudyBreadCrumb(breadCrumb(itemName));
+                })
+                .catch((error) => {
+                    snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                })
+                .finally(() => {
+                    setLoadingBreadCrumb(false);
+                });
+        } else {
+            setCurrentStudyBreadCrumb(undefined);
+        }
+    }, [currentStudy, snackError]);
 
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
@@ -130,7 +159,21 @@ const MappingContainer = () => {
         dispatch(updateMapping());
     }
 
+    function attachStudy() {
+        setIsAttachedModalOpen(true);
+    }
+
+    function detachStudy() {
+        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: null }));
+    }
+
     function attachKnownStudy(id) {
+        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'updateMappingStudyError', messageId: error.message });
+            });
         dispatch(getPropertyValuesFromStudyId(id))
             .unwrap()
             .catch((error) => {
@@ -145,6 +188,12 @@ const MappingContainer = () => {
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                 snackError({ headerId: 'addFavoriteStudiesError', messageId: error.message });
+            });
+        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'updateMappingStudyError', messageId: error.message });
             });
         dispatch(getPropertyValuesFromStudyId(id))
             .unwrap()
@@ -213,14 +262,43 @@ const MappingContainer = () => {
                 <Stack height="100%">
                     <Header
                         name={activeMappingName}
-                        currentStudy={currentStudy}
                         isModified={isModified}
                         isValid={isMappingValid && areParametersValid}
                         save={saveMapping}
                         saveTooltip={SAVE_LABEL}
-                        attach={() => setIsAttachedModalOpen(true)}
-                        attachTooltip={intl.formatMessage({ id: 'attachStudyDialogTitle' })}
                     />
+                    <Grid container justifyContent="flex-end" alignItems="center" paddingLeft={1} marginY={1}>
+                        <Grid paddingTop={1}>
+                            <FolderOutlined />
+                        </Grid>
+                        <Grid size="grow" paddingLeft={1}>
+                            {!loadingBreadCrumb && (
+                                <>
+                                    {currentStudyBreadCrumb ? (
+                                        <Typography noWrap fontWeight="bold" title={'study'}>
+                                            {`${currentStudyBreadCrumb}`}
+                                        </Typography>
+                                    ) : (
+                                        <FormattedMessage id={'noSelectedStudyText'} />
+                                    )}
+                                </>
+                            )}
+                        </Grid>
+                        <Grid container justifyContent="flex-end" paddingRight={2} spacing={1}>
+                            <AttachButton
+                                label={intl.formatMessage({ id: currentStudy ? 'updateStudy' : 'attachStudy' })}
+                                onClick={attachStudy}
+                                variant={currentStudy ? 'contained' : undefined}
+                            />
+                            <DetachButton
+                                label={intl.formatMessage({ id: 'detachStudy' })}
+                                onClick={detachStudy}
+                                tooltip={intl.formatMessage({ id: 'detachStudyTooltip' })}
+                                disabled={!currentStudy}
+                                variant={currentStudy ? 'outlined' : undefined}
+                            />
+                        </Grid>
+                    </Grid>
                     <Grid container justifyContent="flex-start" paddingLeft={1}>
                         <Grid size={12}>
                             <FormControlLabel

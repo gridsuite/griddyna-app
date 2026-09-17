@@ -6,25 +6,16 @@
  */
 
 import { Grid, Tooltip, Typography } from '@mui/material';
-import { AttachButton, SaveButton } from '../1-atoms/buttons/';
 import PropTypes from 'prop-types';
+import { useIntl } from 'react-intl';
 import { styles } from './HeaderStyles';
 import { mergeSx } from 'utils/functions';
+import SaveButton from '../1-atoms/buttons/SaveButton';
 
 const outdatedLabel = 'Generated elements are outdated, re-generate them to delete this warning';
 
-const Header = (props) => {
-    const {
-        name,
-        currentStudy,
-        isModified = false,
-        isValid = true,
-        save,
-        saveTooltip,
-        attach,
-        attachTooltip,
-        isCurrent = true,
-    } = props;
+const Header = ({ name, isModified = false, isValid = true, save, saveTooltip, isCurrent = true }) => {
+    const intl = useIntl();
 
     const getHeaderBoxStyle = () => {
         if (!isValid) {
@@ -50,18 +41,19 @@ const Header = (props) => {
             <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h6" sx={getTitleStyle()}>
-                        {`${name}${isModified ? '*' : ''} :`}
+                        {`${name}${isModified ? '*' : ''}`}
                     </Typography>
                 </Tooltip>
-                <Typography variant="h6" sx={getTitleStyle()}>
-                    {`${currentStudy?.studyName ?? ''}`}
-                </Typography>
             </Grid>
             <Grid size="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
                 {save !== undefined && (
-                    <SaveButton onClick={save} tooltip={saveTooltip} disabled={!isModified || !isValid} />
+                    <SaveButton
+                        label={intl.formatMessage({ id: 'saveMapping' })}
+                        onClick={save}
+                        tooltip={saveTooltip}
+                        disabled={!isModified || !isValid}
+                    />
                 )}
-                {attach !== undefined && <AttachButton onClick={attach} tooltip={attachTooltip} />}
             </Grid>
         </Grid>
     );
@@ -69,17 +61,11 @@ const Header = (props) => {
 
 Header.propTypes = {
     name: PropTypes.string.isRequired,
-    currentStudy: PropTypes.shape({
-        studyId: PropTypes.string,
-        studyName: PropTypes.string,
-    }),
     isModified: PropTypes.bool,
     isValid: PropTypes.bool,
     isCurrent: PropTypes.bool,
     save: PropTypes.func,
     saveTooltip: PropTypes.string,
-    attach: PropTypes.func,
-    attachTooltip: PropTypes.string,
 };
 
 export default Header;

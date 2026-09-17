@@ -7,6 +7,7 @@
 
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSnackMessage } from '@gridsuite/commons-ui';
 import {
     addMapping as addMappingAction,
     exportMapping as exportMappingAction,
@@ -15,11 +16,10 @@ import {
     MappingSlice,
 } from '../redux/slices/Mapping';
 import NavigationMenu from '../components/2-molecules/NavigationMenu';
-import { NetworkSlice } from '../redux/slices/Network';
+import { getPropertyValuesFromStudyId, NetworkSlice } from '../redux/slices/Network';
 import { getAutomatonDefinitions, getModels } from '../redux/slices/Model';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { AutomatonFamily } from '../constants/automatonDefinition';
-import { useSnackMessage } from '@gridsuite/commons-ui';
 import { addFavoriteMappings, getFavoriteMappings, removeFavoriteMappings } from '../redux/slices/Config';
 
 const MenuContainer = () => {
@@ -62,19 +62,29 @@ const MenuContainer = () => {
                         // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                         snackError({ headerId: 'addFavoriteMappingsError', messageId: error.message });
                     });
+                dispatch(getPropertyValuesFromStudyId())
+                    .unwrap()
+                    .catch((error) => {
+                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                        snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                    });
             })
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                 snackError({ headerId: 'addMappingError', messageId: error.message });
             });
-        dispatch(NetworkSlice.actions.cleanNetwork());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
     const selectMapping = (id) => () => {
         dispatch(MappingSlice.actions.selectMapping({ id }));
-        dispatch(NetworkSlice.actions.cleanNetwork());
+        dispatch(getPropertyValuesFromStudyId())
+            .unwrap()
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+            });
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
