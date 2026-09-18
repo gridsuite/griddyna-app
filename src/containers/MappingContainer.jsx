@@ -241,21 +241,7 @@ const MappingContainer = () => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                 snackError({ headerId: 'addFavoriteStudiesError', messageId: error.message });
             });
-        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
-            .unwrap()
-            .then(() => {
-                dispatch(NetworkSlice.actions.cleanNetwork());
-                dispatch(getPropertyValuesFromStudyId(id))
-                    .unwrap()
-                    .catch((error) => {
-                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                        snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
-                    });
-            })
-            .catch((error) => {
-                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'attachMappingStudyError', messageId: error.message });
-            });
+        attachKnownStudy(id);
     }
 
     function deleteKnownStudy(id) {
