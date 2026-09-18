@@ -14,6 +14,7 @@ const initialState = {
     propertyValues: [],
     knownStudies: [],
     status: RequestStatus.IDLE,
+    propertyValuesRequestId: null, // technique value to avoid stale data
 };
 
 // base selectors
@@ -60,15 +61,23 @@ const extraReducers = (builder) => {
 [GET_TYPES] // Get the properties
 */
     builder.addCase(getPropertyValuesFromStudyId.fulfilled, (state, action) => {
+        if (state.propertyValuesRequestId !== action.meta.requestId) {
+            return;
+        }
         state.status = RequestStatus.SUCCESS;
         const { propertyValues } = action.payload;
         state.propertyValues = propertyValues;
     });
-    builder.addCase(getPropertyValuesFromStudyId.rejected, (state, _action) => {
+    builder.addCase(getPropertyValuesFromStudyId.rejected, (state, action) => {
+        if (state.propertyValuesRequestId !== action.meta.requestId) {
+            return;
+        }
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(getPropertyValuesFromStudyId.pending, (state, _action) => {
+    builder.addCase(getPropertyValuesFromStudyId.pending, (state, action) => {
         state.status = RequestStatus.PENDING;
+        console.log('xxx requestId', action.meta.requestId);
+        state.propertyValuesRequestId = action.meta.requestId;
     });
     builder.addCase(getStudies.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;
