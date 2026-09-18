@@ -36,6 +36,8 @@
     "detachStudy": "Detach",
     "detachStudyTooltip": "Detach a study from current mapping",
     "fetchDirectoryElementPathError": "An error occurred while loading the directory element path",
+    "attachMappingStudyError": "An error occurred while attaching a study to the mapping",
+    "detachMappingStudyError": "An error occurred while detaching a study from the mapping",
 
     "attachStudyDialogTitle": "Attach a study",
     "attachKnownStudy": "Attach a known study",

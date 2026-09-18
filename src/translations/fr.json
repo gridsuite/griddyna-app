@@ -35,7 +35,9 @@
     "updateStudy": "Choisir autre étude",
     "detachStudy": "Detacher",
     "detachStudyTooltip": "Detacher une étude du mapping",
-    "fetchDirectoryElementPathError": "Erreur lors de la récupération du chemin d'un élement",
+    "fetchDirectoryElementPathError": "Erreur lors de la récupération du chemin d'un élément",
+    "attachMappingStudyError": "Une erreur est survenue lors de l'attachement d'une étude au mapping",
+    "detachMappingStudyError": "Une erreur est survenue lors du détachement d'une étude du mapping",
 
     "attachStudyDialogTitle": "Attacher une étude",
     "attachKnownStudy": "Attacher une étude connue",

@@ -38,7 +38,7 @@ import {
     updateMapping,
     updateMappingStudy,
 } from '../redux/slices/Mapping';
-import { getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
+import { getPropertyValuesFromStudyId, getStudies, NetworkSlice } from '../redux/slices/Network';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -116,16 +116,24 @@ const MappingContainer = () => {
 
     // fetch breadCrumb the current study
     useEffect(() => {
+        let ignore = false;
         if (activeMapping) {
             fetchDirectoryElementPath(activeMapping)
                 .then((path) => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
-                    setActiveMappingBreadCrumb(breadCrumb(itemName));
+                    if (!ignore) {
+                        setActiveMappingBreadCrumb(breadCrumb(itemName));
+                    }
                 })
                 .catch((error) => {
-                    snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                    if (!ignore) {
+                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                    }
                 });
         }
+        return () => {
+            ignore = true;
+        };
     }, [activeMapping, snackError]);
 
     const [currentStudyBreadCrumb, setCurrentStudyBreadCrumb] = useState();
@@ -133,22 +141,32 @@ const MappingContainer = () => {
 
     // fetch breadCrumb the current study
     useEffect(() => {
+        let ignore = false;
         if (currentStudy) {
             setLoadingCurrentStudyBreadCrumb(true);
             fetchDirectoryElementPath(currentStudy)
                 .then((path) => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
-                    setCurrentStudyBreadCrumb(breadCrumb(itemName));
+                    if (!ignore) {
+                        setCurrentStudyBreadCrumb(breadCrumb(itemName));
+                    }
                 })
                 .catch((error) => {
-                    snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                    if (!ignore) {
+                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                    }
                 })
                 .finally(() => {
-                    setLoadingCurrentStudyBreadCrumb(false);
+                    if (!ignore) {
+                        setLoadingCurrentStudyBreadCrumb(false);
+                    }
                 });
         } else {
             setCurrentStudyBreadCrumb(undefined);
         }
+        return () => {
+            ignore = true;
+        };
     }, [currentStudy, snackError]);
 
     // make header alway open when switching mapping
@@ -187,21 +205,31 @@ const MappingContainer = () => {
     }
 
     function detachStudy() {
-        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: null }));
+        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: null }))
+            .unwrap()
+            .then(() => {
+                dispatch(NetworkSlice.actions.cleanNetwork());
+            })
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'detachMappingStudyError', messageId: error.message });
+            });
     }
 
     function attachKnownStudy(id) {
         dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
             .unwrap()
+            .then(() => {
+                dispatch(getPropertyValuesFromStudyId(id))
+                    .unwrap()
+                    .catch((error) => {
+                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                        snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                    });
+            })
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'updateMappingStudyError', messageId: error.message });
-            });
-        dispatch(getPropertyValuesFromStudyId(id))
-            .unwrap()
-            .catch((error) => {
-                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                snackError({ headerId: 'attachMappingStudyError', messageId: error.message });
             });
     }
 
@@ -214,15 +242,17 @@ const MappingContainer = () => {
             });
         dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
             .unwrap()
+            .then(() => {
+                dispatch(getPropertyValuesFromStudyId(id))
+                    .unwrap()
+                    .catch((error) => {
+                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                        snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                    });
+            })
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'updateMappingStudyError', messageId: error.message });
-            });
-        dispatch(getPropertyValuesFromStudyId(id))
-            .unwrap()
-            .catch((error) => {
-                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                snackError({ headerId: 'attachMappingStudyError', messageId: error.message });
             });
     }
 
