@@ -6,6 +6,7 @@
  */
 
 import { Grid, Tooltip, Typography } from '@mui/material';
+import { FolderOutlined } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { styles } from './HeaderStyles';
@@ -14,7 +15,7 @@ import SaveButton from '../1-atoms/buttons/SaveButton';
 
 const outdatedLabel = 'Generated elements are outdated, re-generate them to delete this warning';
 
-const Header = ({ name, isModified = false, isValid = true, save, saveTooltip, isCurrent = true }) => {
+const Header = ({ name, breadCrumbName, isModified = false, isValid = true, save, saveTooltip, isCurrent = true }) => {
     const intl = useIntl();
 
     const getHeaderBoxStyle = () => {
@@ -37,15 +38,18 @@ const Header = ({ name, isModified = false, isValid = true, save, saveTooltip, i
         return titleStyle;
     };
     return (
-        <Grid container sx={getHeaderBoxStyle()}>
+        <Grid container justifyContent={'flex-end'} sx={getHeaderBoxStyle()}>
+            <Grid paddingTop={1}>
+                <FolderOutlined />
+            </Grid>
             <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h6" sx={getTitleStyle()}>
-                        {`${name}${isModified ? '*' : ''}`}
+                        {`${breadCrumbName || name}${isModified ? '*' : ''}`}
                     </Typography>
                 </Tooltip>
             </Grid>
-            <Grid size="auto" sx={mergeSx(styles.gridButton, styles.buttonIcon)}>
+            <Grid size="auto" sx={mergeSx(styles.gridButton)}>
                 {save !== undefined && (
                     <SaveButton
                         label={intl.formatMessage({ id: 'saveMapping' })}
@@ -61,6 +65,7 @@ const Header = ({ name, isModified = false, isValid = true, save, saveTooltip, i
 
 Header.propTypes = {
     name: PropTypes.string.isRequired,
+    breadCrumbName: PropTypes.string,
     isModified: PropTypes.bool,
     isValid: PropTypes.bool,
     isCurrent: PropTypes.bool,

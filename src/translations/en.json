@@ -1,5 +1,6 @@
 {
     "close": "Close",
+    "noMappingSelected": "No mapping selected",
     "addMapping": "ADD A MAPPING",
     "saveMapping": "Save",
     "addMappingError" : "Error occurred while adding a mapping",
