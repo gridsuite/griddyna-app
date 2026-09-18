@@ -113,12 +113,10 @@ const MappingContainer = () => {
     }, [dispatch, snackError, favoriteStudies]);
 
     const [activeMappingBreadCrumb, setActiveMappingBreadCrumb] = useState();
-    const [loadingActiveMappingBreadCrumb, setLoadingActiveMappingBreadCrumb] = useState(false);
 
     // fetch breadCrumb the current study
     useEffect(() => {
         if (activeMapping) {
-            setLoadingActiveMappingBreadCrumb(true);
             fetchDirectoryElementPath(activeMapping)
                 .then((path) => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
@@ -126,12 +124,7 @@ const MappingContainer = () => {
                 })
                 .catch((error) => {
                     snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
-                })
-                .finally(() => {
-                    setLoadingActiveMappingBreadCrumb(false);
                 });
-        } else {
-            setActiveMappingBreadCrumb(undefined);
         }
     }, [activeMapping, snackError]);
 
