@@ -220,6 +220,7 @@ const MappingContainer = () => {
         dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
             .unwrap()
             .then(() => {
+                dispatch(NetworkSlice.actions.cleanNetwork());
                 dispatch(getPropertyValuesFromStudyId(id))
                     .unwrap()
                     .catch((error) => {
@@ -243,6 +244,7 @@ const MappingContainer = () => {
         dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
             .unwrap()
             .then(() => {
+                dispatch(NetworkSlice.actions.cleanNetwork());
                 dispatch(getPropertyValuesFromStudyId(id))
                     .unwrap()
                     .catch((error) => {
