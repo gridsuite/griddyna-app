@@ -119,6 +119,8 @@ export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 export const getAutomata = (state) => state.mappings.automata;
 export const getFilteredAutomatonFamily = (state) => state.mappings.filteredAutomatonFamily;
 
+export const getCurrentStudy = (state) => state.mappings.currentStudy;
+
 // Selectors
 export const getGroupedRulesNumber = createSelector(getRules, (rules) => {
     const groupedRulesNumber = {};
@@ -476,10 +478,16 @@ export const updateMapping = createAsyncThunk('mappings/update', async (id, { ge
             ? state?.mappings.mappings.find((mapping) => mapping.id === id)?.controlledParameters
             : state?.mappings.controlledParameters;
 
+    const studyUuid =
+        id && id !== state?.mappings.activeMapping
+            ? state?.mappings.mappings.find((mapping) => mapping.id === id)?.studyUuid
+            : state?.mappings.currentStudy;
+
     const mapping = {
         rules: augmentedRules,
         automata: formattedAutomata,
         controlledParameters,
+        studyUuid,
     };
 
     await mappingsAPI.updateMapping(mappingId, mapping, token);
@@ -540,11 +548,22 @@ export const addMapping = createAsyncThunk(
         return await mappingsAPI.getMapping(newMappingId, token);
     }
 );
+
+export const updateMappingStudy = createAsyncThunk(
+    'mappings/updateStudy',
+    async ({ mappingId, studyUuid }, { getState }) => {
+        const state = getState();
+        const token = state?.user.user?.id_token;
+        await mappingsAPI.updateMappingStudy(mappingId, studyUuid, token);
+        return { mappingId, studyUuid };
+    }
+);
+
 export const getNetworkMatchesFromRule = createAsyncThunk('mappings/matchNetwork', async (ruleIndex, { getState }) => {
     const state = getState();
     const token = state?.user.user?.id_token;
     const { rules, filteredRuleType } = state?.mappings;
-    const studyId = state?.network.currentStudy;
+    const studyId = state?.mappings.currentStudy;
     const foundRule = filterRulesByType(rules, filteredRuleType)[ruleIndex];
     const ruleToMatch = {
         ruleIndex,
@@ -572,7 +591,7 @@ export const makeChangeFilterValueThenGetNetworkMatches = () => {
             const state = getState();
 
             // study should be attached
-            if (!state.network.currentStudy) {
+            if (!state.mappings.currentStudy) {
                 return;
             }
 
@@ -738,6 +757,7 @@ const reducers = {
             state.automata = mappingToUse.automata;
             state.activeMapping = id;
             state.controlledParameters = mappingToUse.controlledParameters;
+            state.currentStudy = mappingToUse.studyUuid;
         }
     },
     removeMapping: (state, action) => {
@@ -747,6 +767,8 @@ const reducers = {
             state.rules = [];
             state.automata = [];
             state.activeMapping = undefined;
+            state.controlledParameters = false;
+            state.currentStudy = null;
         }
     },
 };
@@ -771,6 +793,7 @@ const extraReducers = (builder) => {
                 );
                 state.automata = receivedMapping.automata;
                 state.controlledParameters = receivedMapping.controlledParameters;
+                state.currentStudy = receivedMapping.studyUuid;
             }
         }
     });
@@ -842,8 +865,28 @@ const extraReducers = (builder) => {
         state.rules = transformedMapping.rules;
         state.automata = transformedMapping.automata;
         state.controlledParameters = transformedMapping.controlledParameters;
+        state.currentStudy = transformedMapping.studyUuid;
     });
     builder.addCase(addMapping.rejected, (state, _action) => {
+        state.status = RequestStatus.ERROR;
+    });
+
+    // --- update study ---
+    builder.addCase(updateMappingStudy.pending, (state) => {
+        state.status = RequestStatus.PENDING;
+    });
+    builder.addCase(updateMappingStudy.fulfilled, (state, action) => {
+        state.status = RequestStatus.SUCCESS;
+        const { mappingId, studyUuid } = action.payload;
+        const foundMapping = state.mappings.find((mapping) => mapping.id === mappingId);
+        if (foundMapping) {
+            foundMapping.studyUuid = studyUuid;
+            if (mappingId === state.activeMapping) {
+                state.currentStudy = studyUuid;
+            }
+        }
+    });
+    builder.addCase(updateMappingStudy.rejected, (state, _action) => {
         state.status = RequestStatus.ERROR;
     });
 };

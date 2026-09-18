@@ -134,3 +134,18 @@ export function updateMapping(mappingId, mapping, token) {
         token
     );
 }
+export function updateMappingStudy(mappingId, studyUuid, token) {
+    return backendFetch(
+        `${API_MAPPING_URL}/${mappingId}/study`,
+        {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            cache: 'default',
+            body: studyUuid ? JSON.stringify(studyUuid) : null,
+        },
+        token
+    );
+}
