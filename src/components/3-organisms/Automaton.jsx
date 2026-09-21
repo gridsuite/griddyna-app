@@ -30,7 +30,7 @@ const Automaton = (props) => {
         copyAutomaton,
         editGroup = () => {},
         controlledParameters = false,
-        isNetworkAttached = false,
+        isStudyAttached = false,
     } = props;
     const { family, model, setGroup } = automaton;
     // TODO intl
@@ -73,7 +73,7 @@ const Automaton = (props) => {
                                 changeGroup={changeParameters}
                                 editGroup={editGroup}
                                 controlledParameters={controlledParameters}
-                                isNetworkAttached={isNetworkAttached}
+                                isNetworkAttached={isStudyAttached}
                             />
                         </Stack>
                     </Stack>
@@ -111,7 +111,7 @@ Automaton.propTypes = {
     copyAutomaton: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
-    isNetworkAttached: PropTypes.bool,
+    isStudyAttached: PropTypes.bool,
 };
 
 export default Automaton;

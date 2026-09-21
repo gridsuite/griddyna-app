@@ -86,7 +86,7 @@ const AutomatonProperties = ({
                                 </Grid>
                             </Grid>
                             {index !== propertyNames.length - 1 && (
-                                <Grid sx={{ paddingRight: '8px' }}>
+                                <Grid sx={{ paddingRight: 1 }}>
                                     <Divider />
                                 </Grid>
                             )}

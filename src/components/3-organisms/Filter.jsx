@@ -42,7 +42,7 @@ const Filter = (props) => {
                 </Grid>
                 <Grid size="auto" sx={{ paddingLeft: 1 }}>
                     <AddIconButton onClick={newFilter} tooltip={addFilterLabel} disabled={hasFilter} />
-                    <DeleteButton onClick={deleteFilter} isDirty tooltip={deleteFilterLabel} disabled={!hasFilter} />
+                    <DeleteButton onClick={deleteFilter} tooltip={deleteFilterLabel} disabled={!hasFilter} />
                 </Grid>
             </Grid>
             {hasFilter ? (

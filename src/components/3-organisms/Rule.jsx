@@ -31,7 +31,7 @@ const Rule = (props) => {
         changeParameters = () => {},
         editGroup = () => {},
         controlledParameters = false,
-        isNetworkAttached = false,
+        isStudyAttached = false,
     } = props;
     const { type, mappedModel, setGroup, groupType, hasFilter, matches = [] } = rule;
 
@@ -73,20 +73,20 @@ const Rule = (props) => {
                                 changeGroup={changeParameters}
                                 editGroup={editGroup}
                                 controlledParameters={controlledParameters}
-                                isNetworkAttached={isNetworkAttached}
+                                isNetworkAttached={isStudyAttached}
                             />
                         </Stack>
                     </Stack>
                 </Grid>
                 <Grid size={{ xs: 12, md: 8 }}>{children}</Grid>
                 <Grid size={{ xs: 12, md: 12 }} sx={{ paddingTop: 1 }}>
-                    {isNetworkAttached && hasFilter && (
+                    {isStudyAttached && hasFilter && (
                         <Paper sx={styles.matches}>
                             <Grid container>
-                                <Grid size={4} sx={{ maxHeight: '7em', overflowY: 'auto' }}>
+                                <Grid size={4} sx={{ maxHeight: '7em', overflowY: 'auto', paddingLeft: 1 }}>
                                     <Typography variant="subtitle1">{`${matchesLabel} :`}</Typography>
                                 </Grid>
-                                <Grid size={8} sx={{ maxHeight: '7em', overflowY: 'auto' }}>
+                                <Grid size={8} sx={{ maxHeight: '7em', overflowY: 'auto', paddingLeft: 1 }}>
                                     <Typography>
                                         {matches.length > 0 ? `${matches.join(', ')}` : noMatchesLabel}
                                     </Typography>
@@ -109,7 +109,7 @@ Rule.propTypes = {
     changeParameters: PropTypes.func.isRequired,
     editGroup: PropTypes.func.isRequired,
     controlledParameters: PropTypes.bool,
-    isNetworkAttached: PropTypes.bool,
+    isStudyAttached: PropTypes.bool,
 };
 
 export default Rule;

@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import RequestStatus from '../../constants/RequestStatus';
 import * as studyAPI from '../../rest/studyAPI';
 import { PropertyType } from '../../constants/equipmentType';
@@ -13,8 +13,8 @@ import { PropertyType } from '../../constants/equipmentType';
 const initialState = {
     propertyValues: [],
     knownStudies: [],
-    currentStudy: '',
     status: RequestStatus.IDLE,
+    propertyValuesRequestId: null, // technique value to avoid stale data
 };
 
 // base selectors
@@ -28,25 +28,20 @@ export const getNetworkValues = (propertyValues, equipmentType, fullProperty) =>
             fullProperty?.type === PropertyType.BOOLEAN ? value === 'true' : value
         ) ?? [];
 
-export const getCurrentNetworkId = (state) => state.network.currentStudy;
-
-// from the current study id => get study infos
-export const getCurrentStudyInfos = createSelector(
-    (state) => state.network.currentStudy,
-    (state) => state.network.knownStudies,
-    (currentStudy, knownStudies) => {
-        return knownStudies?.find((study) => study.studyId === currentStudy);
-    }
-);
-
 // Reducers
 
 export const getPropertyValuesFromStudyId = createAsyncThunk(
     'network/getValuesFromStudyId',
     async (studyId, { getState }) => {
         const token = getState()?.user.user?.id_token;
+        if (!studyId) {
+            studyId = getState()?.mappings.currentStudy;
+        }
+        if (!studyId) {
+            return { propertyValues: [] };
+        }
         const { propertyValues } = await studyAPI.getNetworkValuesFromStudy(studyId, token);
-        return { propertyValues, studyId };
+        return { propertyValues };
     }
 );
 
@@ -57,7 +52,6 @@ export const getStudies = createAsyncThunk('network/getStudies', async ({ ids },
 const reducers = {
     cleanNetwork: (state) => {
         state.propertyValues = [];
-        state.currentStudy = '';
     },
 };
 
@@ -67,16 +61,22 @@ const extraReducers = (builder) => {
 [GET_TYPES] // Get the properties
 */
     builder.addCase(getPropertyValuesFromStudyId.fulfilled, (state, action) => {
+        if (state.propertyValuesRequestId !== action.meta.requestId) {
+            return;
+        }
         state.status = RequestStatus.SUCCESS;
-        const { propertyValues, studyId } = action.payload;
+        const { propertyValues } = action.payload;
         state.propertyValues = propertyValues;
-        state.currentStudy = studyId;
     });
-    builder.addCase(getPropertyValuesFromStudyId.rejected, (state, _action) => {
+    builder.addCase(getPropertyValuesFromStudyId.rejected, (state, action) => {
+        if (state.propertyValuesRequestId !== action.meta.requestId) {
+            return;
+        }
         state.status = RequestStatus.ERROR;
     });
-    builder.addCase(getPropertyValuesFromStudyId.pending, (state, _action) => {
+    builder.addCase(getPropertyValuesFromStudyId.pending, (state, action) => {
         state.status = RequestStatus.PENDING;
+        state.propertyValuesRequestId = action.meta.requestId;
     });
     builder.addCase(getStudies.fulfilled, (state, action) => {
         state.status = RequestStatus.SUCCESS;

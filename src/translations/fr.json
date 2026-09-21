@@ -1,6 +1,8 @@
 {
     "close": "Fermer",
+    "noMappingSelected": "Aucun mapping sélectionné",
     "addMapping": "AJOUTER UN MAPPING",
+    "saveMapping": "Enregistrer",
     "addMappingError" : "Une erreur est survenue lors de l'ajout d'un mapping",
     "addMappingDialogTitle": "Ajouter un mapping",
     "emptyMapping": "Créer un mapping vide",
@@ -19,7 +21,7 @@
     "addFavoriteMappingsError": "Une erreur est survenue lors de l'ajout des mappings favoris",
     "removeFavoriteMappingsError": "Une erreur est survenue lors de la suppression des mappings favoris",
 
-    "loadParentDirectoryMappingError": "Erreur lors de la récupération du parent directory du mapping",
+    "loadParentDirectoryMappingError": "Erreur lors de la récupération du répertoire parent du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
 
     "NoFolder": "Aucun dossier sélectionné",
@@ -29,6 +31,13 @@
     "noSelectedStudyText": "Aucune étude sélectionnée.",
     "selectStudy": "Sélectionner une étude",
     "attach": "Attacher",
+    "attachStudy": "Choisir une étude",
+    "updateStudy": "Choisir autre étude",
+    "detachStudy": "Détacher",
+    "detachStudyTooltip": "Détacher une étude du mapping",
+    "fetchDirectoryElementPathError": "Erreur lors de la récupération du chemin d'un élément",
+    "attachMappingStudyError": "Une erreur est survenue lors de l'attachement d'une étude au mapping",
+    "detachMappingStudyError": "Une erreur est survenue lors du détachement d'une étude du mapping",
 
     "attachStudyDialogTitle": "Attacher une étude",
     "attachKnownStudy": "Attacher une étude connue",

@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FolderOutlined } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -20,12 +21,13 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import { useIntl } from 'react-intl';
-import { useSnackMessage } from '@gridsuite/commons-ui';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { fetchDirectoryElementPath, snackWithFallback, useSnackMessage } from '@gridsuite/commons-ui';
 import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
     getAutomataNumber,
+    getCurrentStudy,
     getGroupedAutomataNumber,
     getGroupedRulesNumber,
     getRulesNumber,
@@ -34,8 +36,9 @@ import {
     MappingSlice,
     ruleTabsValid as ruleTabsValidSelector,
     updateMapping,
+    updateMappingStudy,
 } from '../redux/slices/Mapping';
-import { getCurrentStudyInfos, getPropertyValuesFromStudyId, getStudies } from '../redux/slices/Network';
+import { getPropertyValuesFromStudyId, getStudies, NetworkSlice } from '../redux/slices/Network';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
@@ -47,7 +50,11 @@ import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 import { AutomatonFamily } from '../constants/automatonDefinition';
 import { RuleEquipmentTypes } from '../constants/equipmentType';
-import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config.ts';
+import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config';
+import DetachButton from '../components/1-atoms/buttons/DetachButton';
+import AttachButton from '../components/1-atoms/buttons/AttachButton';
+import { breadCrumb } from 'utils/directory-utils';
+import { styles as sharedStyles } from 'utils/styles-utils';
 
 const styles = {
     tabBar: {
@@ -79,7 +86,7 @@ const MappingContainer = () => {
     const isMappingValid = useSelector(isMappingValidSelector);
     const studies = useSelector((state) => state.network.knownStudies);
     const favoriteStudies = useSelector(getFavoriteStudies);
-    const currentStudy = useSelector(getCurrentStudyInfos);
+    const currentStudy = useSelector(getCurrentStudy);
     const groupedRulesNumber = useSelector(getGroupedRulesNumber);
     const filteredType = useSelector((state) => state.mappings.filteredRuleType);
     const filteredFamily = useSelector((state) => state.mappings.filteredAutomatonFamily);
@@ -104,6 +111,69 @@ const MappingContainer = () => {
                 snackError({ headerId: 'getStudiesError', messageId: error.message });
             });
     }, [dispatch, snackError, favoriteStudies]);
+
+    const [activeMappingBreadCrumb, setActiveMappingBreadCrumb] = useState();
+
+    // fetch breadCrumb the current study
+    useEffect(() => {
+        let ignore = false;
+        if (activeMapping) {
+            fetchDirectoryElementPath(activeMapping)
+                .then((path) => {
+                    const itemName = path.map((elem) => elem.elementName).join('/');
+                    if (!ignore) {
+                        setActiveMappingBreadCrumb(breadCrumb(itemName));
+                    }
+                })
+                .catch((error) => {
+                    if (!ignore) {
+                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                    }
+                });
+        }
+        return () => {
+            ignore = true;
+        };
+    }, [activeMapping, snackError]);
+
+    const [currentStudyBreadCrumb, setCurrentStudyBreadCrumb] = useState();
+    const [loadingCurrentStudyBreadCrumb, setLoadingCurrentStudyBreadCrumb] = useState(false);
+
+    // fetch breadCrumb the current study
+    useEffect(() => {
+        let ignore = false;
+        if (currentStudy) {
+            setLoadingCurrentStudyBreadCrumb(true);
+            fetchDirectoryElementPath(currentStudy)
+                .then((path) => {
+                    const itemName = path.map((elem) => elem.elementName).join('/');
+                    if (!ignore) {
+                        setCurrentStudyBreadCrumb(breadCrumb(itemName));
+                    }
+                })
+                .catch((error) => {
+                    if (!ignore) {
+                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                    }
+                })
+                .finally(() => {
+                    if (!ignore) {
+                        setLoadingCurrentStudyBreadCrumb(false);
+                    }
+                });
+        } else {
+            setCurrentStudyBreadCrumb(undefined);
+        }
+        return () => {
+            ignore = true;
+        };
+    }, [currentStudy, snackError]);
+
+    // make header alway open when switching mapping
+    const [isHeaderExpanded, setIsHeaderExpanded] = useState(true);
+    useEffect(() => {
+        setIsHeaderExpanded(true);
+    }, [activeMapping]);
 
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
@@ -130,12 +200,37 @@ const MappingContainer = () => {
         dispatch(updateMapping());
     }
 
-    function attachKnownStudy(id) {
-        dispatch(getPropertyValuesFromStudyId(id))
+    function attachStudy() {
+        setIsAttachedModalOpen(true);
+    }
+
+    function detachStudy() {
+        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: null }))
             .unwrap()
+            .then(() => {
+                dispatch(NetworkSlice.actions.cleanNetwork());
+            })
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                snackError({ headerId: 'detachMappingStudyError', messageId: error.message });
+            });
+    }
+
+    function attachKnownStudy(id) {
+        dispatch(updateMappingStudy({ mappingId: activeMapping, studyUuid: id }))
+            .unwrap()
+            .then(() => {
+                dispatch(NetworkSlice.actions.cleanNetwork());
+                dispatch(getPropertyValuesFromStudyId(id))
+                    .unwrap()
+                    .catch((error) => {
+                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                        snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
+                    });
+            })
+            .catch((error) => {
+                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
+                snackError({ headerId: 'attachMappingStudyError', messageId: error.message });
             });
     }
 
@@ -146,12 +241,7 @@ const MappingContainer = () => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                 snackError({ headerId: 'addFavoriteStudiesError', messageId: error.message });
             });
-        dispatch(getPropertyValuesFromStudyId(id))
-            .unwrap()
-            .catch((error) => {
-                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
-            });
+        attachKnownStudy(id);
     }
 
     function deleteKnownStudy(id) {
@@ -211,39 +301,80 @@ const MappingContainer = () => {
         <>
             {activeMapping && (
                 <Stack sx={{ height: '100%' }}>
-                    <Header
-                        name={activeMappingName}
-                        currentStudy={currentStudy}
-                        isModified={isModified}
-                        isValid={isMappingValid && areParametersValid}
-                        save={saveMapping}
-                        saveTooltip={SAVE_LABEL}
-                        attach={() => setIsAttachedModalOpen(true)}
-                        attachTooltip={intl.formatMessage({ id: 'attachStudyDialogTitle' })}
-                    />
-                    <Grid container sx={{ justifyContent: 'flex-start', paddingLeft: 1 }}>
-                        <Grid size={12}>
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        // <Checkbox
-                                        checked={controlledParameters}
-                                        onChange={changeControlledParameters}
-                                    />
-                                }
-                                label={CONTROLLED_PARAMETERS_LABEL}
+                    <Accordion expanded={isHeaderExpanded} onChange={(_, expanded) => setIsHeaderExpanded(expanded)}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
+                            <Header
+                                name={activeMappingName}
+                                breadCrumbName={activeMappingBreadCrumb}
+                                isModified={isModified}
+                                isValid={isMappingValid && areParametersValid}
+                                save={(event) => {
+                                    event.stopPropagation(); //  to avoid event bubbles up to AccordionSummary which change open/close state
+                                    saveMapping();
+                                }}
+                                saveTooltip={SAVE_LABEL}
                             />
-                        </Grid>
-                    </Grid>
+                        </AccordionSummary>
+                        <Divider />
+                        <AccordionDetails>
+                            <Grid container sx={{ justifyContent: 'flex-end', alignItems: 'center' }}>
+                                <Grid sx={{ paddingTop: 1 }}>
+                                    <FolderOutlined />
+                                </Grid>
+                                <Grid size="grow" sx={{ paddingLeft: 1 }}>
+                                    {!loadingCurrentStudyBreadCrumb && (
+                                        <>
+                                            {currentStudyBreadCrumb ? (
+                                                <Typography noWrap fontWeight="bold" title={'study'}>
+                                                    {`${currentStudyBreadCrumb}`}
+                                                </Typography>
+                                            ) : (
+                                                <FormattedMessage id={'noSelectedStudyText'} />
+                                            )}
+                                        </>
+                                    )}
+                                </Grid>
+                                <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1, spacing: 1 }}>
+                                    <AttachButton
+                                        label={intl.formatMessage({ id: currentStudy ? 'updateStudy' : 'attachStudy' })}
+                                        onClick={attachStudy}
+                                        variant={currentStudy ? 'contained' : undefined}
+                                    />
+                                    <DetachButton
+                                        label={intl.formatMessage({ id: 'detachStudy' })}
+                                        onClick={detachStudy}
+                                        tooltip={intl.formatMessage({ id: 'detachStudyTooltip' })}
+                                        disabled={!currentStudy}
+                                        variant={currentStudy ? 'outlined' : undefined}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid container sx={{ justifyContent: 'flex-start' }}>
+                                <Grid size={12}>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                // <Checkbox
+                                                checked={controlledParameters}
+                                                onChange={changeControlledParameters}
+                                            />
+                                        }
+                                        label={CONTROLLED_PARAMETERS_LABEL}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </AccordionDetails>
+                    </Accordion>
                     <Box
                         // scrollbar only in the mapping definition zone
                         sx={{
+                            pt: 1,
                             flex: 1,
                             overflowY: 'auto',
                         }}
                     >
                         <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
                                 <Typography>{`${MODELS_TITLE} ${
                                     totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
                                 }`}</Typography>
@@ -266,7 +397,7 @@ const MappingContainer = () => {
                             </AccordionDetails>
                         </Accordion>
                         <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
                                 <Typography>{`${AUTOMATA_TITLE} ${
                                     totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
                                 }`}</Typography>
