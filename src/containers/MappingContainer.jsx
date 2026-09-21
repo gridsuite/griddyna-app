@@ -334,7 +334,7 @@ const MappingContainer = () => {
                                         </>
                                     )}
                                 </Grid>
-                                <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1, spacing: 1 }}>
+                                <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1 }} spacing={1}>
                                     <AttachButton
                                         label={intl.formatMessage({ id: currentStudy ? 'updateStudy' : 'attachStudy' })}
                                         onClick={attachStudy}
