@@ -17,7 +17,7 @@ const ModelSelect = (props) => {
     const { model, models, changeModel } = props;
 
     return (
-        <Grid container justifyContent={'center'}>
+        <Grid container sx={{ justifyContent: 'center' }}>
             <Grid size="grow" sx={styles.gridItem}>
                 <Typography variant="subtitle1">{`${modelLabel} :`}</Typography>
             </Grid>

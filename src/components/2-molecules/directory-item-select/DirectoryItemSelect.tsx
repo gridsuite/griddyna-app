@@ -71,13 +71,13 @@ export default function DirectoryItemSelect({
     );
 
     return (
-        <Grid container alignItems="center" marginY={1}>
-            <Grid paddingTop={1}>
+        <Grid container sx={{ alignItems: 'center', marginY: 1 }}>
+            <Grid sx={{ paddingTop: 1 }}>
                 <FolderOutlined />
             </Grid>
-            <Grid size="grow" paddingLeft={1}>
+            <Grid size="grow" sx={{ paddingLeft: 1 }}>
                 {selectedItem ? (
-                    <Typography noWrap fontWeight="bold" title={itemName}>
+                    <Typography noWrap title={itemName} sx={{ fontWeight: 'bold' }}>
                         {formatPathName}
                     </Typography>
                 ) : (

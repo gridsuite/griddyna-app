@@ -36,11 +36,11 @@ const Filter = (props) => {
 
     return (
         <Stack>
-            <Grid container justifyContent={'flex-start'}>
+            <Grid container sx={{ justifyContent: 'flex-start' }}>
                 <Grid size="grow">
                     <Typography>{filterLabel}</Typography>
                 </Grid>
-                <Grid size="auto" paddingLeft={1}>
+                <Grid size="auto" sx={{ paddingLeft: 1 }}>
                     <AddIconButton onClick={newFilter} tooltip={addFilterLabel} disabled={hasFilter} />
                     <DeleteButton onClick={deleteFilter} isDirty tooltip={deleteFilterLabel} disabled={!hasFilter} />
                 </Grid>
@@ -48,7 +48,7 @@ const Filter = (props) => {
             {hasFilter ? (
                 <CustomReactQueryBuilder name={EXPERT_FILTER_QUERY} fields={translatedFields} />
             ) : (
-                <Box display="flex" alignItems="center">
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography variant="subtitle2" sx={mergeSx(styles.noFilter, !isValid && styles.invalid)}>
                         {noFilterLabel}
                     </Typography>

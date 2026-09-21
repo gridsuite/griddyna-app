@@ -23,11 +23,11 @@ export function AppLayout({
     children,
 }: Readonly<PropsWithChildren<AppTopBarProps>>) {
     return (
-        <Stack height="100vh">
+        <Stack sx={{ height: '100vh' }}>
             {isAuthenticated && isDeveloperMode && <DevModeBanner />}
-            <Stack direction="row" flex={1} overflow="hidden">
+            <Stack direction="row" sx={{ flex: 1, overflow: 'hidden' }}>
                 <AppSideBar onLogoutClick={onLogoutClick} />
-                <Stack flex={1}>
+                <Stack sx={{ flex: 1 }}>
                     {/* AppTopBar can be added here if needed */}
                     {children}
                 </Stack>

@@ -210,7 +210,7 @@ const MappingContainer = () => {
     return (
         <>
             {activeMapping && (
-                <Stack height="100%">
+                <Stack sx={{ height: '100%' }}>
                     <Header
                         name={activeMappingName}
                         currentStudy={currentStudy}
@@ -221,7 +221,7 @@ const MappingContainer = () => {
                         attach={() => setIsAttachedModalOpen(true)}
                         attachTooltip={intl.formatMessage({ id: 'attachStudyDialogTitle' })}
                     />
-                    <Grid container justifyContent="flex-start" paddingLeft={1}>
+                    <Grid container sx={{ justifyContent: 'flex-start', paddingLeft: 1 }}>
                         <Grid size={12}>
                             <FormControlLabel
                                 control={

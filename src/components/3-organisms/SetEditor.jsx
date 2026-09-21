@@ -50,7 +50,11 @@ const SetEditor = (props) => {
                 .map((definition) => {
                     const correspondingParameter = set.parameters.find((param) => param.name === definition.name);
                     return (
-                        <Grid container key={definition.name} justifyContent="space-evenly" sx={{ padding: '8px 0px' }}>
+                        <Grid
+                            container
+                            key={definition.name}
+                            sx={{ justifyContent: 'space-evenly', padding: '8px 0px' }}
+                        >
                             <Grid size={7}>
                                 <Typography>{definition.name}</Typography>
                             </Grid>
@@ -72,7 +76,7 @@ const SetEditor = (props) => {
                                     sx={{ width: '100%' }}
                                 />
                             </Grid>
-                            <Grid size="grow" padding={1}>
+                            <Grid size="grow" sx={{ padding: 1 }}>
                                 <Tooltip title={infoTypeLabel + definition.type}>
                                     <InfoIcon />
                                 </Tooltip>

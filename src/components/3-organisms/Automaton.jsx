@@ -52,13 +52,13 @@ const Automaton = (props) => {
     return (
         <Paper elevation={24} sx={mergeSx(styles.automatonPaper, !isAutomatonValid && styles.invalidAutomatonPaper)}>
             <Grid container sx={{ padding: 1 }}>
-                <Grid size={{ xs: 12, md: 4 }} paddingRight={1}>
+                <Grid size={{ xs: 12, md: 4 }} sx={{ paddingRight: 1 }}>
                     <Stack>
-                        <Grid container justifyContent="flex-start">
+                        <Grid container sx={{ justifyContent: 'flex-start' }}>
                             <Grid size="grow" sx={styles.titleLabel}>
                                 <Typography variant="subtitle2">{`${automatonLabel} ${family}`}</Typography>
                             </Grid>
-                            <Grid size="auto" paddingLeft={1}>
+                            <Grid size="auto" sx={{ paddingLeft: 1 }}>
                                 <DeleteButton onClick={deleteAutomaton} tooltip={deleteAutomatonLabel} />
                                 <CopyButton onClick={copyAutomaton} tooltip={copyAutomatonLabel} />
                             </Grid>
@@ -80,7 +80,7 @@ const Automaton = (props) => {
                 </Grid>
                 <Grid size={{ xs: 12, md: 8 }}>
                     <Stack>
-                        <Grid container justifyContent="flex-start" marginBottom={2}>
+                        <Grid container sx={{ justifyContent: 'flex-start', marginBottom: 2 }}>
                             <Grid size="grow">
                                 <Typography>{'Properties :'}</Typography>
                             </Grid>

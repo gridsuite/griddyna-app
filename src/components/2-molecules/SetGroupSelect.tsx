@@ -79,16 +79,16 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
     const errorInParams = controlledParameters && (foundGroup === undefined || foundGroup.setsNumber === 0);
 
     return (
-        <Grid container justifyContent={'flex-start'}>
-            <Grid container justifyContent={'flex-start'}>
+        <Grid container sx={{ justifyContent: 'flex-start' }}>
+            <Grid container sx={{ justifyContent: 'flex-start' }}>
                 <Grid size="grow" sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${isAbsoluteLabel} :`}</Typography>
                 </Grid>
-                <Grid container size="auto" justifyContent={'flex-end'}>
+                <Grid container size="auto" sx={{ justifyContent: 'flex-end' }}>
                     <Checkbox checked={isAbsolute} onChange={onAbsoluteChange} disabled={!isNetworkAttached} />
                 </Grid>
             </Grid>
-            <Grid container justifyContent={'flex-start'}>
+            <Grid container sx={{ justifyContent: 'flex-start' }}>
                 <Grid size="grow" sx={styles.gridItem}>
                     <Typography variant="subtitle1">{`${setLabel} :`}</Typography>
                 </Grid>

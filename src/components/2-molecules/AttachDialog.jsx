@@ -63,7 +63,7 @@ const AttachDialog = (props) => {
                     {studies.length > 0 && (
                         <Stack sx={styles.attachKnownStudy}>
                             <Typography>{intl.formatMessage({ id: 'attachKnownStudy' })}</Typography>
-                            <Grid container paddingY={2}>
+                            <Grid container sx={{ paddingY: 2 }}>
                                 <Grid size={10}>
                                     <DeletableAutocomplete
                                         options={studies.map((study) => ({
@@ -95,7 +95,7 @@ const AttachDialog = (props) => {
                     {
                         <Stack sx={styles.attachNewStudy}>
                             <Typography>{intl.formatMessage({ id: 'attachNewStudy' })}</Typography>
-                            <Grid container paddingY={1}>
+                            <Grid container sx={{ paddingY: 1 }}>
                                 <Grid size={10}>
                                     <DirectoryItemSelect
                                         types={[ElementType.STUDY]}

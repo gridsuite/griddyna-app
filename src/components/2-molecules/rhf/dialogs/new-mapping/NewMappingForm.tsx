@@ -43,7 +43,7 @@ function NewMappingForm() {
     const operationType = useWatch({ name: FieldConstants.OPERATION_TYPE });
     const folderItem = useWatch({ name: DIRECTORY_ITEM }) as DirectoryItemSchema;
     return (
-        <Stack spacing={2} marginTop="auto">
+        <Stack spacing={2} sx={{ marginTop: 'auto' }}>
             <RadioInput name={FieldConstants.OPERATION_TYPE} options={ADD_MAPPING_OPTIONS} />
             {(operationType === OperationType.NEW || operationType === OperationType.IMPORT_FILE) && (
                 <UniqueNameInput

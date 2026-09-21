@@ -16,7 +16,7 @@ type PageTemplateProps = {
 const PageTemplate = ({ menu, main }: Readonly<PageTemplateProps>) => {
     const theme = useTheme();
     return (
-        <Stack direction="row" height="100%">
+        <Stack direction="row" sx={{ height: '100%' }}>
             <Box
                 // menu has a scrollbar separated to the one inside the main
                 sx={{
