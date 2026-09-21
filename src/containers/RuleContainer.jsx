@@ -7,13 +7,18 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNetworkMatchesFromRule, makeGetRule, makeIsRuleValid, MappingSlice } from '../redux/slices/Mapping';
+import PropTypes from 'prop-types';
+import {
+    getCurrentStudy,
+    getNetworkMatchesFromRule,
+    makeGetRule,
+    makeIsRuleValid,
+    MappingSlice,
+} from '../redux/slices/Mapping';
 import { makeGetModels } from '../redux/slices/Model';
 import Rule from '../components/3-organisms/Rule';
 import FilterContainer from './FilterContainer';
-import PropTypes from 'prop-types';
 import { GroupEditionOrigin } from '../constants/models';
-import { getCurrentNetworkId } from '../redux/slices/Network';
 
 const RuleContainer = ({ index, editParameters }) => {
     const getRule = useMemo(makeGetRule, []);
@@ -25,8 +30,8 @@ const RuleContainer = ({ index, editParameters }) => {
     const models = useSelector((state) => getModels(state, rule.type));
 
     const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
+    const currentStudy = useSelector(getCurrentStudy);
 
-    const currentNetworkId = useSelector(getCurrentNetworkId);
     const dispatch = useDispatch();
 
     const changeModel = useCallback(
@@ -98,10 +103,10 @@ const RuleContainer = ({ index, editParameters }) => {
     }, [type, models, changeModel, mappedModel]);
 
     useEffect(() => {
-        if (!!currentNetworkId && isRuleValid) {
+        if (!!currentStudy && isRuleValid) {
             dispatch(getNetworkMatchesFromRule(index));
         }
-    }, [currentNetworkId, isRuleValid, index, /*composition,*/ dispatch]);
+    }, [currentStudy, isRuleValid, index, /*composition,*/ dispatch]);
 
     return (
         <Rule
@@ -114,7 +119,7 @@ const RuleContainer = ({ index, editParameters }) => {
             copyRule={copyRule}
             editGroup={editGroup}
             controlledParameters={controlledParameters}
-            isNetworkAttached={!!currentNetworkId}
+            isStudyAttached={!!currentStudy}
         >
             <FilterContainer ruleIndex={index} equipmentType={type} />
         </Rule>
