@@ -66,10 +66,13 @@ const NavigationMenu = (props) => {
     const [isMenuExpanded, setIsMenuExpanded] = useState(true);
 
     return (
-        <Accordion expanded={isMenuExpanded} onChange={(_, expanded) => setIsMenuExpanded(expanded)}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
+        <Accordion expanded={items?.length && isMenuExpanded} onChange={(_, expanded) => setIsMenuExpanded(expanded)}>
+            <AccordionSummary
+                expandIcon={items.length ? <ExpandMoreIcon /> : undefined}
+                sx={sharedStyles.accordionSummary}
+            >
                 {addItem !== undefined && (
-                    <Box>
+                    <Box sx={{ paddingRight: 1 }}>
                         <AddButton
                             label={intl.formatMessage({ id: 'addMapping' })}
                             onClick={(event) => {
