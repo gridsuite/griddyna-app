@@ -37,12 +37,16 @@ const Rule = (props) => {
 
     return (
         <Paper elevation={24} sx={mergeSx(styles.rulePaper, !isRuleValid && styles.invalidRulePaper)}>
-            <Grid container padding={1}>
-                <Grid size={{ xs: 12, md: 4 }} paddingRight={1}>
+            <Grid container sx={{ padding: 1 }}>
+                <Grid size={{ xs: 12, md: 4 }} sx={{ paddingRight: 1 }}>
                     <Stack>
-                        <Grid container justifyContent="flex-start">
+                        <Grid container sx={{ justifyContent: 'flex-start' }}>
                             <Grid container size="grow">
-                                <Grid container justifyContent="flex-start" spacing={1} alignItems="baseline">
+                                <Grid
+                                    container
+                                    spacing={1}
+                                    sx={{ justifyContent: 'flex-start', alignItems: 'baseline' }}
+                                >
                                     <Grid>
                                         <Typography variant="subtitle2">{equipmentLabel}</Typography>
                                     </Grid>
@@ -54,7 +58,7 @@ const Rule = (props) => {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid size="auto" paddingLeft={1}>
+                            <Grid size="auto" sx={{ paddingLeft: 1 }}>
                                 <DeleteButton onClick={deleteRule} tooltip={deleteRuleLabel} />
                                 <CopyButton onClick={copyRule} tooltip={copyRuleLabel} />
                             </Grid>
@@ -75,7 +79,7 @@ const Rule = (props) => {
                     </Stack>
                 </Grid>
                 <Grid size={{ xs: 12, md: 8 }}>{children}</Grid>
-                <Grid size={{ xs: 12, md: 12 }} paddingTop={1}>
+                <Grid size={{ xs: 12, md: 12 }} sx={{ paddingTop: 1 }}>
                     {isStudyAttached && hasFilter && (
                         <Paper sx={styles.matches}>
                             <Grid container>

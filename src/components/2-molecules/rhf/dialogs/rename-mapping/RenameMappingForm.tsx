@@ -14,7 +14,7 @@ type RenameMappingFormProps = {
 };
 function RenameMappingForm({ parentDirectory }: Readonly<RenameMappingFormProps>) {
     return (
-        <Stack spacing={2} marginTop="auto">
+        <Stack spacing={2} sx={{ marginTop: 'auto' }}>
             <Grid>
                 <UniqueNameInput
                     name={MAPPING_NAME}

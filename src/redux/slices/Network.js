@@ -76,7 +76,6 @@ const extraReducers = (builder) => {
     });
     builder.addCase(getPropertyValuesFromStudyId.pending, (state, action) => {
         state.status = RequestStatus.PENDING;
-        console.log('xxx requestId', action.meta.requestId);
         state.propertyValuesRequestId = action.meta.requestId;
     });
     builder.addCase(getStudies.fulfilled, (state, action) => {

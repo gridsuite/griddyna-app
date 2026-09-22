@@ -38,8 +38,8 @@ const Header = ({ name, breadCrumbName, isModified = false, isValid = true, save
         return titleStyle;
     };
     return (
-        <Grid container justifyContent={'flex-end'} sx={getHeaderBoxStyle()}>
-            <Grid paddingTop={1}>
+        <Grid container sx={mergeSx(getHeaderBoxStyle(), { justifyContent: 'flex-end' })}>
+            <Grid sx={{ paddingTop: 1 }}>
                 <FolderOutlined />
             </Grid>
             <Grid size="grow" sx={styles.gridTitle}>

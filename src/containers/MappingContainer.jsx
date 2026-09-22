@@ -300,7 +300,7 @@ const MappingContainer = () => {
     return (
         <>
             {activeMapping && (
-                <Stack height="100%">
+                <Stack sx={{ height: '100%' }}>
                     <Accordion expanded={isHeaderExpanded} onChange={(_, expanded) => setIsHeaderExpanded(expanded)}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
                             <Header
@@ -317,11 +317,11 @@ const MappingContainer = () => {
                         </AccordionSummary>
                         <Divider />
                         <AccordionDetails>
-                            <Grid container justifyContent="flex-end" alignItems="center">
-                                <Grid paddingTop={1}>
+                            <Grid container sx={{ justifyContent: 'flex-end', alignItems: 'center' }}>
+                                <Grid sx={{ paddingTop: 1 }}>
                                     <FolderOutlined />
                                 </Grid>
-                                <Grid size="grow" paddingLeft={1}>
+                                <Grid size="grow" sx={{ paddingLeft: 1 }}>
                                     {!loadingCurrentStudyBreadCrumb && (
                                         <>
                                             {currentStudyBreadCrumb ? (
@@ -334,7 +334,7 @@ const MappingContainer = () => {
                                         </>
                                     )}
                                 </Grid>
-                                <Grid container justifyContent="flex-end" paddingRight={1} spacing={1}>
+                                <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1 }} spacing={1}>
                                     <AttachButton
                                         label={intl.formatMessage({ id: currentStudy ? 'updateStudy' : 'attachStudy' })}
                                         onClick={attachStudy}
@@ -349,7 +349,7 @@ const MappingContainer = () => {
                                     />
                                 </Grid>
                             </Grid>
-                            <Grid container justifyContent="flex-start">
+                            <Grid container sx={{ justifyContent: 'flex-start' }}>
                                 <Grid size={12}>
                                     <FormControlLabel
                                         control={

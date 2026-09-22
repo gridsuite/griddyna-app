@@ -159,7 +159,13 @@ const Autocomplete = (props) => {
             sx={sxStyles.inputWidth}
             renderInput={(params) => <TextField {...params} label={label} error={error} />}
             isOptionEqualToValue={(option, value) => option.value === value.value}
-            PopperComponent={(props) => <Popper {...props} placement="bottom-start" style={{ width: 'fit-content' }} />}
+            slots={{ popper: Popper }}
+            slotProps={{
+                popper: {
+                    placement: 'bottom-start',
+                    style: { width: 'fit-content' },
+                },
+            }}
             {...rest}
         />
     );

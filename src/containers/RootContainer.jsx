@@ -15,8 +15,8 @@ import MenuContainer from './MenuContainer';
 const RootContainer = () => {
     const activeMapping = useSelector((state) => state.mappings.activeMapping);
     let mainContainer = (
-        <Stack direction="column" justifyContent="center" alignItems="center" height="100%">
-            <Typography align="center" variant="h5" paddingTop={1} color={'text.disabled'}>
+        <Stack direction="column" sx={{ justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Typography align="center" variant="h5" sx={{ paddingTop: 1, color: 'text.disabled' }}>
                 <FormattedMessage id="noMappingSelected" />
             </Typography>
         </Stack>

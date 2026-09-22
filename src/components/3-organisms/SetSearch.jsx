@@ -118,8 +118,8 @@ function SetSearch(props) {
             </AccordionSummary>
             <Divider />
             <AccordionDetails style={{ display: 'inherit' }}>
-                <Stack justifyContent="space-between" alignItems="stretch" spacing={2}>
-                    <Stack justifyContent="flex-start" alignItems="stretch">
+                <Stack spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'stretch' }}>
+                    <Stack sx={{ justifyContent: 'flex-start', alignItems: 'stretch' }}>
                         <Select
                             label={'Model'}
                             options={_models}
@@ -153,7 +153,7 @@ function SetSearch(props) {
                             })}
                         />
                     </Stack>
-                    <Grid container justifyContent="flex-end" alignItems="flex-start" spacing={1}>
+                    <Grid container spacing={1} sx={{ justifyContent: 'flex-end', alignItems: 'flex-start' }}>
                         <Grid>
                             <ApplyOneButton onClick={handleApplyOne} tooltip={APPLY_ONE_SET_SEARCH_LABEL} />
                         </Grid>

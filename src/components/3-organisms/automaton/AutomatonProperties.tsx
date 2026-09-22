@@ -63,7 +63,7 @@ const AutomatonProperties = ({
                         [];
 
                     return (
-                        <Stack key={propertyName} justifyContent={'flex-start'} paddingLeft={1}>
+                        <Stack key={propertyName} sx={{ justifyContent: 'flex-start', paddingLeft: 1 }}>
                             <Grid container>
                                 <Grid size={4} sx={{ ...styles.label, alignItems: 'center' }}>
                                     <Typography>{`${propertyDefinition.label} :`}</Typography>
@@ -86,7 +86,7 @@ const AutomatonProperties = ({
                                 </Grid>
                             </Grid>
                             {index !== propertyNames.length - 1 && (
-                                <Grid sx={{ paddingRight: '8px' }}>
+                                <Grid sx={{ paddingRight: 1 }}>
                                     <Divider />
                                 </Grid>
                             )}

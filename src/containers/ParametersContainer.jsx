@@ -176,7 +176,7 @@ const ParametersContainer = ({
                 ) : (
                     <Grid container>
                         {showVerticalSteps && (
-                            <Grid size={3} pt={10}>
+                            <Grid size={3} sx={{ pt: 10 }}>
                                 <VerticalStepper
                                     steps={currentGroup.sets.map((set, index) => ({
                                         label: set.name,
@@ -196,7 +196,7 @@ const ParametersContainer = ({
                                 set={currentSet}
                             />
                         </Grid>
-                        <Grid size={4} pt={1}>
+                        <Grid size={4} sx={{ pt: 1 }}>
                             <SetSearch
                                 typeFilter={modelToEdit?.type}
                                 modelsSelector={modelsSelector}
