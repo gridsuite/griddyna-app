@@ -50,6 +50,7 @@ const Select = (props) => {
                       ))}
                   </Box>
               ),
+              MenuProps: MenuProps,
           }
         : {};
 
@@ -69,7 +70,7 @@ const Select = (props) => {
                 {...multipleProps}
                 disabled={disabled}
                 // Either mess with the style (disappearing overflow) or allow scroll while Select is open
-                MenuProps={MenuProps}
+                MenuProps={{ disableScrollLock: true }}
             >
                 {options.map((option, index) => (
                     <MenuItem key={index} value={option.value}>
