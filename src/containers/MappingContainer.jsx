@@ -113,6 +113,7 @@ const MappingContainer = () => {
     }, [dispatch, snackError, favoriteStudies]);
 
     const [activeMappingBreadCrumb, setActiveMappingBreadCrumb] = useState();
+    const [errorActiveMappingBreadCrumb, setErrorActiveMappingBreadCrumb] = useState(false);
 
     // fetch breadCrumb the current study
     useEffect(() => {
@@ -123,13 +124,19 @@ const MappingContainer = () => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
                     if (!ignore) {
                         setActiveMappingBreadCrumb(breadCrumb(itemName));
+                        setErrorActiveMappingBreadCrumb(false);
                     }
                 })
                 .catch((error) => {
                     if (!ignore) {
-                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                        snackWithFallback(snackError, error, { headerId: 'fetchMappingPathError' });
+                        setActiveMappingBreadCrumb(undefined);
+                        setErrorActiveMappingBreadCrumb(true);
                     }
                 });
+        } else {
+            setActiveMappingBreadCrumb(undefined);
+            setErrorActiveMappingBreadCrumb(false);
         }
         return () => {
             ignore = true;
@@ -138,6 +145,7 @@ const MappingContainer = () => {
 
     const [currentStudyBreadCrumb, setCurrentStudyBreadCrumb] = useState();
     const [loadingCurrentStudyBreadCrumb, setLoadingCurrentStudyBreadCrumb] = useState(false);
+    const [errorCurrentStudyBreadCrumb, setErrorCurrentStudyBreadCrumb] = useState(false);
 
     // fetch breadCrumb the current study
     useEffect(() => {
@@ -149,11 +157,14 @@ const MappingContainer = () => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
                     if (!ignore) {
                         setCurrentStudyBreadCrumb(breadCrumb(itemName));
+                        setErrorCurrentStudyBreadCrumb(false);
                     }
                 })
                 .catch((error) => {
                     if (!ignore) {
-                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                        snackWithFallback(snackError, error, { headerId: 'fetchStudyPathError' });
+                        setCurrentStudyBreadCrumb(undefined);
+                        setErrorCurrentStudyBreadCrumb(true);
                     }
                 })
                 .finally(() => {
@@ -163,6 +174,7 @@ const MappingContainer = () => {
                 });
         } else {
             setCurrentStudyBreadCrumb(undefined);
+            setErrorCurrentStudyBreadCrumb(false);
         }
         return () => {
             ignore = true;
@@ -300,7 +312,21 @@ const MappingContainer = () => {
     return (
         <>
             {activeMapping && (
-                <Stack sx={{ height: '100%' }}>
+                <Stack sx={{ height: '100%', position: 'relative' }}>
+                    {errorActiveMappingBreadCrumb && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                                zIndex: 10,
+                                cursor: 'not-allowed',
+                            }}
+                        />
+                    )}
                     <Accordion expanded={isHeaderExpanded} onChange={(_, expanded) => setIsHeaderExpanded(expanded)}>
                         <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
                             <Header
@@ -329,14 +355,23 @@ const MappingContainer = () => {
                                                     {`${currentStudyBreadCrumb}`}
                                                 </Typography>
                                             ) : (
-                                                <FormattedMessage id={'noSelectedStudyText'} />
+                                                <FormattedMessage
+                                                    id={'noAttachedStudyText'}
+                                                    values={{
+                                                        errorMessage: errorCurrentStudyBreadCrumb
+                                                            ? `(${intl.formatMessage({ id: 'attachedStudyNotFoundText' })})`
+                                                            : '',
+                                                    }}
+                                                />
                                             )}
                                         </>
                                     )}
                                 </Grid>
                                 <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1 }} spacing={1}>
                                     <AttachButton
-                                        label={intl.formatMessage({ id: currentStudy ? 'updateStudy' : 'attachStudy' })}
+                                        label={intl.formatMessage({
+                                            id: currentStudy ? 'updateStudy' : 'attachStudy',
+                                        })}
                                         onClick={attachStudy}
                                         variant={currentStudy ? 'contained' : undefined}
                                     />

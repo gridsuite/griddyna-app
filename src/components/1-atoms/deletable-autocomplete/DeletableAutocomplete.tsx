@@ -7,7 +7,7 @@
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Autocomplete, Box, IconButton, ListItemText, TextField } from '@mui/material';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 export interface Option {
     value: string;
@@ -56,7 +56,14 @@ export default function DeletableAutocomplete({
                         justifyContent: 'space-between',
                     }}
                 >
-                    <ListItemText primary={option.label} />
+                    <ListItemText
+                        primary={option.label ?? <FormattedMessage id="elementNotFound" />}
+                        slotProps={{
+                            primary: {
+                                sx: { color: option.label ? undefined : 'error.main' },
+                            },
+                        }}
+                    />
 
                     <IconButton
                         size="small"
