@@ -5,5 +5,5 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 export const businessErrorsEn = {
-    'directory.elementNotFound': "L'élément du dossier demandé est introuvable.",
+    'directory.elementNotFound': 'The requested directory element was not found.',
 };
