@@ -23,7 +23,7 @@
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du répertoire parent du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
-    "mappingNotAccessible": "Mapping n'est plus accessible",
+    "mappingNotAccessible": "Le mapping n'est plus accessible",
 
   "NoFolder": "Aucun dossier sélectionné",
     "NoItem": "Aucun élément sélectionné",
