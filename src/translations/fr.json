@@ -23,8 +23,9 @@
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du répertoire parent du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
+    "mappingNotAccessible": "Mapping n'est plus accessible",
 
-    "NoFolder": "Aucun dossier sélectionné",
+  "NoFolder": "Aucun dossier sélectionné",
     "NoItem": "Aucun élément sélectionné",
     "edit": "Modifier",
     "selectStudyDialogTitle": "Choisir une étude",

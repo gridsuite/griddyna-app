@@ -37,7 +37,7 @@ export default function DeletableAutocomplete({
             size="small"
             options={options}
             value={matchedOption}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option.label ?? ''}
             onChange={(_, option) => onChange(option?.value)}
             renderInput={(params) => (
                 <TextField

@@ -23,6 +23,7 @@
 
     "loadParentDirectoryMappingError": "An error occurred while loading the parent directory of the mapping",
     "mappingAlreadyAdded": "Mapping already added",
+    "mappingNotAccessible": "Mapping no longer accessible",
 
     "NoFolder": "No selected folder",
     "NoItem": "No selected item",
