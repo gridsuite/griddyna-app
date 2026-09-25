@@ -45,7 +45,7 @@ const Header = ({ name, breadCrumbName, isModified = false, isValid = true, save
             <Grid size="grow" sx={styles.gridTitle}>
                 <Tooltip title={isCurrent ? '' : outdatedLabel}>
                     <Typography variant="h6" sx={getTitleStyle()}>
-                        {`${breadCrumbName || name}${isModified ? '*' : ''}`}
+                        {`${breadCrumbName || (name ?? intl.formatMessage({ id: 'elementNotFound' }))}${isModified ? '*' : ''}`}
                     </Typography>
                 </Tooltip>
             </Grid>
