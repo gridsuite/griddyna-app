@@ -25,7 +25,7 @@ import AddButton from '../1-atoms/buttons/AddButton.jsx';
 import { styles } from './NavigationMenuStyles';
 import NewMappingDialog from './rhf/dialogs/new-mapping/NewMappingDialog.tsx';
 import { useIntl } from 'react-intl';
-import { OverflowableText } from '@gridsuite/commons-ui';
+import { mergeSx, OverflowableText } from '@gridsuite/commons-ui';
 import { styles as sharedStyles } from 'utils/styles-utils';
 
 const NavigationMenu = (props) => {
@@ -51,6 +51,7 @@ const NavigationMenu = (props) => {
                 options.push({
                     label: intl.formatMessage({ id: 'exportMapping' }),
                     action: exportItem(itemId, itemName),
+                    disabled: !itemName,
                 });
             }
             return options;
@@ -100,7 +101,12 @@ const NavigationMenu = (props) => {
                                 disablePadding
                             >
                                 <ListItemButton selected={item.id === selected} onClick={selectItem(item.id)}>
-                                    <OverflowableText text={item.name} sx={styles.itemText} />
+                                    <OverflowableText
+                                        text={item.name ?? intl.formatMessage({ id: 'elementNotFound' })}
+                                        sx={mergeSx(styles.itemText, {
+                                            color: item.name ? undefined : 'error.main',
+                                        })}
+                                    />
                                 </ListItemButton>
                             </ListItem>
                         );

@@ -23,12 +23,15 @@
 
     "loadParentDirectoryMappingError": "Erreur lors de la récupération du répertoire parent du mapping",
     "mappingAlreadyAdded": "Mapping déjà ajouté",
+    "mappingNotAccessible": "Le mapping n'est plus accessible",
 
-    "NoFolder": "Aucun dossier sélectionné",
+  "NoFolder": "Aucun dossier sélectionné",
     "NoItem": "Aucun élément sélectionné",
     "edit": "Modifier",
     "selectStudyDialogTitle": "Choisir une étude",
-    "noSelectedStudyText": "Aucune étude sélectionnée.",
+    "noSelectedStudyText": "Aucune étude sélectionnée",
+    "noAttachedStudyText": "Aucune étude sélectionnée {errorMessage}",
+    "attachedStudyNotFoundText": "l'étude associée n'est plus accessible",
     "selectStudy": "Sélectionner une étude",
     "attach": "Attacher",
     "attachStudy": "Choisir une étude",
@@ -36,6 +39,8 @@
     "detachStudy": "Détacher",
     "detachStudyTooltip": "Détacher une étude du mapping",
     "fetchDirectoryElementPathError": "Erreur lors de la récupération du chemin d'un élément",
+    "fetchMappingPathError": "Erreur lors de la récupération du chemin du mapping",
+    "fetchStudyPathError": "Erreur lors de la récupération du chemin de l'étude",
     "attachMappingStudyError": "Une erreur est survenue lors de l'attachement d'une étude au mapping",
     "detachMappingStudyError": "Une erreur est survenue lors du détachement d'une étude du mapping",
 

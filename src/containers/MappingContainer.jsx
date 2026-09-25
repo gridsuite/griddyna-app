@@ -5,9 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { FolderOutlined } from '@mui/icons-material';
+import {useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {FolderOutlined} from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -21,8 +21,8 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { fetchDirectoryElementPath, snackWithFallback, useSnackMessage } from '@gridsuite/commons-ui';
+import {FormattedMessage, useIntl} from 'react-intl';
+import {fetchDirectoryElementPath, snackWithFallback, useSnackMessage} from '@gridsuite/commons-ui';
 import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
@@ -38,23 +38,24 @@ import {
     updateMapping,
     updateMappingStudy,
 } from '../redux/slices/Mapping';
-import { getPropertyValuesFromStudyId, getStudies, NetworkSlice } from '../redux/slices/Network';
+import {getPropertyValuesFromStudyId, getStudies, NetworkSlice} from '../redux/slices/Network';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import TabBar from '../components/2-molecules/TabBar';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { AddIconButton } from '../components/1-atoms/buttons';
+import {AddIconButton} from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
-import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
-import { AutomatonFamily } from '../constants/automatonDefinition';
-import { RuleEquipmentTypes } from '../constants/equipmentType';
-import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config';
+import {areParametersValid as areParametersValidSelector} from '../redux/selectors';
+import {AutomatonFamily} from '../constants/automatonDefinition';
+import {RuleEquipmentTypes} from '../constants/equipmentType';
+import {addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies} from '../redux/slices/Config';
 import DetachButton from '../components/1-atoms/buttons/DetachButton';
 import AttachButton from '../components/1-atoms/buttons/AttachButton';
-import { breadCrumb } from 'utils/directory-utils';
-import { styles as sharedStyles } from 'utils/styles-utils';
+import {breadCrumb} from 'utils/directory-utils';
+import {styles as sharedStyles} from 'utils/styles-utils';
+import GlassPane from '../components/1-atoms/glass-pane';
 import VirtualizedList from '../components/2-molecules/virtualized-list/VirtualizedList';
 
 const styles = {
@@ -118,23 +119,31 @@ const MappingContainer = () => {
     }, [dispatch, snackError, favoriteStudies]);
 
     const [activeMappingBreadCrumb, setActiveMappingBreadCrumb] = useState();
+    const [errorActiveMappingBreadCrumb, setErrorActiveMappingBreadCrumb] = useState(false);
 
     // fetch breadCrumb the current study
     useEffect(() => {
         let ignore = false;
         if (activeMapping) {
+            setErrorActiveMappingBreadCrumb(false);
             fetchDirectoryElementPath(activeMapping)
                 .then((path) => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
                     if (!ignore) {
                         setActiveMappingBreadCrumb(breadCrumb(itemName));
+                        setErrorActiveMappingBreadCrumb(false);
                     }
                 })
                 .catch((error) => {
                     if (!ignore) {
-                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                        snackWithFallback(snackError, error, { headerId: 'fetchMappingPathError' });
+                        setActiveMappingBreadCrumb(undefined);
+                        setErrorActiveMappingBreadCrumb(true);
                     }
                 });
+        } else {
+            setActiveMappingBreadCrumb(undefined);
+            setErrorActiveMappingBreadCrumb(false);
         }
         return () => {
             ignore = true;
@@ -143,6 +152,7 @@ const MappingContainer = () => {
 
     const [currentStudyBreadCrumb, setCurrentStudyBreadCrumb] = useState();
     const [loadingCurrentStudyBreadCrumb, setLoadingCurrentStudyBreadCrumb] = useState(false);
+    const [errorCurrentStudyBreadCrumb, setErrorCurrentStudyBreadCrumb] = useState(false);
 
     // fetch breadCrumb the current study
     useEffect(() => {
@@ -154,11 +164,14 @@ const MappingContainer = () => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
                     if (!ignore) {
                         setCurrentStudyBreadCrumb(breadCrumb(itemName));
+                        setErrorCurrentStudyBreadCrumb(false);
                     }
                 })
                 .catch((error) => {
                     if (!ignore) {
-                        snackWithFallback(snackError, error, { headerId: 'fetchDirectoryElementPathError' });
+                        snackWithFallback(snackError, error, { headerId: 'fetchStudyPathError' });
+                        setCurrentStudyBreadCrumb(undefined);
+                        setErrorCurrentStudyBreadCrumb(true);
                     }
                 })
                 .finally(() => {
@@ -168,6 +181,8 @@ const MappingContainer = () => {
                 });
         } else {
             setCurrentStudyBreadCrumb(undefined);
+            setErrorCurrentStudyBreadCrumb(false);
+            setLoadingCurrentStudyBreadCrumb(false);
         }
         return () => {
             ignore = true;
@@ -305,144 +320,157 @@ const MappingContainer = () => {
     return (
         <>
             {activeMapping && (
-                <Stack sx={{ height: '100%' }}>
-                    <Accordion expanded={isHeaderExpanded} onChange={(_, expanded) => setIsHeaderExpanded(expanded)}>
-                        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
-                            <Header
-                                name={activeMappingName}
-                                breadCrumbName={activeMappingBreadCrumb}
-                                isModified={isModified}
-                                isValid={isMappingValid && areParametersValid}
-                                save={(event) => {
-                                    event.stopPropagation(); //  to avoid event bubbles up to AccordionSummary which change open/close state
-                                    saveMapping();
-                                }}
-                                saveTooltip={SAVE_LABEL}
-                            />
-                        </AccordionSummary>
-                        <Divider />
-                        <AccordionDetails>
-                            <Grid container sx={{ justifyContent: 'flex-end', alignItems: 'center' }}>
-                                <Grid sx={{ paddingTop: 1 }}>
-                                    <FolderOutlined />
-                                </Grid>
-                                <Grid size="grow" sx={{ paddingLeft: 1 }}>
-                                    {!loadingCurrentStudyBreadCrumb && (
-                                        <>
-                                            {currentStudyBreadCrumb ? (
-                                                <Typography noWrap fontWeight="bold" title={'study'}>
-                                                    {`${currentStudyBreadCrumb}`}
-                                                </Typography>
-                                            ) : (
-                                                <FormattedMessage id={'noSelectedStudyText'} />
-                                            )}
-                                        </>
-                                    )}
-                                </Grid>
-                                <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1 }} spacing={1}>
-                                    <AttachButton
-                                        label={intl.formatMessage({ id: currentStudy ? 'updateStudy' : 'attachStudy' })}
-                                        onClick={attachStudy}
-                                        variant={currentStudy ? 'contained' : undefined}
-                                    />
-                                    <DetachButton
-                                        label={intl.formatMessage({ id: 'detachStudy' })}
-                                        onClick={detachStudy}
-                                        tooltip={intl.formatMessage({ id: 'detachStudyTooltip' })}
-                                        disabled={!currentStudy}
-                                        variant={currentStudy ? 'outlined' : undefined}
-                                    />
-                                </Grid>
-                            </Grid>
-                            <Grid container sx={{ justifyContent: 'flex-start' }}>
-                                <Grid size={12}>
-                                    <FormControlLabel
-                                        control={
-                                            <Switch
-                                                // <Checkbox
-                                                checked={controlledParameters}
-                                                onChange={changeControlledParameters}
-                                            />
-                                        }
-                                        label={CONTROLLED_PARAMETERS_LABEL}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Box
-                        ref={scrollContainerRef}
-                        // scrollbar only in the mapping definition zone
-                        sx={{
-                            pt: 1,
-                            flex: 1,
-                            // minHeight: 0,
-                            overflowY: 'auto',
-                        }}
-                    >
-                        <Accordion expanded={modelsExpanded} onChange={(_, expanded) => setModelsExpanded(expanded)}>
+                <GlassPane error={errorActiveMappingBreadCrumb} errorMessageText={'mappingNotAccessible'}>
+                    <Stack sx={{ height: '100%' }}>
+                        <Accordion
+                            expanded={isHeaderExpanded}
+                            onChange={(_, expanded) => setIsHeaderExpanded(expanded)}
+                        >
                             <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
-                                <Typography>{`${MODELS_TITLE} ${
-                                    totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
-                                }`}</Typography>
+                                <Header
+                                    name={activeMappingName}
+                                    breadCrumbName={activeMappingBreadCrumb}
+                                    isModified={isModified}
+                                    isValid={isMappingValid && areParametersValid}
+                                    save={(event) => {
+                                        event.stopPropagation(); //  to avoid event bubbles up to AccordionSummary which change open/close state
+                                        saveMapping();
+                                    }}
+                                    saveTooltip={SAVE_LABEL}
+                                />
                             </AccordionSummary>
                             <Divider />
                             <AccordionDetails>
-                                <Grid container>
-                                    <Grid size="grow" sx={styles.tabBar}>
-                                        <TabBar
-                                            value={filteredType}
-                                            options={filterRulesOptions}
-                                            setValue={setFilteredType}
-                                        />
+                                <Grid container sx={{ justifyContent: 'flex-end', alignItems: 'center' }}>
+                                    <Grid sx={{ paddingTop: 1 }}>
+                                        <FolderOutlined />
                                     </Grid>
-                                    <Grid size="auto">
-                                        <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
-                                    </Grid>
-                                </Grid>
-                                <List>
-                                    <VirtualizedList
-                                        count={rulesNumber}
-                                        scrollElementRef={scrollContainerRef}
-                                        renderItem={(index) => (
-                                            <RuleContainer
-                                                index={index}
-                                                editParameters={setEditParameters}
-                                                key={`rule-container-${activeMapping}-${filteredType}-${index}`}
-                                            />
+                                    <Grid size="grow" sx={{ paddingLeft: 1 }}>
+                                        {!loadingCurrentStudyBreadCrumb && (
+                                            <>
+                                                {currentStudyBreadCrumb ? (
+                                                    <Typography noWrap fontWeight="bold" title={'study'}>
+                                                        {`${currentStudyBreadCrumb}`}
+                                                    </Typography>
+                                                ) : (
+                                                    <FormattedMessage
+                                                        id={'noAttachedStudyText'}
+                                                        values={{
+                                                            errorMessage: errorCurrentStudyBreadCrumb
+                                                                ? `(${intl.formatMessage({ id: 'attachedStudyNotFoundText' })})`
+                                                                : '',
+                                                        }}
+                                                    />
+                                                )}
+                                            </>
                                         )}
-                                        estimateSize={400}
-                                        overscan={1}
-                                        enabled={modelsExpanded}
-                                    />
-                                </List>
-                            </AccordionDetails>
-                        </Accordion>
-                        <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
-                                <Typography>{`${AUTOMATA_TITLE} ${
-                                    totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
-                                }`}</Typography>
-                            </AccordionSummary>
-                            <Divider />
-                            <AccordionDetails>
-                                <Grid container>
-                                    <Grid size="grow" sx={styles.tabBar}>
-                                        <TabBar
-                                            value={filteredFamily}
-                                            options={filterAutomataOptions}
-                                            setValue={setFilteredFamily}
+                                    </Grid>
+                                    <Grid container sx={{ justifyContent: 'flex-end', paddingRight: 1 }} spacing={1}>
+                                        <AttachButton
+                                            label={intl.formatMessage({
+                                                id: currentStudy ? 'updateStudy' : 'attachStudy',
+                                            })}
+                                            onClick={attachStudy}
+                                            variant={currentStudy ? 'contained' : undefined}
+                                        />
+                                        <DetachButton
+                                            label={intl.formatMessage({ id: 'detachStudy' })}
+                                            onClick={detachStudy}
+                                            tooltip={intl.formatMessage({ id: 'detachStudyTooltip' })}
+                                            disabled={!currentStudy}
+                                            variant={currentStudy ? 'outlined' : undefined}
                                         />
                                     </Grid>
-                                    <Grid size="auto">
-                                        <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
+                                </Grid>
+                                <Grid container sx={{ justifyContent: 'flex-start' }}>
+                                    <Grid size={12}>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    // <Checkbox
+                                                    checked={controlledParameters}
+                                                    onChange={changeControlledParameters}
+                                                />
+                                            }
+                                            label={CONTROLLED_PARAMETERS_LABEL}
+                                        />
                                     </Grid>
                                 </Grid>
-                                <List>{buildAutomata()}</List>
                             </AccordionDetails>
                         </Accordion>
-                    </Box>
-                </Stack>
+                        <Box
+                            ref={scrollContainerRef}
+                            // scrollbar only in the mapping definition zone
+                            sx={{
+                                pt: 1,
+                                flex: 1,
+                                overflowY: 'auto',
+                            }}
+                        >
+                            <Accordion expanded={modelsExpanded} onChange={(_, expanded) => setModelsExpanded(expanded)}>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
+                                    <Typography>{`${MODELS_TITLE} ${
+                                        totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
+                                    }`}</Typography>
+                                </AccordionSummary>
+                                <Divider />
+                                <AccordionDetails>
+                                    <Grid container>
+                                        <Grid size="grow" sx={styles.tabBar}>
+                                            <TabBar
+                                                value={filteredType}
+                                                options={filterRulesOptions}
+                                                setValue={setFilteredType}
+                                            />
+                                        </Grid>
+                                        <Grid size="auto">
+                                            <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
+                                        </Grid>
+                                    </Grid>
+                                    <List>
+                                        <VirtualizedList
+                                            count={rulesNumber}
+                                            scrollElementRef={scrollContainerRef}
+                                            renderItem={(index) => (
+                                                <RuleContainer
+                                                    index={index}
+                                                    editParameters={setEditParameters}
+                                                    key={`rule-container-${activeMapping}-${filteredType}-${index}`}
+                                                />
+                                            )}
+                                            estimateSize={400}
+                                            overscan={1}
+                                            enabled={modelsExpanded}
+                                        />
+                                    </List>
+                                </AccordionDetails>
+                            </Accordion>
+                            <Accordion>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
+                                    <Typography>{`${AUTOMATA_TITLE} ${
+                                        totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
+                                    }`}</Typography>
+                                </AccordionSummary>
+                                <Divider />
+                                <AccordionDetails>
+                                    <Grid container>
+                                        <Grid size="grow" sx={styles.tabBar}>
+                                            <TabBar
+                                                value={filteredFamily}
+                                                options={filterAutomataOptions}
+                                                setValue={setFilteredFamily}
+                                            />
+                                        </Grid>
+                                        <Grid size="auto">
+                                            <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
+                                        </Grid>
+                                    </Grid>
+                                    <List>{buildAutomata()}</List>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Box>
+                    </Stack>
+                </GlassPane>
             )}
             <AttachDialog
                 studies={studies}

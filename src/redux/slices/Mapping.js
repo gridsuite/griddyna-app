@@ -505,7 +505,23 @@ export const getMappings = createAsyncThunk('mappings/get', async ({ ids }, { ge
     const deletedIds = cachedMappings?.filter((mapping) => !ids.includes(mapping.id))?.map((mapping) => mapping.id);
 
     const addedMappings = uncachedIds?.length ? await mappingsAPI.getMappings({ ids: uncachedIds, token }) : [];
-    return { addedMappings, deletedMappingIds: deletedIds ?? [] };
+
+    // augmented with no longer existing mapping since api return only found mappings
+    const augmentedAddedMappings = uncachedIds?.map((id) => {
+        const mapping = addedMappings.find((m) => m.id === id);
+        if (mapping) {
+            return mapping;
+        }
+        return {
+            id,
+            name: undefined,
+            rules: [],
+            automata: [],
+            controlledParameters: false,
+        };
+    });
+
+    return { addedMappings: augmentedAddedMappings, deletedMappingIds: deletedIds ?? [] };
 });
 
 export const exportMapping = createAsyncThunk('mappings/export', async ({ id, name }, { getState }) => {
