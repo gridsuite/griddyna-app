@@ -5,9 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {useEffect, useRef, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {FolderOutlined} from '@mui/icons-material';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FolderOutlined } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -21,8 +21,8 @@ import {
     Switch,
     Typography,
 } from '@mui/material';
-import {FormattedMessage, useIntl} from 'react-intl';
-import {fetchDirectoryElementPath, snackWithFallback, useSnackMessage} from '@gridsuite/commons-ui';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { fetchDirectoryElementPath, snackWithFallback, useSnackMessage } from '@gridsuite/commons-ui';
 import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
@@ -38,23 +38,23 @@ import {
     updateMapping,
     updateMappingStudy,
 } from '../redux/slices/Mapping';
-import {getPropertyValuesFromStudyId, getStudies, NetworkSlice} from '../redux/slices/Network';
+import { getPropertyValuesFromStudyId, getStudies, NetworkSlice } from '../redux/slices/Network';
 import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import TabBar from '../components/2-molecules/TabBar';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {AddIconButton} from '../components/1-atoms/buttons';
+import { AddIconButton } from '../components/1-atoms/buttons';
 import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
-import {areParametersValid as areParametersValidSelector} from '../redux/selectors';
-import {AutomatonFamily} from '../constants/automatonDefinition';
-import {RuleEquipmentTypes} from '../constants/equipmentType';
-import {addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies} from '../redux/slices/Config';
+import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
+import { AutomatonFamily } from '../constants/automatonDefinition';
+import { RuleEquipmentTypes } from '../constants/equipmentType';
+import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config';
 import DetachButton from '../components/1-atoms/buttons/DetachButton';
 import AttachButton from '../components/1-atoms/buttons/AttachButton';
-import {breadCrumb} from 'utils/directory-utils';
-import {styles as sharedStyles} from 'utils/styles-utils';
+import { breadCrumb } from 'utils/directory-utils';
+import { styles as sharedStyles } from 'utils/styles-utils';
 import GlassPane from '../components/1-atoms/glass-pane';
 import VirtualizedList from '../components/2-molecules/virtualized-list/VirtualizedList';
 
@@ -407,7 +407,10 @@ const MappingContainer = () => {
                                 overflowY: 'auto',
                             }}
                         >
-                            <Accordion expanded={modelsExpanded} onChange={(_, expanded) => setModelsExpanded(expanded)}>
+                            <Accordion
+                                expanded={modelsExpanded}
+                                onChange={(_, expanded) => setModelsExpanded(expanded)}
+                            >
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
                                     <Typography>{`${MODELS_TITLE} ${
                                         totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
