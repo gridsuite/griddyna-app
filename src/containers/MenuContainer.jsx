@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSnackMessage } from '@gridsuite/commons-ui';
 import {
@@ -27,8 +27,16 @@ const MenuContainer = () => {
 
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
-    const selectedMapping = useSelector((state) => state.mappings.activeMapping);
     const favoriteMappings = useSelector(getFavoriteMappings);
+
+    const activeMapping = useSelector((state) => state.mappings.activeMapping);
+    const [selectedMapping, setSelectedMapping] = useState(activeMapping);
+    // To synchronize selectedMapping with activeMapping
+    useEffect(() => {
+        setSelectedMapping(activeMapping);
+    }, [activeMapping]);
+
+    const [isPending, startTransition] = useTransition();
 
     // On mount component
     useEffect(() => {
@@ -78,15 +86,21 @@ const MenuContainer = () => {
     };
 
     const selectMapping = (id) => () => {
-        dispatch(MappingSlice.actions.selectMapping({ id }));
+        // set local selectedMapping
+        setSelectedMapping(id);
+        // defer update redux state
+        startTransition(() => {
+            dispatch(MappingSlice.actions.selectMapping({ id }));
+            dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+            dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
+        });
+
         dispatch(getPropertyValuesFromStudyId())
             .unwrap()
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                 snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
             });
-        dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
-        dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };
 
     const removeMapping = (id) => () => {

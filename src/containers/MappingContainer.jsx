@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FolderOutlined } from '@mui/icons-material';
 import {
@@ -56,6 +56,7 @@ import AttachButton from '../components/1-atoms/buttons/AttachButton';
 import { breadCrumb } from 'utils/directory-utils';
 import { styles as sharedStyles } from 'utils/styles-utils';
 import GlassPane from '../components/1-atoms/glass-pane';
+import VirtualizedList from '../components/2-molecules/virtualized-list/VirtualizedList';
 
 const styles = {
     tabBar: {
@@ -98,6 +99,10 @@ const MappingContainer = () => {
     const controlledParameters = useSelector((state) => state.mappings.controlledParameters);
     const areParametersValid = useSelector(areParametersValidSelector);
     const dispatch = useDispatch();
+
+    // the ref to the scroll container of rules and automata
+    const scrollContainerRef = useRef(null);
+    const [modelsExpanded, setModelsExpanded] = useState(false);
 
     // but we fetch the names of the studies to display them in the attachment dialog.
     useEffect(() => {
@@ -394,6 +399,7 @@ const MappingContainer = () => {
                             </AccordionDetails>
                         </Accordion>
                         <Box
+                            ref={scrollContainerRef}
                             // scrollbar only in the mapping definition zone
                             sx={{
                                 pt: 1,
@@ -401,7 +407,10 @@ const MappingContainer = () => {
                                 overflowY: 'auto',
                             }}
                         >
-                            <Accordion>
+                            <Accordion
+                                expanded={modelsExpanded}
+                                onChange={(_, expanded) => setModelsExpanded(expanded)}
+                            >
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
                                     <Typography>{`${MODELS_TITLE} ${
                                         totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
@@ -421,7 +430,22 @@ const MappingContainer = () => {
                                             <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
                                         </Grid>
                                     </Grid>
-                                    <List>{buildRules()}</List>
+                                    <List>
+                                        <VirtualizedList
+                                            count={rulesNumber}
+                                            scrollElementRef={scrollContainerRef}
+                                            renderItem={(index) => (
+                                                <RuleContainer
+                                                    index={index}
+                                                    editParameters={setEditParameters}
+                                                    key={`rule-container-${activeMapping}-${filteredType}-${index}`}
+                                                />
+                                            )}
+                                            estimateSize={400}
+                                            overscan={1}
+                                            enabled={modelsExpanded}
+                                        />
+                                    </List>
                                 </AccordionDetails>
                             </Accordion>
                             <Accordion>
