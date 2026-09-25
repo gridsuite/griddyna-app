@@ -43,7 +43,7 @@ interface GlassPaneProps {
 // Take from study-app then add error, errorMessageText props and a relative container, should move to commons-ui
 function GlassPane({ active, children, loadingMessageText, error, errorMessageText }: Readonly<GlassPaneProps>) {
     return (
-        <Box sx={styles.container}>
+        <Box sx={styles.container} inert={active || error}>
             {active && (
                 <Box sx={styles.glassPane}>
                     <CircularProgress size={64} />
@@ -59,7 +59,7 @@ function GlassPane({ active, children, loadingMessageText, error, errorMessageTe
                     )}
                 </Box>
             )}
-            {children}
+            {!error && children}
         </Box>
     );
 }
