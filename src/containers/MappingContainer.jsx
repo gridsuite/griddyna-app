@@ -114,14 +114,13 @@ const MappingContainer = () => {
     }, [dispatch, snackError, favoriteStudies]);
 
     const [activeMappingBreadCrumb, setActiveMappingBreadCrumb] = useState();
-    const [loadingActiveMappingBreadCrumb, setLoadingActiveMappingBreadCrumb] = useState();
     const [errorActiveMappingBreadCrumb, setErrorActiveMappingBreadCrumb] = useState(false);
 
     // fetch breadCrumb the current study
     useEffect(() => {
         let ignore = false;
         if (activeMapping) {
-            setLoadingActiveMappingBreadCrumb(true);
+            setErrorActiveMappingBreadCrumb(false);
             fetchDirectoryElementPath(activeMapping)
                 .then((path) => {
                     const itemName = path.map((elem) => elem.elementName).join('/');
@@ -135,11 +134,6 @@ const MappingContainer = () => {
                         snackWithFallback(snackError, error, { headerId: 'fetchMappingPathError' });
                         setActiveMappingBreadCrumb(undefined);
                         setErrorActiveMappingBreadCrumb(true);
-                    }
-                })
-                .finally(() => {
-                    if (!ignore) {
-                        setLoadingActiveMappingBreadCrumb(false);
                     }
                 });
         } else {
@@ -321,11 +315,7 @@ const MappingContainer = () => {
     return (
         <>
             {activeMapping && (
-                <GlassPane
-                    active={loadingActiveMappingBreadCrumb || loadingCurrentStudyBreadCrumb}
-                    error={errorActiveMappingBreadCrumb}
-                    errorMessageText={'mappingNotAccessible'}
-                >
+                <GlassPane error={errorActiveMappingBreadCrumb} errorMessageText={'mappingNotAccessible'}>
                     <Stack sx={{ height: '100%' }}>
                         <Accordion
                             expanded={isHeaderExpanded}

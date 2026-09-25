@@ -11,6 +11,12 @@ import { FormattedMessage } from 'react-intl';
 import { type MuiStyles } from '@gridsuite/commons-ui';
 
 const styles = {
+    container: {
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden', // prevents the absolute child from leaking outside
+    },
     glassPane: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         display: 'flex',
@@ -34,10 +40,10 @@ interface GlassPaneProps {
     errorMessageText?: string;
 }
 
-// Take from study-app but add error and error message, should move to commons-ui
+// Take from study-app then add error, errorMessageText props and a relative container, should move to commons-ui
 function GlassPane({ active, children, loadingMessageText, error, errorMessageText }: Readonly<GlassPaneProps>) {
     return (
-        <>
+        <Box sx={styles.container}>
             {active && (
                 <Box sx={styles.glassPane}>
                     <CircularProgress size={64} />
@@ -47,14 +53,14 @@ function GlassPane({ active, children, loadingMessageText, error, errorMessageTe
             {error && (
                 <Box sx={styles.glassPane}>
                     {errorMessageText && (
-                        <Typography align="center" variant="h5" sx={{ paddingTop: 1, color: 'text.disabled' }}>
+                        <Typography variant="h5" sx={{ color: 'text.disabled' }}>
                             <FormattedMessage id={errorMessageText} />
                         </Typography>
                     )}
                 </Box>
             )}
             {children}
-        </>
+        </Box>
     );
 }
 
