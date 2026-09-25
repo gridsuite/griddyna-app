@@ -183,6 +183,7 @@ const MappingContainer = () => {
         } else {
             setCurrentStudyBreadCrumb(undefined);
             setErrorCurrentStudyBreadCrumb(false);
+            setLoadingCurrentStudyBreadCrumb(false);
         }
         return () => {
             ignore = true;
