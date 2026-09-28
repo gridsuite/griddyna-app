@@ -129,7 +129,7 @@ const MappingContainer = () => {
                         setErrorActiveMappingBreadCrumb(false);
                     }
                 })
-                .catch((error) => {
+                .catch((_error) => {
                     if (!ignore) {
                         setActiveMappingBreadCrumb(undefined);
                         setErrorActiveMappingBreadCrumb(true);
@@ -161,7 +161,7 @@ const MappingContainer = () => {
                         setErrorCurrentStudyBreadCrumb(false);
                     }
                 })
-                .catch((error) => {
+                .catch((_error) => {
                     if (!ignore) {
                         setCurrentStudyBreadCrumb(undefined);
                         setErrorCurrentStudyBreadCrumb(true);
