@@ -114,6 +114,7 @@ const filterAutomataByFamily = (automata, family) =>
 
 // Base selectors that used in create selector, IMPORTANT base selectors must not create new array or object
 // in order to make memorization effectively
+export const getActiveMapping = (state) => state.mappings.activeMapping;
 export const getRules = (state) => state.mappings.rules;
 export const getFilteredRuleType = (state) => state.mappings.filteredRuleType;
 export const getAutomata = (state) => state.mappings.automata;
@@ -175,6 +176,9 @@ export const makeGetRule = () =>
         (rules, filteredRuleType, ruleIndex) => {
             const filteredRules = filterRulesByType(rules, filteredRuleType);
             const foundRule = filteredRules[ruleIndex];
+            if (!foundRule) {
+                return undefined;
+            }
             const { type, mappedModel, setGroup, groupType, matches } = foundRule;
             // Filter fetched separately to avoid re-renders
             return {

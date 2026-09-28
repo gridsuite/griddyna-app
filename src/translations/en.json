@@ -38,6 +38,7 @@
     "updateStudy": "Pick other study",
     "detachStudy": "Detach",
     "detachStudyTooltip": "Detach a study from current mapping",
+    "fetchDirectoryElementPathError": "An error occurred while loading the element path",
     "fetchMappingPathError": "An error occurred while loading the mapping path",
     "fetchStudyPathError": "An error occurred while loading the study path",
     "attachMappingStudyError": "An error occurred while attaching a study to the mapping",
@@ -52,5 +53,12 @@
     "getPropertyValuesFromStudyIdError": "An error occurred while fetching property values from a study",
 
     "updateConfigParameterError": "An error occurred while updating a configuration parameter",
-    "fetchAppsMetadataError": "An error occurred while fetching apps metadata"
+    "fetchAppsMetadataError": "An error occurred while fetching apps metadata",
+
+    "addModelLabel": "Add a model",
+    "models": "Models",
+    "saveMappingTooltip": "Save mapping",
+    "automata": "Automata",
+    "addAutomaton": "Add an automaton",
+    "manageModelParameters": "Manage model parameters"
 }

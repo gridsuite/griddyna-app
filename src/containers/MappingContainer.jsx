@@ -26,20 +26,17 @@ import { fetchDirectoryElementPath, snackWithFallback, useSnackMessage } from '@
 import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
+    getActiveMapping,
     getAutomataNumber,
     getCurrentStudy,
     getGroupedAutomataNumber,
-    getGroupedRulesNumber,
-    getRulesNumber,
     isMappingValid as isMappingValidSelector,
     isModified as isModifiedSelector,
     MappingSlice,
-    ruleTabsValid as ruleTabsValidSelector,
     updateMapping,
     updateMappingStudy,
 } from '../redux/slices/Mapping';
 import { getPropertyValuesFromStudyId, getStudies, NetworkSlice } from '../redux/slices/Network';
-import RuleContainer from './RuleContainer';
 import Header from '../components/2-molecules/Header';
 import AttachDialog from '../components/2-molecules/AttachDialog';
 import TabBar from '../components/2-molecules/TabBar';
@@ -49,48 +46,29 @@ import AutomatonContainer from './AutomatonContainer';
 import ParametersContainer from './ParametersContainer';
 import { areParametersValid as areParametersValidSelector } from '../redux/selectors';
 import { AutomatonFamily } from '../constants/automatonDefinition';
-import { RuleEquipmentTypes } from '../constants/equipmentType';
 import { addFavoriteStudies, getFavoriteStudies, removeFavoriteStudies } from '../redux/slices/Config';
 import DetachButton from '../components/1-atoms/buttons/DetachButton';
 import AttachButton from '../components/1-atoms/buttons/AttachButton';
 import { breadCrumb } from 'utils/directory-utils';
 import { styles as sharedStyles } from 'utils/styles-utils';
 import GlassPane from '../components/1-atoms/glass-pane';
-import VirtualizedList from '../components/2-molecules/virtualized-list/VirtualizedList';
-
-const styles = {
-    tabBar: {
-        display: 'flex',
-        justifyContent: 'flex-start',
-    },
-};
-
-// TODO intl
-const ADD_MODEL_LABEL = 'Add a model';
-const SAVE_LABEL = 'Save Mapping';
-const MODELS_TITLE = 'Models';
-const AUTOMATA_TITLE = 'Automata';
-const ADD_AUTOMATON_LABEL = 'Add an automaton';
-const CONTROLLED_PARAMETERS_LABEL = 'Manage model parameters';
+import MappingRuleContainer from './MappingRuleContainer.tsx';
 
 const MappingContainer = () => {
     const { snackError } = useSnackMessage();
     const intl = useIntl();
 
     // TODO Add path parameter here
-    const totalRulesNumber = useSelector((state) => state.mappings.rules.length);
-    const rulesNumber = useSelector(getRulesNumber);
-    const activeMapping = useSelector((state) => state.mappings.activeMapping);
+    const activeMapping = useSelector(getActiveMapping);
     const activeMappingName = useSelector(activeMappingNameSelector);
     const isModified = useSelector(isModifiedSelector);
-    const ruleTabsValid = useSelector(ruleTabsValidSelector);
+
     const automatonTabsValid = useSelector(automatonTabsValidSelector);
     const isMappingValid = useSelector(isMappingValidSelector);
     const studies = useSelector((state) => state.network.knownStudies);
     const favoriteStudies = useSelector(getFavoriteStudies);
     const currentStudy = useSelector(getCurrentStudy);
-    const groupedRulesNumber = useSelector(getGroupedRulesNumber);
-    const filteredType = useSelector((state) => state.mappings.filteredRuleType);
+
     const filteredFamily = useSelector((state) => state.mappings.filteredAutomatonFamily);
 
     const totalAutomataNumber = useSelector((state) => state.mappings.automata.length);
@@ -102,7 +80,6 @@ const MappingContainer = () => {
 
     // the ref to the scroll container of rules and automata
     const scrollContainerRef = useRef(null);
-    const [modelsExpanded, setModelsExpanded] = useState(false);
 
     // but we fetch the names of the studies to display them in the attachment dialog.
     useEffect(() => {
@@ -198,23 +175,12 @@ const MappingContainer = () => {
     const [isAttachedModalOpen, setIsAttachedModalOpen] = useState(false);
     const [editParameters, setEditParameters] = useState(undefined);
 
-    const filterRulesOptions = RuleEquipmentTypes.map((type) => ({
-        value: type,
-        // TODO: intl
-        label: `${type} (${groupedRulesNumber[type]})`,
-        isValid: ruleTabsValid[type],
-    }));
-
     const filterAutomataOptions = Object.values(AutomatonFamily).map((family) => ({
         value: family,
         // TODO: intl
         label: `${family} (${groupedAutomataNumber[family]})`,
         isValid: automatonTabsValid[family],
     }));
-
-    function addRule() {
-        dispatch(MappingSlice.actions.addRule(undefined));
-    }
 
     function saveMapping() {
         dispatch(updateMapping());
@@ -273,10 +239,6 @@ const MappingContainer = () => {
             });
     }
 
-    function setFilteredType(type) {
-        dispatch(MappingSlice.actions.changeFilteredType(type));
-    }
-
     function addAutomaton() {
         dispatch(MappingSlice.actions.addAutomaton(undefined));
     }
@@ -287,20 +249,6 @@ const MappingContainer = () => {
 
     function changeControlledParameters() {
         dispatch(MappingSlice.actions.changeControlledParameters());
-    }
-
-    function buildRules() {
-        const rules = [];
-        for (let i = 0; i < rulesNumber; i++) {
-            rules.push(
-                <RuleContainer
-                    index={i}
-                    editParameters={setEditParameters}
-                    key={`rule-container-${activeMapping}-${filteredType}-${i}`}
-                />
-            );
-        }
-        return rules;
     }
 
     function buildAutomata() {
@@ -336,7 +284,7 @@ const MappingContainer = () => {
                                         event.stopPropagation(); //  to avoid event bubbles up to AccordionSummary which change open/close state
                                         saveMapping();
                                     }}
-                                    saveTooltip={SAVE_LABEL}
+                                    saveTooltip={intl.formatMessage({ id: 'saveMappingTooltip' })}
                                 />
                             </AccordionSummary>
                             <Divider />
@@ -392,7 +340,7 @@ const MappingContainer = () => {
                                                     onChange={changeControlledParameters}
                                                 />
                                             }
-                                            label={CONTROLLED_PARAMETERS_LABEL}
+                                            label={intl.formatMessage({ id: 'manageModelParameters' })}
                                         />
                                     </Grid>
                                 </Grid>
@@ -407,57 +355,22 @@ const MappingContainer = () => {
                                 overflowY: 'auto',
                             }}
                         >
-                            <Accordion
-                                expanded={modelsExpanded}
-                                onChange={(_, expanded) => setModelsExpanded(expanded)}
-                            >
-                                <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
-                                    <Typography>{`${MODELS_TITLE} ${
-                                        totalRulesNumber ? '(' + totalRulesNumber + ')' : ''
-                                    }`}</Typography>
-                                </AccordionSummary>
-                                <Divider />
-                                <AccordionDetails>
-                                    <Grid container>
-                                        <Grid size="grow" sx={styles.tabBar}>
-                                            <TabBar
-                                                value={filteredType}
-                                                options={filterRulesOptions}
-                                                setValue={setFilteredType}
-                                            />
-                                        </Grid>
-                                        <Grid size="auto">
-                                            <AddIconButton onClick={addRule} tooltip={ADD_MODEL_LABEL} />
-                                        </Grid>
-                                    </Grid>
-                                    <List>
-                                        <VirtualizedList
-                                            count={rulesNumber}
-                                            scrollElementRef={scrollContainerRef}
-                                            renderItem={(index) => (
-                                                <RuleContainer
-                                                    index={index}
-                                                    editParameters={setEditParameters}
-                                                    key={`rule-container-${activeMapping}-${filteredType}-${index}`}
-                                                />
-                                            )}
-                                            estimateSize={400}
-                                            overscan={1}
-                                            enabled={modelsExpanded}
-                                        />
-                                    </List>
-                                </AccordionDetails>
-                            </Accordion>
+                            <MappingRuleContainer
+                                parentScrollContainerRef={scrollContainerRef}
+                                activeMapping={activeMapping}
+                                editParameters={setEditParameters}
+                            />
+
                             <Accordion>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={sharedStyles.accordionSummary}>
-                                    <Typography>{`${AUTOMATA_TITLE} ${
+                                    <Typography>{`${intl.formatMessage({ id: 'automata' })} ${
                                         totalAutomataNumber ? '(' + totalAutomataNumber + ')' : ''
                                     }`}</Typography>
                                 </AccordionSummary>
                                 <Divider />
                                 <AccordionDetails>
                                     <Grid container>
-                                        <Grid size="grow" sx={styles.tabBar}>
+                                        <Grid size="grow" sx={sharedStyles.tabBar}>
                                             <TabBar
                                                 value={filteredFamily}
                                                 options={filterAutomataOptions}
@@ -465,7 +378,10 @@ const MappingContainer = () => {
                                             />
                                         </Grid>
                                         <Grid size="auto">
-                                            <AddIconButton onClick={addAutomaton} tooltip={ADD_AUTOMATON_LABEL} />
+                                            <AddIconButton
+                                                onClick={addAutomaton}
+                                                tooltip={intl.formatMessage({ id: 'addAutomaton' })}
+                                            />
                                         </Grid>
                                     </Grid>
                                     <List>{buildAutomata()}</List>

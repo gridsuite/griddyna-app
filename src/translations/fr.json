@@ -25,7 +25,7 @@
     "mappingAlreadyAdded": "Mapping déjà ajouté",
     "mappingNotAccessible": "Le mapping n'est plus accessible",
 
-  "NoFolder": "Aucun dossier sélectionné",
+    "NoFolder": "Aucun dossier sélectionné",
     "NoItem": "Aucun élément sélectionné",
     "edit": "Modifier",
     "selectStudyDialogTitle": "Choisir une étude",
@@ -53,5 +53,12 @@
     "getPropertyValuesFromStudyIdError": "Une erreur est survenue lors de la récupération des valeurs de propriété à partir d'une étude",
 
     "updateConfigParameterError": "Une erreur est survenue lors de la mise à jour d'un paramètre de configuration",
-    "fetchAppsMetadataError": "Une erreur est survenue lors de la récupération des métadonnées des applications"
+    "fetchAppsMetadataError": "Une erreur est survenue lors de la récupération des métadonnées des applications",
+
+    "addModelLabel": "Ajouter un modèle",
+    "models": "Modèles",
+    "saveMappingTooltip": "Enregistrer le mapping",
+    "automata": "Automata",
+    "addAutomaton": "Ajouter un automate",
+    "manageModelParameters": "Gérer des paramèttres de modèle "
 }

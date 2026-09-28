@@ -20,9 +20,7 @@ import Rule from '../components/3-organisms/Rule';
 import FilterContainer from './FilterContainer';
 import { GroupEditionOrigin } from '../constants/models';
 
-const RuleContainer = ({ index, editParameters }) => {
-    const getRule = useMemo(makeGetRule, []);
-    const rule = useSelector((state) => getRule(state, index));
+const RuleContainerInner = ({ index, editParameters, rule }) => {
     const { type, mappedModel, setGroup, groupType } = rule;
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
     const isRuleValid = useSelector((state) => isRuleValidSelector(state, index));
@@ -124,6 +122,15 @@ const RuleContainer = ({ index, editParameters }) => {
             <FilterContainer ruleIndex={index} equipmentType={type} />
         </Rule>
     );
+};
+
+const RuleContainer = ({ index, editParameters }) => {
+    const getRule = useMemo(makeGetRule, []);
+    const rule = useSelector((state) => getRule(state, index));
+    if (!rule) {
+        return null;
+    }
+    return <RuleContainerInner index={index} editParameters={editParameters} rule={rule} />;
 };
 
 RuleContainer.propTypes = {

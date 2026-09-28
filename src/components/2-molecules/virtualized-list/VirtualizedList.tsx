@@ -5,9 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { ReactNode, RefObject } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { memo, ReactNode, RefObject } from 'react';
 import { Box } from '@mui/material';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface VirtualizedListProps {
     count: number;
@@ -15,25 +15,25 @@ interface VirtualizedListProps {
     renderItem: (index: number) => ReactNode;
     estimateSize?: number;
     overscan?: number;
-    enabled?: boolean;
+    disabled?: boolean;
 }
 
-export default function VirtualizedList({
+function VirtualizedList({
     count,
     scrollElementRef,
     renderItem,
     estimateSize = 300,
     overscan = 3,
-    enabled = true,
+    disabled = false,
 }: VirtualizedListProps) {
     const virtualizer = useVirtualizer({
-        count,
+        count: disabled ? 0 : count, // optimize usage of hook when disabled
         getScrollElement: () => scrollElementRef.current,
         estimateSize: () => estimateSize,
         overscan,
     });
-    console.log('xxx virtualizer', { itemsCount: virtualizer.getVirtualItems() });
-    if (!enabled) {
+
+    if (disabled) {
         return null;
     }
 
@@ -64,3 +64,5 @@ export default function VirtualizedList({
         </Box>
     );
 }
+
+export default memo(VirtualizedList);

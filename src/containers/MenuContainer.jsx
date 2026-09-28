@@ -5,12 +5,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSnackMessage } from '@gridsuite/commons-ui';
 import {
     addMapping as addMappingAction,
     exportMapping as exportMappingAction,
+    getActiveMapping,
     getMappings,
     getMappingsInfo,
     MappingSlice,
@@ -27,16 +28,8 @@ const MenuContainer = () => {
 
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
+    const activeMapping = useSelector(getActiveMapping);
     const favoriteMappings = useSelector(getFavoriteMappings);
-
-    const activeMapping = useSelector((state) => state.mappings.activeMapping);
-    const [selectedMapping, setSelectedMapping] = useState(activeMapping);
-    // To synchronize selectedMapping with activeMapping
-    useEffect(() => {
-        setSelectedMapping(activeMapping);
-    }, [activeMapping]);
-
-    const [isPending, startTransition] = useTransition();
 
     // On mount component
     useEffect(() => {
@@ -86,14 +79,9 @@ const MenuContainer = () => {
     };
 
     const selectMapping = (id) => () => {
-        // set local selectedMapping
-        setSelectedMapping(id);
-        // defer update redux state
-        startTransition(() => {
-            dispatch(MappingSlice.actions.selectMapping({ id }));
-            dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
-            dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
-        });
+        dispatch(MappingSlice.actions.selectMapping({ id }));
+        dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
+        dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
 
         dispatch(getPropertyValuesFromStudyId())
             .unwrap()
@@ -105,7 +93,7 @@ const MenuContainer = () => {
 
     const removeMapping = (id) => () => {
         dispatch(MappingSlice.actions.removeMapping({ id }));
-        if (id === selectedMapping) {
+        if (id === activeMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
             dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
             dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
@@ -134,7 +122,7 @@ const MenuContainer = () => {
             removeItem={removeMapping}
             exportItem={exportMapping}
             selectItem={selectMapping}
-            selected={selectedMapping}
+            selected={activeMapping}
         />
     );
 };
