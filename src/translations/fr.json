@@ -58,7 +58,7 @@
     "addModelLabel": "Ajouter un modèle",
     "models": "Modèles",
     "saveMappingTooltip": "Enregistrer le mapping",
-    "automata": "Automata",
+    "automata": "Automates",
     "addAutomaton": "Ajouter un automate",
-    "manageModelParameters": "Gérer des paramèttres de modèle "
+    "manageModelParameters": "Gérer les paramètres du modèle "
 }

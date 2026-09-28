@@ -95,6 +95,7 @@ function MappingRuleContainer({
                     </Grid>
                 </Grid>
                 <VirtualizedList
+                    key={`virtualized-list-${activeMapping}-${filteredType}`}
                     count={rulesNumber}
                     scrollElementRef={parentScrollContainerRef}
                     renderItem={renderItem}
