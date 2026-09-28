@@ -62,12 +62,7 @@ const MenuContainer = () => {
                         // TODO use snackWithFallback instead of snackError when correct RTK serialize error
                         snackError({ headerId: 'addFavoriteMappingsError', messageId: error.message });
                     });
-                dispatch(getPropertyValuesFromStudyId())
-                    .unwrap()
-                    .catch((error) => {
-                        // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                        snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
-                    });
+                dispatch(getPropertyValuesFromStudyId());
             })
             .catch((error) => {
                 // TODO use snackWithFallback instead of snackError when correct RTK serialize error
@@ -79,12 +74,7 @@ const MenuContainer = () => {
 
     const selectMapping = (id) => () => {
         dispatch(MappingSlice.actions.selectMapping({ id }));
-        dispatch(getPropertyValuesFromStudyId())
-            .unwrap()
-            .catch((error) => {
-                // TODO use snackWithFallback instead of snackError when correct RTK serialize error
-                snackError({ headerId: 'getPropertyValuesFromStudyIdError', messageId: error.message });
-            });
+        dispatch(getPropertyValuesFromStudyId());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
     };

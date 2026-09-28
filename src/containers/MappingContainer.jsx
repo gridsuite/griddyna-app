@@ -22,7 +22,7 @@ import {
     Typography,
 } from '@mui/material';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { fetchDirectoryElementPath, snackWithFallback, useSnackMessage } from '@gridsuite/commons-ui';
+import { fetchDirectoryElementPath, useSnackMessage } from '@gridsuite/commons-ui';
 import {
     activeMappingName as activeMappingNameSelector,
     automatonTabsValid as automatonTabsValidSelector,
@@ -131,7 +131,6 @@ const MappingContainer = () => {
                 })
                 .catch((error) => {
                     if (!ignore) {
-                        snackWithFallback(snackError, error, { headerId: 'fetchMappingPathError' });
                         setActiveMappingBreadCrumb(undefined);
                         setErrorActiveMappingBreadCrumb(true);
                     }
@@ -164,7 +163,6 @@ const MappingContainer = () => {
                 })
                 .catch((error) => {
                     if (!ignore) {
-                        snackWithFallback(snackError, error, { headerId: 'fetchStudyPathError' });
                         setCurrentStudyBreadCrumb(undefined);
                         setErrorCurrentStudyBreadCrumb(true);
                     }
