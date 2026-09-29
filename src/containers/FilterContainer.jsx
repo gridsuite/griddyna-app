@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     makeChangeFilterValueThenGetNetworkMatches,
@@ -110,4 +110,4 @@ FilterContainer.propTypes = {
     equipmentType: PropTypes.string.isRequired,
 };
 
-export default FilterContainer;
+export default memo(FilterContainer);

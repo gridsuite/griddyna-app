@@ -11,6 +11,7 @@ import { useSnackMessage } from '@gridsuite/commons-ui';
 import {
     addMapping as addMappingAction,
     exportMapping as exportMappingAction,
+    getActiveMapping,
     getMappings,
     getMappingsInfo,
     MappingSlice,
@@ -27,7 +28,7 @@ const MenuContainer = () => {
 
     const dispatch = useDispatch();
     const mappingsInfo = useSelector(getMappingsInfo);
-    const selectedMapping = useSelector((state) => state.mappings.activeMapping);
+    const activeMapping = useSelector(getActiveMapping);
     const favoriteMappings = useSelector(getFavoriteMappings);
 
     // On mount component
@@ -74,14 +75,14 @@ const MenuContainer = () => {
 
     const selectMapping = (id) => () => {
         dispatch(MappingSlice.actions.selectMapping({ id }));
-        dispatch(getPropertyValuesFromStudyId());
         dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
         dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
+        dispatch(getPropertyValuesFromStudyId());
     };
 
     const removeMapping = (id) => () => {
         dispatch(MappingSlice.actions.removeMapping({ id }));
-        if (id === selectedMapping) {
+        if (id === activeMapping) {
             dispatch(NetworkSlice.actions.cleanNetwork());
             dispatch(MappingSlice.actions.changeFilteredType(RuleEquipmentTypes[0]));
             dispatch(MappingSlice.actions.changeFilteredFamily(AutomatonFamily.CURRENT));
@@ -110,7 +111,7 @@ const MenuContainer = () => {
             removeItem={removeMapping}
             exportItem={exportMapping}
             selectItem={selectMapping}
-            selected={selectedMapping}
+            selected={activeMapping}
         />
     );
 };

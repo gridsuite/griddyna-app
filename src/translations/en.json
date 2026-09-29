@@ -50,5 +50,12 @@
     "getPropertyValuesFromStudyIdError": "An error occurred while fetching property values from a study",
 
     "updateConfigParameterError": "An error occurred while updating a configuration parameter",
-    "fetchAppsMetadataError": "An error occurred while fetching apps metadata"
+    "fetchAppsMetadataError": "An error occurred while fetching apps metadata",
+
+    "addModelLabel": "Add a model",
+    "models": "Models",
+    "saveMappingTooltip": "Save mapping",
+    "automata": "Automata",
+    "addAutomaton": "Add an automaton",
+    "manageModelParameters": "Manage model parameters"
 }

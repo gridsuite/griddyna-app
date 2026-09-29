@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid, Stack, Tooltip, Typography } from '@mui/material';
 import { CustomReactQueryBuilder, EXPERT_FILTER_QUERY, useFormatLabelWithUnit } from '@gridsuite/commons-ui';
@@ -70,4 +70,4 @@ Filter.propTypes = {
     hasFilter: PropTypes.bool,
 };
 
-export default Filter;
+export default memo(Filter);

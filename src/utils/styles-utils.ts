@@ -24,4 +24,8 @@ export const styles = {
             paddingRight: 0,
         },
     },
+    tabBar: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+    },
 };

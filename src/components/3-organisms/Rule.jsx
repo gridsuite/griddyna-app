@@ -12,6 +12,7 @@ import { styles } from './RuleStyle';
 import ModelSelect from '../2-molecules/ModelSelect';
 import SetGroupSelect from '../2-molecules/SetGroupSelect';
 import { mergeSx } from 'utils/functions';
+import { memo } from 'react';
 
 const equipmentLabel = 'Each';
 const deleteRuleLabel = 'Delete model';
@@ -112,4 +113,4 @@ Rule.propTypes = {
     isStudyAttached: PropTypes.bool,
 };
 
-export default Rule;
+export default memo(Rule);
