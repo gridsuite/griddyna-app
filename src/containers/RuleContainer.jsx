@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -138,4 +138,4 @@ RuleContainer.propTypes = {
     editParameters: PropTypes.func.isRequired,
 };
 
-export default RuleContainer;
+export default memo(RuleContainer);

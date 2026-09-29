@@ -10,11 +10,13 @@ import Select from '../1-atoms/Select';
 import { getModelsOptions } from '../../utils/optionsBuilders';
 import { styles } from './ModelSelectStyle';
 import PropTypes from 'prop-types';
+import { useMemo } from 'react';
 
 const modelLabel = 'should be mapped to';
 
 const ModelSelect = (props) => {
     const { model, models, changeModel } = props;
+    const options = useMemo(() => getModelsOptions(models), [models]);
 
     return (
         <Grid container sx={{ justifyContent: 'center' }}>
@@ -22,7 +24,7 @@ const ModelSelect = (props) => {
                 <Typography variant="subtitle1">{`${modelLabel} :`}</Typography>
             </Grid>
             <Grid size="auto" sx={styles.titleSelect}>
-                <Select options={getModelsOptions(models)} value={model} setValue={changeModel} error={model === ''} />
+                <Select options={options} value={model} setValue={changeModel} error={model === ''} />
             </Grid>
         </Grid>
     );
