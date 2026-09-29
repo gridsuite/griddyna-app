@@ -55,7 +55,7 @@ function VirtualizedList({
         return () => {
             resizeObserver.disconnect();
         };
-    }, [scrollElementRef]);
+    }, [scrollElementRef, disabled]);
 
     const virtualizer = useVirtualizer({
         count: disabled ? 0 : count, // optimize usage of hook when disabled
