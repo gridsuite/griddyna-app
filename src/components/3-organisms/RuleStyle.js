@@ -13,10 +13,7 @@ export const styles = {
     }),
     rulePaper: {
         borderRadius: '5px',
-        marginBottom: 1,
-        '& >.MuiGrid-root': {
-            marginTop: 1,
-        },
+        marginTop: 1,
     },
     invalidRulePaper: {
         border: '1px solid',

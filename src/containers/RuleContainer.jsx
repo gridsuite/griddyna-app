@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -20,9 +20,7 @@ import Rule from '../components/3-organisms/Rule';
 import FilterContainer from './FilterContainer';
 import { GroupEditionOrigin } from '../constants/models';
 
-const RuleContainer = ({ index, editParameters }) => {
-    const getRule = useMemo(makeGetRule, []);
-    const rule = useSelector((state) => getRule(state, index));
+const RuleContainerInner = ({ index, editParameters, rule }) => {
     const { type, mappedModel, setGroup, groupType } = rule;
     const isRuleValidSelector = useMemo(makeIsRuleValid, []);
     const isRuleValid = useSelector((state) => isRuleValidSelector(state, index));
@@ -126,9 +124,18 @@ const RuleContainer = ({ index, editParameters }) => {
     );
 };
 
+const RuleContainer = ({ index, editParameters }) => {
+    const getRule = useMemo(makeGetRule, []);
+    const rule = useSelector((state) => getRule(state, index));
+    if (!rule) {
+        return null;
+    }
+    return <RuleContainerInner index={index} editParameters={editParameters} rule={rule} />;
+};
+
 RuleContainer.propTypes = {
     index: PropTypes.number.isRequired,
     editParameters: PropTypes.func.isRequired,
 };
 
-export default RuleContainer;
+export default memo(RuleContainer);

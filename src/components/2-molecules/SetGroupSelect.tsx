@@ -8,7 +8,7 @@
 import { Checkbox, Grid, Typography } from '@mui/material';
 import Select from '../1-atoms/Select';
 import { styles } from './SetGroupSelectStyle';
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { SetType } from '../../constants/models';
 import { EditButton } from '../1-atoms/buttons';
 import { Group, Model } from '../../redux/types/model.type';
@@ -47,12 +47,11 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
         controlledParameters = false,
         isNetworkAttached,
     } = props;
-    const mappedModel = models.find((modelToTest) => modelToTest.name === model);
+    const mappedModel = useMemo(() => models.find((modelToTest) => modelToTest.name === model), [model, models]);
 
-    const groups = mappedModel ? mappedModel.groups : [];
-
-    const foundGroup: Group | undefined = mappedModel?.groups.find(
-        (group) => group.name === setGroup && group.type === groupType
+    const foundGroup: Group | undefined = useMemo(
+        () => mappedModel?.groups?.find((group) => group.name === setGroup && group.type === groupType),
+        [mappedModel, setGroup, groupType]
     );
 
     const [isAbsolute, setIsAbsolute] = useState(![SetType.PREFIX, SetType.SUFFIX].includes(groupType));
@@ -64,17 +63,23 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
         }
     }, [groupType]);
 
-    const onAbsoluteChange = () => {
+    const onAbsoluteChange = useCallback(() => {
         setIsAbsolute(!isAbsolute);
         changeGroup(newEmptyGroup);
-    };
-    let groupOptions: { label: string; value?: Group }[] = groups
-        .filter((group) => (isAbsolute ? group.type === SetType.FIXED : group.type !== SetType.FIXED))
-        .map((group) => ({
-            label: parName(group),
-            value: group,
-        }));
-    groupOptions.push({ label: newGroupLabel });
+    }, [isAbsolute, changeGroup]);
+
+    const groupOptions = useMemo(() => {
+        const groupOpts: { label: string; value?: Group }[] =
+            mappedModel?.groups
+                ?.filter((group) => (isAbsolute ? group.type === SetType.FIXED : group.type !== SetType.FIXED))
+                .map((group) => ({
+                    label: parName(group),
+                    value: group,
+                })) ?? [];
+        groupOpts.push({ label: newGroupLabel });
+
+        return groupOpts;
+    }, [mappedModel, isAbsolute]);
 
     const errorInParams = controlledParameters && (foundGroup === undefined || foundGroup.setsNumber === 0);
 
@@ -112,4 +117,4 @@ const SetGroupSelect = (props: SetGroupSelectProps) => {
     );
 };
 
-export default SetGroupSelect;
+export default memo(SetGroupSelect);
