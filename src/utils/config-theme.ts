@@ -35,25 +35,6 @@ const darkScrollbarStyles = (theme: Theme) => {
     };
 };
 
-const componentsStyleOverrides = () => {
-    return {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
-        MuiTab: {
-            styleOverrides: {
-                root: {
-                    textTransform: 'none',
-                },
-            },
-        },
-    };
-};
-
 const lightTheme = createTheme({
     palette: {
         mode: 'light',
@@ -63,9 +44,6 @@ const lightTheme = createTheme({
         button: {
             textTransform: 'none',
         },
-    },
-    components: {
-        ...componentsStyleOverrides(),
     },
 });
 const darkTheme = createTheme({
@@ -82,7 +60,6 @@ const darkTheme = createTheme({
         MuiCssBaseline: {
             styleOverrides: darkScrollbarStyles,
         },
-        ...componentsStyleOverrides(),
     },
 });
 
