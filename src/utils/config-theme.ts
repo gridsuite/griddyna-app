@@ -5,9 +5,35 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createTheme, responsiveFontSizes } from '@mui/material';
+import { createTheme, responsiveFontSizes, Theme } from '@mui/material';
 import { GsLangUser, GsTheme, LANG_FRENCH, LIGHT_THEME } from '@gridsuite/commons-ui';
 import { enUS as MuiCoreEnUS, frFR as MuiCoreFrFR } from '@mui/material/locale';
+
+const darkScrollbarStyles = (theme: Theme) => {
+    const trackColor = theme.palette.grey[800];
+    const thumbColor = theme.palette.grey[500];
+
+    return {
+        '*': {
+            scrollbarColor: `${thumbColor} ${trackColor}`,
+
+            '&::-webkit-scrollbar': {
+                width: '12px',
+                height: '12px',
+            },
+
+            '&::-webkit-scrollbar-track': {
+                backgroundColor: trackColor,
+            },
+
+            '&::-webkit-scrollbar-thumb': {
+                backgroundColor: thumbColor,
+                borderRadius: '8px',
+                border: `3px solid ${trackColor}`,
+            },
+        },
+    };
+};
 
 const lightTheme = createTheme({
     palette: {
@@ -28,6 +54,11 @@ const darkTheme = createTheme({
     typography: {
         button: {
             textTransform: 'none',
+        },
+    },
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: darkScrollbarStyles,
         },
     },
 });
