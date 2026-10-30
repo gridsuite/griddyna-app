@@ -34,7 +34,7 @@ function AppProvidersWithStore() {
             <BrowserRouter basename={basename}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={themeCompiled}>
-                        <CssBaseline />
+                        <CssBaseline enableColorScheme />
                         <SnackbarProvider hideIconVariant={false}>
                             <NotificationsProvider urls={urlMapper}>
                                 <CardErrorBoundary>
