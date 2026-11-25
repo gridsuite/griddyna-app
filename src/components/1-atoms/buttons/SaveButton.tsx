@@ -18,12 +18,12 @@ type SaveButtonProps = {
     sx: SxProps;
 };
 
-const SaveButton = ({ label, onClick, sx, disabled, tooltip, startIcon: StartIcon }: Readonly<SaveButtonProps>) => (
+const SaveButton = ({ label, onClick, sx, disabled, tooltip, startIcon }: Readonly<SaveButtonProps>) => (
     <Tooltip title={tooltip}>
         <Button
             variant="contained"
             onClick={onClick}
-            startIcon={StartIcon ? StartIcon : <SaveOutlinedIcon />}
+            startIcon={startIcon ?? <SaveOutlinedIcon />}
             sx={sx}
             disabled={disabled}
         >

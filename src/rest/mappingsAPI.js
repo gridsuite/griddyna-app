@@ -73,9 +73,9 @@ export function getMappings({ ids, token }) {
 
         return mappingsPromise.then((mappings) => {
             const mappingIds = mappings.map((mapping) => mapping.id);
-            const idsToFetchNames = new Set([...mappingIds, ...nonReadableIds]);
-            if (mappingIds?.length > 0) {
-                return fetchElementNames(idsToFetchNames).then((elementIdNames) => {
+            const idsToFetchNames = [...mappingIds, ...nonReadableIds];
+            if (idsToFetchNames?.length > 0) {
+                return fetchElementNames(new Set(idsToFetchNames)).then((elementIdNames) => {
                     const mappingsWithName = mappings.map((mapping) => ({
                         ...mapping,
                         name: elementIdNames?.[mapping.id],
@@ -95,7 +95,7 @@ export function getMappings({ ids, token }) {
                     return [...mappingsWithName, ...nonReadableMappings];
                 });
             }
-            return mappings;
+            return Promise.resolve([]);
         });
     });
 }
