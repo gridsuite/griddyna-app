@@ -25,6 +25,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { fetchDirectoryElementPath, useSnackMessage } from '@gridsuite/commons-ui';
 import {
     activeMappingName as activeMappingNameSelector,
+    activeMappingPermission as activeMappingPermissionSelector,
     automatonTabsValid as automatonTabsValidSelector,
     getActiveMapping,
     getAutomataNumber,
@@ -61,6 +62,7 @@ const MappingContainer = () => {
     // TODO Add path parameter here
     const activeMapping = useSelector(getActiveMapping);
     const activeMappingName = useSelector(activeMappingNameSelector);
+    const activeMappingPermission = useSelector(activeMappingPermissionSelector);
     const isModified = useSelector(isModifiedSelector);
 
     const automatonTabsValid = useSelector(automatonTabsValidSelector);
@@ -276,6 +278,7 @@ const MappingContainer = () => {
                                 <Header
                                     name={activeMappingName}
                                     breadCrumbName={activeMappingBreadCrumb}
+                                    permission={activeMappingPermission}
                                     isModified={isModified}
                                     isValid={isMappingValid && areParametersValid}
                                     save={(event) => {

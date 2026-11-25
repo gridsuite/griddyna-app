@@ -371,6 +371,7 @@ export const getMappingsInfo = createSelector(
         mappings.map((mapping) => ({
             name: mapping.name,
             id: mapping.id,
+            permission: mapping.permission,
         }))
 );
 
@@ -380,6 +381,15 @@ export const activeMappingName = createSelector(
     (activeMapping, mappings) => {
         const foundMapping = mappings.find((mapping) => mapping.id === activeMapping);
         return foundMapping?.name;
+    }
+);
+
+export const activeMappingPermission = createSelector(
+    (state) => state.mappings.activeMapping,
+    (state) => state.mappings.mappings,
+    (activeMapping, mappings) => {
+        const foundMapping = mappings.find((mapping) => mapping.id === activeMapping);
+        return foundMapping?.permission;
     }
 );
 
@@ -519,6 +529,7 @@ export const getMappings = createAsyncThunk('mappings/get', async ({ ids }, { ge
         return {
             id,
             name: undefined,
+            permission: undefined,
             rules: [],
             automata: [],
             controlledParameters: false,
