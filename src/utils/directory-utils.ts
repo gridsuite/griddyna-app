@@ -4,6 +4,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+import { PermissionType } from '@gridsuite/commons-ui';
 
 export function breadCrumb(itemFullPath: string): string {
     if (itemFullPath.length > 48) {
@@ -19,4 +20,29 @@ export function breadCrumb(itemFullPath: string): string {
         // splitNameList length can not be equal to one because there is at least one root folder
     }
     return itemFullPath;
+}
+
+/**
+ * Checks if the given permission level meets or exceeds the required permission
+ * Note: the implementation is copied from the backend directory-server#PermissionService
+ */
+export function hasPermissionLevel(actualLevel: PermissionType | null, requiredLevel: PermissionType): boolean {
+    if (actualLevel === null) {
+        return false;
+    }
+
+    switch (requiredLevel) {
+        case PermissionType.READ:
+            return (
+                actualLevel === PermissionType.READ ||
+                actualLevel === PermissionType.WRITE ||
+                actualLevel === PermissionType.MANAGE
+            );
+        case PermissionType.WRITE:
+            return actualLevel === PermissionType.WRITE || actualLevel === PermissionType.MANAGE;
+        case PermissionType.MANAGE:
+            return actualLevel === PermissionType.MANAGE;
+        default:
+            return false;
+    }
 }

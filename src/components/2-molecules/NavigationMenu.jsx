@@ -18,15 +18,18 @@ import {
     ListItem,
     ListItemButton,
 } from '@mui/material';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { CustomTooltip, mergeSx, OverflowableText, PermissionType } from '@gridsuite/commons-ui';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LockIcon from '@mui/icons-material/Lock';
+import EditOffIcon from '@mui/icons-material/EditOff';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ContextMenu from './ContextMenu';
-import AddButton from '../1-atoms/buttons/AddButton.jsx';
+import AddButton from '../1-atoms/buttons/AddButton';
 import { styles } from './NavigationMenuStyles';
-import NewMappingDialog from './rhf/dialogs/new-mapping/NewMappingDialog.tsx';
-import { useIntl } from 'react-intl';
-import { mergeSx, OverflowableText } from '@gridsuite/commons-ui';
+import NewMappingDialog from './rhf/dialogs/new-mapping/NewMappingDialog';
 import { styles as sharedStyles } from 'utils/styles-utils';
+import { hasPermissionLevel } from '../../utils/directory-utils';
 
 const NavigationMenu = (props) => {
     const { items, removeItem, exportItem, addItem, selectItem, selected = undefined } = props;
@@ -39,7 +42,7 @@ const NavigationMenu = (props) => {
 
     const buildOptions = useCallback(
         (itemId) => {
-            const itemName = items?.find((item) => item.id === itemId)?.name;
+            const { name: itemName, permission: itemPermission } = items?.find((item) => item.id === itemId) || {};
             const options = [];
             if (removeItem) {
                 options.push({
@@ -51,7 +54,7 @@ const NavigationMenu = (props) => {
                 options.push({
                     label: intl.formatMessage({ id: 'exportMapping' }),
                     action: exportItem(itemId, itemName),
-                    disabled: !itemName,
+                    disabled: !itemName || !hasPermissionLevel(itemPermission, PermissionType.READ),
                 });
             }
             return options;
@@ -107,6 +110,15 @@ const NavigationMenu = (props) => {
                                             color: item.name ? undefined : 'error.main',
                                         })}
                                     />
+                                    {!hasPermissionLevel(item.permission, PermissionType.READ) && item.name ? (
+                                        <CustomTooltip title={<FormattedMessage id="restricted" />}>
+                                            <LockIcon sx={{ ml: 1, flexShrink: 0, pb: 0.5 }} color="primary" />
+                                        </CustomTooltip>
+                                    ) : !hasPermissionLevel(item.permission, PermissionType.WRITE) && item.name ? (
+                                        <CustomTooltip title={<FormattedMessage id="readOnly" />}>
+                                            <EditOffIcon sx={{ ml: 1, flexShrink: 0, pb: 0.5 }} color="primary" />
+                                        </CustomTooltip>
+                                    ) : null}
                                 </ListItemButton>
                             </ListItem>
                         );

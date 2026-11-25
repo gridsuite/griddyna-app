@@ -57,5 +57,8 @@
     "saveMappingTooltip": "Save mapping",
     "automata": "Automata",
     "addAutomaton": "Add an automaton",
-    "manageModelParameters": "Manage model parameters"
+    "manageModelParameters": "Manage model parameters",
+
+    "readOnly": "Read only",
+    "restricted": "Restricted"
 }

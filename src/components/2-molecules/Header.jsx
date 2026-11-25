@@ -6,16 +6,27 @@
  */
 
 import { Grid, Tooltip, Typography } from '@mui/material';
-import { FolderOutlined } from '@mui/icons-material';
+import { EditOff, FolderOutlined } from '@mui/icons-material';
+import { PermissionType } from '@gridsuite/commons-ui';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { styles } from './HeaderStyles';
 import { mergeSx } from 'utils/functions';
 import SaveButton from '../1-atoms/buttons/SaveButton';
+import { hasPermissionLevel } from '../../utils/directory-utils';
 
 const outdatedLabel = 'Generated elements are outdated, re-generate them to delete this warning';
 
-const Header = ({ name, breadCrumbName, isModified = false, isValid = true, save, saveTooltip, isCurrent = true }) => {
+const Header = ({
+    name,
+    breadCrumbName,
+    permission,
+    isModified = false,
+    isValid = true,
+    save,
+    saveTooltip,
+    isCurrent = true,
+}) => {
     const intl = useIntl();
 
     const getHeaderBoxStyle = () => {
@@ -37,6 +48,7 @@ const Header = ({ name, breadCrumbName, isModified = false, isValid = true, save
         }
         return titleStyle;
     };
+    const hasWritePermission = hasPermissionLevel(permission, PermissionType.WRITE);
     return (
         <Grid container sx={mergeSx(getHeaderBoxStyle(), { justifyContent: 'flex-end' })}>
             <Grid sx={{ paddingTop: 1 }}>
@@ -55,7 +67,8 @@ const Header = ({ name, breadCrumbName, isModified = false, isValid = true, save
                         label={intl.formatMessage({ id: 'saveMapping' })}
                         onClick={save}
                         tooltip={saveTooltip}
-                        disabled={!isModified || !isValid}
+                        disabled={!hasWritePermission || !isModified || !isValid}
+                        startIcon={!hasWritePermission ? <EditOff /> : undefined}
                     />
                 )}
             </Grid>

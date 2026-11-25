@@ -7,18 +7,26 @@
 
 import { Button, SxProps, Tooltip } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import { ReactNode } from 'react';
 
 type SaveButtonProps = {
     label: string;
     tooltip: string;
     disabled?: boolean;
     onClick: () => void;
+    startIcon?: ReactNode;
     sx: SxProps;
 };
 
-const SaveButton = ({ label, onClick, sx, disabled, tooltip }: Readonly<SaveButtonProps>) => (
+const SaveButton = ({ label, onClick, sx, disabled, tooltip, startIcon: StartIcon }: Readonly<SaveButtonProps>) => (
     <Tooltip title={tooltip}>
-        <Button variant="contained" onClick={onClick} startIcon={<SaveOutlinedIcon />} sx={sx} disabled={disabled}>
+        <Button
+            variant="contained"
+            onClick={onClick}
+            startIcon={StartIcon ? StartIcon : <SaveOutlinedIcon />}
+            sx={sx}
+            disabled={disabled}
+        >
             {label}
         </Button>
     </Tooltip>
