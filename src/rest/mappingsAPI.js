@@ -95,7 +95,7 @@ export function getMappings({ ids, token }) {
                     return [...mappingsWithName, ...nonReadableMappings];
                 });
             }
-            return Promise.resolve([]);
+            return [];
         });
     });
 }
